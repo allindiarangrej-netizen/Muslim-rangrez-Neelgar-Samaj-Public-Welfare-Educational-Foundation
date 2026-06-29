@@ -1,0 +1,6 @@
+{
+  "name": "Rangrez Community Bharat Portal",
+  "description": "An enterprise-grade national community portal, membership system, matrimonial, education, career, and social welfare platform.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
