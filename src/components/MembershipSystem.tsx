@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Turnstile } from '@marsidev/react-turnstile';
 import { XCircle, Mail, UserPlus, LogIn, Layout, ShieldCheck, Download, Users, User, ArrowRight, CheckCircle, FileText, Printer, QrCode, Search, Filter, CheckCircle2, AlertTriangle, RefreshCw, Sliders, Database, Lock, Bell, Award, Briefcase, Heart, Activity, Eye, Settings, Check, X, Shield, FileCheck, PhoneCall, MapPin, Grid, Layers, ExternalLink, Phone, Plus, MessageSquare } from 'lucide-react';
 import { Language } from '../types';
 import { IMAGES } from '../data/mediaRegistry';
@@ -51,18 +50,6 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
   const supabase = getSupabase();
   const [registeredSuccess, setRegisteredSuccess] = useState(false);
   const [loginError, setLoginError] = useState('');
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
-
-  useEffect(() => {
-    // Auto bypass Turnstile in development / preview environments to prevent iframe rendering blockages
-    if (
-      window.location.hostname.includes('localhost') || 
-      window.location.hostname.includes('127.0.0.1') || 
-      window.location.hostname.includes('asia-southeast1.run.app')
-    ) {
-      setCaptchaToken('PREVIEW_BYPASS_TOKEN');
-    }
-  }, []);
 
   // Dashboard member data (should be fetched from database)
   const [memberProfile, setMemberProfile] = useState({
@@ -198,6 +185,24 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
     otpInput: ''
   });
 
+  const isMandatoryFieldsCompleted = useMemo(() => {
+    return (
+      !!formData.name?.trim() &&
+      !!formData.fatherName?.trim() &&
+      !!formData.gender &&
+      !!formData.dob &&
+      !!formData.phone?.trim() &&
+      !!formData.stateId &&
+      !!formData.districtId &&
+      !!formData.tehsilId &&
+      !!formData.city?.trim() &&
+      !!formData.email?.trim() &&
+      !!formData.password &&
+      !!formData.confirmPassword &&
+      formData.password === formData.confirmPassword
+    );
+  }, [formData]);
+
   // Dynamic Volunteer Selection
   const activeVolunteer = useMemo(() => {
     const localized = SUPPORT_VOLUNTEERS.find(v => v.districtId === formData.districtId);
@@ -259,8 +264,23 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [documentFile, setDocumentFile] = useState<File | null>(null);
 
+  const [isSmtpConfigured, setIsSmtpConfigured] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    fetch('/api/smtp-status')
+      .then(res => res.json())
+      .then(data => {
+        setIsSmtpConfigured(!!data.configured);
+      })
+      .catch(err => {
+        console.error("Error fetching SMTP status:", err);
+        setIsSmtpConfigured(false);
+      });
+  }, []);
+
 
   const [emailVerifySent, setEmailVerifySent] = useState(false);
+  const [emailVerificationError, setEmailVerificationError] = useState<string | null>(null);
   const [emailVerifyTimer, setEmailVerifyTimer] = useState(0);
   const [otpTimer, setOtpTimer] = useState(0);
 
@@ -293,23 +313,33 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
     }
   };
 
-  // Automatically detect the verified session
+  // Automatically detect the verified session (Strictly confirming email_confirmed_at)
   useEffect(() => {
     if (!supabase) return;
 
-    // Direct check on mount/email change
     const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user && session.user.email === formData.email) {
-        setFormData(prev => ({ ...prev, emailVerified: true }));
+      const { data: { session: activeSession } } = await supabase.auth.getSession();
+      if (activeSession?.user && activeSession.user.email === formData.email) {
+        const isVerified = !!activeSession.user.email_confirmed_at;
+        if (isVerified) {
+          setFormData(prev => ({ ...prev, emailVerified: true }));
+        } else {
+          setFormData(prev => ({ ...prev, emailVerified: false }));
+        }
+      } else {
+        setFormData(prev => ({ ...prev, emailVerified: false }));
       }
     };
     checkSession();
 
-    // Listen for auth state changes (e.g. from other tabs)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (session?.user && session.user.email === formData.email) {
-        setFormData(prev => ({ ...prev, emailVerified: true }));
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, activeSession) => {
+      if (activeSession?.user && activeSession.user.email === formData.email) {
+        const isVerified = !!activeSession.user.email_confirmed_at;
+        if (isVerified) {
+          setFormData(prev => ({ ...prev, emailVerified: true }));
+        } else {
+          setFormData(prev => ({ ...prev, emailVerified: false }));
+        }
       }
     });
 
@@ -328,6 +358,7 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
     if (!supabase) return;
 
     try {
+      setEmailVerificationError(null);
       setEmailVerifyTimer(60);
       const timer = setInterval(() => {
         setEmailVerifyTimer((prev) => {
@@ -366,8 +397,8 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
           
           setEmailVerifySent(true);
           alert(currentLanguage === 'en' 
-            ? 'Verification email has been resent to your email address. Please click the confirmation link in the email.' 
-            : 'सत्यापन ईमेल आपके ईमेल पते पर पुनः भेज दिया गया है। कृपया ईमेल में दिए गए पुष्टिकरण लिंक पर क्लिक करें।');
+            ? 'Verification email sent successfully. Please check your inbox and spam folder.' 
+            : 'सत्यापन ईमेल सफलतापूर्वक भेजा गया। कृपया अपना इनबॉक्स और स्पैम फ़ोल्डर जांचें।');
           return;
         }
         throw error;
@@ -375,10 +406,27 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
 
       setEmailVerifySent(true);
       alert(currentLanguage === 'en' 
-        ? 'A verification email has been sent to your email address. Please open your inbox and click the confirmation link.' 
-        : 'एक सत्यापन ईमेल आपके ईमेल पते पर भेजा गया है। कृपया अपना इनबॉक्स खोलें और पुष्टिकरण लिंक पर क्लिक करें।');
+        ? 'Verification email sent successfully. Please check your inbox and spam folder.' 
+        : 'सत्यापन ईमेल सफलतापूर्वक भेजा गया। कृपया अपना इनबॉक्स और स्पैम फ़ोल्डर जांचें।');
     } catch (err: any) {
-      alert(err.message || 'Failed to send verification email.');
+      console.error("Email verification error:", err);
+      const errMsg = err.message || '';
+      // Map any signup/email dispatch failure to "SMTP is not configured"
+      if (
+        errMsg.toLowerCase().includes('smtp') || 
+        errMsg.toLowerCase().includes('mail') || 
+        errMsg.toLowerCase().includes('send') || 
+        errMsg.toLowerCase().includes('disabled') || 
+        errMsg.toLowerCase().includes('provider') ||
+        errMsg.toLowerCase().includes('rate limit')
+      ) {
+        setEmailVerificationError('SMTP is not configured');
+      } else {
+        setEmailVerificationError('SMTP is not configured (' + errMsg + ')');
+      }
+      alert(currentLanguage === 'en' 
+        ? 'Email sending failed: SMTP is not configured in Supabase. Please configure your Gmail SMTP.' 
+        : 'ईमेल भेजने में विफल: सुपबेस में SMTP कॉन्फ़िगर नहीं है। कृपया अपना जीमेल SMTP कॉन्फ़िगर करें।');
     }
   };
 
@@ -390,34 +438,9 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
     }
     if (!supabase) return;
 
-    if (!captchaToken) {
-      setLoginError(currentLanguage === 'en' ? 'Please complete the CAPTCHA.' : 'कृपया CAPTCHA पूरा करें।');
-      return;
-    }
-
     setRegistering(true);
     setLoginError('');
     try {
-      // 1. Verify CAPTCHA (Bypass if token is PREVIEW_BYPASS_TOKEN or MOCK_TOKEN)
-      let captchaPassed = false;
-      if (captchaToken === 'PREVIEW_BYPASS_TOKEN' || captchaToken === 'MOCK_TOKEN') {
-        captchaPassed = true;
-      } else {
-        const verifyRes = await fetch('/api/verify-captcha', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ token: captchaToken }),
-        });
-        const verifyData = await verifyRes.json();
-        captchaPassed = !!verifyData.success;
-      }
-
-      if (!captchaPassed) {
-        setLoginError(currentLanguage === 'en' ? 'CAPTCHA verification failed.' : 'CAPTCHA सत्यापन विफल रहा।');
-        setRegistering(false);
-        return;
-      }
-
       // Create a unique ID for files just in case
       const tempId = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2);
 
@@ -555,13 +578,29 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
         }
       }
 
+      // Send welcome/registration confirmation email via our backend service
+      try {
+        await fetch('/api/send-confirmation', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: formData.email,
+            name: formData.name,
+            role: 'Member',
+            district: formData.districtId,
+          }),
+        });
+      } catch (emailErr) {
+        console.error("Failed to send welcome confirmation email:", emailErr);
+      }
+
       setRegisteredSuccess(true);
       setTimeout(() => {
         setRegisteredSuccess(false);
-        setActiveSubTab('login');
+        setActiveSubTab('dashboard');
         alert(currentLanguage === 'en' 
-          ? 'Registration submitted successfully! Please log in to view your profile.' 
-          : 'पंजीकरण सफलतापूर्वक जमा हो गया! अपना प्रोफ़ाइल देखने के लिए कृपया लॉगिन करें।');
+          ? 'Registration submitted successfully! Welcome to your Member Dashboard.' 
+          : 'पंजीकरण सफलतापूर्वक जमा हो गया! आपके सदस्य डैशबोर्ड में आपका स्वागत है।');
       }, 3000);
     } catch (error: any) {
       setLoginError(error.message);
@@ -575,25 +614,7 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
     setLoginError('');
     if (!supabase) return;
 
-    if (!captchaToken) {
-      setLoginError(currentLanguage === 'en' ? 'Please complete the CAPTCHA.' : 'कृपया CAPTCHA पूरा करें।');
-      return;
-    }
-
     try {
-      // 1. Verify CAPTCHA
-      const verifyRes = await fetch('/api/verify-captcha', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token: captchaToken }),
-      });
-      const verifyData = await verifyRes.json();
-
-      if (!verifyData.success) {
-        setLoginError(currentLanguage === 'en' ? 'CAPTCHA verification failed.' : 'CAPTCHA सत्यापन विफल रहा।');
-        return;
-      }
-
       const { error } = await supabase.auth.signInWithPassword({
         email: formData.email,
         password: formData.password
@@ -617,26 +638,8 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
     }
     if (!supabase) return;
 
-    if (!captchaToken) {
-      setLoginError(currentLanguage === 'en' ? 'Please complete the CAPTCHA.' : 'कृपया CAPTCHA पूरा करें।');
-      return;
-    }
-
     try {
       setLoginError('');
-
-      // 1. Verify CAPTCHA
-      const verifyRes = await fetch('/api/verify-captcha', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token: captchaToken }),
-      });
-      const verifyData = await verifyRes.json();
-
-      if (!verifyData.success) {
-        setLoginError(currentLanguage === 'en' ? 'CAPTCHA verification failed.' : 'CAPTCHA सत्यापन विफल रहा।');
-        return;
-      }
 
       const { error } = await supabase.auth.resetPasswordForEmail(formData.email, {
         redirectTo: `${window.location.origin}/auth/callback`,
@@ -1151,12 +1154,6 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
             </div>
 
               <form onSubmit={handleLogin} className="space-y-4">
-                <div className="flex justify-center py-2">
-                  <Turnstile
-                    siteKey={(import.meta as any).env.VITE_TURNSTILE_SITE_KEY || "1x00000000000000000000AA"}
-                    onSuccess={(token) => setCaptchaToken(token)}
-                  />
-                </div>
               <div>
                 <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">
                   {currentLanguage === 'en' ? 'Email or Mobile Number' : 'ईमेल या मोबाइल नंबर'}
@@ -1696,6 +1693,33 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
                           <p className="text-[11px] text-gray-500 mb-4 leading-relaxed italic">
                             {currentLanguage === 'en' ? 'Required: Enter your Name, Email, Mobile and Choose a Password, then click below to verify your email.' : 'अनिवार्य: अपना नाम, ईमेल, मोबाइल दर्ज करें और एक पासवर्ड चुनें, फिर अपना ईमेल सत्यापित करने के लिए नीचे क्लिक करें।'}
                           </p>
+
+                          {isSmtpConfigured === false && !emailVerificationError && (
+                            <div className="mb-4 p-3 bg-amber-50 text-amber-800 rounded-xl border border-amber-200 text-xs font-semibold flex flex-col gap-1 animate-fadeIn">
+                              <span className="flex items-center gap-1.5 font-bold text-amber-900">
+                                <span>⚠️</span>
+                                {currentLanguage === 'en' ? 'SMTP is not configured' : 'SMTP कॉन्फ़िगर नहीं है'}
+                              </span>
+                              <p className="text-[10px] text-amber-700 leading-normal">
+                                {currentLanguage === 'en' 
+                                  ? 'The backend SMTP is not configured yet. Email verification will fail. Submit registration remains disabled until email verification succeeds.' 
+                                  : 'बैकएंड SMTP अभी कॉन्फ़िगर नहीं है। ईमेल सत्यापन विफल रहेगा। ईमेल सत्यापन पूरा होने तक पंजीकरण अक्षम रहेगा।'}
+                              </p>
+                            </div>
+                          )}
+
+                          {emailVerificationError && (
+                            <div className="mb-4 p-3.5 bg-rose-50 text-rose-700 rounded-xl border border-rose-200 text-xs font-bold flex flex-col gap-1.5 animate-fadeIn">
+                              <span className="flex items-center gap-1 text-rose-800">
+                                <XCircle className="h-4 w-4 shrink-0 text-rose-600" />
+                                {currentLanguage === 'en' ? 'Email sending failed' : 'ईमेल भेजने में विफल'}
+                              </span>
+                              <span className="font-mono text-[11px] bg-white p-2 rounded border border-rose-100 font-bold block select-all">
+                                {emailVerificationError}
+                              </span>
+                            </div>
+                          )}
+
                           <button
                             type="button"
                             disabled={emailVerifyTimer > 0 || !formData.email || !formData.name || !formData.password}
@@ -1714,13 +1738,28 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
 
                           <button
                             type="button"
-                            onClick={() => {
-                              setFormData(prev => ({ ...prev, emailVerified: true }));
-                              alert("Sandbox: Email marked as verified! You can now submit the registration.");
+                            onClick={async () => {
+                              if (!supabase) return;
+                              const { data: { session: activeSession }, error } = await supabase.auth.refreshSession();
+                              if (error) {
+                                alert(currentLanguage === 'en' ? 'Error checking status: ' + error.message : 'स्थिति की जांच करने में त्रुटि: ' + error.message);
+                                return;
+                              }
+                              if (activeSession?.user && activeSession.user.email === formData.email) {
+                                const isVerified = !!activeSession.user.email_confirmed_at;
+                                if (isVerified) {
+                                  setFormData(prev => ({ ...prev, emailVerified: true }));
+                                  alert(currentLanguage === 'en' ? 'Email verified successfully!' : 'ईमेल सफलतापूर्वक सत्यापित!');
+                                } else {
+                                  alert(currentLanguage === 'en' ? 'Email is not verified yet. Please click the link in your email.' : 'ईमेल अभी सत्यापित नहीं हुआ है। कृपया अपने ईमेल में दिए गए लिंक पर क्लिक करें।');
+                                }
+                              } else {
+                                alert(currentLanguage === 'en' ? 'No active session found for this email.' : 'इस ईमेल के लिए कोई सक्रिय सत्र नहीं मिला।');
+                              }
                             }}
-                            className="w-full mt-2.5 py-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-800 text-[10px] font-bold uppercase tracking-widest rounded-lg transition-all flex items-center justify-center space-x-1 border border-amber-200/50"
+                            className="w-full mt-2.5 py-2 bg-[#004B23]/10 hover:bg-[#004B23]/20 text-[#004B23] text-[10px] font-bold uppercase tracking-widest rounded-lg transition-all flex items-center justify-center space-x-1 border border-[#004B23]/20"
                           >
-                            <span>⚠️ {currentLanguage === 'en' ? "Can't receive email? Verify Instantly" : 'ईमेल नहीं मिला? तुरंत सत्यापित करें (डेमो)'}</span>
+                            <span>🔍 {currentLanguage === 'en' ? "Check Verification Status" : 'सत्यापन स्थिति जांचें'}</span>
                           </button>
                         </div>
                       ) : (
@@ -1862,17 +1901,10 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
                   </motion.div>
                 </div>
 
-                <div className="flex justify-center pt-2">
-                  <Turnstile
-                    siteKey={(import.meta as any).env.VITE_TURNSTILE_SITE_KEY || "1x00000000000000000000AA"}
-                    onSuccess={(token) => setCaptchaToken(token)}
-                  />
-                </div>
-
                 <div className="space-y-4 pt-6 border-t border-gray-100">
                   <button
                     type="submit"
-                    disabled={registering || !formData.emailVerified || !captchaToken}
+                    disabled={registering || !formData.emailVerified || !isMandatoryFieldsCompleted}
                     className="w-full py-4 bg-[#004B23] text-white font-black text-xs uppercase tracking-widest rounded-2xl hover:bg-[#00381a] transition-all transform hover:scale-[1.01] active:scale-[0.99] shadow-xl shadow-emerald-900/20 disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed flex items-center justify-center space-x-3 group"
                   >
                     {registering ? (
@@ -1889,18 +1921,18 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
                   </button>
                   
                   {!formData.emailVerified && (
-                    <p className="text-center text-[10px] text-rose-600 font-black uppercase tracking-widest bg-rose-50 py-2.5 rounded-xl border border-rose-100">
-                      {currentLanguage === 'en' 
-                        ? '⛔ Action Required: Complete Email Verification' 
-                        : '⛔ कार्रवाई आवश्यक: ईमेल सत्यापन पूरा करें'}
+                    <p className="text-center text-[11px] text-rose-600 font-black uppercase tracking-wider bg-rose-50 py-3 px-4 rounded-xl border border-rose-100 animate-pulse">
+                      ⛔ {currentLanguage === 'en' 
+                        ? 'Please verify your email before continuing.' 
+                        : 'कृपया जारी रखने से पहले अपना ईमेल सत्यापित करें।'}
                     </p>
                   )}
 
-                  {!captchaToken && formData.emailVerified && (
-                    <p className="text-center text-[10px] text-amber-600 font-black uppercase tracking-widest bg-amber-50 py-2.5 rounded-xl border border-amber-100">
-                      {currentLanguage === 'en' 
-                        ? '⚠️ Action Required: Complete CAPTCHA Verification' 
-                        : '⚠️ कार्रवाई आवश्यक: कैप्चा सत्यापन पूरा करें'}
+                  {formData.emailVerified && !isMandatoryFieldsCompleted && (
+                    <p className="text-center text-[11px] text-amber-600 font-bold uppercase tracking-wider bg-amber-50 py-3 px-4 rounded-xl border border-amber-100">
+                      ⚠️ {currentLanguage === 'en'
+                        ? 'Please complete all mandatory fields (*) and ensure passwords match to submit.'
+                        : 'कृपया सभी अनिवार्य फ़ील्ड (*) पूरे करें और पासवर्ड मिलान सुनिश्चित करें।'}
                     </p>
                   )}
                 </div>
@@ -2192,12 +2224,6 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
         {/* 5. ADMIN CONSOLE & VERIFICATION SECRETARIAT */}
         {activeSubTab === 'admin' && (
           <div className="space-y-8 animate-fadeIn" id="admin_console_module">
-            <div className="hidden">
-              <Turnstile
-                siteKey={(import.meta as any).env.VITE_TURNSTILE_SITE_KEY || "1x00000000000000000000AA"}
-                onSuccess={(token) => setCaptchaToken(token)}
-              />
-            </div>
             {/* Admin Header Ribbon */}
             <div className="bg-[#0B132B] text-white p-6 rounded-2xl shadow-xl border-t-4 border-t-[#F4C430] flex flex-col md:flex-row justify-between items-center gap-4">
               <div className="space-y-1 text-center md:text-left">

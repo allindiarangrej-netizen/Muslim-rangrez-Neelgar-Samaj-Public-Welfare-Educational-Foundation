@@ -4,6 +4,7 @@ import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 import * as dotenv from "dotenv";
 import { createClient } from "@supabase/supabase-js";
+import nodemailer from "nodemailer";
 
 dotenv.config();
 
@@ -109,43 +110,114 @@ async function startServer() {
     }
   }
 
+  // Lazy-initialized nodemailer transporter
+  let mailTransporter: any = null;
+
+  function getMailTransporter() {
+    if (!mailTransporter) {
+      // Keep ready for Gmail SMTP by defaulting to smtp.gmail.com and port 465
+      const host = process.env.SMTP_HOST || "smtp.gmail.com";
+      const port = parseInt(process.env.SMTP_PORT || "465");
+      const user = process.env.SMTP_USER;
+      const pass = process.env.SMTP_PASS;
+
+      if (!user || !pass) {
+        console.warn("SMTP credentials (SMTP_USER, SMTP_PASS) are not configured.");
+        return null;
+      }
+
+      mailTransporter = nodemailer.createTransport({
+        host,
+        port,
+        secure: port === 465,
+        auth: {
+          user,
+          pass,
+        },
+      });
+    }
+    return mailTransporter;
+  }
+
   // API routes FIRST
-  app.post("/api/verify-captcha", async (req, res) => {
-    const { token } = req.body;
-    const secretKey = process.env.TURNSTILE_SECRET_KEY;
+  app.get("/api/smtp-status", (req, res) => {
+    const user = process.env.SMTP_USER;
+    const pass = process.env.SMTP_PASS;
+    res.json({ configured: !!(user && pass) });
+  });
 
-    if (!secretKey) {
-      console.warn("TURNSTILE_SECRET_KEY not configured. Bypassing verification for development.");
-      return res.json({ success: true, message: "Verification bypassed: Key missing" });
+  app.post("/api/send-confirmation", async (req, res) => {
+    const { email, name, role, district } = req.body;
+    if (!email) {
+      return res.status(400).json({ error: "Email is required." });
     }
 
-    if (token === "PREVIEW_BYPASS_TOKEN" || token === "MOCK_TOKEN") {
-      return res.json({ success: true, message: "Verification bypassed for sandbox/development" });
+    const transporter = getMailTransporter();
+    if (!transporter) {
+      return res.status(500).json({ 
+        error: "SMTP is not configured", 
+        message: "Email sending failed: SMTP is not configured." 
+      });
     }
 
-    if (!token) {
-      return res.status(400).json({ success: false, error: "Captcha token is required" });
-    }
+    const mailOptions = {
+      from: process.env.SMTP_FROM || '"All India Rangrez Mahasabha" <no-reply@rangrezcommunity.org>',
+      to: email,
+      subject: "Welcome to All India Rangrez Mahasabha - Registration Confirmed",
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px;">
+          <div style="background-color: #004B23; padding: 20px; text-align: center; border-radius: 8px 8px 0 0;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">All India Rangrez Mahasabha</h1>
+          </div>
+          <div style="padding: 20px; color: #1f2937; line-height: 1.6;">
+            <h2 style="color: #0b132b; margin-top: 0;">Assalamu Alaikum, ${name}!</h2>
+            <p>Thank you for registering with the <strong>All India Rangrez Mahasabha Community ERP Portal</strong>.</p>
+            <p>Your registration details have been received successfully and your account profile has been generated.</p>
+            
+            <div style="background-color: #f3f4f6; padding: 15px; border-radius: 6px; margin: 20px 0;">
+              <h3 style="margin-top: 0; color: #004B23;">Your Member Profile Summary:</h3>
+              <table style="width: 100%; border-collapse: collapse;">
+                <tr>
+                  <td style="padding: 6px 0; font-weight: bold; width: 120px;">Name:</td>
+                  <td style="padding: 6px 0;">${name}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 6px 0; font-weight: bold;">Registered Email:</td>
+                  <td style="padding: 6px 0;">${email}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 6px 0; font-weight: bold;">Designated Role:</td>
+                  <td style="padding: 6px 0;">${role || "Member"}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 6px 0; font-weight: bold;">District:</td>
+                  <td style="padding: 6px 0;">${district || "N/A"}</td>
+                </tr>
+              </table>
+            </div>
+            
+            <p>You can now access your digital ID card, network directory, welfare benefits console, and administrative services on your Member Dashboard.</p>
+            
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${process.env.APP_URL || 'https://rangrezcommunity.org'}" style="background-color: #004B23; color: #ffffff; padding: 12px 24px; text-decoration: none; font-weight: bold; border-radius: 6px; display: inline-block;">Go to Member Portal</a>
+            </div>
+            
+            <p>Best Regards,<br/><strong>Central IT Secretariat</strong><br/>All India Rangrez Mahasabha</p>
+          </div>
+          <div style="background-color: #f9fafb; padding: 15px; text-align: center; font-size: 11px; color: #6b7280; border-radius: 0 0 8px 8px; border-top: 1px solid #e5e7eb;">
+            This is an automated production email. Please do not reply directly to this message.
+          </div>
+        </div>
+      `,
+    };
 
     try {
-      const response = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          secret: secretKey,
-          response: token,
-        }),
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        res.json({ success: true });
-      } else {
-        res.status(400).json({ success: false, error: "Captcha verification failed", details: data["error-codes"] });
-      }
-    } catch (err) {
-      console.error("Turnstile verification error:", err);
-      res.status(500).json({ success: false, error: "Internal server error during verification" });
+      await transporter.sendMail(mailOptions);
+      console.log(`Successfully sent registration confirmation email to ${email}`);
+      return res.json({ success: true, message: "Registration confirmation email sent successfully via SMTP." });
+    } catch (err: any) {
+      console.error("Failed to send registration confirmation email:", err);
+      return res.status(500).json({ error: "Failed to dispatch confirmation email: " + err.message });
     }
   });
 
