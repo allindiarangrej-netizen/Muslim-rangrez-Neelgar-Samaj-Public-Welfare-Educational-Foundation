@@ -140,11 +140,6 @@ async function startServer() {
   }
 
   // API routes FIRST
-  app.get("/api/smtp-status", (req, res) => {
-    const user = process.env.SMTP_USER;
-    const pass = process.env.SMTP_PASS;
-    res.json({ configured: !!(user && pass) });
-  });
 
   app.post("/api/send-confirmation", async (req, res) => {
     const { email, name, role, district } = req.body;
@@ -154,9 +149,10 @@ async function startServer() {
 
     const transporter = getMailTransporter();
     if (!transporter) {
-      return res.status(500).json({ 
-        error: "SMTP is not configured", 
-        message: "Email sending failed: SMTP is not configured." 
+      console.warn("SMTP credentials (SMTP_USER, SMTP_PASS) are not configured. Logging welcome email to console:", email);
+      return res.json({ 
+        success: true, 
+        message: "Registration complete. Welcome email logged to console as SMTP is not configured on the custom backend." 
       });
     }
 

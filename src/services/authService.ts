@@ -237,36 +237,9 @@ export class AuthService {
   }
 
   /**
-   * Log in with email and password, or by role in development testing
+   * Log in with email and password
    */
   static async login(email: string, password?: string): Promise<{ success: boolean; session?: UserSession; error?: string }> {
-    const roles: UserRole[] = [
-      'Visitor', 'Member', 'Volunteer', 'Committee', 'District Admin', 
-      'State Admin', 'National Admin', 'Moderator', 'Super Administrator'
-    ];
-
-    if (!password && roles.includes(email as any)) {
-      const role = email as UserRole;
-      const permissions = ROLE_PERMISSIONS[role] || [];
-      const mockSession: UserSession = {
-        id: `MOCK-${role.toUpperCase().replace(/\s/g, '-')}-${Math.floor(100 + Math.random() * 900)}`,
-        name: `Demo ${role}`,
-        email: `demo-${role.toLowerCase().replace(/\s/g, '')}@example.com`,
-        phone: '+919999999999',
-        role,
-        isEmailVerified: true,
-        isOtpVerified: true,
-        district: 'Morena',
-        state: 'Madhya Pradesh',
-        createdAt: new Date().toISOString(),
-        lastLoginAt: new Date().toISOString(),
-        token: `mock_token_for_${role}`,
-        permissions
-      };
-      this.setSession(mockSession);
-      return { success: true, session: mockSession };
-    }
-
     const supabase = getSupabase();
     if (!supabase) {
       return { success: false, error: 'Supabase client not initialized.' };
@@ -341,36 +314,10 @@ export class AuthService {
   static async register(payload: RegisterPayload): Promise<{ success: boolean; session?: UserSession; error?: string }> {
     // Enforce Public users can ONLY register as Members
     const role: UserRole = 'Member';
-    const permissions = ROLE_PERMISSIONS[role];
 
     const supabase = getSupabase();
     if (!supabase) {
-      console.warn("Supabase not configured. Using offline mock registration.");
-      const newId = `USR-MEM-${Math.floor(100 + Math.random() * 900)}`;
-      const newSession: UserSession = {
-        id: newId,
-        name: payload.name,
-        email: payload.email,
-        phone: payload.phone,
-        role,
-        isEmailVerified: false,
-        isOtpVerified: false,
-        district: payload.district || 'Morena',
-        state: payload.state || 'Madhya Pradesh',
-        memberId: `RCB-2026-${payload.state.substring(0,2).toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`,
-        avatarUrl: `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(payload.name)}`,
-        createdAt: new Date().toISOString(),
-        lastLoginAt: new Date().toISOString(),
-        token: `jwt_user_token_${Math.random().toString(36).substring(2, 10)}`,
-        permissions
-      };
-
-      const allUsers = this.getAllRegisteredUsers();
-      allUsers.push(newSession);
-      localStorage.setItem(REGISTERED_USERS_KEY, JSON.stringify(allUsers));
-      this.setSession(newSession);
-
-      return { success: true, session: newSession };
+      return { success: false, error: 'Supabase is not configured or initialized.' };
     }
 
     try {

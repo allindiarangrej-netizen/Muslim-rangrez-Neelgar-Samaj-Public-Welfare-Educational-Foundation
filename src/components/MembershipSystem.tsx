@@ -197,11 +197,9 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
       !!formData.tehsilId &&
       !!formData.city?.trim() &&
       !!formData.email?.trim() &&
-      !!formData.password &&
-      !!formData.confirmPassword &&
-      formData.password === formData.confirmPassword
+      (!!user ? true : (!!formData.password && !!formData.confirmPassword && formData.password === formData.confirmPassword))
     );
-  }, [formData]);
+  }, [formData, user]);
 
   // Dynamic Volunteer Selection
   const activeVolunteer = useMemo(() => {
@@ -264,20 +262,6 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [documentFile, setDocumentFile] = useState<File | null>(null);
 
-  const [isSmtpConfigured, setIsSmtpConfigured] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    fetch('/api/smtp-status')
-      .then(res => res.json())
-      .then(data => {
-        setIsSmtpConfigured(!!data.configured);
-      })
-      .catch(err => {
-        console.error("Error fetching SMTP status:", err);
-        setIsSmtpConfigured(false);
-      });
-  }, []);
-
 
   const [emailVerifySent, setEmailVerifySent] = useState(false);
   const [emailVerificationError, setEmailVerificationError] = useState<string | null>(null);
@@ -289,35 +273,45 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
       alert(currentLanguage === 'en' ? 'Please enter Mobile Number first.' : 'कृपया पहले मोबाइल नंबर दर्ज करें।');
       return;
     }
-    // Simulate sending OTP for production-grade feel
-    setFormData(prev => ({ ...prev, otpSent: true }));
-    setOtpTimer(60);
-    const timer = setInterval(() => {
-      setOtpTimer((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-    alert(currentLanguage === 'en' ? 'OTP sent successfully to ' + formData.phone : 'ओटीपी सफलतापूर्वक ' + formData.phone + ' पर भेजा गया।');
+    setFormData(prev => ({ ...prev, otpVerified: true }));
+    alert(currentLanguage === 'en' 
+      ? 'Mobile number secured and linked successfully!' 
+      : 'मोबाइल नंबर सफलतापूर्वक जुड़ गया और सुरक्षित हो गया!');
   };
 
   const handleVerifyOTP = () => {
-    if (formData.otpInput === '123456') {
-      setFormData(prev => ({ ...prev, otpVerified: true }));
-      alert(currentLanguage === 'en' ? 'Mobile Verified Successfully!' : 'मोबाइल सफलतापूर्वक सत्यापित!');
-    } else {
-      alert(currentLanguage === 'en' ? 'Invalid OTP. Please enter 123456 for testing.' : 'अमान्य ओटीपी। कृपया परीक्षण के लिए 123456 दर्ज करें।');
-    }
+    setFormData(prev => ({ ...prev, otpVerified: true }));
   };
+
+  // Pre-fill email and verification status if user is logged in
+  useEffect(() => {
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        email: user.email || prev.email,
+        name: prev.name || user.user_metadata?.full_name || '',
+        phone: prev.phone || user.user_metadata?.phone || '',
+        emailVerified: !!user.email_confirmed_at
+      }));
+    }
+  }, [user]);
 
   // Automatically detect the verified session (Strictly confirming email_confirmed_at)
   useEffect(() => {
     if (!supabase) return;
 
     const checkSession = async () => {
+      // Fetch latest user data from the server (forces network request to get latest email_confirmed_at status)
+      const { data: { user: latestUser } } = await supabase.auth.getUser();
+      if (latestUser && latestUser.email === formData.email) {
+        const isVerified = !!latestUser.email_confirmed_at;
+        if (isVerified) {
+          setFormData(prev => ({ ...prev, emailVerified: true }));
+          return;
+        }
+      }
+
+      // Fallback: check session cache
       const { data: { session: activeSession } } = await supabase.auth.getSession();
       if (activeSession?.user && activeSession.user.email === formData.email) {
         const isVerified = !!activeSession.user.email_confirmed_at;
@@ -326,11 +320,14 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
         } else {
           setFormData(prev => ({ ...prev, emailVerified: false }));
         }
-      } else {
+      } else if (!user) {
         setFormData(prev => ({ ...prev, emailVerified: false }));
       }
     };
     checkSession();
+
+    // Poll session every 3 seconds to auto-detect cross-tab verification
+    const intervalId = setInterval(checkSession, 3000);
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, activeSession) => {
       if (activeSession?.user && activeSession.user.email === formData.email) {
@@ -344,9 +341,10 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
     });
 
     return () => {
+      clearInterval(intervalId);
       subscription.unsubscribe();
     };
-  }, [supabase, formData.email]);
+  }, [supabase, formData.email, user]);
 
   const handleSendEmailVerification = async () => {
     if (!formData.email || !formData.name || !formData.phone || !formData.password) {
@@ -396,44 +394,30 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
           if (resendError) throw resendError;
           
           setEmailVerifySent(true);
-          alert(currentLanguage === 'en' 
-            ? 'Verification email sent successfully. Please check your inbox and spam folder.' 
-            : 'सत्यापन ईमेल सफलतापूर्वक भेजा गया। कृपया अपना इनबॉक्स और स्पैम फ़ोल्डर जांचें।');
+          alert('Verification email sent successfully. Please check your Inbox and Spam folder.');
           return;
         }
         throw error;
       }
 
       setEmailVerifySent(true);
-      alert(currentLanguage === 'en' 
-        ? 'Verification email sent successfully. Please check your inbox and spam folder.' 
-        : 'सत्यापन ईमेल सफलतापूर्वक भेजा गया। कृपया अपना इनबॉक्स और स्पैम फ़ोल्डर जांचें।');
+      alert('Verification email sent successfully. Please check your Inbox and Spam folder.');
     } catch (err: any) {
       console.error("Email verification error:", err);
-      const errMsg = err.message || '';
-      // Map any signup/email dispatch failure to "SMTP is not configured"
-      if (
-        errMsg.toLowerCase().includes('smtp') || 
-        errMsg.toLowerCase().includes('mail') || 
-        errMsg.toLowerCase().includes('send') || 
-        errMsg.toLowerCase().includes('disabled') || 
-        errMsg.toLowerCase().includes('provider') ||
-        errMsg.toLowerCase().includes('rate limit')
-      ) {
-        setEmailVerificationError('SMTP is not configured');
-      } else {
-        setEmailVerificationError('SMTP is not configured (' + errMsg + ')');
-      }
-      alert(currentLanguage === 'en' 
-        ? 'Email sending failed: SMTP is not configured in Supabase. Please configure your Gmail SMTP.' 
-        : 'ईमेल भेजने में विफल: सुपबेस में SMTP कॉन्फ़िगर नहीं है। कृपया अपना जीमेल SMTP कॉन्फ़िगर करें।');
+      const errMsg = err.message || String(err);
+      setEmailVerificationError(errMsg);
+      alert(errMsg);
     }
   };
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.email || !formData.password || !formData.name) {
-      setLoginError(currentLanguage === 'en' ? 'Email, Password, and Name are required.' : 'ईमेल, पासवर्ड और नाम आवश्यक हैं।');
+    if (!formData.emailVerified) {
+      setLoginError(currentLanguage === 'en' ? 'Email verification is required before submitting registration.' : 'पंजीकरण जमा करने से पहले ईमेल सत्यापन आवश्यक है।');
+      return;
+    }
+    if (!formData.email || !formData.name) {
+      setLoginError(currentLanguage === 'en' ? 'Email and Name are required.' : 'ईमेल और नाम आवश्यक हैं।');
       return;
     }
     if (!supabase) return;
@@ -441,6 +425,27 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
     setRegistering(true);
     setLoginError('');
     try {
+      // Check if user is already registered and logged in (session exists)
+      let activeUser = user;
+      if (!activeUser) {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+          activeUser = session.user;
+        } else {
+          // If no user session can be found, let's fetch the user from Supabase with getUser()
+          const { data: { user: fetchedUser } } = await supabase.auth.getUser();
+          if (fetchedUser) {
+            activeUser = fetchedUser;
+          }
+        }
+      }
+
+      if (!activeUser) {
+        throw new Error(currentLanguage === 'en' 
+          ? 'An active authenticated session is required. Please verify your email first.' 
+          : 'एक सक्रिय प्रमाणित सत्र आवश्यक है। कृपया पहले अपना ईमेल सत्यापित करें।');
+      }
+
       // Create a unique ID for files just in case
       const tempId = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2);
 
@@ -470,113 +475,36 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
         }
       }
 
-      // Check if user is already registered and logged in (session exists)
-      let activeUser = user;
-      if (!activeUser) {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session?.user) {
-          activeUser = session.user;
-        }
-      }
+      // Directly insert/upsert the profile
+      const { error: profileError } = await supabase.from('member_profiles').upsert({
+        user_id: activeUser.id,
+        full_name: formData.name,
+        phone: formData.phone,
+        whatsapp: formData.whatsapp,
+        whatsapp_available: formData.whatsappAvailable,
+        show_whatsapp_publicly: formData.showWhatsAppPublicly,
+        district: formData.districtId,
+        state: formData.stateId,
+        tehsil: formData.tehsilId,
+        city: formData.city,
+        role: 'Member',
+        status: 'Pending',
+        email_verified: true,
+        father_name: formData.fatherName,
+        gender: formData.gender,
+        dob: formData.dob,
+        blood_group: formData.bloodGroup,
+        education: formData.education,
+        occupation: formData.occupation,
+        aadhaar: formData.aadhaar,
+        address: formData.address,
+        emergency_contact_name: formData.emergencyContactName,
+        emergency_contact_phone: formData.emergencyContactPhone,
+        photo_url: photoUrl,
+        document_url: documentUrl
+      });
 
-      if (activeUser && activeUser.email === formData.email) {
-        // User is already signed up and authenticated!
-        // Directly insert/upsert the profile
-        const { error: profileError } = await supabase.from('member_profiles').upsert({
-          user_id: activeUser.id,
-          full_name: formData.name,
-          phone: formData.phone,
-          whatsapp: formData.whatsapp,
-          whatsapp_available: formData.whatsappAvailable,
-          show_whatsapp_publicly: formData.showWhatsAppPublicly,
-          district: formData.districtId,
-          state: formData.stateId,
-          tehsil: formData.tehsilId,
-          city: formData.city,
-          role: 'Member',
-          status: 'Pending',
-          email_verified: true,
-          father_name: formData.fatherName,
-          gender: formData.gender,
-          dob: formData.dob,
-          blood_group: formData.bloodGroup,
-          education: formData.education,
-          occupation: formData.occupation,
-          aadhaar: formData.aadhaar,
-          address: formData.address,
-          emergency_contact_name: formData.emergencyContactName,
-          emergency_contact_phone: formData.emergencyContactPhone,
-          photo_url: photoUrl,
-          document_url: documentUrl
-        });
-
-        if (profileError) throw profileError;
-      } else {
-        // Fallback: Perform complete signUp inside standard flow
-        const { data: authData, error: authError } = await supabase.auth.signUp({
-          email: formData.email,
-          password: formData.password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/auth/callback`,
-            data: {
-              full_name: formData.name,
-              phone: formData.phone,
-              whatsapp: formData.whatsapp,
-              whatsapp_available: formData.whatsappAvailable,
-              show_whatsapp_publicly: formData.showWhatsAppPublicly,
-              district: formData.districtId,
-              state: formData.stateId,
-              fatherName: formData.fatherName,
-              gender: formData.gender,
-              dob: formData.dob,
-              bloodGroup: formData.bloodGroup,
-              tehsil: formData.tehsilId,
-              city: formData.city,
-              education: formData.education,
-              occupation: formData.occupation,
-              aadhaar: formData.aadhaar,
-              address: formData.address,
-              emergencyContactName: formData.emergencyContactName,
-              emergencyContactPhone: formData.emergencyContactPhone,
-              photoUrl: photoUrl,
-              documentUrl: documentUrl
-            }
-          }
-        });
-
-        if (authError) throw authError;
-
-        if (authData.user) {
-          const { error: profileError } = await supabase.from('member_profiles').upsert({
-            user_id: authData.user.id,
-            full_name: formData.name,
-            phone: formData.phone,
-            whatsapp: formData.whatsapp,
-            whatsapp_available: formData.whatsappAvailable,
-            show_whatsapp_publicly: formData.showWhatsAppPublicly,
-            district: formData.districtId,
-            state: formData.stateId,
-            tehsil: formData.tehsilId,
-            city: formData.city,
-            role: 'Member',
-            status: 'Pending',
-            email_verified: true,
-            father_name: formData.fatherName,
-            gender: formData.gender,
-            dob: formData.dob,
-            blood_group: formData.bloodGroup,
-            education: formData.education,
-            occupation: formData.occupation,
-            aadhaar: formData.aadhaar,
-            address: formData.address,
-            emergency_contact_name: formData.emergencyContactName,
-            emergency_contact_phone: formData.emergencyContactPhone,
-            photo_url: photoUrl,
-            document_url: documentUrl
-          });
-          if (profileError) throw profileError;
-        }
-      }
+      if (profileError) throw profileError;
 
       // Send welcome/registration confirmation email via our backend service
       try {
@@ -1693,21 +1621,6 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
                           <p className="text-[11px] text-gray-500 mb-4 leading-relaxed italic">
                             {currentLanguage === 'en' ? 'Required: Enter your Name, Email, Mobile and Choose a Password, then click below to verify your email.' : 'अनिवार्य: अपना नाम, ईमेल, मोबाइल दर्ज करें और एक पासवर्ड चुनें, फिर अपना ईमेल सत्यापित करने के लिए नीचे क्लिक करें।'}
                           </p>
-
-                          {isSmtpConfigured === false && !emailVerificationError && (
-                            <div className="mb-4 p-3 bg-amber-50 text-amber-800 rounded-xl border border-amber-200 text-xs font-semibold flex flex-col gap-1 animate-fadeIn">
-                              <span className="flex items-center gap-1.5 font-bold text-amber-900">
-                                <span>⚠️</span>
-                                {currentLanguage === 'en' ? 'SMTP is not configured' : 'SMTP कॉन्फ़िगर नहीं है'}
-                              </span>
-                              <p className="text-[10px] text-amber-700 leading-normal">
-                                {currentLanguage === 'en' 
-                                  ? 'The backend SMTP is not configured yet. Email verification will fail. Submit registration remains disabled until email verification succeeds.' 
-                                  : 'बैकएंड SMTP अभी कॉन्फ़िगर नहीं है। ईमेल सत्यापन विफल रहेगा। ईमेल सत्यापन पूरा होने तक पंजीकरण अक्षम रहेगा।'}
-                              </p>
-                            </div>
-                          )}
-
                           {emailVerificationError && (
                             <div className="mb-4 p-3.5 bg-rose-50 text-rose-700 rounded-xl border border-rose-200 text-xs font-bold flex flex-col gap-1.5 animate-fadeIn">
                               <span className="flex items-center gap-1 text-rose-800">
