@@ -50,12 +50,12 @@ export default function SocioEconomicStats({ currentLanguage }: SocioEconomicSta
     <section className="bg-[#0B132B] text-white py-16 relative overflow-hidden" id="stats_section">
       {/* Decorative Golden Islamic Geometry Overlay */}
       <div className="absolute right-0 top-0 opacity-5 pointer-events-none transform translate-x-20 -translate-y-20">
-        <div className="w-96 h-96 rounded-full border-[20px] border-[#D4AF37] rotate-45"></div>
+        <div className="w-96 h-96 rounded-full border-[20px] border-[#F4C430] rotate-45"></div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center max-w-3xl mx-auto mb-12">
-          <span className="text-[#D4AF37] text-xs font-mono font-bold tracking-widest uppercase">
+          <span className="text-[#F4C430] text-xs font-mono font-bold tracking-widest uppercase">
             {currentLanguage === 'en' ? 'TRANSPARENT SOCIO-ECONOMIC COUNT' : 'पारदर्शी सामाजिक-आर्थिक रिपोर्ट'}
           </span>
           <h3 className="text-2xl sm:text-3xl font-serif font-extrabold tracking-tight mt-2 text-white">
@@ -79,10 +79,10 @@ export default function SocioEconomicStats({ currentLanguage }: SocioEconomicSta
                 id={`stat_card_${stat.id}`}
               >
                 <div className="flex justify-between items-start">
-                  <div className="text-3xl sm:text-4xl font-extrabold text-[#D4AF37] font-mono tracking-tight">
+                  <div className="text-3xl sm:text-4xl font-extrabold text-[#F4C430] font-mono tracking-tight">
                     {stat.value}
                   </div>
-                  <div className="p-2 bg-[#004B23]/40 rounded-lg text-[#D4AF37] border border-[#D4AF37]/20">
+                  <div className="p-2 bg-[#004B23]/40 rounded-lg text-[#F4C430] border border-[#F4C430]/20">
                     <IconComponent className="h-5 w-5" />
                   </div>
                 </div>
@@ -102,7 +102,7 @@ export default function SocioEconomicStats({ currentLanguage }: SocioEconomicSta
 
         {/* trust badge row */}
         <div className="mt-12 flex flex-wrap justify-center items-center gap-4 text-xs text-gray-300 bg-white/5 py-4 px-6 rounded-lg border border-white/5" id="stats_trust_badge">
-          <ShieldCheck className="h-4 w-4 text-[#D4AF37]" />
+          <ShieldCheck className="h-4 w-4 text-[#F4C430]" />
           <span>
             {currentLanguage === 'en'
               ? 'Database encrypted with AES-256 standard and fully compliant with India’s DPDP Act.'

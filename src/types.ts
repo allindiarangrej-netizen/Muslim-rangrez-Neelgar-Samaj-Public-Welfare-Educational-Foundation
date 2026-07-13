@@ -1,4 +1,4 @@
-export type Language = 'en' | 'hi';
+export type Language = 'en' | 'hi' | 'ur';
 
 export interface AreaNode {
   id: string;
@@ -42,6 +42,9 @@ export interface MatrimonialProfile {
   photoUrl: string;
   isVerified: boolean;
   privacyMask: boolean; // True means blurred by default
+  phone?: string;
+  whatsapp?: string;
+  showWhatsAppPublicly?: boolean;
 }
 
 export interface JobListing {
@@ -92,6 +95,8 @@ export interface BloodDonor {
   districtEn: string;
   districtHi: string;
   phone: string;
+  whatsapp?: string;
+  showWhatsAppPublicly?: boolean;
   isAvailable: boolean;
 }
 
@@ -131,4 +136,106 @@ export interface FamilyMember {
   educationHi: string;
   occupationEn: string;
   occupationHi: string;
+}
+
+export interface VolunteerProfile {
+  id: string;
+  name: string;
+  phone?: string;
+  whatsapp?: string;
+  showWhatsAppPublicly?: boolean;
+  photoUrl: string;
+  designation: string;
+  committeeName: string;
+  city: string;
+  state: string;
+  memberSince: string;
+  skills: string[];
+  totalVolunteerHours: number;
+  numberOfActivities: number;
+  numberOfBeneficiariesServed: number;
+  bloodDonations: number;
+  treesPlanted: number;
+  medicalCampsOrganized: number;
+  educationalProgrammesConducted: number;
+  awardsReceived: string[];
+  certificates: string[];
+  gallery: string[];
+  testimonials: { name: string; text: string }[];
+  socialImpactStory: string;
+  // Motivation features
+  badges: string[];
+  achievementLevel: 'Bronze' | 'Silver' | 'Gold' | 'Platinum';
+  milestones: { title: string; date: string }[];
+  anniversaryDate: string;
+}
+
+export interface CommitteeProfile {
+  id: string;
+  committeeName: string;
+  whatsapp?: string;
+  showWhatsAppPublicly?: boolean;
+  officeBearers: { role: string; name: string }[];
+  district: string;
+  state: string;
+  yearEstablished: number;
+  totalMembers: number;
+  totalVolunteers: number;
+  totalActivities: number;
+  beneficiaries: number;
+  annualReports: { year: number; url: string }[];
+  photoGallery: string[];
+  videos: string[];
+  monthlyPerformance: { month: string; score: number }[];
+  communityRating: number;
+}
+
+export type VerificationStatus = 'Pending' | 'Verified' | 'Rejected';
+
+export interface VerificationDetails {
+  status: VerificationStatus;
+  evidencePhotos: string[];
+  attendanceRecordsUrl?: string;
+  beneficiaryConfirmation?: boolean;
+  committeeApproval: boolean;
+  activityReportUrl?: string;
+  date: string;
+  location: string;
+  supportingDocuments?: string[];
+  auditTrail: { timestamp: string; action: string; actor: string }[];
+}
+
+export interface LeaderboardEntry {
+  id: string;
+  name: string;
+  type: 'Volunteer' | 'Committee';
+  location: { city: string; district: string; state: string; };
+  points: number;
+  category: string;
+  timestamp: string;
+  verification: VerificationDetails;
+}
+
+export interface LeaderboardFilter {
+  level: 'National' | 'State' | 'District' | 'City' | 'Committee';
+  locationName?: string;
+  month?: string;
+  year?: string;
+}
+
+export interface MonthlyRecognition {
+  id: string;
+  month: string;
+  volunteerOfTheMonth: string;
+  committeeOfTheMonth: string;
+  projectOfTheMonth: string;
+  inspirationalStory: string;
+}
+
+export interface DigitalAppreciation {
+  id: string;
+  badge: 'Gold' | 'Silver' | 'Bronze';
+  stars: number;
+  achievementLevel: string;
+  certificateUrl: string;
 }

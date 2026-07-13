@@ -1,0 +1,12 @@
+# Rangrez Community Bharat Portal - Official Robots.txt
+# Enterprise-Grade SEO Configuration for National Portal
+
+User-agent: *
+Allow: /
+Allow: /images/
+Allow: /documents/
+Disallow: /admin-private
+Disallow: /system-backend
+
+# Sitemaps
+Sitemap: https://rangrezbharat.org/sitemap.xml

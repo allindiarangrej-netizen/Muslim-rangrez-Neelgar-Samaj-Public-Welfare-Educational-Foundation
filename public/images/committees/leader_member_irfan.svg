@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="avatarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1A0B2E" />
+      <stop offset="100%" stop-color="#3D0C5A" />
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F5E396" />
+      <stop offset="100%" stop-color="#D4AF37" />
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#avatarGrad)" rx="200" />
+  <circle cx="200" cy="200" r="190" fill="none" stroke="url(#goldGrad)" stroke-width="4" stroke-opacity="0.6" />
+  
+  <g transform="translate(200, 190)">
+    <!-- Face -->
+    <circle cx="0" cy="-20" r="50" fill="#DFBA92" />
+    <!-- Hair -->
+    <path d="M -50 -30 C -50 -80, 50 -80, 50 -30 Z" fill="#202020" />
+    <!-- Glasses -->
+    <rect x="-30" y="-28" width="20" height="15" rx="3" fill="none" stroke="#D4AF37" stroke-width="3" />
+    <rect x="10" y="-28" width="20" height="15" rx="3" fill="none" stroke="#D4AF37" stroke-width="3" />
+    <line x1="-10" y1="-20" x2="10" y2="-20" stroke="#D4AF37" stroke-width="3" />
+    <!-- Beard -->
+    <path d="M -50 -10 Q 0 40 50 -10 C 35 25, -35 25, -50 -10" fill="#202020" />
+    <!-- Suit -->
+    <path d="M -80 60 L -50 120 L 50 120 L 80 60 Z" fill="#25103E" />
+    <path d="M -30 60 L 0 95 L 30 60" fill="none" stroke="url(#goldGrad)" stroke-width="2" />
+  </g>
+  <text x="200" y="340" font-family="sans-serif" font-size="16" font-weight="bold" fill="#F5EFE6" text-anchor="middle">Er. Irfan Rangrez</text>
+  <text x="200" y="360" font-family="sans-serif" font-size="12" fill="url(#goldGrad)" text-anchor="middle">Executive Committee Member</text>
+</svg>

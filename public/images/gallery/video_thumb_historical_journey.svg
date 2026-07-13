@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1E002B" />
+      <stop offset="100%" stop-color="#3A0D4E" />
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F5E396" />
+      <stop offset="100%" stop-color="#D4AF37" />
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#g)" />
+  
+  <g transform="translate(300, 180)" text-anchor="middle">
+    <!-- Play Icon in center -->
+    <circle cx="0" cy="0" r="45" fill="#D4AF37" opacity="0.9" />
+    <polygon points="-12,-20 22,0 -12,20" fill="#1E002B" />
+    
+    <text y="100" font-family="serif" font-size="20" font-weight="bold" fill="#FFF">HERITAGE OF DYEING DOCUMENTARY</text>
+    <text y="125" font-family="serif" font-size="14" fill="url(#gold)" letter-spacing="2">HISTORICAL JOURNEY OF RANGREZ BHARAT</text>
+  </g>
+  <!-- Duration Badge -->
+  <rect x="520" y="350" width="60" height="30" rx="5" fill="#000" opacity="0.8" />
+  <text x="550" y="370" font-family="monospace" font-size="12" font-weight="bold" fill="#FFF" text-anchor="middle">14:25</text>
+</svg>

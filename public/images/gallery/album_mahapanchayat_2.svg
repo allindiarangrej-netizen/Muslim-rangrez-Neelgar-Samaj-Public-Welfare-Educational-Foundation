@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" height="100%">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#052214" />
+      <stop offset="100%" stop-color="#145A32" />
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F5E396" />
+      <stop offset="100%" stop-color="#D4AF37" />
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#g)" />
+  <g transform="translate(400, 260)" text-anchor="middle">
+    <!-- Assembly Icon -->
+    <rect x="-40" y="-30" width="80" height="60" rx="5" fill="none" stroke="url(#gold)" stroke-width="4" />
+    <line x1="-25" y1="0" x2="25" y2="0" stroke="url(#gold)" stroke-width="2" />
+    <path d="M -15 30 L -30 60 L 30 60 L 15 30 Z" fill="none" stroke="url(#gold)" stroke-width="3" />
+    <text y="140" font-family="serif" font-size="28" font-weight="bold" fill="#FFF">NATIONAL CONVENTION HIGHLIGHTS</text>
+    <text y="180" font-family="serif" font-size="18" fill="url(#gold)" letter-spacing="2">ANNUAL ADVISORY MEET</text>
+  </g>
+</svg>

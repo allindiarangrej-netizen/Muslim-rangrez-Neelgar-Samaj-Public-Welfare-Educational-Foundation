@@ -1,3 +1,5 @@
+import { IMAGES, VIDEOS } from './mediaRegistry';
+
 export interface HeritageAlbum {
   id: string;
   titleEn: string;
@@ -90,10 +92,8 @@ export const initialHeritageAlbums: HeritageAlbum[] = [
     photographerHi: 'सिद्धार्थ स्टूडियो',
     uploadedBy: 'Mohammed Adil Rangrez',
     images: [
-      'https://images.unsplash.com/photo-1511578314322-379afb476865?q=80&w=800&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=800&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1475721027785-f74eccf877e2?q=80&w=800&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=800&auto=format&fit=crop'
+      IMAGES.albums.mahapanchayat_1,
+      IMAGES.albums.mahapanchayat_2
     ],
     descriptionEn: 'The massive community mahapanchayat focused on education reform, dynamic socio-census updates, and state reservation representation.',
     descriptionHi: 'शिक्षा सुधार, सामाजिक जनगणना और आरक्षण प्रतिनिधित्व पर केंद्रित विशाल राष्ट्रीय सामुदायिक महापंचायत महाधिवेशन।',
@@ -119,9 +119,8 @@ export const initialHeritageAlbums: HeritageAlbum[] = [
     photographerHi: 'शाही अभिलेखागार जयपुर',
     uploadedBy: 'Al-Haaj Gulam Rasool Rangrez',
     images: [
-      'https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=800&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1531482615713-2afd69097998?q=80&w=800&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1517048676732-d65bc937f952?q=80&w=800&auto=format&fit=crop'
+      IMAGES.albums.historical_1,
+      IMAGES.albums.historical_2
     ],
     descriptionEn: 'Extremely rare photographs preserving the historical national leadership and freedom fighters of the dyer guild.',
     descriptionHi: 'रंगाई उद्योग बिरादरी के स्वतंत्रता सेनानियों और ऐतिहासिक नेताओं की दुर्लभ ऐतिहासिक तस्वीरें।',
@@ -147,9 +146,8 @@ export const initialHeritageAlbums: HeritageAlbum[] = [
     photographerHi: 'अनस मीडिया हाउस',
     uploadedBy: 'Janab Shakeel Ahmed Rangrez',
     images: [
-      'https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?q=80&w=800&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=800&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=800&auto=format&fit=crop'
+      IMAGES.albums.scholarship_1,
+      IMAGES.albums.scholarship_2
     ],
     descriptionEn: 'Honoring top high school and university rankers with golden merit certificates and micro-scholarship funds.',
     descriptionHi: 'कक्षा 10वीं, 12वीं और विश्वविद्यालय के मेधावी छात्र-छात्राओं को स्वर्ण पदक और छात्रवृत्ति वितरण कार्यक्रम।',
@@ -175,8 +173,8 @@ export const initialHeritageAlbums: HeritageAlbum[] = [
     photographerHi: 'जनकल्याण सेल',
     uploadedBy: 'Haji Mohammad Iqbal',
     images: [
-      'https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=800&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=800&auto=format&fit=crop'
+      IMAGES.albums.marriage_1,
+      IMAGES.albums.marriage_2
     ],
     descriptionEn: 'The annual community wedding initiative facilitating seamless, dowry-free marriages for 51 couples with complete household kits.',
     descriptionHi: 'प्रतिवर्ष आयोजित होने वाला दहेज मुक्त सामूहिक निकाह सम्मेलन, जिसमें 51 जोड़ों का निकाह संपन्न कराया गया।',
@@ -201,8 +199,8 @@ export const initialHeritageAlbums: HeritageAlbum[] = [
     photographerHi: 'लखनऊ ब्यूरो',
     uploadedBy: 'Er. Irfan Rangrez',
     images: [
-      'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=800&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1593113598332-cd288d649433?q=80&w=800&auto=format&fit=crop'
+      IMAGES.albums.charity_1,
+      IMAGES.albums.charity_2
     ],
     descriptionEn: 'Emergency support program managed by state youth volunteers providing food security kits and free health checkups.',
     descriptionHi: 'युवा स्वयंसेवकों द्वारा आयोजित खाद्य सुरक्षा एवं निःशुल्क चिकित्सा शिविर कार्यक्रम।',
@@ -219,8 +217,8 @@ export const initialHeritageVideos: HeritageVideo[] = [
     titleHi: 'रंगसाजी की विरासत: भारतीय रंगरेजों की ऐतिहासिक यात्रा',
     eventType: 'Historical Photos',
     category: 'Documentary Library',
-    thumbnailUrl: 'https://images.unsplash.com/photo-1513829096999-4978602297f7?q=80&w=600&auto=format&fit=crop',
-    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ', // Placeholder embed
+    thumbnailUrl: IMAGES.thumbnails.historical_journey,
+    videoUrl: VIDEOS.documentary_history,
     platform: 'YouTube',
     duration: '14:25',
     location: {
@@ -240,8 +238,8 @@ export const initialHeritageVideos: HeritageVideo[] = [
     titleHi: 'अखिल भारतीय रंगरेज महाधिवेशन भोपाल हाइलाइट्स 2026',
     eventType: 'Mahapanchayat',
     category: 'Video Gallery',
-    thumbnailUrl: 'https://images.unsplash.com/photo-1511578314322-379afb476865?q=80&w=600&auto=format&fit=crop',
-    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+    thumbnailUrl: IMAGES.thumbnails.mahapanchayat_highlights,
+    videoUrl: VIDEOS.mahapanchayat_highlights,
     platform: 'YouTube',
     duration: '08:40',
     location: {
@@ -260,8 +258,8 @@ export const initialHeritageVideos: HeritageVideo[] = [
     titleHi: 'सामूहिक निकाह सम्मेलन मुरैना ऐतिहासिक वृत्तचित्र',
     eventType: 'Nikah',
     category: 'Video Gallery',
-    thumbnailUrl: 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=600&auto=format&fit=crop',
-    videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+    thumbnailUrl: IMAGES.thumbnails.nikah_highlights,
+    videoUrl: VIDEOS.nikah_highlights,
     platform: 'Local',
     duration: '22:15',
     location: {

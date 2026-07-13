@@ -36,6 +36,8 @@ import {
   QrCode
 } from 'lucide-react';
 import { Language } from '../types';
+import { getSupabase } from '../lib/supabaseClient';
+import { IMAGES } from '../data/mediaRegistry';
 import {
   initialHeritageAlbums,
   initialHeritageVideos,
@@ -47,23 +49,89 @@ import { indianStates, initialDistricts, initialTehsils, initialVillages } from 
 
 interface MediaCenterProps {
   currentLanguage: Language;
+  defaultCategory?: 'Photo Gallery' | 'Video Gallery' | 'Event Albums' | 'Historical Archive' | 'Community Memories' | 'Documentary Library' | 'Awards & Achievements' | 'Press & News Gallery';
 }
 
-export default function MediaCenter({ currentLanguage }: MediaCenterProps) {
+export default function MediaCenter({ currentLanguage, defaultCategory = 'Photo Gallery' }: MediaCenterProps) {
   // Navigation & Sub-Tab State
   // Media categories mapping to main menu items requested
-  const [activeMenuTab, setActiveMenuTab] = useState<'Photo Gallery' | 'Video Gallery' | 'Event Albums' | 'Historical Archive' | 'Community Memories' | 'Documentary Library' | 'Awards & Achievements' | 'Press & News Gallery'>('Photo Gallery');
-  
-  // Storage for user uploads / modified stats (initialized from localStorage or seed data)
-  const [albums, setAlbums] = useState<HeritageAlbum[]>(() => {
-    const saved = localStorage.getItem('rcb_heritage_albums');
-    return saved ? JSON.parse(saved) : initialHeritageAlbums;
-  });
+  const [activeMenuTab, setActiveMenuTab] = useState<'Photo Gallery' | 'Video Gallery' | 'Event Albums' | 'Historical Archive' | 'Community Memories' | 'Documentary Library' | 'Awards & Achievements' | 'Press & News Gallery'>(defaultCategory);
 
-  const [videos, setVideos] = useState<HeritageVideo[]>(() => {
-    const saved = localStorage.getItem('rcb_heritage_videos');
-    return saved ? JSON.parse(saved) : initialHeritageVideos;
-  });
+  useEffect(() => {
+    if (defaultCategory) {
+      setActiveMenuTab(defaultCategory);
+    }
+  }, [defaultCategory]);
+  
+  // Storage for user uploads / modified stats
+  const [albums, setAlbums] = useState<HeritageAlbum[]>([]);
+  const [videos, setVideos] = useState<HeritageVideo[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchMedia() {
+      const supabase = getSupabase();
+      if (!supabase) {
+        setAlbums(initialHeritageAlbums);
+        setVideos(initialHeritageVideos);
+        setLoading(false);
+        return;
+      }
+      try {
+        const { data: albumsData, error: albumsError } = await supabase.from('media_gallery').select('*').eq('category', 'Photo Gallery');
+        const { data: videosData, error: videosError } = await supabase.from('media_gallery').select('*').eq('category', 'Video Gallery');
+        
+        if (albumsError) console.error('Error fetching albums:', albumsError);
+        if (videosError) console.error('Error fetching videos:', videosError);
+        
+        const dbAlbums = albumsData?.map(a => ({
+          id: a.id,
+          titleEn: a.title,
+          titleHi: a.title,
+          eventType: 'Community',
+          category: 'Photo Gallery' as any,
+          location: { state: 'MP', district: 'Morena' },
+          date: a.created_at,
+          year: 2026,
+          photographerEn: 'Admin',
+          photographerHi: 'Admin',
+          uploadedBy: 'Admin',
+          images: [a.url],
+          descriptionEn: a.title,
+          descriptionHi: a.title,
+          views: 0,
+          likes: 0
+        })) || [];
+
+        const dbVideos = videosData?.map(v => ({
+          id: v.id,
+          titleEn: v.title,
+          titleHi: v.title,
+          eventType: 'Community',
+          category: 'Video Gallery' as any,
+          thumbnailUrl: v.url,
+          videoUrl: v.url,
+          platform: 'YouTube' as any,
+          duration: '05:00',
+          location: { state: 'MP', district: 'Morena' },
+          uploadDate: v.created_at,
+          year: 2026,
+          views: 0,
+          likes: 0
+        })) || [];
+
+        setAlbums([...dbAlbums, ...initialHeritageAlbums]);
+        setVideos([...dbVideos, ...initialHeritageVideos]);
+      } catch (err) {
+        console.error('Error fetching media:', err);
+        setAlbums(initialHeritageAlbums);
+        setVideos(initialHeritageVideos);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchMedia();
+  }, []);
 
   // Local comments engine mapped by item ID
   const [commentsMap, setCommentsMap] = useState<Record<string, { author: string; text: string; date: string }[]>>(() => {
@@ -378,7 +446,7 @@ export default function MediaCenter({ currentLanguage }: MediaCenterProps) {
     const resolvedDistrictName = initialDistricts.find(d => d.id === newAlbumData.districtId)?.nameEn || 'Morena';
     const resolvedTehsilName = initialTehsils.find(t => t.id === newAlbumData.tehsilId)?.nameEn || '';
 
-    const imageArray = newAlbumData.imagesInput.split('\n').map(s => s.trim()).filter(s => s !== '');
+    const imageArray = (newAlbumData.imagesInput || '').split('\n').map(s => s.trim()).filter(s => s !== '');
 
     const added: HeritageAlbum = {
       id: `alb_${Date.now()}`,
@@ -397,7 +465,7 @@ export default function MediaCenter({ currentLanguage }: MediaCenterProps) {
       photographerEn: newAlbumData.photographerEn || 'Community Media Cell',
       photographerHi: newAlbumData.photographerHi || 'सामुदायिक मीडिया सेल',
       uploadedBy: newAlbumData.uploadedBy || 'Portal Administrator',
-      images: imageArray.length > 0 ? imageArray : ['https://images.unsplash.com/photo-1511578314322-379afb476865?q=80&w=800&auto=format&fit=crop'],
+      images: imageArray.length > 0 ? imageArray : [IMAGES.albums.mahapanchayat_1],
       descriptionEn: newAlbumData.descriptionEn || 'Custom uploaded memory album.',
       descriptionHi: newAlbumData.descriptionHi || 'कस्टम अपलोड किया गया मेमोरी एल्बम।',
       views: 12,
@@ -441,7 +509,7 @@ export default function MediaCenter({ currentLanguage }: MediaCenterProps) {
       titleHi: newVideoData.titleHi || newVideoData.titleEn,
       eventType: newVideoData.eventType,
       category: newVideoData.category,
-      thumbnailUrl: newVideoData.thumbnailUrl || 'https://images.unsplash.com/photo-1513829096999-4978602297f7?q=80&w=600&auto=format&fit=crop',
+      thumbnailUrl: newVideoData.thumbnailUrl || IMAGES.thumbnails.historical_journey,
       videoUrl: newVideoData.videoUrl,
       platform: newVideoData.platform,
       duration: newVideoData.duration,
@@ -477,14 +545,14 @@ export default function MediaCenter({ currentLanguage }: MediaCenterProps) {
   return (
     <div className="py-16 bg-[#FDFBF7] relative overflow-hidden" id="digital_heritage_gallery">
       {/* Visual background element: Islamic motif lines */}
-      <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent"></div>
+      <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-[#F4C430] to-transparent"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         
         {/* ================= HEADER SECTION ================= */}
         <div className="text-center max-w-4xl mx-auto space-y-4">
           <div className="inline-flex items-center space-x-2 bg-emerald-50 px-3.5 py-1.5 rounded-full border border-emerald-100 text-[#004B23] text-xs font-bold uppercase tracking-widest font-mono">
-            <Sparkles className="h-4 w-4 text-[#D4AF37]" />
+            <Sparkles className="h-4 w-4 text-[#F4C430]" />
             <span>{currentLanguage === 'en' ? 'NATIONAL DIGITAL ARCHIVE' : 'राष्ट्रीय डिजिटल विरासत अभिलेखागार'}</span>
           </div>
           <h2 className="text-3xl sm:text-5xl font-serif font-extrabold text-[#004B23] tracking-tight">
@@ -500,19 +568,19 @@ export default function MediaCenter({ currentLanguage }: MediaCenterProps) {
         {/* ================= AUTOMATIC ORGANIZATION FOLDERS & STATS CARDS ================= */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="heritage_organization_folders">
           
-          <div className="bg-[#004B23] text-white p-5 rounded-2xl border border-[#D4AF37]/30 shadow-md flex items-center space-x-4 group hover:border-[#D4AF37] transition duration-300">
-            <div className="p-3 bg-white/10 rounded-xl text-[#D4AF37]">
+          <div className="bg-[#004B23] text-white p-5 rounded-2xl border border-[#F4C430]/30 shadow-md flex items-center space-x-4 group hover:border-[#F4C430] transition duration-300">
+            <div className="p-3 bg-white/10 rounded-xl text-[#F4C430]">
               <Layers className="h-6 w-6" />
             </div>
             <div>
               <p className="text-[10px] text-emerald-200 uppercase tracking-widest font-mono">Archive Structure</p>
               <p className="text-sm font-bold text-white mt-1">/Media/Photos/2026</p>
-              <p className="text-[9px] text-[#D4AF37] font-mono mt-0.5">Auto-categorized folders</p>
+              <p className="text-[9px] text-[#F4C430] font-mono mt-0.5">Auto-categorized folders</p>
             </div>
           </div>
 
           <div className="bg-white p-5 rounded-2xl border border-gray-150 shadow-sm flex items-center space-x-4 hover:shadow-md transition">
-            <div className="p-3 bg-amber-50 rounded-xl text-[#D4AF37]">
+            <div className="p-3 bg-amber-50 rounded-xl text-[#F4C430]">
               <Compass className="h-6 w-6" />
             </div>
             <div>
@@ -572,7 +640,7 @@ export default function MediaCenter({ currentLanguage }: MediaCenterProps) {
               }}
               className={`px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-200 ${
                 activeMenuTab === tab
-                  ? 'bg-[#004B23] text-white shadow-lg border border-[#D4AF37]/50'
+                  ? 'bg-[#004B23] text-white shadow-lg border border-[#F4C430]/50'
                   : 'text-gray-700 hover:bg-white hover:text-[#004B23]'
               }`}
             >
@@ -600,9 +668,9 @@ export default function MediaCenter({ currentLanguage }: MediaCenterProps) {
             {/* Quick Action: Open Upload Panel */}
             <button
               onClick={() => setAdminActive(true)}
-              className="px-5 py-3 bg-[#004B23] text-white hover:bg-emerald-950 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center space-x-2 border border-[#D4AF37]/40 transition"
+              className="px-5 py-3 bg-[#004B23] text-white hover:bg-emerald-950 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center space-x-2 border border-[#F4C430]/40 transition"
             >
-              <FolderPlus className="h-4 w-4 text-[#D4AF37]" />
+              <FolderPlus className="h-4 w-4 text-[#F4C430]" />
               <span>{currentLanguage === 'en' ? 'Upload Heritage Media' : 'मीडिया अपलोड करें'}</span>
             </button>
           </div>
@@ -733,7 +801,7 @@ export default function MediaCenter({ currentLanguage }: MediaCenterProps) {
             <div className="space-y-6">
               <div className="flex items-center justify-between border-b border-gray-150 pb-2">
                 <h3 className="text-sm font-bold uppercase tracking-wider text-[#004B23] font-mono flex items-center space-x-2">
-                  <ImageIcon className="h-4 w-4 text-[#D4AF37]" />
+                  <ImageIcon className="h-4 w-4 text-[#F4C430]" />
                   <span>{activeMenuTab} Archives ({filteredAlbums.length} available)</span>
                 </h3>
                 <span className="text-xs text-gray-400 font-mono">India / {selectedState === 'All' ? 'National' : selectedState}</span>
@@ -741,7 +809,7 @@ export default function MediaCenter({ currentLanguage }: MediaCenterProps) {
 
               {filteredAlbums.length === 0 ? (
                 <div className="bg-gray-50 border border-gray-150 rounded-2xl p-12 text-center space-y-4">
-                  <div className="p-4 bg-emerald-50 rounded-full inline-block text-[#D4AF37]">
+                  <div className="p-4 bg-emerald-50 rounded-full inline-block text-[#F4C430]">
                     <SlidersHorizontal className="h-8 w-8" />
                   </div>
                   <h4 className="text-base font-serif font-extrabold text-[#004B23]">No Heritage Archives Found</h4>
@@ -765,7 +833,7 @@ export default function MediaCenter({ currentLanguage }: MediaCenterProps) {
                           className="w-full h-full object-cover object-center group-hover:scale-110 group-hover:brightness-105 transition-all duration-500"
                         />
                         {/* Overlay Category badge */}
-                        <span className="absolute top-3 left-3 bg-[#004B23] text-white font-mono text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded shadow-sm border border-[#D4AF37]/30">
+                        <span className="absolute top-3 left-3 bg-[#004B23] text-white font-mono text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded shadow-sm border border-[#F4C430]/30">
                           {album.eventType}
                         </span>
                         
@@ -789,13 +857,13 @@ export default function MediaCenter({ currentLanguage }: MediaCenterProps) {
                       <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
                         <div className="space-y-2">
                           <div className="flex items-center space-x-1 text-[10px] text-gray-400 font-mono">
-                            <MapPin className="h-3 w-3 text-[#D4AF37]" />
+                            <MapPin className="h-3 w-3 text-[#F4C430]" />
                             <span className="truncate max-w-[150px]">{album.location.district}, {album.location.state}</span>
                             <span>•</span>
                             <span>{album.year}</span>
                           </div>
 
-                          <h4 className="text-sm font-serif font-extrabold text-[#004B23] line-clamp-2 group-hover:text-[#D4AF37] transition">
+                          <h4 className="text-sm font-serif font-extrabold text-[#004B23] line-clamp-2 group-hover:text-[#F4C430] transition">
                             {currentLanguage === 'en' ? album.titleEn : album.titleHi}
                           </h4>
 
@@ -808,7 +876,7 @@ export default function MediaCenter({ currentLanguage }: MediaCenterProps) {
                           <span className="text-[10px] text-gray-400 font-mono">
                             {album.images.length} {currentLanguage === 'en' ? 'Photos' : 'तस्वीरें'}
                           </span>
-                          <span className="text-[10px] font-bold text-[#004B23] uppercase tracking-wider group-hover:text-[#D4AF37] flex items-center space-x-1 transition">
+                          <span className="text-[10px] font-bold text-[#004B23] uppercase tracking-wider group-hover:text-[#F4C430] flex items-center space-x-1 transition">
                             <span>{currentLanguage === 'en' ? 'View Album' : 'एल्बम देखें'}</span>
                             <ArrowRight className="h-3.5 w-3.5 transform group-hover:translate-x-1 transition-transform" />
                           </span>
@@ -825,14 +893,14 @@ export default function MediaCenter({ currentLanguage }: MediaCenterProps) {
             <div className="space-y-6">
               <div className="flex items-center justify-between border-b border-gray-150 pb-2">
                 <h3 className="text-sm font-bold uppercase tracking-wider text-[#004B23] font-mono flex items-center space-x-2">
-                  <Video className="h-4 w-4 text-[#D4AF37]" />
+                  <Video className="h-4 w-4 text-[#F4C430]" />
                   <span>{activeMenuTab} ({filteredVideos.length} Documentaries)</span>
                 </h3>
               </div>
 
               {filteredVideos.length === 0 ? (
                 <div className="bg-gray-50 border border-gray-150 rounded-2xl p-12 text-center space-y-4">
-                  <div className="p-4 bg-emerald-50 rounded-full inline-block text-[#D4AF37]">
+                  <div className="p-4 bg-emerald-50 rounded-full inline-block text-[#F4C430]">
                     <Video className="h-8 w-8" />
                   </div>
                   <h4 className="text-base font-serif font-extrabold text-[#004B23]">No Community Documentaries Available</h4>
@@ -854,7 +922,7 @@ export default function MediaCenter({ currentLanguage }: MediaCenterProps) {
                           className="w-full h-full object-cover group-hover:scale-105 group-hover:opacity-95 transition-transform duration-500"
                         />
                         <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-80 group-hover:opacity-100 transition">
-                          <div className="p-3 bg-[#004B23]/90 text-white rounded-full border border-[#D4AF37] group-hover:bg-[#D4AF37] group-hover:text-emerald-950 shadow-lg transform transition duration-300">
+                          <div className="p-3 bg-[#004B23]/90 text-white rounded-full border border-[#F4C430] group-hover:bg-[#F4C430] group-hover:text-emerald-950 shadow-lg transform transition duration-300">
                             <Play className="h-6 w-6 fill-current text-white" />
                           </div>
                         </div>
@@ -863,7 +931,7 @@ export default function MediaCenter({ currentLanguage }: MediaCenterProps) {
                           {vid.duration}
                         </span>
 
-                        <span className="absolute top-3 right-3 bg-[#D4AF37] text-[#004B23] font-mono text-[9px] font-bold px-2 py-0.5 rounded">
+                        <span className="absolute top-3 right-3 bg-[#F4C430] text-[#004B23] font-mono text-[9px] font-bold px-2 py-0.5 rounded">
                           {vid.platform}
                         </span>
                       </div>
@@ -871,7 +939,7 @@ export default function MediaCenter({ currentLanguage }: MediaCenterProps) {
                       <div className="p-5 flex-1 flex flex-col justify-between space-y-3">
                         <div className="space-y-1">
                           <p className="text-[10px] text-gray-400 font-mono flex items-center space-x-1">
-                            <MapPin className="h-3 w-3 text-[#D4AF37]" />
+                            <MapPin className="h-3 w-3 text-[#F4C430]" />
                             <span>{vid.location.state} • {vid.year}</span>
                           </p>
                           <h4 className="text-sm font-serif font-extrabold text-[#004B23] line-clamp-2">
@@ -904,15 +972,15 @@ export default function MediaCenter({ currentLanguage }: MediaCenterProps) {
         </div>
 
         {/* ================= PRESERVED SPECIAL SECTION: "COMMUNITY MEMORIES" DIGITAL MUSEUM ================= */}
-        <section className="bg-gradient-to-br from-emerald-950 via-emerald-900 to-emerald-950 p-6 sm:p-10 rounded-3xl border-2 border-[#D4AF37]/40 shadow-2xl relative overflow-hidden" id="community_memories_museum">
-          <div className="absolute inset-0 opacity-[0.03] bg-[radial-gradient(#D4AF37_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none"></div>
+        <section className="bg-gradient-to-br from-emerald-950 via-emerald-900 to-emerald-950 p-6 sm:p-10 rounded-3xl border-2 border-[#F4C430]/40 shadow-2xl relative overflow-hidden" id="community_memories_museum">
+          <div className="absolute inset-0 opacity-[0.03] bg-[radial-gradient(#F4C430_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none"></div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
             <div className="lg:col-span-5 space-y-4">
-              <div className="inline-block bg-[#D4AF37]/15 border border-[#D4AF37]/40 px-3.5 py-1.5 rounded-full text-[#D4AF37] text-xs font-mono font-bold uppercase tracking-widest">
+              <div className="inline-block bg-[#F4C430]/15 border border-[#F4C430]/40 px-3.5 py-1.5 rounded-full text-[#F4C430] text-xs font-mono font-bold uppercase tracking-widest">
                 🏺 DIGITAL MUSEUM FRAME
               </div>
-              <h3 className="text-2xl sm:text-4xl font-serif font-extrabold text-[#D4AF37] tracking-tight">
+              <h3 className="text-2xl sm:text-4xl font-serif font-extrabold text-[#F4C430] tracking-tight">
                 {currentLanguage === 'en' ? 'The Heritage Memorial Room' : 'ऐतिहासिक स्मृति वीथिका'}
               </h3>
               <p className="text-xs sm:text-sm text-emerald-100 font-light leading-relaxed">
@@ -924,7 +992,7 @@ export default function MediaCenter({ currentLanguage }: MediaCenterProps) {
                     setActiveMenuTab('Community Memories');
                     setSearchQuery('');
                   }}
-                  className="px-5 py-2.5 bg-[#D4AF37] text-[#004B23] font-bold text-xs uppercase rounded-xl border border-[#D4AF37] hover:bg-[#c49f27] transition"
+                  className="px-5 py-2.5 bg-[#F4C430] text-[#004B23] font-bold text-xs uppercase rounded-xl border border-[#F4C430] hover:bg-[#c49f27] transition"
                 >
                   {currentLanguage === 'en' ? 'Enter Memories Archive' : 'संग्रह प्रवेश करें'}
                 </button>
@@ -937,7 +1005,7 @@ export default function MediaCenter({ currentLanguage }: MediaCenterProps) {
                 <div
                   key={mem.id}
                   onClick={() => handleViewAlbum(mem)}
-                  className="bg-white/5 backdrop-blur-sm p-4 rounded-xl border border-white/10 hover:border-[#D4AF37] transition duration-300 cursor-pointer space-y-3"
+                  className="bg-white/5 backdrop-blur-sm p-4 rounded-xl border border-white/10 hover:border-[#F4C430] transition duration-300 cursor-pointer space-y-3"
                 >
                   <img
                     src={mem.images[0]}
@@ -946,7 +1014,7 @@ export default function MediaCenter({ currentLanguage }: MediaCenterProps) {
                     className="w-full h-24 object-cover rounded-lg filter sepia"
                   />
                   <div className="space-y-1">
-                    <span className="text-[9px] text-[#D4AF37] font-mono">{mem.date}</span>
+                    <span className="text-[9px] text-[#F4C430] font-mono">{mem.date}</span>
                     <h5 className="text-xs font-serif font-bold text-white line-clamp-1">{mem.titleEn}</h5>
                     <p className="text-[10px] text-emerald-200 line-clamp-2">{mem.descriptionEn}</p>
                   </div>
@@ -959,7 +1027,7 @@ export default function MediaCenter({ currentLanguage }: MediaCenterProps) {
         {/* ================= METADATA & SEO ENGINE ROTATION PREVIEW ================= */}
         <div className="bg-white p-6 rounded-3xl border border-gray-150 shadow-sm space-y-4" id="seo_engine_panel">
           <div className="flex items-center space-x-2 border-b border-gray-100 pb-2">
-            <Globe className="h-5 w-5 text-[#D4AF37]" />
+            <Globe className="h-5 w-5 text-[#F4C430]" />
             <h4 className="text-xs font-bold text-[#004B23] uppercase tracking-widest font-mono">
               Live Search Engine Schema Generator
             </h4>
@@ -1011,7 +1079,7 @@ export default function MediaCenter({ currentLanguage }: MediaCenterProps) {
           
           <div className="absolute inset-x-0 top-0 p-4 bg-gradient-to-b from-black/80 to-transparent flex items-center justify-between z-20 text-white">
             <div>
-              <span className="text-[10px] text-[#D4AF37] font-mono tracking-widest uppercase">
+              <span className="text-[10px] text-[#F4C430] font-mono tracking-widest uppercase">
                 {activeLightboxAlbum.category} • Image {lightboxImageIndex + 1} of {activeLightboxAlbum.images.length}
               </span>
               <h3 className="text-sm sm:text-lg font-serif font-bold truncate max-w-sm sm:max-w-xl">
@@ -1097,7 +1165,7 @@ export default function MediaCenter({ currentLanguage }: MediaCenterProps) {
             <div className="space-y-6 flex-1">
               {/* Metrics Header */}
               <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                <span className="text-xs text-[#D4AF37] font-mono uppercase tracking-widest">Digital Vault reactions</span>
+                <span className="text-xs text-[#F4C430] font-mono uppercase tracking-widest">Digital Vault reactions</span>
                 <div className="flex space-x-2 text-xs">
                   <button
                     onClick={() => handleLikeAlbum(activeLightboxAlbum.id)}
@@ -1117,7 +1185,7 @@ export default function MediaCenter({ currentLanguage }: MediaCenterProps) {
                   onClick={() => alert('Your download request has been dispatched to high-speed CDN. Check downloads directory.')}
                   className="py-2.5 bg-emerald-800 hover:bg-emerald-700 text-xs font-bold rounded-lg flex items-center justify-center space-x-1.5 transition"
                 >
-                  <Download className="h-3.5 w-3.5 text-[#D4AF37]" />
+                  <Download className="h-3.5 w-3.5 text-[#F4C430]" />
                   <span>Download High-Res</span>
                 </button>
 
@@ -1134,7 +1202,7 @@ export default function MediaCenter({ currentLanguage }: MediaCenterProps) {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] text-gray-400 font-mono uppercase">Verified Community Log ({commentsMap[activeLightboxAlbum.id]?.length || 0})</span>
-                  <MessageSquare className="h-4 w-4 text-[#D4AF37]" />
+                  <MessageSquare className="h-4 w-4 text-[#F4C430]" />
                 </div>
 
                 <div className="space-y-2 max-h-[160px] overflow-y-auto pr-1">
@@ -1144,7 +1212,7 @@ export default function MediaCenter({ currentLanguage }: MediaCenterProps) {
                     commentsMap[activeLightboxAlbum.id].map((c, i) => (
                       <div key={i} className="p-2.5 bg-white/5 rounded-lg space-y-1 text-[11px] border border-white/5">
                         <div className="flex justify-between items-center">
-                          <p className="font-bold text-[#D4AF37]">{c.author}</p>
+                          <p className="font-bold text-[#F4C430]">{c.author}</p>
                           <span className="text-[9px] text-gray-400">{c.date}</span>
                         </div>
                         <p className="text-gray-200">{c.text}</p>
@@ -1162,7 +1230,7 @@ export default function MediaCenter({ currentLanguage }: MediaCenterProps) {
                 placeholder="Your Name (optional)"
                 value={commentName}
                 onChange={(e) => setCommentName(e.target.value)}
-                className="w-full bg-white/10 border border-white/10 p-2 text-xs rounded focus:outline-none text-white focus:border-[#D4AF37]"
+                className="w-full bg-white/10 border border-white/10 p-2 text-xs rounded focus:outline-none text-white focus:border-[#F4C430]"
               />
               <div className="relative">
                 <input
@@ -1170,9 +1238,9 @@ export default function MediaCenter({ currentLanguage }: MediaCenterProps) {
                   placeholder="Express your congratulations..."
                   value={commentText}
                   onChange={(e) => setCommentText(e.target.value)}
-                  className="w-full bg-white/10 border border-white/10 p-2 pr-10 text-xs rounded focus:outline-none text-white focus:border-[#D4AF37]"
+                  className="w-full bg-white/10 border border-white/10 p-2 pr-10 text-xs rounded focus:outline-none text-white focus:border-[#F4C430]"
                 />
-                <button type="submit" className="absolute right-2 top-2 text-[#D4AF37] hover:text-white transition">
+                <button type="submit" className="absolute right-2 top-2 text-[#F4C430] hover:text-white transition">
                   <Send className="h-4 w-4" />
                 </button>
               </div>
@@ -1189,14 +1257,14 @@ export default function MediaCenter({ currentLanguage }: MediaCenterProps) {
       {activePlayerVideo && (
         <div className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4" id="video_player_modal">
           
-          <div className="bg-[#002B15] border-2 border-[#D4AF37]/50 w-full max-w-5xl rounded-3xl overflow-hidden shadow-2xl flex flex-col lg:flex-row max-h-[90vh]">
+          <div className="bg-[#002B15] border-2 border-[#F4C430]/50 w-full max-w-5xl rounded-3xl overflow-hidden shadow-2xl flex flex-col lg:flex-row max-h-[90vh]">
             
             {/* Left: Responsive Video stage */}
             <div className="flex-1 bg-black flex flex-col justify-between p-4 relative">
               
               <div className="flex items-center justify-between text-white z-10 pb-3">
                 <div>
-                  <span className="text-[9px] text-[#D4AF37] font-mono tracking-widest uppercase">Verified Documentary Play</span>
+                  <span className="text-[9px] text-[#F4C430] font-mono tracking-widest uppercase">Verified Documentary Play</span>
                   <h3 className="text-sm font-serif font-bold">{activePlayerVideo.titleEn}</h3>
                 </div>
                 <button
@@ -1224,8 +1292,8 @@ export default function MediaCenter({ currentLanguage }: MediaCenterProps) {
 
                 {/* PiP Overlay indicator if active */}
                 {simulatedPiP && (
-                  <div className="absolute bottom-4 right-4 bg-emerald-950/90 text-white p-3 rounded-lg border border-[#D4AF37] text-xs font-mono z-20 flex items-center space-x-2 animate-pulse">
-                    <Tv className="h-4 w-4 text-[#D4AF37]" />
+                  <div className="absolute bottom-4 right-4 bg-emerald-950/90 text-white p-3 rounded-lg border border-[#F4C430] text-xs font-mono z-20 flex items-center space-x-2 animate-pulse">
+                    <Tv className="h-4 w-4 text-[#F4C430]" />
                     <span>Picture-in-Picture active</span>
                   </div>
                 )}
@@ -1237,17 +1305,17 @@ export default function MediaCenter({ currentLanguage }: MediaCenterProps) {
                   <span className="text-[10px] text-gray-400 font-mono">Platform: {activePlayerVideo.platform}</span>
                   <div className="flex items-center space-x-1 text-[11px]">
                     <span className="text-gray-400">Speed:</span>
-                    <button onClick={() => setPlaybackSpeed(0.5)} className={`px-1.5 py-0.5 rounded ${playbackSpeed === 0.5 ? 'bg-[#D4AF37] text-emerald-950 font-bold' : 'hover:bg-white/10'}`}>0.5x</button>
-                    <button onClick={() => setPlaybackSpeed(1)} className={`px-1.5 py-0.5 rounded ${playbackSpeed === 1 ? 'bg-[#D4AF37] text-emerald-950 font-bold' : 'hover:bg-white/10'}`}>1x</button>
-                    <button onClick={() => setPlaybackSpeed(1.5)} className={`px-1.5 py-0.5 rounded ${playbackSpeed === 1.5 ? 'bg-[#D4AF37] text-emerald-950 font-bold' : 'hover:bg-white/10'}`}>1.5x</button>
-                    <button onClick={() => setPlaybackSpeed(2)} className={`px-1.5 py-0.5 rounded ${playbackSpeed === 2 ? 'bg-[#D4AF37] text-emerald-950 font-bold' : 'hover:bg-white/10'}`}>2x</button>
+                    <button onClick={() => setPlaybackSpeed(0.5)} className={`px-1.5 py-0.5 rounded ${playbackSpeed === 0.5 ? 'bg-[#F4C430] text-emerald-950 font-bold' : 'hover:bg-white/10'}`}>0.5x</button>
+                    <button onClick={() => setPlaybackSpeed(1)} className={`px-1.5 py-0.5 rounded ${playbackSpeed === 1 ? 'bg-[#F4C430] text-emerald-950 font-bold' : 'hover:bg-white/10'}`}>1x</button>
+                    <button onClick={() => setPlaybackSpeed(1.5)} className={`px-1.5 py-0.5 rounded ${playbackSpeed === 1.5 ? 'bg-[#F4C430] text-emerald-950 font-bold' : 'hover:bg-white/10'}`}>1.5x</button>
+                    <button onClick={() => setPlaybackSpeed(2)} className={`px-1.5 py-0.5 rounded ${playbackSpeed === 2 ? 'bg-[#F4C430] text-emerald-950 font-bold' : 'hover:bg-white/10'}`}>2x</button>
                   </div>
                 </div>
 
                 <div className="flex items-center space-x-3">
                   <button
                     onClick={() => setSimulatedPiP(!simulatedPiP)}
-                    className={`px-3 py-1 rounded text-[10px] font-mono border transition ${simulatedPiP ? 'bg-[#D4AF37] text-emerald-950 border-[#D4AF37]' : 'border-white/20 hover:bg-white/10'}`}
+                    className={`px-3 py-1 rounded text-[10px] font-mono border transition ${simulatedPiP ? 'bg-[#F4C430] text-emerald-950 border-[#F4C430]' : 'border-white/20 hover:bg-white/10'}`}
                   >
                     PIP MODE
                   </button>
@@ -1268,7 +1336,7 @@ export default function MediaCenter({ currentLanguage }: MediaCenterProps) {
               
               <div className="space-y-6 flex-1">
                 <div>
-                  <span className="text-[10px] text-[#D4AF37] font-mono uppercase tracking-widest">Census Location Tags</span>
+                  <span className="text-[10px] text-[#F4C430] font-mono uppercase tracking-widest">Census Location Tags</span>
                   <p className="text-xs text-gray-300 mt-1">📍 {activePlayerVideo.location.state} National Chapter</p>
                   <p className="text-[11px] text-gray-400 mt-1">Uploaded on: {activePlayerVideo.uploadDate}</p>
                 </div>
@@ -1305,7 +1373,7 @@ export default function MediaCenter({ currentLanguage }: MediaCenterProps) {
                     ) : (
                       commentsMap[activePlayerVideo.id].map((c, i) => (
                         <div key={i} className="p-2 bg-white/5 rounded text-[10px]">
-                          <p className="font-bold text-[#D4AF37]">{c.author}</p>
+                          <p className="font-bold text-[#F4C430]">{c.author}</p>
                           <p className="text-gray-300 mt-0.5">{c.text}</p>
                         </div>
                       ))
@@ -1322,14 +1390,14 @@ export default function MediaCenter({ currentLanguage }: MediaCenterProps) {
                   placeholder="Express your name"
                   value={commentName}
                   onChange={(e) => setCommentName(e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 p-1.5 text-[10px] text-white focus:outline-none focus:border-[#D4AF37]"
+                  className="w-full bg-white/5 border border-white/10 p-1.5 text-[10px] text-white focus:outline-none focus:border-[#F4C430]"
                 />
                 <input
                   type="text"
                   placeholder="Add public video feedback..."
                   value={commentText}
                   onChange={(e) => setCommentText(e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 p-1.5 text-[10px] text-white focus:outline-none focus:border-[#D4AF37]"
+                  className="w-full bg-white/5 border border-white/10 p-1.5 text-[10px] text-white focus:outline-none focus:border-[#F4C430]"
                 />
               </form>
 
@@ -1345,7 +1413,7 @@ export default function MediaCenter({ currentLanguage }: MediaCenterProps) {
       {/* ======================================================== */}
       {sharingItemUrl && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white border-2 border-[#D4AF37] rounded-3xl p-6 w-full max-w-md shadow-2xl relative space-y-6">
+          <div className="bg-white border-2 border-[#F4C430] rounded-3xl p-6 w-full max-w-md shadow-2xl relative space-y-6">
             
             <button
               onClick={() => {
@@ -1423,7 +1491,7 @@ export default function MediaCenter({ currentLanguage }: MediaCenterProps) {
               {/* QR Toggle button */}
               <button
                 onClick={() => setShowQrCode(!showQrCode)}
-                className="w-full py-2 bg-[#004B23] hover:bg-emerald-950 text-[#D4AF37] rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center space-x-2"
+                className="w-full py-2 bg-[#004B23] hover:bg-emerald-950 text-[#F4C430] rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center space-x-2"
               >
                 <QrCode className="h-4 w-4" />
                 <span>{showQrCode ? 'Hide QR Code' : 'Generate Shareable QR Code'}</span>
@@ -1449,7 +1517,7 @@ export default function MediaCenter({ currentLanguage }: MediaCenterProps) {
       {/* ======================================================== */}
       {adminActive && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4" id="heritage_admin_panel">
-          <div className="bg-white border-2 border-[#D4AF37] rounded-3xl p-6 w-full max-w-2xl shadow-2xl relative overflow-y-auto max-h-[90vh]">
+          <div className="bg-white border-2 border-[#F4C430] rounded-3xl p-6 w-full max-w-2xl shadow-2xl relative overflow-y-auto max-h-[90vh]">
             
             <button
               onClick={() => setAdminActive(false)}
@@ -1460,7 +1528,7 @@ export default function MediaCenter({ currentLanguage }: MediaCenterProps) {
 
             <div className="space-y-4">
               <div className="text-center space-y-1">
-                <span className="text-[#D4AF37] text-xs font-mono font-bold tracking-widest uppercase block">MahaSabha Administrative Center</span>
+                <span className="text-[#F4C430] text-xs font-mono font-bold tracking-widest uppercase block">MahaSabha Administrative Center</span>
                 <h3 className="text-lg sm:text-2xl font-serif font-extrabold text-[#004B23]">
                   Archive New Historical Record
                 </h3>
@@ -1645,7 +1713,7 @@ export default function MediaCenter({ currentLanguage }: MediaCenterProps) {
 
                   <button
                     type="submit"
-                    className="w-full py-3 bg-[#004B23] text-white hover:bg-emerald-900 rounded-xl font-bold uppercase tracking-widest border border-[#D4AF37]/50 transition"
+                    className="w-full py-3 bg-[#004B23] text-white hover:bg-emerald-900 rounded-xl font-bold uppercase tracking-widest border border-[#F4C430]/50 transition"
                   >
                     Commit Album to Archives
                   </button>
@@ -1756,7 +1824,7 @@ export default function MediaCenter({ currentLanguage }: MediaCenterProps) {
 
                   <button
                     type="submit"
-                    className="w-full py-3 bg-[#004B23] text-white hover:bg-emerald-900 rounded-xl font-bold uppercase tracking-widest border border-[#D4AF37]/50 transition"
+                    className="w-full py-3 bg-[#004B23] text-white hover:bg-emerald-900 rounded-xl font-bold uppercase tracking-widest border border-[#F4C430]/50 transition"
                   >
                     Commit Video to Archive
                   </button>

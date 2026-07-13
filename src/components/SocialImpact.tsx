@@ -1,6 +1,7 @@
 import React from 'react';
 import { Award, CheckCircle, Flame, Heart, FileText, Download } from 'lucide-react';
 import { Language } from '../types';
+import Counter from './Counter';
 
 interface SocialImpactProps {
   currentLanguage: Language;
@@ -38,7 +39,9 @@ export default function SocialImpact({ currentLanguage }: SocialImpactProps) {
             <div key={idx} className="bg-gray-50 p-6 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-between hover:shadow-md transition">
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-3xl sm:text-4xl font-extrabold text-[#D4AF37] font-mono">{imp.value}</span>
+                  <span className="text-3xl sm:text-4xl font-extrabold text-[#F4C430] font-mono">
+                    <Counter value={imp.value} />+
+                  </span>
                   <div className="p-2 bg-[#004B23]/10 text-[#004B23] rounded-full">
                     <Heart className="h-5 w-5 fill-current" />
                   </div>
@@ -61,7 +64,7 @@ export default function SocialImpact({ currentLanguage }: SocialImpactProps) {
           {/* Awards Spotlights */}
           <div className="lg:col-span-7 bg-gray-50 p-6 sm:p-8 rounded-xl border border-gray-100 shadow-sm space-y-6">
             <h3 className="text-sm font-bold text-[#0B132B] uppercase tracking-wider flex items-center space-x-2">
-              <Award className="h-5 w-5 text-[#D4AF37]" />
+              <Award className="h-5 w-5 text-[#F4C430]" />
               <span>{currentLanguage === 'en' ? 'Welfare & Leadership Awards 2026' : 'नेतृत्व एवं उत्कृष्ट कार्यकर्ता पुरस्कार 2026'}</span>
             </h3>
 
@@ -72,7 +75,7 @@ export default function SocialImpact({ currentLanguage }: SocialImpactProps) {
                   <h4 className="text-xs font-bold text-gray-900 mt-1">{currentLanguage === 'en' ? 'Kailaras Committee Team' : 'कैलारस क्षेत्रीय समिति दल'}</h4>
                   <p className="text-[10px] text-gray-500 mt-0.5">{currentLanguage === 'en' ? 'Recognized for achieving 94% census registration coverage.' : '94% परिवार जनगणना पंजीकरण कवरेज प्राप्त करने के लिए विशेष पुरस्कार।'}</p>
                 </div>
-                <Flame className="h-8 w-8 text-[#D4AF37] flex-shrink-0" />
+                <Flame className="h-8 w-8 text-[#F4C430] flex-shrink-0" />
               </div>
 
               <div className="bg-white p-4 rounded-lg border border-gray-100 flex items-center justify-between gap-4">
@@ -81,7 +84,7 @@ export default function SocialImpact({ currentLanguage }: SocialImpactProps) {
                   <h4 className="text-xs font-bold text-gray-900 mt-1">Mohammed Jamil Rangrez (Morena)</h4>
                   <p className="text-[10px] text-gray-500 mt-0.5">{currentLanguage === 'en' ? 'Supported verification logistics of 800+ family units.' : '800+ परिवारों के सत्यापन एवं डेटा प्रविष्टि में अथक सहयोग।'}</p>
                 </div>
-                <Award className="h-8 w-8 text-[#D4AF37] flex-shrink-0" />
+                <Award className="h-8 w-8 text-[#F4C430] flex-shrink-0" />
               </div>
             </div>
           </div>

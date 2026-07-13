@@ -1,23 +1,36 @@
-import React, { useState } from 'react';
-import { UserPlus, Trash, ChevronDown, Award, Users, Info, Plus, Sparkles, Network } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { UserPlus, Trash, ChevronDown, Award, Users, Info, Plus, Sparkles, Network, Download, Printer, FileText } from 'lucide-react';
 import { Language, FamilyMember } from '../types';
+import { getSupabase } from '../lib/supabaseClient';
 
 interface FamilyRegistrationProps {
   currentLanguage: Language;
+  focusSection?: 'census' | 'tree';
 }
 
-export default function FamilyRegistration({ currentLanguage }: FamilyRegistrationProps) {
+const DEFAULT_MEMBERS: FamilyMember[] = [
+  { id: '1', nameEn: 'Mohammed Shakeel Rangrez', nameHi: 'मोहम्मद शकील रंगरेज़', relationship: 'Self', gender: 'M', age: 34, educationEn: 'B.Tech CS', educationHi: 'बी.टेक सीएस', occupationEn: 'Software Developer', occupationHi: 'सॉफ्टवेयर डेवलपर' },
+  { id: '2', nameEn: 'Al-Haaj Gulam Nabi', nameHi: 'अल-हाज गुलाम नबी', relationship: 'Father', gender: 'M', age: 68, educationEn: 'Graduate', educationHi: 'स्नातक', occupationEn: 'Retired Government Officer', occupationHi: 'सेवानिवृत्त सरकारी अधिकारी' },
+  { id: '3', nameEn: 'Zainab Begum', nameHi: 'जैनब बेगम', relationship: 'Mother', gender: 'F', age: 61, educationEn: 'Matric', educationHi: 'मैट्रिक', occupationEn: 'Homemaker', occupationHi: 'गृहणी' },
+  { id: '4', nameEn: 'Yasmin Rangrez', nameHi: 'यास्मीन रंगरेज़', relationship: 'Spouse', gender: 'F', age: 30, educationEn: 'B.Ed', educationHi: 'बी.एड', occupationEn: 'School Teacher', occupationHi: 'शिक्षिका' },
+  { id: '5', nameEn: 'Rehan Rangrez', nameHi: 'रेहान रंगरेज़', relationship: 'Son', gender: 'M', age: 6, educationEn: 'Primary School', educationHi: 'प्राथमिक विद्यालय', occupationEn: 'Student', occupationHi: 'छात्र' }
+];
+
+export default function FamilyRegistration({ currentLanguage, focusSection }: FamilyRegistrationProps) {
+  useEffect(() => {
+    if (focusSection === 'tree') {
+      setTimeout(() => {
+        const el = document.getElementById('family_tree_display');
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 250);
+    }
+  }, [focusSection]);
   const [householdIncome, setHouseholdIncome] = useState('Middle');
   const [legacyArtisan, setLegacyArtisan] = useState(false);
+  const [censusWarning, setCensusWarning] = useState<string | null>(null);
   
-  // Default populated family census mapping representational tree
-  const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([
-    { id: '1', nameEn: 'Mohammed Shakeel Rangrez', nameHi: 'मोहम्मद शकील रंगरेज', relationship: 'Self', gender: 'M', age: 34, educationEn: 'B.Tech CS', educationHi: 'बी.टेक सीएस', occupationEn: 'Software Architect', occupationHi: 'सॉफ्टवेयर आर्किटेक्ट' },
-    { id: '2', nameEn: 'Yasmeen Begum', nameHi: 'यास्मीन बेगम', relationship: 'Spouse', gender: 'F', age: 31, educationEn: 'M.Sc Botany', educationHi: 'एम.एससी वनस्पति विज्ञान', occupationEn: 'Homemaker', occupationHi: 'गृहणी' },
-    { id: '3', nameEn: 'Adnan Rangrez', nameHi: 'अदनान रंगरेज', relationship: 'Son', gender: 'M', age: 8, educationEn: 'Primary Schooling', educationHi: 'प्राथमिक शिक्षा', occupationEn: 'Student', occupationHi: 'विद्यार्थी' },
-    { id: '4', nameEn: 'Aisha Bano', nameHi: 'आयशा बानो', relationship: 'Daughter', gender: 'F', age: 5, educationEn: 'Kindergarten', educationHi: 'बालवाड़ी', occupationEn: 'Student', occupationHi: 'विद्यार्थी' },
-    { id: '5', nameEn: 'Al-Haaj Gulam Nabi', nameHi: 'अल-हाज गुलाम नबी', relationship: 'Father', gender: 'M', age: 67, educationEn: 'B.Com Graduate', educationHi: 'बी.कॉम स्नातक', occupationEn: 'Retired Government Official', occupationHi: 'सेवानिवृत्त सरकारी अधिकारी' }
-  ]);
+  const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([]);
+  const [loading, setLoading] = useState(true);
 
   // Form states for new relative input
   const [newMember, setNewMember] = useState({
@@ -32,25 +45,122 @@ export default function FamilyRegistration({ currentLanguage }: FamilyRegistrati
     occupationHi: ''
   });
 
-  const handleAddMember = (e: React.FormEvent) => {
+  useEffect(() => {
+    async function fetchFamilyMembers() {
+      const supabase = getSupabase();
+      if (!supabase) {
+        setFamilyMembers(DEFAULT_MEMBERS);
+        setLoading(false);
+        return;
+      }
+      try {
+        const { data, error } = await supabase.from('family_members').select('*');
+        if (error) {
+          console.error('Error fetching family members:', error);
+          setFamilyMembers(DEFAULT_MEMBERS);
+        } else if (data && data.length > 0) {
+          // Map database fields to interface fields
+          const dbMembers = data.map(m => ({
+            id: m.id,
+            nameEn: m.name_en,
+            nameHi: m.name_hi,
+            relationship: m.relationship,
+            gender: m.gender,
+            age: m.age,
+            educationEn: m.education_en,
+            educationHi: m.education_hi,
+            occupationEn: m.occupation_en,
+            occupationHi: m.occupation_hi
+          }));
+          setFamilyMembers([...DEFAULT_MEMBERS, ...dbMembers]);
+        } else {
+          setFamilyMembers(DEFAULT_MEMBERS);
+        }
+      } catch (err) {
+        console.error('Exception fetching family members:', err);
+        setFamilyMembers(DEFAULT_MEMBERS);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchFamilyMembers();
+  }, []);
+
+  const handleAddMember = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newMember.nameEn) return;
+    setCensusWarning(null);
     
-    const created: FamilyMember = {
-      id: Math.random().toString(36).substr(2, 9),
-      nameEn: newMember.nameEn,
-      nameHi: newMember.nameHi || newMember.nameEn,
-      relationship: newMember.relationship,
-      gender: newMember.gender,
-      age: parseInt(newMember.age) || 20,
-      educationEn: newMember.educationEn || 'Secondary',
-      educationHi: newMember.educationHi || 'माध्यमिक',
-      occupationEn: newMember.occupationEn || 'Student',
-      occupationHi: newMember.occupationHi || 'छात्र'
-    };
+    const supabase = getSupabase();
+    if (!supabase) {
+      const localMember: FamilyMember = {
+        id: 'LOCAL-' + Date.now(),
+        nameEn: newMember.nameEn,
+        nameHi: newMember.nameHi || newMember.nameEn,
+        relationship: newMember.relationship,
+        gender: newMember.gender,
+        age: Number(newMember.age),
+        educationEn: newMember.educationEn || 'Secondary',
+        educationHi: newMember.educationHi || 'माध्यमिक',
+        occupationEn: newMember.occupationEn || 'Student',
+        occupationHi: newMember.occupationHi || 'छात्र'
+      };
+      setFamilyMembers(prev => [...prev, localMember]);
+      setNewMember({
+        nameEn: '',
+        nameHi: '',
+        relationship: 'Son',
+        gender: 'M',
+        age: '',
+        educationEn: '',
+        educationHi: '',
+        occupationEn: '',
+        occupationHi: ''
+      });
+      return;
+    }
 
-    setFamilyMembers([...familyMembers, created]);
-    // reset form fields
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+
+      const created = {
+        user_id: user?.id,
+        name_en: newMember.nameEn,
+        name_hi: newMember.nameHi || newMember.nameEn,
+        relationship: newMember.relationship,
+        gender: newMember.gender,
+        age: parseInt(newMember.age) || 20,
+        education_en: newMember.educationEn || 'Secondary',
+        education_hi: newMember.educationHi || 'माध्यमिक',
+        occupation_en: newMember.occupationEn || 'Student',
+        occupation_hi: newMember.occupationHi || 'छात्र'
+      };
+
+      const { data, error } = await supabase.from('family_members').insert(created).select().single();
+
+      if (error) {
+        console.error('Error adding member:', error);
+        return;
+      }
+
+      if (data) {
+        setFamilyMembers(prev => [...prev, {
+          id: data.id,
+          nameEn: data.name_en,
+          nameHi: data.name_hi,
+          relationship: data.relationship,
+          gender: data.gender,
+          age: data.age,
+          educationEn: data.education_en,
+          educationHi: data.education_hi,
+          occupationEn: data.occupation_en,
+          occupationHi: data.occupation_hi
+        }]);
+      }
+    } catch (err) {
+      console.error('Failed to add family member:', err);
+    }
+
     setNewMember({
       nameEn: '',
       nameHi: '',
@@ -64,14 +174,30 @@ export default function FamilyRegistration({ currentLanguage }: FamilyRegistrati
     });
   };
 
-  const handleRemoveMember = (id: string) => {
-    // Keep self at least
+  const handleRemoveMember = async (id: string) => {
+    setCensusWarning(null);
     const target = familyMembers.find(m => m.id === id);
     if (target?.relationship === 'Self') {
-      alert('The Household Head (Self) cannot be removed from the census form.');
+      setCensusWarning(currentLanguage === 'en' ? 'The Household Head (Self) cannot be removed from the census form.' : 'घर के मुखिया (Self) को जनगणना प्रपत्र से हटाया नहीं जा सकता है।');
       return;
     }
-    setFamilyMembers(familyMembers.filter(m => m.id !== id));
+    
+    const supabase = getSupabase();
+    if (!supabase) {
+      setFamilyMembers(prev => prev.filter(m => m.id !== id));
+      return;
+    }
+
+    try {
+      const { error } = await supabase.from('family_members').delete().eq('id', id);
+      if (error) {
+        console.error('Error removing member:', error);
+        return;
+      }
+      setFamilyMembers(prev => prev.filter(m => m.id !== id));
+    } catch (err) {
+      console.error('Failed to remove family member:', err);
+    }
   };
 
   return (
@@ -79,13 +205,17 @@ export default function FamilyRegistration({ currentLanguage }: FamilyRegistrati
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Module Title */}
-        <div className="text-center max-w-3xl mx-auto mb-12">
+        <div className="text-center max-w-3xl mx-auto mb-12 space-y-2">
           <span className="text-[#004B23] font-bold text-xs uppercase tracking-widest block">
             {currentLanguage === 'en' ? 'NATIONAL FAMILY CENSUS ENGINE' : 'राष्ट्रीय पारिवारिक जनगणना प्रणाली'}
           </span>
           <h2 className="text-2xl sm:text-3xl font-serif font-extrabold text-[#0B132B] mt-2">
             {currentLanguage === 'en' ? 'Socio-Economic Family Tree Mapping' : 'पारिवारिक जनगणना एवं वंशावली'}
           </h2>
+          <div className="text-[10px] text-emerald-800 bg-emerald-50 border border-emerald-100 py-1.5 px-3 rounded-lg max-w-lg mx-auto font-serif font-bold">
+            {currentLanguage === 'en' ? 'Registrant Entity:' : 'पंजीकरण निकाय:'}{' '}
+            <span className="uppercase tracking-wide">Muslim Rangrez Neelgar Samaj Public Welfare & Educational Foundation</span>
+          </div>
           <p className="text-gray-500 text-sm mt-3">
             {currentLanguage === 'en'
               ? 'Formulate your complete family census records below. The system automatically creates a high-fidelity visual generation map/tree.'
@@ -104,6 +234,13 @@ export default function FamilyRegistration({ currentLanguage }: FamilyRegistrati
                 <span>{currentLanguage === 'en' ? 'Add Relative Dependents' : 'नया पारिवारिक सदस्य जोड़ें'}</span>
               </h3>
             </div>
+
+            {censusWarning && (
+              <div className="bg-red-50 border border-red-200 text-red-900 text-xs px-4 py-2.5 rounded-lg flex items-center justify-between font-bold animate-fadeIn">
+                <span>⚠️ {censusWarning}</span>
+                <button onClick={() => setCensusWarning(null)} className="text-red-500 hover:text-red-700 font-extrabold ml-2">✕</button>
+              </div>
+            )}
 
             <form onSubmit={handleAddMember} className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -197,7 +334,7 @@ export default function FamilyRegistration({ currentLanguage }: FamilyRegistrati
                   type="submit"
                   className="w-full py-2.5 bg-[#004B23] text-white font-bold text-xs uppercase tracking-wider rounded hover:bg-[#00381a] transition inline-flex items-center justify-center space-x-2"
                 >
-                  <Plus className="h-4 w-4 text-[#D4AF37]" />
+                  <Plus className="h-4 w-4 text-[#F4C430]" />
                   <span>{currentLanguage === 'en' ? 'Link Relative Dependent' : 'परिवार से सम्बद्ध करें'}</span>
                 </button>
               </div>
@@ -245,7 +382,7 @@ export default function FamilyRegistration({ currentLanguage }: FamilyRegistrati
             
             <div className="flex justify-between items-center border-b border-gray-200 pb-3">
               <h3 className="text-sm font-bold text-[#0B132B] uppercase tracking-wider flex items-center space-x-2">
-                <Network className="h-4 w-4 text-[#D4AF37]" />
+                <Network className="h-4 w-4 text-[#F4C430]" />
                 <span>{currentLanguage === 'en' ? 'Interactive Visual Genogram Chart' : 'सामुदायिक गतिशील वंशावली वृक्ष'}</span>
               </h3>
               <span className="text-[10px] font-mono bg-[#004B23]/10 text-[#004B23] px-2 py-0.5 rounded font-bold">
@@ -278,8 +415,8 @@ export default function FamilyRegistration({ currentLanguage }: FamilyRegistrati
                 {familyMembers
                   .filter(m => m.relationship === 'Self' || m.relationship === 'Spouse')
                   .map(m => (
-                    <div key={m.id} className="relative bg-white text-gray-900 border-2 border-[#D4AF37] px-5 py-3 rounded-xl shadow-md text-center min-w-[160px] transform hover:scale-102 transition">
-                      <span className="text-[8px] uppercase tracking-wider bg-[#D4AF37] text-gray-900 px-2 py-0.5 rounded absolute -top-2.5 left-1/2 transform -translate-x-1/2 font-extrabold">
+                    <div key={m.id} className="relative bg-white text-gray-900 border-2 border-[#F4C430] px-5 py-3 rounded-xl shadow-md text-center min-w-[160px] transform hover:scale-102 transition">
+                      <span className="text-[8px] uppercase tracking-wider bg-[#F4C430] text-gray-900 px-2 py-0.5 rounded absolute -top-2.5 left-1/2 transform -translate-x-1/2 font-extrabold">
                         {currentLanguage === 'en' ? m.relationship : (m.relationship === 'Self' ? 'स्वयं (मुखिया)' : 'जीवनसाथी')}
                       </span>
                       <p className="text-xs font-extrabold text-gray-900 mt-1">{currentLanguage === 'en' ? m.nameEn : m.nameHi}</p>
@@ -296,7 +433,7 @@ export default function FamilyRegistration({ currentLanguage }: FamilyRegistrati
                     .filter(m => m.relationship === 'Son' || m.relationship === 'Daughter')
                     .map(m => (
                       <div key={m.id} className="relative bg-amber-50/60 text-gray-900 border border-amber-200 px-4 py-2 rounded-lg text-center min-w-[130px]">
-                        <span className="text-[8px] uppercase tracking-wider bg-[#D4AF37]/20 text-amber-950 border border-amber-300 px-1.5 py-0.5 rounded absolute -top-2.5 left-1/2 transform -translate-x-1/2 font-bold">
+                        <span className="text-[8px] uppercase tracking-wider bg-[#F4C430]/20 text-amber-950 border border-amber-300 px-1.5 py-0.5 rounded absolute -top-2.5 left-1/2 transform -translate-x-1/2 font-bold">
                           {currentLanguage === 'en' ? m.relationship : (m.relationship === 'Son' ? 'पुत्र' : 'पुत्री')}
                         </span>
                         <p className="text-xs font-bold text-gray-900 mt-1">{currentLanguage === 'en' ? m.nameEn : m.nameHi}</p>
@@ -317,12 +454,57 @@ export default function FamilyRegistration({ currentLanguage }: FamilyRegistrati
 
             {/* Verification & Trust Disclaimer info block */}
             <div className="bg-amber-50 border border-amber-200 text-amber-950 text-xs p-4 rounded-lg flex items-start space-x-3">
-              <Info className="h-4.5 w-4.5 text-[#D4AF37] flex-shrink-0 mt-0.5" />
+              <Info className="h-4.5 w-4.5 text-[#F4C430] flex-shrink-0 mt-0.5" />
               <p className="leading-normal">
                 {currentLanguage === 'en'
                   ? 'All linked children are eligible for the central trust educational grants directory. Ensure high school results or tuition slips are scanned and updated correctly in the support panel.'
                   : 'सम्बद्ध बच्चे केंद्रीय ट्रस्ट शैक्षिक सहायता सूची के पात्र हैं। सुनिश्चित करें कि माध्यमिक बोर्ड परिणाम या शिक्षण शुल्क पर्ची सहायता पैनल में सही ढंग से अपलोड की गई हो।'}
               </p>
+            </div>
+
+            {/* Census Reports & Genogram Export Toolbar */}
+            <div className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm space-y-3">
+              <div className="flex justify-between items-center border-b border-gray-150 pb-2">
+                <span className="text-xs font-bold text-gray-800 uppercase flex items-center space-x-2">
+                  <FileText className="h-4 w-4 text-[#004B23]" />
+                  <span>{currentLanguage === 'en' ? 'Family Census & Genogram Reports Toolbar' : 'परिवार जनगणना एवं वंशावली रिपोर्ट टूलबार'}</span>
+                </span>
+                <span className="text-[10px] font-mono bg-purple-100 text-purple-800 px-2 py-0.5 rounded font-bold">EXCEL / PDF / PRINT</span>
+              </div>
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                <button
+                  onClick={() => alert('Exporting Household Census sheet to Excel (.xlsx) format...')}
+                  className="p-2.5 bg-gray-50 hover:bg-[#004B23] hover:text-white border border-gray-200 rounded text-xs font-bold transition flex items-center justify-center space-x-1.5 shadow-2xs"
+                >
+                  <Download className="h-3.5 w-3.5" />
+                  <span>{currentLanguage === 'en' ? 'Excel Census Dump' : 'एक्सेल शीट डाउनलोड'}</span>
+                </button>
+
+                <button
+                  onClick={() => alert('Generating PDF Family Genogram Chart & Lineage Report...')}
+                  className="p-2.5 bg-gray-50 hover:bg-[#004B23] hover:text-white border border-gray-200 rounded text-xs font-bold transition flex items-center justify-center space-x-1.5 shadow-2xs"
+                >
+                  <Download className="h-3.5 w-3.5" />
+                  <span>{currentLanguage === 'en' ? 'PDF Genogram Tree' : 'पीडीएफ वंशावली'}</span>
+                </button>
+
+                <button
+                  onClick={() => window.print()}
+                  className="p-2.5 bg-gray-50 hover:bg-[#004B23] hover:text-white border border-gray-200 rounded text-xs font-bold transition flex items-center justify-center space-x-1.5 shadow-2xs"
+                >
+                  <Printer className="h-3.5 w-3.5" />
+                  <span>{currentLanguage === 'en' ? 'Print Tree Chart' : 'वृक्ष प्रिंट करें'}</span>
+                </button>
+
+                <button
+                  onClick={() => alert('Family socio-economic analytics & education statistics summary compiled for review!')}
+                  className="p-2.5 bg-purple-50 hover:bg-purple-600 hover:text-white text-purple-900 border border-purple-200 rounded text-xs font-bold transition flex items-center justify-center space-x-1.5 shadow-2xs"
+                >
+                  <Award className="h-3.5 w-3.5" />
+                  <span>{currentLanguage === 'en' ? 'Census Analytics' : 'जनगणना आंकड़े'}</span>
+                </button>
+              </div>
             </div>
 
           </div>

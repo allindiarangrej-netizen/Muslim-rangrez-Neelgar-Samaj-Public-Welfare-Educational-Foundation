@@ -25,7 +25,8 @@ import {
   Briefcase,
   GraduationCap,
   Calendar,
-  AlertCircle
+  AlertCircle,
+  MessageSquare
 } from 'lucide-react';
 import { Language } from '../types';
 import {
@@ -40,6 +41,7 @@ import {
   VillageNode,
   MemberNode
 } from '../data/nationalDirectory';
+import { translate } from '../utils/translator';
 
 interface AreasModuleProps {
   currentLanguage: Language;
@@ -54,17 +56,65 @@ export default function AreasModule({ currentLanguage }: AreasModuleProps) {
 
   const [districts, setDistricts] = useState<DistrictNode[]>(() => {
     const saved = localStorage.getItem('rcb_districts');
-    return saved ? JSON.parse(saved) : initialDistricts;
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved) as DistrictNode[];
+        const missing = initialDistricts.filter(id => !parsed.some(pd => pd.id === id.id));
+        const updated = parsed.map(pd => {
+          const seed = initialDistricts.find(sd => sd.id === pd.id);
+          if (seed && (seed.presidentEn !== pd.presidentEn || seed.presidentMobile !== pd.presidentMobile || seed.nameEn !== pd.nameEn)) {
+            return { ...pd, ...seed };
+          }
+          return pd;
+        });
+        return [...updated, ...missing];
+      } catch (e) {
+        return initialDistricts;
+      }
+    }
+    return initialDistricts;
   });
 
   const [tehsils, setTehsils] = useState<TehsilNode[]>(() => {
     const saved = localStorage.getItem('rcb_tehsils');
-    return saved ? JSON.parse(saved) : initialTehsils;
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved) as TehsilNode[];
+        const missing = initialTehsils.filter(it => !parsed.some(pt => pt.id === it.id));
+        const updated = parsed.map(pt => {
+          const seed = initialTehsils.find(it => it.id === pt.id);
+          if (seed && (seed.presidentEn !== pt.presidentEn || seed.presidentMobile !== pt.presidentMobile || seed.nameEn !== pt.nameEn)) {
+            return { ...pt, ...seed };
+          }
+          return pt;
+        });
+        return [...updated, ...missing];
+      } catch (e) {
+        return initialTehsils;
+      }
+    }
+    return initialTehsils;
   });
 
   const [villages, setVillages] = useState<VillageNode[]>(() => {
     const saved = localStorage.getItem('rcb_villages');
-    return saved ? JSON.parse(saved) : initialVillages;
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved) as VillageNode[];
+        const missing = initialVillages.filter(iv => !parsed.some(pv => pv.id === iv.id));
+        const updated = parsed.map(pv => {
+          const seed = initialVillages.find(iv => iv.id === pv.id);
+          if (seed && (seed.presidentEn !== pv.presidentEn || seed.presidentMobile !== pv.presidentMobile || seed.nameEn !== pv.nameEn)) {
+            return { ...pv, ...seed };
+          }
+          return pv;
+        });
+        return [...updated, ...missing];
+      } catch (e) {
+        return initialVillages;
+      }
+    }
+    return initialVillages;
   });
 
   const [members, setMembers] = useState<MemberNode[]>(() => {
@@ -204,10 +254,10 @@ export default function AreasModule({ currentLanguage }: AreasModuleProps) {
     const v = villages.find(x => x.id === activeVillageId);
 
     return {
-      state: s ? (currentLanguage === 'en' ? s.nameEn : s.nameHi) : '',
-      district: d ? (currentLanguage === 'en' ? d.nameEn : d.nameHi) : '',
-      tehsil: t ? (currentLanguage === 'en' ? t.nameEn : t.nameHi) : '',
-      village: v ? (currentLanguage === 'en' ? v.nameEn : v.nameHi) : ''
+      state: s ? translate(s, 'name', currentLanguage) : '',
+      district: d ? translate(d, 'name', currentLanguage) : '',
+      tehsil: t ? translate(t, 'name', currentLanguage) : '',
+      village: v ? translate(v, 'name', currentLanguage) : ''
     };
   }, [activeStateId, activeDistrictId, activeTehsilId, activeVillageId, states, districts, tehsils, villages, currentLanguage]);
 
@@ -453,7 +503,7 @@ export default function AreasModule({ currentLanguage }: AreasModuleProps) {
       return;
     }
     try {
-      const rows = bulkImportText.trim().split('\n');
+      const rows = (bulkImportText || '').trim().split('\n');
       let importCount = 0;
 
       if (importType === 'villages') {
@@ -577,13 +627,13 @@ export default function AreasModule({ currentLanguage }: AreasModuleProps) {
     <div className="py-16 bg-[#FDFBF7] border-t border-[#f1ece1] relative overflow-hidden" id="national_directory_module">
       
       {/* Decorative Traditional Border Motif */}
-      <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent"></div>
+      <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-[#F4C430] to-transparent"></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Banner Section Notification */}
         {notification && (
-          <div className="fixed bottom-6 right-6 z-50 bg-[#004B23] text-[#D4AF37] border border-[#D4AF37]/50 px-5 py-3 rounded-xl shadow-2xl flex items-center space-x-3 text-xs font-semibold animate-bounce">
+          <div className="fixed bottom-6 right-6 z-50 bg-[#004B23] text-[#F4C430] border border-[#F4C430]/50 px-5 py-3 rounded-xl shadow-2xl flex items-center space-x-3 text-xs font-semibold animate-bounce">
             <CheckCircle2 className="h-5 w-5" />
             <span>{notification}</span>
           </div>
@@ -603,7 +653,7 @@ export default function AreasModule({ currentLanguage }: AreasModuleProps) {
           {currentBreadcrumb.tehsil && (
             <>
               <ChevronRight className="h-3.5 w-3.5 text-gray-300" />
-              <span className="text-[#D4AF37] font-semibold">{currentBreadcrumb.tehsil}</span>
+              <span className="text-[#F4C430] font-semibold">{currentBreadcrumb.tehsil}</span>
             </>
           )}
           {currentBreadcrumb.village && (
@@ -618,10 +668,10 @@ export default function AreasModule({ currentLanguage }: AreasModuleProps) {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
           <div className="space-y-3 max-w-2xl">
             <span className="text-[#004B23] font-bold text-xs uppercase tracking-widest block font-mono">
-              {currentLanguage === 'en' ? 'NATIONAL GEOGRAPHIC DIRECTORY' : 'राष्ट्रीय भौगोलिक निर्देशिका'}
+              {currentLanguage === 'en' ? 'NATIONAL GEOGRAPHIC DIRECTORY' : 'क़ौमी इलाक़ाई निर्देशिका (भौगोलिक निर्देशिका)'}
             </span>
             <h2 className="text-3xl sm:text-5xl font-serif font-extrabold text-[#004B23] tracking-tight">
-              {currentLanguage === 'en' ? 'All-India Community Census & Area Index' : 'अखिल भारतीय सामुदायिक जनगणना एवं क्षेत्रीय सूचकांक'}
+              {currentLanguage === 'en' ? 'All-India Community Census & Area Index' : 'कुल हिन्द बिरादरी मर्दुमशुमारी एवं क्षेत्रीय सूचकांक'}
             </h2>
             <p className="text-sm text-gray-500 font-light leading-relaxed">
               Explore dynamic local assemblies, accredited district councils, registered families, and socio-economic stats down to the village level.
@@ -629,14 +679,14 @@ export default function AreasModule({ currentLanguage }: AreasModuleProps) {
           </div>
 
           {/* Quick Stats Summary Ribbon */}
-          <div className="grid grid-cols-2 gap-4 bg-[#004B23] p-4 rounded-xl text-white border border-[#D4AF37]/20 shadow-md">
+          <div className="grid grid-cols-2 gap-4 bg-[#004B23] p-4 rounded-xl text-white border border-[#F4C430]/20 shadow-md">
             <div>
               <p className="text-[10px] uppercase text-emerald-200 tracking-wider font-mono">Documented Families</p>
-              <p className="text-lg font-bold text-[#D4AF37]">{animatedStats.families.toLocaleString()}+</p>
+              <p className="text-lg font-bold text-[#F4C430]">{animatedStats.families.toLocaleString()}+</p>
             </div>
             <div>
               <p className="text-[10px] uppercase text-emerald-200 tracking-wider font-mono">Registered Members</p>
-              <p className="text-lg font-bold text-[#D4AF37]">{animatedStats.members.toLocaleString()}+</p>
+              <p className="text-lg font-bold text-[#F4C430]">{animatedStats.members.toLocaleString()}+</p>
             </div>
           </div>
         </div>
@@ -654,7 +704,7 @@ export default function AreasModule({ currentLanguage }: AreasModuleProps) {
               </div>
               <input
                 type="text"
-                placeholder={currentLanguage === 'en' ? "Search by State, District, Tehsil, Village name, Pincode..." : "राज्य, जिला, तहसील, ग्राम या पिनकोड खोजें..."}
+                placeholder={currentLanguage === 'en' ? "Search by State, District, Tehsil, Village name, Pincode..." : "सूबा (राज्य), ज़िला, तहसील, देहात (ग्राम) या पिनकोड खोजें..."}
                 value={searchQuery}
                 onChange={(e) => {
                   setSearchQuery(e.target.value);
@@ -675,7 +725,7 @@ export default function AreasModule({ currentLanguage }: AreasModuleProps) {
                       className="p-3 hover:bg-emerald-50 cursor-pointer flex items-center justify-between text-xs transition"
                     >
                       <div className="flex items-center space-x-2">
-                        <MapPin className="h-3.5 w-3.5 text-[#D4AF37]" />
+                        <MapPin className="h-3.5 w-3.5 text-[#F4C430]" />
                         <span className="font-bold text-gray-800">{item.label}</span>
                       </div>
                       <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 uppercase font-mono">
@@ -699,21 +749,21 @@ export default function AreasModule({ currentLanguage }: AreasModuleProps) {
                 onClick={() => setActiveTab('map')}
                 className={`px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-lg transition ${activeTab === 'map' ? 'bg-[#004B23] text-white shadow-md' : 'text-gray-600 hover:text-gray-900'}`}
               >
-                {currentLanguage === 'en' ? 'Interactive Map' : 'मानचित्र'}
+                {currentLanguage === 'en' ? 'Interactive Map' : 'नक़्शा (मानचित्र)'}
               </button>
               <button
                 onClick={() => setActiveTab('admin')}
                 className={`px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-lg transition flex items-center space-x-1 ${activeTab === 'admin' ? 'bg-[#004B23] text-white shadow-md' : 'text-gray-600 hover:text-gray-900'}`}
               >
-                <Settings className="h-3.5 w-3.5 text-[#D4AF37]" />
-                <span>{currentLanguage === 'en' ? 'Admin Portal' : 'प्रशासक पोर्टल'}</span>
+                <Settings className="h-3.5 w-3.5 text-[#F4C430]" />
+                <span>{currentLanguage === 'en' ? 'Admin Portal' : 'एडमिन पोर्टल (प्रशासक पोर्टल)'}</span>
               </button>
               <button
                 onClick={() => setActiveTab('seo')}
                 className={`px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-lg transition flex items-center space-x-1 ${activeTab === 'seo' ? 'bg-[#004B23] text-white shadow-md' : 'text-gray-600 hover:text-gray-900'}`}
               >
-                <Globe className="h-3.5 w-3.5 text-[#D4AF37]" />
-                <span>{currentLanguage === 'en' ? 'SEO Engine' : 'एसईओ'}</span>
+                <Globe className="h-3.5 w-3.5 text-[#F4C430]" />
+                <span>{currentLanguage === 'en' ? 'SEO Engine' : 'एसईओ (SEO)'}</span>
               </button>
             </div>
           </div>
@@ -746,7 +796,7 @@ export default function AreasModule({ currentLanguage }: AreasModuleProps) {
                   }}
                   className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition ${s.id === activeStateId ? 'bg-emerald-50 text-[#004B23] border-[#004B23] font-bold shadow-sm' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
                 >
-                  {currentLanguage === 'en' ? s.nameEn : s.nameHi}
+                  {translate(s, 'name', currentLanguage)}
                 </button>
               ))}
             </div>
@@ -866,7 +916,7 @@ export default function AreasModule({ currentLanguage }: AreasModuleProps) {
                             if (firstV) setActiveVillageId(firstV.id);
                           }
                         }}
-                        className={`group relative bg-white border rounded-2xl p-5 text-left cursor-pointer transition-all duration-400 ease-out hover:-translate-y-3.5 hover:shadow-2xl hover:shadow-[#004B23]/10 flex flex-col justify-between ${isSelected ? 'border-[#D4AF37] ring-1 ring-[#D4AF37]/50' : 'border-gray-150'}`}
+                        className={`group relative bg-white border rounded-2xl p-5 text-left cursor-pointer transition-all duration-400 ease-out hover:-translate-y-3.5 hover:shadow-2xl hover:shadow-[#004B23]/10 flex flex-col justify-between ${isSelected ? 'border-[#F4C430] ring-1 ring-[#F4C430]/50' : 'border-gray-150'}`}
                       >
                         {/* Status Ribbon Accent */}
                         <div className="absolute top-4 right-4">
@@ -878,35 +928,76 @@ export default function AreasModule({ currentLanguage }: AreasModuleProps) {
                         <div className="space-y-4">
                           <div className="space-y-1">
                             <h4 className="text-lg font-serif font-extrabold text-[#004B23]">
-                              {currentLanguage === 'en' ? d.nameEn : d.nameHi}
+                              {translate(d, 'name', currentLanguage)}
                             </h4>
                             <p className="text-[10px] font-mono text-gray-400 uppercase tracking-wider">{currentBreadcrumb.state}</p>
                           </div>
 
                           <div className="space-y-2 border-t border-b border-gray-50 py-3 text-xs">
+                            <div className="space-y-1">
+                              <p className="flex justify-between">
+                                <span className="text-gray-400">
+                                  {currentLanguage === 'en' ? 'President:' : currentLanguage === 'ur' ? 'صدر:' : 'अध्यक्ष (सदर):'}
+                                </span>
+                                <span className="font-extrabold text-[#004B23]">{translate(d, 'president', currentLanguage)}</span>
+                              </p>
+                              {d.presidentFatherEn && (
+                                <p className="flex justify-between text-[10px] text-gray-500 italic pl-3">
+                                  <span>{currentLanguage === 'en' ? "Father's Name:" : 'पिता का नाम:'}</span>
+                                  <span>{translate(d, 'presidentFather', currentLanguage)}</span>
+                                </p>
+                              )}
+                              {d.presidentMobile && (
+                                <div className="space-y-1 mt-1 pl-3">
+                                  <p className="flex justify-between text-[10px] text-gray-500">
+                                    <span>{currentLanguage === 'en' ? 'Mobile:' : 'मोबाइल:'}</span>
+                                    <span className="font-mono text-emerald-700 font-semibold">{d.presidentMobile ? d.presidentMobile.replace(/(\d{5})\d{5}/, '$1XXXXX') : 'N/A'}</span>
+                                  </p>
+                                  <div className="flex justify-end">
+                                    <a
+                                      href={`https://wa.me/${d.presidentMobile.replace(/\D/g, '')}`}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="inline-flex items-center space-x-1.5 bg-[#25D366] hover:bg-[#128C7E] text-white px-2 py-0.5 rounded text-[9px] font-bold shadow-sm transition"
+                                    >
+                                      <MessageSquare className="h-3 w-3" />
+                                      <span>WhatsApp</span>
+                                    </a>
+                                  </div>
+                                </div>
+                              )}
+                              {d.presidentOccupationEn && (
+                                <p className="flex justify-between text-[10px] text-gray-500 pl-3">
+                                  <span>{currentLanguage === 'en' ? 'Occupation:' : 'व्यवसाय:'}</span>
+                                  <span>{translate(d, 'presidentOccupation', currentLanguage)}</span>
+                                </p>
+                              )}
+                            </div>
                             <p className="flex justify-between">
-                              <span className="text-gray-400">President:</span>
-                              <span className="font-bold text-gray-800">{currentLanguage === 'en' ? d.presidentEn : d.presidentHi}</span>
-                            </p>
-                            <p className="flex justify-between">
-                              <span className="text-gray-400">Secretary:</span>
-                              <span className="font-bold text-gray-800">{currentLanguage === 'en' ? d.secretaryEn : d.secretaryHi}</span>
+                              <span className="text-gray-400">
+                                {currentLanguage === 'en' ? 'Secretary:' : currentLanguage === 'ur' ? 'ناظم/سیکرٹری:' : 'सचिव (नाज़िम):'}
+                              </span>
+                              <span className="font-bold text-gray-800">{translate(d, 'secretary', currentLanguage)}</span>
                             </p>
                           </div>
 
                           <div className="grid grid-cols-2 gap-2 text-center bg-gray-50 p-2.5 rounded-xl">
                             <div>
-                              <p className="text-[9px] text-gray-400 uppercase font-semibold">Families</p>
+                              <p className="text-[9px] text-gray-400 uppercase font-semibold">
+                                {currentLanguage === 'en' ? 'Families' : currentLanguage === 'ur' ? 'خاندان' : 'परिवार'}
+                              </p>
                               <p className="text-xs font-bold font-mono text-[#004B23]">{d.familiesCount}</p>
                             </div>
                             <div>
-                              <p className="text-[9px] text-gray-400 uppercase font-semibold">Members</p>
+                              <p className="text-[9px] text-gray-400 uppercase font-semibold">
+                                {currentLanguage === 'en' ? 'Members' : currentLanguage === 'ur' ? 'ارکان' : 'सदस्य'}
+                              </p>
                               <p className="text-xs font-bold font-mono text-gray-800">{d.membersCount}</p>
                             </div>
                           </div>
                         </div>
 
-                        <div className="mt-4 pt-3 flex items-center justify-between border-t border-gray-50 text-[10px] font-bold text-[#D4AF37] uppercase group-hover:text-[#004B23] transition-colors">
+                        <div className="mt-4 pt-3 flex items-center justify-between border-t border-gray-50 text-[10px] font-bold text-[#F4C430] uppercase group-hover:text-[#004B23] transition-colors">
                           <span>View Regional Census</span>
                           <ChevronRight className="h-4 w-4 transform group-hover:translate-x-1 transition-transform" />
                         </div>
@@ -924,10 +1015,10 @@ export default function AreasModule({ currentLanguage }: AreasModuleProps) {
               <div className="lg:col-span-4 bg-white border border-gray-200 rounded-2xl p-5 space-y-4">
                 <div className="flex items-center justify-between border-b border-gray-50 pb-3">
                   <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest font-mono">
-                    Tehsils of {currentLanguage === 'en' ? districts.find(x => x.id === activeDistrictId)?.nameEn : districts.find(x => x.id === activeDistrictId)?.nameHi}
+                    {currentLanguage === 'en' ? 'Tehsils of ' : currentLanguage === 'ur' ? 'تحصیلیں برائے ' : 'तहसीलें: '}{translate(districts.find(x => x.id === activeDistrictId), 'name', currentLanguage)}
                   </h4>
                   <span className="text-[10px] font-bold font-mono bg-emerald-50 text-emerald-800 px-2 py-0.5 rounded-full">
-                    {activeTehsils.length} Total
+                    {activeTehsils.length} {currentLanguage === 'en' ? 'Total' : currentLanguage === 'ur' ? 'کل' : 'कुल'}
                   </span>
                 </div>
 
@@ -947,10 +1038,53 @@ export default function AreasModule({ currentLanguage }: AreasModuleProps) {
                             const firstV = villages.find(v => v.tehsilId === t.id);
                             if (firstV) setActiveVillageId(firstV.id);
                           }}
-                          className={`p-3 rounded-xl border text-xs font-semibold cursor-pointer transition flex items-center justify-between ${isSelected ? 'bg-gradient-to-r from-emerald-50 to-white border-[#004B23] text-[#004B23] font-bold shadow-sm' : 'border-gray-100 text-gray-700 hover:bg-gray-50'}`}
+                          className={`p-3 rounded-xl border text-xs cursor-pointer transition flex flex-col space-y-2 ${isSelected ? 'bg-gradient-to-r from-emerald-50 to-white border-[#004B23] text-[#004B23] font-bold shadow-sm' : 'border-gray-100 text-gray-700 hover:bg-gray-50 font-semibold'}`}
                         >
-                          <span>{currentLanguage === 'en' ? t.nameEn : t.nameHi}</span>
-                          <ChevronRight className="h-4 w-4 text-gray-300" />
+                          <div className="flex items-center justify-between w-full">
+                            <span>{translate(t, 'name', currentLanguage)}</span>
+                            <ChevronRight className="h-4 w-4 text-gray-300" />
+                          </div>
+                          {isSelected && (t.presidentEn || t.presidentHi) && (
+                            <div className="border-t border-emerald-100 pt-2 w-full space-y-1 text-[11px] text-gray-600 font-normal">
+                              <p className="flex justify-between items-center">
+                                <span className="text-gray-400">
+                                  {currentLanguage === 'en' ? 'President:' : currentLanguage === 'ur' ? 'صدر:' : 'अध्यक्ष (सदर):'}
+                                </span>
+                                <span className="font-extrabold text-[#004B23]">{translate(t, 'president', currentLanguage)}</span>
+                              </p>
+                              {t.presidentFatherEn && (
+                                <p className="flex justify-between items-center text-[10px] text-gray-500 italic pl-3">
+                                  <span>{currentLanguage === 'en' ? "Father's Name:" : 'पिता का नाम:'}</span>
+                                  <span>{translate(t, 'presidentFather', currentLanguage)}</span>
+                                </p>
+                              )}
+                              {t.presidentMobile && (
+                                <div className="space-y-1 mt-1 pl-3">
+                                  <p className="flex justify-between items-center text-[10px] text-gray-500">
+                                    <span>{currentLanguage === 'en' ? 'Mobile:' : 'मोबाइल:'}</span>
+                                    <span className="font-mono text-emerald-700 font-semibold">{t.presidentMobile ? t.presidentMobile.replace(/(\d{5})\d{5}/, '$1XXXXX') : 'N/A'}</span>
+                                  </p>
+                                  <div className="flex justify-end">
+                                    <a
+                                      href={`https://wa.me/${t.presidentMobile.replace(/\D/g, '')}`}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="inline-flex items-center space-x-1.5 bg-[#25D366] hover:bg-[#128C7E] text-white px-2 py-0.5 rounded text-[9px] font-bold shadow-sm transition"
+                                    >
+                                      <MessageSquare className="h-3 w-3" />
+                                      <span>WhatsApp</span>
+                                    </a>
+                                  </div>
+                                </div>
+                              )}
+                              {t.presidentOccupationEn && (
+                                <p className="flex justify-between items-center text-[10px] text-gray-500 pl-3">
+                                  <span>{currentLanguage === 'en' ? 'Occupation:' : 'व्यवसाय:'}</span>
+                                  <span>{translate(t, 'presidentOccupation', currentLanguage)}</span>
+                                </p>
+                              )}
+                            </div>
+                          )}
                         </div>
                       );
                     })}
@@ -962,10 +1096,10 @@ export default function AreasModule({ currentLanguage }: AreasModuleProps) {
               <div className="lg:col-span-4 bg-white border border-gray-200 rounded-2xl p-5 space-y-4">
                 <div className="flex items-center justify-between border-b border-gray-50 pb-3">
                   <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest font-mono">
-                    Villages & Wards Index
+                    {currentLanguage === 'en' ? 'Villages & Wards Index' : currentLanguage === 'ur' ? 'دیہات اور وارڈ انڈیکس' : 'ग्राम व वार्ड सूचकांक'}
                   </h4>
                   <span className="text-[10px] font-bold font-mono bg-emerald-50 text-emerald-800 px-2 py-0.5 rounded-full">
-                    {activeVillages.length} Total
+                    {activeVillages.length} {currentLanguage === 'en' ? 'Total' : currentLanguage === 'ur' ? 'کل' : 'कुल'}
                   </span>
                 </div>
 
@@ -981,15 +1115,58 @@ export default function AreasModule({ currentLanguage }: AreasModuleProps) {
                         <div
                           key={v.id}
                           onClick={() => setActiveVillageId(v.id)}
-                          className={`p-3 rounded-xl border text-xs cursor-pointer transition flex items-center justify-between ${isSelected ? 'bg-gradient-to-r from-emerald-50 to-white border-[#004B23] text-[#004B23] font-bold shadow-sm' : 'border-gray-100 text-gray-700 hover:bg-gray-50'}`}
+                          className={`p-3 rounded-xl border text-xs cursor-pointer transition flex flex-col space-y-2 ${isSelected ? 'bg-gradient-to-r from-emerald-50 to-white border-[#004B23] text-[#004B23] font-bold shadow-sm' : 'border-gray-100 text-gray-700 hover:bg-gray-50 font-semibold'}`}
                         >
-                          <div>
-                            <p className="font-bold">{currentLanguage === 'en' ? v.nameEn : v.nameHi}</p>
-                            <p className="text-[10px] font-mono text-gray-400 mt-0.5">PIN: {v.pincode}</p>
+                          <div className="flex items-center justify-between w-full">
+                            <div>
+                              <p className="font-bold">{translate(v, 'name', currentLanguage)}</p>
+                              <p className="text-[10px] font-mono text-gray-400 mt-0.5 font-normal">PIN: {v.pincode}</p>
+                            </div>
+                            <span className="text-[10px] font-mono text-gray-500 bg-gray-50 border border-gray-100 px-2 py-0.5 rounded font-normal">
+                              {v.familiesCount} Fam
+                            </span>
                           </div>
-                          <span className="text-[10px] font-mono text-gray-500 bg-gray-50 border border-gray-100 px-2 py-0.5 rounded">
-                            {v.familiesCount} Fam
-                          </span>
+                          {isSelected && (v.presidentEn || v.presidentHi) && (
+                            <div className="border-t border-emerald-100 pt-2 w-full space-y-1 text-[11px] text-gray-600 font-normal">
+                              <p className="flex justify-between items-center">
+                                <span className="text-gray-400">
+                                  {currentLanguage === 'en' ? 'President:' : currentLanguage === 'ur' ? 'صدر:' : 'अध्यक्ष (सदर):'}
+                                </span>
+                                <span className="font-extrabold text-[#004B23]">{translate(v, 'president', currentLanguage)}</span>
+                              </p>
+                              {v.presidentFatherEn && (
+                                <p className="flex justify-between items-center text-[10px] text-gray-500 italic pl-3">
+                                  <span>{currentLanguage === 'en' ? "Father's Name:" : 'पिता का नाम:'}</span>
+                                  <span>{translate(v, 'presidentFather', currentLanguage)}</span>
+                                </p>
+                              )}
+                              {v.presidentMobile && (
+                                <div className="space-y-1 mt-1 pl-3">
+                                  <p className="flex justify-between items-center text-[10px] text-gray-500">
+                                    <span>{currentLanguage === 'en' ? 'Mobile:' : 'मोबाइल:'}</span>
+                                    <span className="font-mono text-emerald-700 font-semibold">{v.presidentMobile ? v.presidentMobile.replace(/(\d{5})\d{5}/, '$1XXXXX') : 'N/A'}</span>
+                                  </p>
+                                  <div className="flex justify-end">
+                                    <a
+                                      href={`https://wa.me/${v.presidentMobile.replace(/\D/g, '')}`}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="inline-flex items-center space-x-1.5 bg-[#25D366] hover:bg-[#128C7E] text-white px-2 py-0.5 rounded text-[9px] font-bold shadow-sm transition"
+                                    >
+                                      <MessageSquare className="h-3 w-3" />
+                                      <span>WhatsApp</span>
+                                    </a>
+                                  </div>
+                                </div>
+                              )}
+                              {v.presidentOccupationEn && (
+                                <p className="flex justify-between items-center text-[10px] text-gray-500 pl-3">
+                                  <span>{currentLanguage === 'en' ? 'Occupation:' : 'व्यवसाय:'}</span>
+                                  <span>{translate(v, 'presidentOccupation', currentLanguage)}</span>
+                                </p>
+                              )}
+                            </div>
+                          )}
                         </div>
                       );
                     })}
@@ -1001,16 +1178,16 @@ export default function AreasModule({ currentLanguage }: AreasModuleProps) {
               <div className="lg:col-span-4 bg-white border border-gray-200 rounded-2xl p-5 space-y-4">
                 <div className="flex items-center justify-between border-b border-gray-50 pb-3">
                   <h4 className="text-xs font-bold text-gray-400 uppercase tracking-widest font-mono">
-                    Local Representative Census
+                    {currentLanguage === 'en' ? 'Local Representative Census' : currentLanguage === 'ur' ? 'مقامی نمائندہ مردم شماری' : 'स्थानीय प्रतिनिधि जनगणना'}
                   </h4>
-                  <span className="text-[10px] font-bold font-mono bg-[#D4AF37]/10 text-[#004B23] px-2 py-0.5 rounded-full">
-                    {activeMembersList.length} Verified
+                  <span className="text-[10px] font-bold font-mono bg-[#F4C430]/10 text-[#004B23] px-2 py-0.5 rounded-full">
+                    {activeMembersList.length} {currentLanguage === 'en' ? 'Verified' : currentLanguage === 'ur' ? 'تصدیق شدہ' : 'सत्यापित'}
                   </span>
                 </div>
 
                 {activeMembersList.length === 0 ? (
                   <div className="text-center p-8 text-xs text-gray-400 space-y-2">
-                    <AlertCircle className="h-8 w-8 text-[#D4AF37] mx-auto opacity-60 animate-pulse" />
+                    <AlertCircle className="h-8 w-8 text-[#F4C430] mx-auto opacity-60 animate-pulse" />
                     <p>No verified members mapped here. Join digital census to display profiles.</p>
                   </div>
                 ) : (
@@ -1018,17 +1195,17 @@ export default function AreasModule({ currentLanguage }: AreasModuleProps) {
                     {activeMembersList.map(m => (
                       <div key={m.id} className="p-3 bg-gray-50 border border-gray-100 rounded-xl space-y-2 text-xs">
                         <div className="flex justify-between items-center">
-                          <p className="font-bold text-[#004B23]">{currentLanguage === 'en' ? m.nameEn : m.nameHi}</p>
+                          <p className="font-bold text-[#004B23]">{translate(m, 'name', currentLanguage)}</p>
                           <span className="text-[9px] font-mono text-gray-400">{m.id}</span>
                         </div>
                         <div className="grid grid-cols-2 gap-2 text-[10px] text-gray-500">
-                          <p>🎓 {currentLanguage === 'en' ? m.educationEn : m.educationHi}</p>
-                          <p>💼 {currentLanguage === 'en' ? m.occupationEn : m.occupationHi}</p>
+                          <p>🎓 {translate(m, 'education', currentLanguage)}</p>
+                          <p>💼 {translate(m, 'occupation', currentLanguage)}</p>
                         </div>
                         <div className="flex flex-wrap gap-1.5 pt-1">
-                          {m.isBloodDonor && <span className="bg-red-50 text-red-700 text-[8px] font-bold px-1.5 py-0.5 rounded border border-red-100 uppercase">Blood Donor</span>}
-                          {m.isBusinessOwner && <span className="bg-amber-50 text-amber-700 text-[8px] font-bold px-1.5 py-0.5 rounded border border-amber-100 uppercase font-mono">Business Owner</span>}
-                          {m.isStudent && <span className="bg-blue-50 text-blue-700 text-[8px] font-bold px-1.5 py-0.5 rounded border border-blue-100 uppercase">Student</span>}
+                          {m.isBloodDonor && <span className="bg-red-50 text-red-700 text-[8px] font-bold px-1.5 py-0.5 rounded border border-red-100 uppercase">{currentLanguage === 'en' ? 'Blood Donor' : currentLanguage === 'ur' ? 'خون عطیہ دہندہ' : 'रक्तदाता'}</span>}
+                          {m.isBusinessOwner && <span className="bg-amber-50 text-amber-700 text-[8px] font-bold px-1.5 py-0.5 rounded border border-amber-100 uppercase font-mono">{currentLanguage === 'en' ? 'Business Owner' : currentLanguage === 'ur' ? 'व्यवसायी' : 'कारوباری مالک'}</span>}
+                          {m.isStudent && <span className="bg-blue-50 text-blue-700 text-[8px] font-bold px-1.5 py-0.5 rounded border border-blue-100 uppercase">{currentLanguage === 'en' ? 'Student' : currentLanguage === 'ur' ? 'طالب علم' : 'छात्र'}</span>}
                         </div>
                       </div>
                     ))}
@@ -1048,17 +1225,17 @@ export default function AreasModule({ currentLanguage }: AreasModuleProps) {
               
               {/* GIS Left: Custom Interactive SVG Vector Map of India representation */}
               <div className="lg:col-span-7 flex flex-col items-center space-y-4">
-                <div className="w-full max-w-[500px] aspect-square bg-gradient-to-b from-emerald-950 via-emerald-900 to-emerald-950 rounded-2xl border-2 border-[#D4AF37]/30 relative p-6 flex flex-col justify-between overflow-hidden shadow-2xl">
+                <div className="w-full max-w-[500px] aspect-square bg-gradient-to-b from-emerald-950 via-emerald-900 to-emerald-950 rounded-2xl border-2 border-[#F4C430]/30 relative p-6 flex flex-col justify-between overflow-hidden shadow-2xl">
                   
                   {/* Decorative background Islamic grid inside map stage */}
-                  <div className="absolute inset-0 opacity-[0.03] bg-[radial-gradient(#D4AF37_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none"></div>
+                  <div className="absolute inset-0 opacity-[0.03] bg-[radial-gradient(#F4C430_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none"></div>
 
                   <div className="flex justify-between items-start z-10">
                     <div>
-                      <span className="text-[10px] font-mono font-bold text-[#D4AF37] uppercase tracking-widest">Interactive GIS Map Stage</span>
+                      <span className="text-[10px] font-mono font-bold text-[#F4C430] uppercase tracking-widest">Interactive GIS Map Stage</span>
                       <h4 className="text-sm font-serif font-bold text-white mt-0.5">Click State Node to Drill Census</h4>
                     </div>
-                    <span className="text-[9px] font-bold bg-[#D4AF37]/20 text-[#D4AF37] border border-[#D4AF37]/40 px-2 py-0.5 rounded-full uppercase">
+                    <span className="text-[9px] font-bold bg-[#F4C430]/20 text-[#F4C430] border border-[#F4C430]/40 px-2 py-0.5 rounded-full uppercase">
                       Vector Representation
                     </span>
                   </div>
@@ -1077,7 +1254,7 @@ export default function AreasModule({ currentLanguage }: AreasModuleProps) {
                     <div className="absolute top-[48%] left-[45%] z-20">
                       <button
                         onClick={() => { setActiveStateId('MP'); triggerNotification('Selected Madhya Pradesh Map Node'); }}
-                        className={`w-12 h-12 rounded-full flex flex-col items-center justify-center transition-all duration-300 ${activeStateId === 'MP' ? 'bg-[#D4AF37] text-emerald-950 scale-125 shadow-2xl shadow-[#D4AF37]' : 'bg-emerald-800 hover:bg-emerald-700 text-white shadow-md'}`}
+                        className={`w-12 h-12 rounded-full flex flex-col items-center justify-center transition-all duration-300 ${activeStateId === 'MP' ? 'bg-[#F4C430] text-emerald-950 scale-125 shadow-2xl shadow-[#F4C430]' : 'bg-emerald-800 hover:bg-emerald-700 text-white shadow-md'}`}
                       >
                         <span className="text-[9px] font-extrabold uppercase font-mono">MP</span>
                         <span className="text-[7px] block">14.2k</span>
@@ -1087,7 +1264,7 @@ export default function AreasModule({ currentLanguage }: AreasModuleProps) {
                     <div className="absolute top-[35%] left-[28%] z-20">
                       <button
                         onClick={() => { setActiveStateId('RJ'); triggerNotification('Selected Rajasthan Map Node'); }}
-                        className={`w-12 h-12 rounded-full flex flex-col items-center justify-center transition-all duration-300 ${activeStateId === 'RJ' ? 'bg-[#D4AF37] text-emerald-950 scale-125 shadow-2xl shadow-[#D4AF37]' : 'bg-emerald-800 hover:bg-emerald-700 text-white shadow-md'}`}
+                        className={`w-12 h-12 rounded-full flex flex-col items-center justify-center transition-all duration-300 ${activeStateId === 'RJ' ? 'bg-[#F4C430] text-emerald-950 scale-125 shadow-2xl shadow-[#F4C430]' : 'bg-emerald-800 hover:bg-emerald-700 text-white shadow-md'}`}
                       >
                         <span className="text-[9px] font-extrabold uppercase font-mono">RJ</span>
                         <span className="text-[7px] block">17.5k</span>
@@ -1097,7 +1274,7 @@ export default function AreasModule({ currentLanguage }: AreasModuleProps) {
                     <div className="absolute top-[38%] left-[55%] z-20">
                       <button
                         onClick={() => { setActiveStateId('UP'); triggerNotification('Selected Uttar Pradesh Map Node'); }}
-                        className={`w-12 h-12 rounded-full flex flex-col items-center justify-center transition-all duration-300 ${activeStateId === 'UP' ? 'bg-[#D4AF37] text-emerald-950 scale-125 shadow-2xl shadow-[#D4AF37]' : 'bg-emerald-800 hover:bg-emerald-700 text-white shadow-md'}`}
+                        className={`w-12 h-12 rounded-full flex flex-col items-center justify-center transition-all duration-300 ${activeStateId === 'UP' ? 'bg-[#F4C430] text-emerald-950 scale-125 shadow-2xl shadow-[#F4C430]' : 'bg-emerald-800 hover:bg-emerald-700 text-white shadow-md'}`}
                       >
                         <span className="text-[9px] font-extrabold uppercase font-mono">UP</span>
                         <span className="text-[7px] block">10.4k</span>
@@ -1107,7 +1284,7 @@ export default function AreasModule({ currentLanguage }: AreasModuleProps) {
                     <div className="absolute top-[60%] left-[38%] z-20">
                       <button
                         onClick={() => { setActiveStateId('MH'); triggerNotification('Selected Maharashtra Map Node'); }}
-                        className={`w-12 h-12 rounded-full flex flex-col items-center justify-center transition-all duration-300 ${activeStateId === 'MH' ? 'bg-[#D4AF37] text-emerald-950 scale-125 shadow-2xl shadow-[#D4AF37]' : 'bg-emerald-800 hover:bg-emerald-700 text-white shadow-md'}`}
+                        className={`w-12 h-12 rounded-full flex flex-col items-center justify-center transition-all duration-300 ${activeStateId === 'MH' ? 'bg-[#F4C430] text-emerald-950 scale-125 shadow-2xl shadow-[#F4C430]' : 'bg-emerald-800 hover:bg-emerald-700 text-white shadow-md'}`}
                       >
                         <span className="text-[9px] font-extrabold uppercase font-mono">MH</span>
                         <span className="text-[7px] block">7.2k</span>
@@ -1115,14 +1292,14 @@ export default function AreasModule({ currentLanguage }: AreasModuleProps) {
                     </div>
 
                     <div className="absolute bottom-[20%] left-[50%] z-10 text-center">
-                      <p className="text-[9px] font-mono text-[#D4AF37]/50">Click State coordinates above to see real-time updates</p>
+                      <p className="text-[9px] font-mono text-[#F4C430]/50">Click State coordinates above to see real-time updates</p>
                     </div>
 
                   </div>
 
                   <div className="bg-emerald-950/80 p-3 rounded-xl border border-white/10 flex justify-between items-center text-xs">
                     <span className="text-emerald-200">Active Map Viewport:</span>
-                    <span className="font-bold text-[#D4AF37] font-mono">{currentBreadcrumb.state}</span>
+                    <span className="font-bold text-[#F4C430] font-mono">{currentBreadcrumb.state}</span>
                   </div>
 
                 </div>
@@ -1143,7 +1320,7 @@ export default function AreasModule({ currentLanguage }: AreasModuleProps) {
                     { label: 'Active Businesses', value: '560+', icon: <Briefcase className="h-5 w-5 text-[#004B23]" /> },
                     { label: 'Blood Donors', value: '380+ Vol', icon: <Heart className="h-5 w-5 text-red-600" /> },
                     { label: 'Local Events', value: '24 Scheduled', icon: <Calendar className="h-5 w-5 text-[#004B23]" /> },
-                    { label: 'Edu Scholarships', value: '185 Issued', icon: <Award className="h-5 w-5 text-[#D4AF37]" /> }
+                    { label: 'Edu Scholarships', value: '185 Issued', icon: <Award className="h-5 w-5 text-[#F4C430]" /> }
                   ].map((it, idx) => (
                     <div key={idx} className="bg-white border border-gray-150 p-4 rounded-xl flex items-center space-x-3 shadow-sm hover:shadow-md transition">
                       <div className="p-2.5 rounded-lg bg-gray-50">{it.icon}</div>
@@ -1191,7 +1368,7 @@ export default function AreasModule({ currentLanguage }: AreasModuleProps) {
 
             {/* Notification Block */}
             <div className="bg-amber-50 border border-amber-200 text-amber-900 p-4 rounded-xl flex items-start space-x-3">
-              <Info className="h-5 w-5 text-[#D4AF37] flex-shrink-0" />
+              <Info className="h-5 w-5 text-[#F4C430] flex-shrink-0" />
               <div>
                 <p className="font-bold uppercase tracking-wider text-[10px] mb-0.5">ADMIN MODE ACTIVE</p>
                 <p className="text-xs">Changes made in this console update the local database system. You can export the updated data model below to commit permanently.</p>
@@ -1518,9 +1695,9 @@ export default function AreasModule({ currentLanguage }: AreasModuleProps) {
                 <div className="space-y-4">
                   <button
                     onClick={handleExportData}
-                    className="w-full py-3 bg-gradient-to-r from-emerald-950 to-emerald-900 text-white rounded-xl font-bold uppercase tracking-wider flex items-center justify-center space-x-2 border border-[#D4AF37]/30 hover:border-[#D4AF37] hover:shadow-lg transition duration-300"
+                    className="w-full py-3 bg-gradient-to-r from-emerald-950 to-emerald-900 text-white rounded-xl font-bold uppercase tracking-wider flex items-center justify-center space-x-2 border border-[#F4C430]/30 hover:border-[#F4C430] hover:shadow-lg transition duration-300"
                   >
-                    <Download className="h-4 w-4 text-[#D4AF37]" />
+                    <Download className="h-4 w-4 text-[#F4C430]" />
                     <span>Export Census JSON Database</span>
                   </button>
 
@@ -1612,8 +1789,8 @@ export default function AreasModule({ currentLanguage }: AreasModuleProps) {
                 </pre>
               </div>
 
-              <div className="p-4 bg-[#D4AF37]/10 border border-[#D4AF37]/20 rounded-xl text-xs text-emerald-950 flex items-start space-x-3">
-                <Award className="h-5 w-5 text-[#D4AF37] flex-shrink-0" />
+              <div className="p-4 bg-[#F4C430]/10 border border-[#F4C430]/20 rounded-xl text-xs text-emerald-950 flex items-start space-x-3">
+                <Award className="h-5 w-5 text-[#F4C430] flex-shrink-0" />
                 <p className="leading-relaxed">
                   <strong>SEO Compliance Checklist Met:</strong> Includes proper Breadcrumb Schema mapping, OG (Open Graph) cards for WhatsApp/Facebook rich previews, and automated canonical URL path generators to avoid duplicate content blocks.
                 </p>
@@ -1623,11 +1800,11 @@ export default function AreasModule({ currentLanguage }: AreasModuleProps) {
         )}
 
         {/* Elegant traditional visual banner detailing future readiness */}
-        <div className="mt-16 bg-gradient-to-r from-emerald-950 to-emerald-900 text-white rounded-2xl p-8 border border-[#D4AF37]/20 relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-xl">
+        <div className="mt-16 bg-gradient-to-r from-emerald-950 to-emerald-900 text-white rounded-2xl p-8 border border-[#F4C430]/20 relative overflow-hidden flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-xl">
           <div className="absolute inset-0 opacity-[0.03] bg-[radial-gradient(#FFFFFF_1.2px,transparent_1.2px)] [background-size:16px_16px] pointer-events-none"></div>
           
           <div className="space-y-2 max-w-xl relative z-10">
-            <span className="text-[10px] font-mono font-bold text-[#D4AF37] tracking-widest uppercase">SCALABLE MULTI-MODULE EXPANSION READY</span>
+            <span className="text-[10px] font-mono font-bold text-[#F4C430] tracking-widest uppercase">SCALABLE MULTI-MODULE EXPANSION READY</span>
             <h4 className="text-xl sm:text-2xl font-serif font-extrabold text-white">Future-Proof Geographic Architecture</h4>
             <p className="text-xs text-emerald-200 leading-relaxed font-light">
               This node hierarchy is pre-configured to link with upcoming modules including dedicated Mohallas, verified Islamic schools, local blood banks, micro-business incubators, and central matrimonial registries seamlessly.
@@ -1640,7 +1817,7 @@ export default function AreasModule({ currentLanguage }: AreasModuleProps) {
               setAdminMode('bulk_import');
               triggerNotification('Switched to bulk loader panel.');
             }}
-            className="px-5 py-3 bg-[#D4AF37] hover:bg-[#C59B27] text-emerald-950 text-xs font-bold uppercase tracking-wider rounded-xl transition shadow-md whitespace-nowrap self-start md:self-center relative z-10"
+            className="px-5 py-3 bg-[#F4C430] hover:bg-[#FFDF66] text-emerald-950 text-xs font-bold uppercase tracking-wider rounded-xl transition shadow-md whitespace-nowrap self-start md:self-center relative z-10"
           >
             Manage Databases
           </button>

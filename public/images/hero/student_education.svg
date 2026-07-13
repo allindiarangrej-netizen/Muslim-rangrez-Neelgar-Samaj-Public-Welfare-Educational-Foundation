@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="100%" height="100%">
+  <defs>
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#021526" />
+      <stop offset="50%" stop-color="#03346E" />
+      <stop offset="100%" stop-color="#021526" />
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F5E396" />
+      <stop offset="50%" stop-color="#D4AF37" />
+      <stop offset="100%" stop-color="#AA8010" />
+    </linearGradient>
+    <pattern id="educationGrid" width="50" height="50" patternUnits="userSpaceOnUse">
+      <circle cx="25" cy="25" r="1.5" fill="#D4AF37" fill-opacity="0.15" />
+    </pattern>
+  </defs>
+  
+  <rect width="100%" height="100%" fill="url(#blueGrad)" />
+  <rect width="100%" height="100%" fill="url(#educationGrid)" />
+  
+  <g transform="translate(600, 320)" text-anchor="middle">
+    <!-- Stylized Book & Quill Emblem -->
+    <path d="M -60 -40 L 0 -70 L 60 -40 L 0 -10 Z" fill="none" stroke="url(#goldGrad)" stroke-width="4" />
+    <path d="M -60 -40 L -60 20 L 0 50 L 60 20 L 60 -40" fill="none" stroke="url(#goldGrad)" stroke-width="4" stroke-linejoin="round" />
+    <path d="M 0 -10 L 0 50" fill="none" stroke="url(#goldGrad)" stroke-width="2" />
+    <path d="M 15 -35 L 45 -45 L 35 -15" fill="none" stroke="url(#goldGrad)" stroke-width="2" />
+    
+    <!-- English Heading -->
+    <text y="150" font-family="'Cinzel', 'Georgia', serif" font-size="38" font-weight="bold" fill="#F5EFE6" letter-spacing="2">
+      SECURED STUDENT ACADEMIC SCHOLARSHIPS
+    </text>
+    <text y="200" font-family="'Cinzel', 'Georgia', serif" font-size="24" font-weight="600" fill="url(#goldGrad)" letter-spacing="4">
+      EDUCATION CELL & PROFESSIONAL HUB
+    </text>
+    
+    <!-- Hindi Heading -->
+    <text y="260" font-family="'Devanagari', sans-serif" font-size="32" font-weight="bold" fill="#F5EFE6">
+      मेधावी छात्रवृत्ति एवं तकनीकी साक्षरता मिशन
+    </text>
+    <text y="300" font-family="'Devanagari', sans-serif" font-size="20" font-weight="500" fill="#D4AF37">
+      आधुनिक कंप्यूटर लैब • उच्च शिक्षा अनुदान • उज्जवल भविष्य
+    </text>
+  </g>
+</svg>

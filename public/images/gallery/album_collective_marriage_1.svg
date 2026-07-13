@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" height="100%">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4A001E" />
+      <stop offset="100%" stop-color="#2D0012" />
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F5E396" />
+      <stop offset="100%" stop-color="#D4AF37" />
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#g)" />
+  <g transform="translate(400, 260)" text-anchor="middle">
+    <!-- Wedding Ring / Flower Knot Icon -->
+    <circle cx="-15" cy="0" r="30" fill="none" stroke="url(#gold)" stroke-width="4" />
+    <circle cx="15" cy="0" r="30" fill="none" stroke="url(#gold)" stroke-width="4" />
+    <text y="140" font-family="serif" font-size="28" font-weight="bold" fill="#FFF">ANNUAL COLLECTIVE MARRIAGE SAMMELAN</text>
+    <text y="180" font-family="serif" font-size="18" fill="url(#gold)" letter-spacing="2">DOWRY-FREE COMMUNITY WEDDINGS</text>
+  </g>
+</svg>
