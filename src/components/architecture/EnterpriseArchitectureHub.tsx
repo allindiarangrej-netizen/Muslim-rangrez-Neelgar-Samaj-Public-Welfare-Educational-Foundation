@@ -14,7 +14,7 @@ import {
   Printer, FileSpreadsheet, Globe, Smartphone, Mail, MessageSquare, Zap
 } from 'lucide-react';
 import { 
-  AuthService, UserRole, UserSession, DEMO_ACCOUNTS, ROLE_PERMISSIONS,
+  AuthService, UserRole, UserSession, ROLE_PERMISSIONS,
   DBService, DatabaseSchema,
   ReportEngine, ReportModule, GeneratedReport,
   MediaService, MediaAssetItem, MediaCategory,

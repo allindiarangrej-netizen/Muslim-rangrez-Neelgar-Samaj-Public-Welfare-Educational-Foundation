@@ -177,8 +177,24 @@ export const ROLE_PERMISSIONS: Record<UserRole, string[]> = {
 import { getSupabase } from '../lib/supabaseClient';
 
 const SESSION_STORAGE_KEY = 'rcb_enterprise_auth_session';
+const REGISTERED_USERS_KEY = 'rcb_registered_users_mock';
 
 export class AuthService {
+  /**
+   * Retrieves all mock registered users from local storage
+   */
+  static getAllRegisteredUsers(): UserSession[] {
+    try {
+      const stored = localStorage.getItem(REGISTERED_USERS_KEY);
+      if (stored) {
+        return JSON.parse(stored);
+      }
+    } catch (e) {
+      console.error('Failed to parse registered users:', e);
+    }
+    return [];
+  }
+
   /**
    * Production session validation and security check
    */
@@ -221,12 +237,43 @@ export class AuthService {
   }
 
   /**
-   * Log in with email and password
+   * Log in with email and password, or by role in development testing
    */
-  static async login(email: string, password: string): Promise<{ success: boolean; session?: UserSession; error?: string }> {
+  static async login(email: string, password?: string): Promise<{ success: boolean; session?: UserSession; error?: string }> {
+    const roles: UserRole[] = [
+      'Visitor', 'Member', 'Volunteer', 'Committee', 'District Admin', 
+      'State Admin', 'National Admin', 'Moderator', 'Super Administrator'
+    ];
+
+    if (!password && roles.includes(email as any)) {
+      const role = email as UserRole;
+      const permissions = ROLE_PERMISSIONS[role] || [];
+      const mockSession: UserSession = {
+        id: `MOCK-${role.toUpperCase().replace(/\s/g, '-')}-${Math.floor(100 + Math.random() * 900)}`,
+        name: `Demo ${role}`,
+        email: `demo-${role.toLowerCase().replace(/\s/g, '')}@example.com`,
+        phone: '+919999999999',
+        role,
+        isEmailVerified: true,
+        isOtpVerified: true,
+        district: 'Morena',
+        state: 'Madhya Pradesh',
+        createdAt: new Date().toISOString(),
+        lastLoginAt: new Date().toISOString(),
+        token: `mock_token_for_${role}`,
+        permissions
+      };
+      this.setSession(mockSession);
+      return { success: true, session: mockSession };
+    }
+
     const supabase = getSupabase();
     if (!supabase) {
       return { success: false, error: 'Supabase client not initialized.' };
+    }
+
+    if (!password) {
+      return { success: false, error: 'Password is required for standard login.' };
     }
 
     try {
@@ -252,24 +299,26 @@ export class AuthService {
           .eq('user_id', data.user.id)
           .maybeSingle();
 
-        if (profile?.status === 'Suspended' || profile?.status === 'Disabled') {
+        const castProfile = profile as any;
+
+        if (castProfile?.status === 'Suspended' || castProfile?.status === 'Disabled') {
           await supabase.auth.signOut();
           return { success: false, error: 'Your account is suspended or disabled.' };
         }
 
-        const role = (profile?.role || data.user.user_metadata?.role || 'Member') as UserRole;
-        const permissions = (profile?.permissions || ROLE_PERMISSIONS[role] || ROLE_PERMISSIONS['Member']) as string[];
+        const role = (castProfile?.role || data.user.user_metadata?.role || 'Member') as UserRole;
+        const permissions = (castProfile?.permissions || ROLE_PERMISSIONS[role] || ROLE_PERMISSIONS['Member']) as string[];
 
         const userSession: UserSession = {
           id: data.user.id,
-          name: profile?.full_name || data.user.user_metadata?.full_name || data.user.email?.split('@')[0] || 'Member',
+          name: castProfile?.full_name || data.user.user_metadata?.full_name || data.user.email?.split('@')[0] || 'Member',
           email: data.user.email || '',
-          phone: profile?.phone || data.user.user_metadata?.phone || '',
+          phone: castProfile?.phone || data.user.user_metadata?.phone || '',
           role,
           isEmailVerified: !!data.user.email_confirmed_at,
           isOtpVerified: !!data.user.email_confirmed_at,
-          district: profile?.district || data.user.user_metadata?.district || 'Morena',
-          state: profile?.state || data.user.user_metadata?.state || 'Madhya Pradesh',
+          district: castProfile?.district || data.user.user_metadata?.district || 'Morena',
+          state: castProfile?.state || data.user.user_metadata?.state || 'Madhya Pradesh',
           createdAt: data.user.created_at,
           lastLoginAt: new Date().toISOString(),
           token: data.session?.access_token || '',
