@@ -158,6 +158,9 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showLoginPassword, setShowLoginPassword] = useState(false);
 
+  // Email verification sending state
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
+
   // Simulated registration form state
   const [formData, setFormData] = useState({
     name: '',
@@ -190,7 +193,36 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
     otpInput: ''
   });
 
+  // Password Validation Criteria and Strength
+  const passwordCriteria = useMemo(() => {
+    const password = formData.password || '';
+    return {
+      hasMinLength: password.length >= 8,
+      hasUppercase: /[A-Z]/.test(password),
+      hasLowercase: /[a-z]/.test(password),
+      hasNumber: /[0-9]/.test(password),
+      hasSpecial: /[^A-Za-z0-9]/.test(password),
+    };
+  }, [formData.password]);
+
+  const passwordStrength = useMemo(() => {
+    let score = 0;
+    if (passwordCriteria.hasMinLength) score += 20;
+    if (passwordCriteria.hasUppercase) score += 20;
+    if (passwordCriteria.hasLowercase) score += 20;
+    if (passwordCriteria.hasNumber) score += 20;
+    if (passwordCriteria.hasSpecial) score += 20;
+    return score;
+  }, [passwordCriteria]);
+
   const isMandatoryFieldsCompleted = useMemo(() => {
+    const isPasswordSecure = !!user ? true : (
+      passwordStrength === 100 &&
+      !!formData.password &&
+      !!formData.confirmPassword &&
+      formData.password === formData.confirmPassword
+    );
+
     return (
       !!formData.name?.trim() &&
       !!formData.fatherName?.trim() &&
@@ -202,9 +234,9 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
       !!formData.tehsilId &&
       !!formData.city?.trim() &&
       !!formData.email?.trim() &&
-      (!!user ? true : (!!formData.password && !!formData.confirmPassword && formData.password === formData.confirmPassword))
+      isPasswordSecure
     );
-  }, [formData, user]);
+  }, [formData, user, passwordStrength]);
 
   // Dynamic Volunteer Selection
   const activeVolunteer = useMemo(() => {
@@ -306,27 +338,31 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
     if (!supabase) return;
 
     const checkSession = async () => {
-      // Fetch latest user data from the server (forces network request to get latest email_confirmed_at status)
-      const { data: { user: latestUser } } = await supabase.auth.getUser();
-      if (latestUser && latestUser.email === formData.email) {
-        const isVerified = !!latestUser.email_confirmed_at;
-        if (isVerified) {
-          setFormData(prev => ({ ...prev, emailVerified: true }));
+      try {
+        const { data: { session: activeSession }, error: sessionError } = await supabase.auth.getSession();
+        if (sessionError) {
+          console.error('Error fetching session in poll:', sessionError);
           return;
         }
-      }
 
-      // Fallback: check session cache
-      const { data: { session: activeSession } } = await supabase.auth.getSession();
-      if (activeSession?.user && activeSession.user.email === formData.email) {
-        const isVerified = !!activeSession.user.email_confirmed_at;
-        if (isVerified) {
-          setFormData(prev => ({ ...prev, emailVerified: true }));
-        } else {
+        if (activeSession?.user && activeSession.user.email === formData.email) {
+          const isVerified = !!activeSession.user.email_confirmed_at;
+          if (isVerified) {
+            setFormData(prev => ({ ...prev, emailVerified: true }));
+          } else {
+            // Fetch fresh user object from server to bypass stale cache
+            const { data: { user: freshUser }, error: userError } = await supabase.auth.getUser();
+            if (!userError && freshUser && freshUser.email === formData.email && freshUser.email_confirmed_at) {
+              setFormData(prev => ({ ...prev, emailVerified: true }));
+            } else {
+              setFormData(prev => ({ ...prev, emailVerified: false }));
+            }
+          }
+        } else if (!user) {
           setFormData(prev => ({ ...prev, emailVerified: false }));
         }
-      } else if (!user) {
-        setFormData(prev => ({ ...prev, emailVerified: false }));
+      } catch (err) {
+        console.error("Session check error:", err);
       }
     };
     checkSession();
@@ -368,51 +404,48 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
       alert(currentLanguage === 'en' ? 'Please choose a Password first.' : 'कृपया पहले एक पासवर्ड चुनें।');
       return;
     }
-    if (formData.password.length < 6) {
-      alert(currentLanguage === 'en' ? 'Password must be at least 6 characters long.' : 'पासवर्ड कम से कम 6 अक्षरों का होना चाहिए।');
+
+    // Direct password criteria verification before sending
+    const isPasswordSecure = 
+      formData.password.length >= 8 &&
+      /[A-Z]/.test(formData.password) &&
+      /[a-z]/.test(formData.password) &&
+      /[0-9]/.test(formData.password) &&
+      /[^A-Za-z0-9]/.test(formData.password);
+
+    if (!isPasswordSecure) {
+      alert(currentLanguage === 'en' 
+        ? 'Password must meet all strength requirements: 8+ characters, uppercase, lowercase, number, and special character.' 
+        : 'पासवर्ड को सभी शक्ति आवश्यकताओं को पूरा करना चाहिए: 8+ अक्षर, बड़ा अक्षर, छोटा अक्षर, संख्या और विशेष वर्ण।');
+      return;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      alert(currentLanguage === 'en' ? 'Passwords do not match.' : 'पासवर्ड मेल नहीं खाते।');
       return;
     }
 
     if (!supabase) {
-      // Allow simulated verification for testing in environments without Supabase configured
-      setEmailVerificationError(null);
-      setEmailVerifyTimer(15);
-      setEmailVerifySent(true);
-      alert(currentLanguage === 'en' 
-        ? 'Supabase is not configured. Initiating simulated email verification for testing...' 
-        : 'सुपारी कॉन्फ़िगर नहीं है। परीक्षण के लिए नकली ईमेल सत्यापन शुरू किया जा रहा है...');
-      setTimeout(() => {
-        setFormData(prev => ({ ...prev, emailVerified: true }));
-        alert(currentLanguage === 'en' ? 'Simulated email verified successfully!' : 'नकली ईमेल सफलतापूर्वक सत्यापित हो गया!');
-      }, 3000);
+      const errMsg = currentLanguage === 'en'
+        ? 'Supabase environment variables (VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY) are not set. Real authentication is required.'
+        : 'सुपारी वातावरण चर (VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY) सेट नहीं हैं। वास्तविक प्रमाणीकरण की आवश्यकता है।';
+      setEmailVerificationError(errMsg);
+      alert(errMsg);
       return;
     }
 
-    try {
-      setEmailVerificationError(null);
-      setEmailVerifyTimer(60);
-      const timer = setInterval(() => {
-        setEmailVerifyTimer((prev) => {
-          if (prev <= 1) {
-            clearInterval(timer);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
+    setIsSendingEmail(true);
+    setEmailVerificationError(null);
 
-      // Determine redirect URL based on hostname
-      const isProdDomain = window.location.hostname.includes('rangrezcommunity.org');
+    try {
+      const redirectUrl = `${window.location.origin}/auth/callback`;
       const signUpOptions: any = {
+        emailRedirectTo: redirectUrl,
         data: {
           full_name: formData.name,
           phone: formData.phone,
         }
       };
-
-      if (isProdDomain) {
-        signUpOptions.emailRedirectTo = `https://rangrezcommunity.org/auth/callback`;
-      }
 
       // Attempt standard signUp to register the user and send verification email
       const { data: signUpData, error } = await supabase.auth.signUp({
@@ -429,15 +462,12 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
           error.message.includes('already been registered') ||
           error.message.includes('email_exists')
         ) {
-          const resendOptions: any = {};
-          if (isProdDomain) {
-            resendOptions.emailRedirectTo = `https://rangrezcommunity.org/auth/callback`;
-          }
-
           const { error: resendError } = await supabase.auth.resend({
             type: 'signup',
             email: formData.email,
-            options: resendOptions
+            options: {
+              emailRedirectTo: redirectUrl
+            }
           });
 
           if (resendError) {
@@ -457,8 +487,19 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
           }
           
           setEmailVerifySent(true);
+          setEmailVerifyTimer(60);
+          const timer = setInterval(() => {
+            setEmailVerifyTimer((prev) => {
+              if (prev <= 1) {
+                clearInterval(timer);
+                return 0;
+              }
+              return prev - 1;
+            });
+          }, 1000);
+
           alert(currentLanguage === 'en' 
-            ? 'Verification link sent successfully. Please check your Inbox and Spam folder.' 
+            ? 'Verification email sent successfully. Please check your Inbox and Spam folder.' 
             : 'सत्यापन लिंक सफलतापूर्वक भेजा गया। कृपया अपना इनबॉक्स और स्पैम फ़ोल्डर जांचें।');
           return;
         }
@@ -475,14 +516,27 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
       }
 
       setEmailVerifySent(true);
+      setEmailVerifyTimer(60);
+      const timer = setInterval(() => {
+        setEmailVerifyTimer((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
       alert(currentLanguage === 'en' 
-        ? 'Verification link sent successfully. Please check your Inbox and Spam folder.' 
+        ? 'Verification email sent successfully. Please check your Inbox and Spam folder.' 
         : 'सत्यापन लिंक सफलतापूर्वक भेजा गया। कृपया अपना इनबॉक्स और स्पैम फ़ोल्डर जांचें।');
     } catch (err: any) {
       console.error("Email verification error:", err);
       const errMsg = err.message || String(err);
       setEmailVerificationError(errMsg);
       alert(errMsg);
+    } finally {
+      setIsSendingEmail(false);
     }
   };
 
@@ -1524,6 +1578,72 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
                         {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </button>
                     </div>
+
+                    {/* Password Strength Indicator */}
+                    {formData.password && (
+                      <div className="mt-2 space-y-1.5 p-2 bg-gray-50 rounded-lg border border-gray-100 text-[10px]">
+                        <div className="flex justify-between items-center mb-1 font-bold">
+                          <span className="text-gray-500 uppercase">
+                            {currentLanguage === 'en' ? 'Password Strength:' : 'पासवर्ड शक्ति:'}
+                          </span>
+                          <span className={
+                            passwordStrength <= 20 ? 'text-rose-500' :
+                            passwordStrength <= 60 ? 'text-amber-500' :
+                            passwordStrength <= 80 ? 'text-blue-500' : 'text-emerald-500'
+                          }>
+                            {passwordStrength === 20 ? (currentLanguage === 'en' ? 'Very Weak' : 'बहुत कमजोर') :
+                             passwordStrength === 40 ? (currentLanguage === 'en' ? 'Weak' : 'कमजोर') :
+                             passwordStrength === 60 ? (currentLanguage === 'en' ? 'Medium' : 'मध्यम') :
+                             passwordStrength === 80 ? (currentLanguage === 'en' ? 'Strong' : 'मजबूत') :
+                             (currentLanguage === 'en' ? 'Very Strong (Secure)' : 'बहुत मजबूत (सुरक्षित)')}
+                          </span>
+                        </div>
+                        <div className="w-full bg-gray-200 h-1 rounded-full overflow-hidden">
+                          <div 
+                            className={`h-full transition-all duration-300 ${
+                              passwordStrength <= 20 ? 'bg-rose-500' :
+                              passwordStrength <= 60 ? 'bg-amber-500' :
+                              passwordStrength <= 80 ? 'bg-blue-500' : 'bg-emerald-500'
+                            }`}
+                            style={{ width: `${passwordStrength}%` }}
+                          />
+                        </div>
+
+                        {/* Criteria Checklist */}
+                        <div className="grid grid-cols-2 gap-x-2 gap-y-1 mt-1 text-[9px] font-medium text-gray-500">
+                          <div className="flex items-center space-x-1">
+                            <span className={passwordCriteria.hasMinLength ? 'text-emerald-500 font-bold' : 'text-gray-400'}>
+                              {passwordCriteria.hasMinLength ? '✓' : '•'}
+                            </span>
+                            <span>{currentLanguage === 'en' ? '8+ Characters' : '8+ अक्षर'}</span>
+                          </div>
+                          <div className="flex items-center space-x-1">
+                            <span className={passwordCriteria.hasUppercase ? 'text-emerald-500 font-bold' : 'text-gray-400'}>
+                              {passwordCriteria.hasUppercase ? '✓' : '•'}
+                            </span>
+                            <span>{currentLanguage === 'en' ? 'Uppercase (A-Z)' : 'बड़ा अक्षर'}</span>
+                          </div>
+                          <div className="flex items-center space-x-1">
+                            <span className={passwordCriteria.hasLowercase ? 'text-emerald-500 font-bold' : 'text-gray-400'}>
+                              {passwordCriteria.hasLowercase ? '✓' : '•'}
+                            </span>
+                            <span>{currentLanguage === 'en' ? 'Lowercase (a-z)' : 'छोटा अक्षर'}</span>
+                          </div>
+                          <div className="flex items-center space-x-1">
+                            <span className={passwordCriteria.hasNumber ? 'text-emerald-500 font-bold' : 'text-gray-400'}>
+                              {passwordCriteria.hasNumber ? '✓' : '•'}
+                            </span>
+                            <span>{currentLanguage === 'en' ? 'Number (0-9)' : 'संख्या (0-9)'}</span>
+                          </div>
+                          <div className="flex items-center space-x-1 col-span-2">
+                            <span className={passwordCriteria.hasSpecial ? 'text-emerald-500 font-bold' : 'text-gray-400'}>
+                              {passwordCriteria.hasSpecial ? '✓' : '•'}
+                            </span>
+                            <span>{currentLanguage === 'en' ? 'Special Character (!@#$ etc.)' : 'विशेष वर्ण (!@#$ आदि)'}</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* Confirm Password */}
@@ -1549,6 +1669,22 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
                         {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </button>
                     </div>
+
+                    {formData.confirmPassword && (
+                      <div className="mt-1.5 flex items-center space-x-1 text-[10px] font-bold">
+                        {formData.password === formData.confirmPassword ? (
+                          <span className="text-emerald-600 flex items-center gap-1">
+                            <CheckCircle2 className="h-3 w-3" />
+                            {currentLanguage === 'en' ? 'Passwords match' : 'पासवर्ड मेल खाते हैं'}
+                          </span>
+                        ) : (
+                          <span className="text-rose-500 flex items-center gap-1 animate-pulse">
+                            <XCircle className="h-3 w-3 animate-bounce" />
+                            {currentLanguage === 'en' ? 'Passwords do not match' : 'पासवर्ड मेल नहीं खाते'}
+                          </span>
+                        )}
+                      </div>
+                    )}
                   </div>
 
                   {/* Education */}
@@ -1739,13 +1875,18 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
                             </div>
                           )}
 
-                          <button
+                           <button
                             type="button"
-                            disabled={emailVerifyTimer > 0 || !formData.email || !formData.name || !formData.password}
+                            disabled={isSendingEmail || emailVerifyTimer > 0 || !formData.email || !formData.name || !formData.password}
                             onClick={handleSendEmailVerification}
                             className="w-full py-3 bg-[#004B23] text-white text-[11px] font-black uppercase tracking-widest rounded-xl hover:bg-[#00381a] transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-emerald-900/10 disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed flex items-center justify-center space-x-2"
                           >
-                            {emailVerifyTimer > 0 ? (
+                            {isSendingEmail ? (
+                              <>
+                                <RefreshCw className="h-3 w-3 animate-spin" />
+                                <span>{currentLanguage === 'en' ? 'Sending Verification...' : 'सत्यापन भेजा जा रहा है...'}</span>
+                              </>
+                            ) : emailVerifyTimer > 0 ? (
                               <>
                                 <RefreshCw className="h-3 w-3 animate-spin" />
                                 <span>{currentLanguage === 'en' ? 'Resend in' : 'पुनः भेजें'} {emailVerifyTimer}s</span>
@@ -1759,7 +1900,7 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
                             type="button"
                             onClick={async () => {
                               if (!supabase) {
-                                alert(currentLanguage === 'en' ? 'Supabase is not configured. Email is simulated.' : 'सुपारी कॉन्फ़िगर नहीं है। ईमेल नकली है।');
+                                alert(currentLanguage === 'en' ? 'Supabase is not configured.' : 'सुपारी कॉन्फ़िगर नहीं है।');
                                 return;
                               }
                               const { data: { session: activeSession }, error } = await supabase.auth.refreshSession();
@@ -1776,26 +1917,13 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
                                   alert(currentLanguage === 'en' ? 'Email is not verified yet. Please click the link in your email.' : 'ईमेल अभी सत्यापित नहीं हुआ है। कृपया अपने ईमेल में दिए गए लिंक पर क्लिक करें।');
                                 }
                               } else {
-                                alert(currentLanguage === 'en' ? 'No active session found for this email.' : 'इस ईमेल के लिए कोई सक्रिय सत्र नहीं मिला।');
+                                alert(currentLanguage === 'en' ? 'No active session found for this email. Please make sure you clicked the link.' : 'इस ईमेल के लिए कोई सक्रिय सत्र नहीं मिला। कृपया सुनिश्चित करें कि आपने लिंक पर क्लिक किया है।');
                               }
                             }}
                             className="w-full mt-2.5 py-2 bg-[#004B23]/10 hover:bg-[#004B23]/20 text-[#004B23] text-[10px] font-bold uppercase tracking-widest rounded-lg transition-all flex items-center justify-center space-x-1 border border-[#004B23]/20"
                           >
                             <span>🔍 {currentLanguage === 'en' ? "Check Verification Status" : 'सत्यापन स्थिति जांचें'}</span>
                           </button>
-
-                          {!window.location.hostname.includes('rangrezcommunity.org') && (
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setFormData(prev => ({ ...prev, emailVerified: true }));
-                                alert('Development Mode: Email verification bypassed successfully!');
-                              }}
-                              className="w-full mt-2 py-2 bg-amber-50 hover:bg-amber-100 text-amber-800 text-[10px] font-bold uppercase tracking-widest rounded-lg transition-all flex items-center justify-center space-x-1 border border-amber-200"
-                            >
-                              <span>🛠️ {currentLanguage === 'en' ? "Bypass Email Verification (Dev)" : 'ईमेल सत्यापन बायपास करें (डेव)'}</span>
-                            </button>
-                          )}
                         </div>
                       ) : (
                         <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-100 flex items-center space-x-3 mt-auto">
