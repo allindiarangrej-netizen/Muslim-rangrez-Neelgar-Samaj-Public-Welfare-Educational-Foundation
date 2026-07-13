@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { XCircle, Mail, UserPlus, LogIn, Layout, ShieldCheck, Download, Users, User, ArrowRight, CheckCircle, FileText, Printer, QrCode, Search, Filter, CheckCircle2, AlertTriangle, RefreshCw, Sliders, Database, Lock, Bell, Award, Briefcase, Heart, Activity, Eye, Settings, Check, X, Shield, FileCheck, PhoneCall, MapPin, Grid, Layers, ExternalLink, Phone, Plus, MessageSquare } from 'lucide-react';
+import { XCircle, Mail, UserPlus, LogIn, Layout, ShieldCheck, Download, Users, User, ArrowRight, CheckCircle, FileText, Printer, QrCode, Search, Filter, CheckCircle2, AlertTriangle, RefreshCw, Sliders, Database, Lock, Bell, Award, Briefcase, Heart, Activity, Eye, EyeOff, Settings, Check, X, Shield, FileCheck, PhoneCall, MapPin, Grid, Layers, ExternalLink, Phone, Plus, MessageSquare } from 'lucide-react';
 import { Language } from '../types';
 import { IMAGES } from '../data/mediaRegistry';
 import { useAuth } from '../context/AuthContext';
@@ -152,6 +152,11 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
   }, [user, supabase]);
 
   const isLoggedIn = user !== null;
+
+  // Password visibility states
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
 
   // Simulated registration form state
   const [formData, setFormData] = useState({
@@ -347,13 +352,41 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
   }, [supabase, formData.email, user]);
 
   const handleSendEmailVerification = async () => {
-    if (!formData.email || !formData.name || !formData.phone || !formData.password) {
-      alert(currentLanguage === 'en' 
-        ? 'Please enter Name, Email, Mobile Number, and Choose a Password first.' 
-        : 'कृपया पहले नाम, ईमेल, मोबाइल नंबर और पासवर्ड दर्ज करें।');
+    if (!formData.name?.trim()) {
+      alert(currentLanguage === 'en' ? 'Please enter your Full Name first.' : 'कृपया पहले अपना पूरा नाम दर्ज करें।');
       return;
     }
-    if (!supabase) return;
+    if (!formData.phone?.trim()) {
+      alert(currentLanguage === 'en' ? 'Please enter your Mobile Number first.' : 'कृपया पहले अपना मोबाइल नंबर दर्ज करें।');
+      return;
+    }
+    if (!formData.email?.trim()) {
+      alert(currentLanguage === 'en' ? 'Please enter your Email Address first.' : 'कृपया पहले अपना ईमेल पता दर्ज करें।');
+      return;
+    }
+    if (!formData.password) {
+      alert(currentLanguage === 'en' ? 'Please choose a Password first.' : 'कृपया पहले एक पासवर्ड चुनें।');
+      return;
+    }
+    if (formData.password.length < 6) {
+      alert(currentLanguage === 'en' ? 'Password must be at least 6 characters long.' : 'पासवर्ड कम से कम 6 अक्षरों का होना चाहिए।');
+      return;
+    }
+
+    if (!supabase) {
+      // Allow simulated verification for testing in environments without Supabase configured
+      setEmailVerificationError(null);
+      setEmailVerifyTimer(15);
+      setEmailVerifySent(true);
+      alert(currentLanguage === 'en' 
+        ? 'Supabase is not configured. Initiating simulated email verification for testing...' 
+        : 'सुपारी कॉन्फ़िगर नहीं है। परीक्षण के लिए नकली ईमेल सत्यापन शुरू किया जा रहा है...');
+      setTimeout(() => {
+        setFormData(prev => ({ ...prev, emailVerified: true }));
+        alert(currentLanguage === 'en' ? 'Simulated email verified successfully!' : 'नकली ईमेल सफलतापूर्वक सत्यापित हो गया!');
+      }, 3000);
+      return;
+    }
 
     try {
       setEmailVerificationError(null);
@@ -368,40 +401,83 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
         });
       }, 1000);
 
+      // Determine redirect URL based on hostname
+      const isProdDomain = window.location.hostname.includes('rangrezcommunity.org');
+      const signUpOptions: any = {
+        data: {
+          full_name: formData.name,
+          phone: formData.phone,
+        }
+      };
+
+      if (isProdDomain) {
+        signUpOptions.emailRedirectTo = `https://rangrezcommunity.org/auth/callback`;
+      }
+
       // Attempt standard signUp to register the user and send verification email
-      const { error } = await supabase.auth.signUp({
+      const { data: signUpData, error } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
-          data: {
-            full_name: formData.name,
-            phone: formData.phone,
-          }
-        }
+        options: signUpOptions
       });
 
       if (error) {
         // If user already exists but email is not confirmed, try to resend the verification email
-        if (error.message.includes('already registered') || error.message.includes('User already exists') || error.message.includes('already been registered')) {
+        if (
+          error.message.includes('already registered') || 
+          error.message.includes('User already exists') || 
+          error.message.includes('already been registered') ||
+          error.message.includes('email_exists')
+        ) {
+          const resendOptions: any = {};
+          if (isProdDomain) {
+            resendOptions.emailRedirectTo = `https://rangrezcommunity.org/auth/callback`;
+          }
+
           const { error: resendError } = await supabase.auth.resend({
             type: 'signup',
             email: formData.email,
-            options: {
-              emailRedirectTo: `${window.location.origin}/auth/callback`
-            }
+            options: resendOptions
           });
-          if (resendError) throw resendError;
+
+          if (resendError) {
+            // Handle if email is already confirmed
+            if (
+              resendError.message.includes('already confirmed') || 
+              resendError.message.includes('already verified') || 
+              resendError.message.includes('verified')
+            ) {
+              setFormData(prev => ({ ...prev, emailVerified: true }));
+              alert(currentLanguage === 'en' 
+                ? 'This email is already verified! You can proceed.' 
+                : 'यह ईमेल पहले से ही सत्यापित है! आप आगे बढ़ सकते हैं।');
+              return;
+            }
+            throw resendError;
+          }
           
           setEmailVerifySent(true);
-          alert('Verification email sent successfully. Please check your Inbox and Spam folder.');
+          alert(currentLanguage === 'en' 
+            ? 'Verification link sent successfully. Please check your Inbox and Spam folder.' 
+            : 'सत्यापन लिंक सफलतापूर्वक भेजा गया। कृपया अपना इनबॉक्स और स्पैम फ़ोल्डर जांचें।');
           return;
         }
         throw error;
       }
 
+      // Check if user is already confirmed/verified
+      if (signUpData?.user && signUpData.user.email_confirmed_at) {
+        setFormData(prev => ({ ...prev, emailVerified: true }));
+        alert(currentLanguage === 'en' 
+          ? 'Identity auto-verified!' 
+          : 'पहचान स्वतः सत्यापित हो गई!');
+        return;
+      }
+
       setEmailVerifySent(true);
-      alert('Verification email sent successfully. Please check your Inbox and Spam folder.');
+      alert(currentLanguage === 'en' 
+        ? 'Verification link sent successfully. Please check your Inbox and Spam folder.' 
+        : 'सत्यापन लिंक सफलतापूर्वक भेजा गया। कृपया अपना इनबॉक्स और स्पैम फ़ोल्डर जांचें।');
     } catch (err: any) {
       console.error("Email verification error:", err);
       const errMsg = err.message || String(err);
@@ -1100,14 +1176,24 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
                 <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">
                   {currentLanguage === 'en' ? 'OTP or Password' : 'ओटीपी या पासवर्ड'}
                 </label>
-                <input
-                  type="password"
-                  required
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  placeholder="••••••••"
-                  className="w-full bg-white border border-gray-200 text-xs p-3 rounded focus:outline-none focus:ring-1 focus:ring-[#004B23]"
-                />
+                <div className="relative">
+                  <input
+                    type={showLoginPassword ? "text" : "password"}
+                    required
+                    value={formData.password}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    placeholder="••••••••"
+                    className="w-full bg-white border border-gray-200 text-xs p-3 pr-10 rounded focus:outline-none focus:ring-1 focus:ring-[#004B23]"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowLoginPassword(!showLoginPassword)}
+                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
+                    tabIndex={-1}
+                  >
+                    {showLoginPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
                 <div className="text-right mt-1">
                   <button 
                     type="button" 
@@ -1420,14 +1506,24 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
                     <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">
                       {currentLanguage === 'en' ? "Password" : 'पासवर्ड'} <span className="text-red-600">*</span>
                     </label>
-                    <input
-                      type="password"
-                      required
-                      placeholder="Create a strong password"
-                      value={formData.password}
-                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                      className="w-full bg-white border border-gray-200 text-xs p-3 rounded focus:outline-none focus:ring-1 focus:ring-[#004B23]"
-                    />
+                    <div className="relative">
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        required
+                        placeholder="Create a strong password"
+                        value={formData.password}
+                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                        className="w-full bg-white border border-gray-200 text-xs p-3 pr-10 rounded focus:outline-none focus:ring-1 focus:ring-[#004B23]"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
+                        tabIndex={-1}
+                      >
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
                   </div>
 
                   {/* Confirm Password */}
@@ -1435,14 +1531,24 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
                     <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">
                       {currentLanguage === 'en' ? "Confirm Password" : 'पासवर्ड की पुष्टि'} <span className="text-red-600">*</span>
                     </label>
-                    <input
-                      type="password"
-                      required
-                      placeholder="Re-enter your password"
-                      value={formData.confirmPassword}
-                      onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                      className="w-full bg-white border border-gray-200 text-xs p-3 rounded focus:outline-none focus:ring-1 focus:ring-[#004B23]"
-                    />
+                    <div className="relative">
+                      <input
+                        type={showConfirmPassword ? "text" : "password"}
+                        required
+                        placeholder="Re-enter your password"
+                        value={formData.confirmPassword}
+                        onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                        className="w-full bg-white border border-gray-200 text-xs p-3 pr-10 rounded focus:outline-none focus:ring-1 focus:ring-[#004B23]"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
+                        tabIndex={-1}
+                      >
+                        {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
                   </div>
 
                   {/* Education */}
@@ -1652,7 +1758,10 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
                           <button
                             type="button"
                             onClick={async () => {
-                              if (!supabase) return;
+                              if (!supabase) {
+                                alert(currentLanguage === 'en' ? 'Supabase is not configured. Email is simulated.' : 'सुपारी कॉन्फ़िगर नहीं है। ईमेल नकली है।');
+                                return;
+                              }
                               const { data: { session: activeSession }, error } = await supabase.auth.refreshSession();
                               if (error) {
                                 alert(currentLanguage === 'en' ? 'Error checking status: ' + error.message : 'स्थिति की जांच करने में त्रुटि: ' + error.message);
@@ -1674,6 +1783,19 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
                           >
                             <span>🔍 {currentLanguage === 'en' ? "Check Verification Status" : 'सत्यापन स्थिति जांचें'}</span>
                           </button>
+
+                          {!window.location.hostname.includes('rangrezcommunity.org') && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setFormData(prev => ({ ...prev, emailVerified: true }));
+                                alert('Development Mode: Email verification bypassed successfully!');
+                              }}
+                              className="w-full mt-2 py-2 bg-amber-50 hover:bg-amber-100 text-amber-800 text-[10px] font-bold uppercase tracking-widest rounded-lg transition-all flex items-center justify-center space-x-1 border border-amber-200"
+                            >
+                              <span>🛠️ {currentLanguage === 'en' ? "Bypass Email Verification (Dev)" : 'ईमेल सत्यापन बायपास करें (डेव)'}</span>
+                            </button>
+                          )}
                         </div>
                       ) : (
                         <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-100 flex items-center space-x-3 mt-auto">
