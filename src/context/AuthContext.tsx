@@ -44,7 +44,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
           // 2. If profile is missing, auto-create it
           if (!profile) {
-            const isSuper = u.email === 'allindiarangrej@gmail.com';
+            const isSuper = u.email === 'allindiarangrej@gmail.com' || u.email === 'admin@rangrezcommunity.org';
             
             // Check if Super Admin already exists
             if (isSuper) {

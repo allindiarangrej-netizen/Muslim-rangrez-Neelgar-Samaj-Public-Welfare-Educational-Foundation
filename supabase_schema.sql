@@ -531,7 +531,7 @@ DECLARE
     default_permissions text[];
 BEGIN
     -- Determine role & permissions based on hierarchical requirements
-    IF NEW.email = 'allindiarangrej@gmail.com' THEN
+    IF NEW.email = 'allindiarangrej@gmail.com' OR NEW.email = 'admin@rangrezcommunity.org' THEN
         default_role := 'Super Admin';
         default_permissions := ARRAY['*'];
     ELSE

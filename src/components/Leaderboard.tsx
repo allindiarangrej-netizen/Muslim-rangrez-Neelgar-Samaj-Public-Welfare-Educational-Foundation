@@ -21,10 +21,10 @@ const initialLeaderboardData: LeaderboardEntry[] = [
         'https://images.unsplash.com/photo-1615461066841-6116e61058f4?w=400&h=300&fit=crop',
         'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=400&h=300&fit=crop'
       ],
-      attendanceRecordsUrl: 'https://rangrezsamaj.in/records/att-jaipur-blood-089.pdf',
+      attendanceRecordsUrl: 'https://rangrezcommunity.org/records/att-jaipur-blood-089.pdf',
       beneficiaryConfirmation: true,
       committeeApproval: true,
-      activityReportUrl: 'https://rangrezsamaj.in/reports/rep-2026-jpr-blood.pdf',
+      activityReportUrl: 'https://rangrezcommunity.org/reports/rep-2026-jpr-blood.pdf',
       date: 'July 01, 2026 (02:00 AM - 06:30 AM)',
       location: 'SMS Hospital Blood Bank & Emergency Ward, Jaipur, Rajasthan',
       supportingDocuments: ['Hospital Superintendent Acknowledgment Letter', 'Blood Donor Registration Register Copy'],
@@ -50,10 +50,10 @@ const initialLeaderboardData: LeaderboardEntry[] = [
         'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=400&h=300&fit=crop',
         'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400&h=300&fit=crop'
       ],
-      attendanceRecordsUrl: 'https://rangrezsamaj.in/records/att-indore-edu-104.pdf',
+      attendanceRecordsUrl: 'https://rangrezcommunity.org/records/att-indore-edu-104.pdf',
       beneficiaryConfirmation: true,
       committeeApproval: true,
-      activityReportUrl: 'https://rangrezsamaj.in/reports/rep-2026-ind-edu.pdf',
+      activityReportUrl: 'https://rangrezcommunity.org/reports/rep-2026-ind-edu.pdf',
       date: 'June 28, 2026 (10:00 AM - 04:00 PM)',
       location: 'Govt. Urdu Secondary School, Azad Nagar, Indore, MP',
       supportingDocuments: ['School Principal Appreciation Letter', 'Vendor Book & Kit Purchase Invoices (1,200 kits)'],
@@ -78,10 +78,10 @@ const initialLeaderboardData: LeaderboardEntry[] = [
       evidencePhotos: [
         'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=300&fit=crop'
       ],
-      attendanceRecordsUrl: 'https://rangrezsamaj.in/records/att-bhopal-voc.pdf',
+      attendanceRecordsUrl: 'https://rangrezcommunity.org/records/att-bhopal-voc.pdf',
       beneficiaryConfirmation: true,
       committeeApproval: true,
-      activityReportUrl: 'https://rangrezsamaj.in/reports/rep-2026-bhp-voc.pdf',
+      activityReportUrl: 'https://rangrezcommunity.org/reports/rep-2026-bhp-voc.pdf',
       date: 'June 15 - June 29, 2026 (14-Day Workshop)',
       location: 'Rangrez Community Hall, Old Bhopal, Madhya Pradesh',
       supportingDocuments: ['50 Women Artisan Certification Logs', 'Municipal Skill Development Endorsement'],
@@ -106,10 +106,10 @@ const initialLeaderboardData: LeaderboardEntry[] = [
       evidencePhotos: [
         'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=400&h=300&fit=crop'
       ],
-      attendanceRecordsUrl: 'https://rangrezsamaj.in/records/att-ahm-eye.pdf',
+      attendanceRecordsUrl: 'https://rangrezcommunity.org/records/att-ahm-eye.pdf',
       beneficiaryConfirmation: true,
       committeeApproval: true,
-      activityReportUrl: 'https://rangrezsamaj.in/reports/rep-2026-ahm-eye.pdf',
+      activityReportUrl: 'https://rangrezcommunity.org/reports/rep-2026-ahm-eye.pdf',
       date: 'June 23 - 25, 2026',
       location: 'Civil Hospital Eye Wing, Ahmedabad, Gujarat',
       supportingDocuments: ['Civil Hospital Surgeon Collaborative Certificate', '68 Patient Discharge Summaries'],
@@ -134,10 +134,10 @@ const initialLeaderboardData: LeaderboardEntry[] = [
       evidencePhotos: [
         'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=400&h=300&fit=crop'
       ],
-      attendanceRecordsUrl: 'https://rangrezsamaj.in/records/att-lko-trees.pdf',
+      attendanceRecordsUrl: 'https://rangrezcommunity.org/records/att-lko-trees.pdf',
       beneficiaryConfirmation: false,
       committeeApproval: true,
-      activityReportUrl: 'https://rangrezsamaj.in/reports/rep-2026-lko-trees.pdf',
+      activityReportUrl: 'https://rangrezcommunity.org/reports/rep-2026-lko-trees.pdf',
       date: 'July 01, 2026 (07:00 AM - 11:00 AM)',
       location: 'Kukrail Reserve Forest Belt, Lucknow, UP',
       supportingDocuments: ['Forest Department Permission Memo', 'Nursery Sapling Receipt (500 Neem & Peepal Saplings)'],

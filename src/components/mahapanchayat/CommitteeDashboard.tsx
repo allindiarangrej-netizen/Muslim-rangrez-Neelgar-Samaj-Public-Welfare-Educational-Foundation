@@ -60,7 +60,7 @@ const COMMITTEES_DATA: Committee[] = [
     treasurer: 'Haji Abdul Ghaffar',
     membersCount: 45,
     contactPhone: '+91 98290-23451',
-    contactEmail: 'rajasthan-committee@rangrezsamaj.in',
+    contactEmail: 'rajasthan-committee@rangrezcommunity.org',
     photoUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80',
     tenure: '2025 - 2028 (3 Years)',
     responsibilities: [
@@ -92,7 +92,7 @@ const COMMITTEES_DATA: Committee[] = [
     treasurer: 'Mohammad Rashid',
     membersCount: 38,
     contactPhone: '+91 94150-89012',
-    contactEmail: 'upeast-youth@rangrezsamaj.in',
+    contactEmail: 'upeast-youth@rangrezcommunity.org',
     photoUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=300&q=80',
     tenure: '2025 - 2028 (3 Years)',
     responsibilities: [
@@ -124,7 +124,7 @@ const COMMITTEES_DATA: Committee[] = [
     treasurer: 'Yusuf Bhai Rangrez',
     membersCount: 30,
     contactPhone: '+91 98260-34567',
-    contactEmail: 'mp-textiles@rangrezsamaj.in',
+    contactEmail: 'mp-textiles@rangrezcommunity.org',
     photoUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80',
     tenure: '2025 - 2028 (3 Years)',
     responsibilities: [
@@ -156,7 +156,7 @@ const COMMITTEES_DATA: Committee[] = [
     treasurer: 'Haji Shakeel Ahmed',
     membersCount: 50,
     contactPhone: '+91 98110-12345',
-    contactEmail: 'national-apex@rangrezsamaj.in',
+    contactEmail: 'national-apex@rangrezcommunity.org',
     photoUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=300&q=80',
     tenure: '2025 - 2029 (4 Years)',
     responsibilities: [
@@ -188,7 +188,7 @@ const COMMITTEES_DATA: Committee[] = [
     treasurer: 'Mustafa Gulam',
     membersCount: 32,
     contactPhone: '+91 98250-67890',
-    contactEmail: 'gujarat-zakat@rangrezsamaj.in',
+    contactEmail: 'gujarat-zakat@rangrezcommunity.org',
     photoUrl: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=300&q=80',
     tenure: '2025 - 2028 (3 Years)',
     responsibilities: [
@@ -220,7 +220,7 @@ const COMMITTEES_DATA: Committee[] = [
     treasurer: 'Abdul Jabbar',
     membersCount: 24,
     contactPhone: '+91 141-2345678',
-    contactEmail: 'jaipur-district@rangrezsamaj.in',
+    contactEmail: 'jaipur-district@rangrezcommunity.org',
     photoUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=300&q=80',
     tenure: '2025 - 2027 (2 Years)',
     responsibilities: [
@@ -252,7 +252,7 @@ const COMMITTEES_DATA: Committee[] = [
     treasurer: 'Mohammad Anees',
     membersCount: 18,
     contactPhone: '+91 1572-251234',
-    contactEmail: 'sikar-tehsil@rangrezsamaj.in',
+    contactEmail: 'sikar-tehsil@rangrezcommunity.org',
     photoUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
     tenure: '2025 - 2027 (2 Years)',
     responsibilities: [
@@ -284,7 +284,7 @@ const COMMITTEES_DATA: Committee[] = [
     treasurer: 'Haji Furqan',
     membersCount: 20,
     contactPhone: '+91 11-23267890',
-    contactEmail: 'old-delhi-city@rangrezsamaj.in',
+    contactEmail: 'old-delhi-city@rangrezcommunity.org',
     photoUrl: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=300&q=80',
     tenure: '2025 - 2027 (2 Years)',
     responsibilities: [
@@ -316,7 +316,7 @@ const COMMITTEES_DATA: Committee[] = [
     treasurer: 'Hassan Ali',
     membersCount: 15,
     contactPhone: '+91 2932-284567',
-    contactEmail: 'pali-rural@rangrezsamaj.in',
+    contactEmail: 'pali-rural@rangrezcommunity.org',
     photoUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&q=80',
     tenure: '2025 - 2027 (2 Years)',
     responsibilities: [
@@ -348,7 +348,7 @@ const COMMITTEES_DATA: Committee[] = [
     treasurer: 'Rizwan Ahmed',
     membersCount: 16,
     contactPhone: '+91 731-2567890',
-    contactEmail: 'indore-ward14@rangrezsamaj.in',
+    contactEmail: 'indore-ward14@rangrezcommunity.org',
     photoUrl: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=300&q=80',
     tenure: '2025 - 2026 (1 Year)',
     responsibilities: [

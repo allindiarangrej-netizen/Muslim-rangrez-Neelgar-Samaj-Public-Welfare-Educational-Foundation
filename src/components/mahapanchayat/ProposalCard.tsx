@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ThumbsUp, MessageSquare, CheckCircle2, FileText, ExternalLink, Play, Award, Settings2, ShieldCheck, ChevronRight } from 'lucide-react';
 import { Proposal, WorkflowStage } from './types';
+import { AuthService } from '../../services/authService';
 
 interface ProposalCardProps {
   key?: React.Key;
@@ -31,6 +32,9 @@ export default function ProposalCard({
   const [showAdminControls, setShowAdminControls] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
 
+  const currentSession = AuthService.getCurrentSession();
+  const isAdmin = currentSession && (currentSession.role === 'Super Administrator' || currentSession.role === 'National Admin');
+
   // Find index of current workflow stage
   const currentStageIdx = WORKFLOW_STAGES.findIndex(s => s.stage === proposal.workflowStage);
 
@@ -53,18 +57,20 @@ export default function ProposalCard({
           </span>
         </div>
 
-        <button
-          onClick={() => setShowAdminControls(!showAdminControls)}
-          className="text-[11px] bg-gray-50 hover:bg-gray-100 text-gray-600 hover:text-emerald-700 px-3 py-1 rounded-full border border-gray-200 flex items-center gap-1.5 transition"
-          title="Toggle Admin Workflow Simulator"
-        >
-          <Settings2 className="h-3.5 w-3.5 text-emerald-600" />
-          <span>{getText('Admin Workflow Config', 'एडमिन कार्यप्रणाली', 'ایڈمن ورک فلو')}</span>
-        </button>
+        {isAdmin && (
+          <button
+            onClick={() => setShowAdminControls(!showAdminControls)}
+            className="text-[11px] bg-gray-50 hover:bg-gray-100 text-gray-600 hover:text-emerald-700 px-3 py-1 rounded-full border border-gray-200 flex items-center gap-1.5 transition"
+            title="Toggle Admin Workflow Simulator"
+          >
+            <Settings2 className="h-3.5 w-3.5 text-emerald-600" />
+            <span>{getText('Admin Workflow Config', 'एडमिन कार्यप्रणाली', 'ایڈمن ورک فلو')}</span>
+          </button>
+        )}
       </div>
 
       {/* Admin Controls Drawer (if opened) */}
-      {showAdminControls && onUpdateStage && (
+      {isAdmin && showAdminControls && onUpdateStage && (
         <div className="bg-amber-50 p-4 rounded-2xl border border-amber-200 space-y-3 animate-fadeIn">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-amber-800 flex items-center gap-1.5">

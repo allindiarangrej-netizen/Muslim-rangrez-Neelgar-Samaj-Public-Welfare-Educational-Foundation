@@ -192,6 +192,51 @@ export default function HelpSupport({ currentLanguage }: HelpSupportProps) {
       return;
     }
 
+    // Trigger SMTP emails for visitor acknowledgment and admin alerts
+    try {
+      const email = user?.email;
+      if (email) {
+        // 1. Send confirmation to visitor
+        await fetch('/api/email/send-generic', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            recipient: email,
+            name: user?.user_metadata?.name || 'Community Member',
+            templateType: 'contact_confirmation',
+            templateData: {
+              subject: ticketSubject,
+              message: ticketDesc
+            }
+          })
+        });
+
+        // 2. Send notification alert to Admin
+        await fetch('/api/email/send-generic', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            recipient: 'admin@rangrezcommunity.org',
+            name: 'System Admin',
+            templateType: 'admin_alert',
+            templateData: {
+              alertType: 'New Support Ticket Submission',
+              details: {
+                sender_email: email,
+                sender_name: user?.user_metadata?.name || 'Community Member',
+                ticket_id: data.id,
+                subject: ticketSubject,
+                description: ticketDesc,
+                status: 'Open'
+              }
+            }
+          })
+        });
+      }
+    } catch (emailErr) {
+      console.error('Failed to trigger SMTP support ticket notifications:', emailErr);
+    }
+
     setActiveTickets([
       { id: data.id, subject: data.title, category: 'Other', description: data.description, status: data.status, dateCreated: data.created_at.split('T')[0] },
       ...activeTickets
@@ -226,6 +271,32 @@ export default function HelpSupport({ currentLanguage }: HelpSupportProps) {
     if (error) {
       console.error('Error submitting feedback:', error);
       return;
+    }
+
+    // Send admin notification regarding new feedback
+    try {
+      const email = user?.email || 'anonymous@rangrezcommunity.org';
+      await fetch('/api/email/send-generic', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          recipient: 'admin@rangrezcommunity.org',
+          name: 'System Admin',
+          templateType: 'admin_alert',
+          templateData: {
+            alertType: 'New Department Feedback Received',
+            details: {
+              sender_email: email,
+              sender_name: feedbackName || 'Community Member',
+              department: feedbackDept,
+              rating: `${feedbackRating} / 5 Stars`,
+              comments: feedbackText
+            }
+          }
+        })
+      });
+    } catch (emailErr) {
+      console.error('Failed to trigger SMTP feedback notifications:', emailErr);
     }
 
     setFeedbackSubmitted(true);
@@ -476,10 +547,10 @@ export default function HelpSupport({ currentLanguage }: HelpSupportProps) {
 
                     <div className="p-3 bg-white/10 rounded-xl border border-white/10 flex items-center justify-between">
                       <div>
-                        <span className="text-[10px] text-blue-300 font-bold uppercase block">Media & Document Vault</span>
-                        <span className="text-xs font-mono font-bold">media@rangrezsamaj.in</span>
+                        <span className="text-[10px] text-blue-300 font-bold uppercase block">Media & Support Vault</span>
+                        <span className="text-xs font-mono font-bold">support@rangrezcommunity.org</span>
                       </div>
-                      <button onClick={() => triggerToast('Email copied to clipboard!')} className="p-2 bg-white/20 hover:bg-white/30 text-white rounded-lg text-xs font-bold transition">Copy</button>
+                      <button onClick={() => { navigator.clipboard.writeText('support@rangrezcommunity.org'); triggerToast('Email copied to clipboard!'); }} className="p-2 bg-white/20 hover:bg-white/30 text-white rounded-lg text-xs font-bold transition">Copy</button>
                     </div>
                   </div>
                 </div>

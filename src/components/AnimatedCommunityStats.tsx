@@ -26,8 +26,6 @@ interface AnimatedCommunityStatsProps {
 export default function AnimatedCommunityStats({ currentLanguage }: AnimatedCommunityStatsProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const [hasAnimated, setHasAnimated] = useState(false);
-  const [showCodeHub, setShowCodeHub] = useState(false);
-  const [copied, setCopied] = useState(false);
   
   // Dashboard Interactive States
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -145,13 +143,6 @@ export default function AnimatedCommunityStats({ currentLanguage }: AnimatedComm
     }, 4500);
   };
 
-  const copyElementorCode = () => {
-    const code = `<!-- ELEMENTOR PRO CUSTOM CODE BLOCK -->\n<div class="rangrez-stats-section">\n  <div class="rangrez-stats-grid">\n    ${statsList.map(s => `<div class="rangrez-stat-card" data-target="${s.target}" data-suffix="${s.suffix}">\n      <div class="rangrez-stat-emoji">${s.emoji}</div>\n      <div class="rangrez-stat-number-wrapper"><span class="rangrez-stat-count">0</span><span class="rangrez-stat-suffix">${s.suffix}</span></div>\n      <div class="rangrez-stat-label">${currentLanguage === 'en' ? s.labelEn : s.labelHi}</div>\n    </div>`).join('')}\n  </div>\n</div>`;
-    navigator.clipboard.writeText(code);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 3000);
-  };
-
   const filteredStats = selectedCategory === 'all' 
     ? statsList 
     : statsList.filter(s => s.category === selectedCategory);
@@ -201,19 +192,12 @@ export default function AnimatedCommunityStats({ currentLanguage }: AnimatedComm
                 : 'हमारी राष्ट्रीय समाज कल्याणकारी पहलों की रीयल-टाइम पारदर्शिता। प्रत्येक घंटा, रक्त इकाई, छात्र सहायता और उपयोग की गई धनराशि हमारे 7-सूत्रीय ऑडिट के तहत सत्यापित है।'}
             </p>
 
-            {/* Live Feed Simulator & Audit Badge */}
+            {/* Live Feed Audit Badge */}
             <div className="pt-2 flex flex-wrap justify-center items-center gap-3">
               <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-900/80 text-emerald-300 border border-emerald-500/30">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping mr-2"></span>
                 {currentLanguage === 'en' ? 'Live Verifiable Impact Feed • Last update: 2 mins ago' : 'लाइव सत्यापित प्रभाव फ़ीड • अंतिम अपडेट: 2 मिनट पहले'}
               </span>
-              <button
-                onClick={triggerLiveSimulation}
-                className="bg-[#F4C430] hover:bg-yellow-400 text-[#0B132B] px-4 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow-md transition transform hover:scale-105"
-              >
-                <Zap className="h-3.5 w-3.5" />
-                <span>{currentLanguage === 'en' ? 'Simulate Real-Time Activity' : 'रीयल-टाइम सेवा कार्य देखें'}</span>
-              </button>
             </div>
           </div>
 
@@ -647,52 +631,6 @@ export default function AnimatedCommunityStats({ currentLanguage }: AnimatedComm
                 ))}
               </div>
             </div>
-          )}
-        </div>
-
-        {/* SECTION 3: ELEMENTOR PRO INTEGRATION WIDGET FOR ADMINS */}
-        <div className="text-center">
-          <button
-            onClick={() => setShowCodeHub(!showCodeHub)}
-            className="inline-flex items-center space-x-2 px-5 py-2.5 rounded bg-emerald-950/80 hover:bg-emerald-900 border border-[#F4C430]/30 hover:border-[#FFDF66] text-xs font-mono font-bold text-[#F4C430] hover:text-[#FFDF66] transition duration-300 shadow-md"
-            aria-label="Toggle Elementor Code Export"
-          >
-            <Code className="h-4 w-4" />
-            <span>{currentLanguage === 'en' ? 'ELEMENTOR PRO INTEGRATION CENTRE (FOR SITE ADMINS)' : 'एलिमेंटोर प्रो एकीकरण केंद्र (एडमिन के लिए)'}</span>
-          </button>
-
-          {showCodeHub && (
-            <motion.div
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mt-6 p-6 max-w-4xl mx-auto bg-[#041a0e] border border-[#F4C430]/20 rounded-xl text-left space-y-4 shadow-2xl"
-            >
-              <div className="flex justify-between items-center border-b border-white/10 pb-3">
-                <div>
-                  <h4 className="text-sm font-bold text-[#F4C430] font-serif">
-                    Elementor Pro Compatible Copy-Paste Widget
-                  </h4>
-                  <p className="text-[11px] text-gray-400 mt-0.5">
-                    No programming required. Copy this directly into any Elementor HTML Widget to display these 15 counters.
-                  </p>
-                </div>
-                <button
-                  onClick={copyElementorCode}
-                  className="px-4 py-1.5 bg-[#F4C430] text-emerald-950 hover:bg-[#FFDF66] hover:border-[#FFDF66] border border-[#F4C430] rounded text-xs font-mono font-bold flex items-center space-x-1.5 transition"
-                >
-                  {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
-                  <span>{copied ? 'Copied' : 'Copy HTML & CSS Code'}</span>
-                </button>
-              </div>
-
-              <div className="bg-emerald-950/60 p-4 rounded border border-white/5 overflow-x-auto max-h-48 text-xs font-mono text-emerald-200">
-                <pre>{`<!-- Instructions for Elementor Page Builder:
-1. Drag and drop an "HTML" widget onto your page.
-2. Click inside the HTML Code block.
-3. Paste the code you copy from here.
-4. Admins can freely modify the data-target="25000" values directly in the HTML code to change the animated numbers. -->`}</pre>
-              </div>
-            </motion.div>
           )}
         </div>
 

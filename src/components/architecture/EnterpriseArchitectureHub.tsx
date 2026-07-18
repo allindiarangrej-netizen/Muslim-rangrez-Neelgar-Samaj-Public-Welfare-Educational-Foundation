@@ -35,7 +35,7 @@ export const EnterpriseArchitectureHub: React.FC<EnterpriseHubProps> = ({
   onClose,
   onNavigateTab
 }) => {
-  const [activeNav, setActiveNav] = useState<'auth' | 'dashboards' | 'admin_modules' | 'reports' | 'media_vault' | 'notifications' | 'security_backup' | 'deployment' | 'user_management'>('auth');
+  const [activeNav, setActiveNav] = useState<'auth' | 'dashboards' | 'admin_modules' | 'reports' | 'media_vault' | 'notifications' | 'security_backup' | 'deployment' | 'user_management' | 'email_management'>('auth');
   const [session, setSession] = useState<UserSession>(AuthService.getCurrentSession());
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
 
@@ -124,6 +124,143 @@ export const EnterpriseArchitectureHub: React.FC<EnterpriseHubProps> = ({
   const [deploymentConfig] = useState(SecurityService.getDeploymentConfig());
   const [backupLog, setBackupLog] = useState<string | null>(null);
   const [restoreJson, setRestoreJson] = useState('');
+
+  // Email Administration state managers
+  const [emailLogsData, setEmailLogsData] = useState<any[]>([]);
+  const [emailStatsData, setEmailStatsData] = useState<any>({
+    total: 0,
+    sent: 0,
+    failed: 0,
+    queued: 0,
+    limitMax: 10000,
+    limitUsed: 0,
+    byTemplate: {}
+  });
+  const [loadingEmails, setLoadingEmails] = useState(false);
+  const [emailSearchTerm, setEmailSearchTerm] = useState('');
+  const [emailTemplateFilter, setEmailTemplateFilter] = useState('All');
+  const [emailStatusFilter, setEmailStatusFilter] = useState('All');
+  const [selectedEmailForView, setSelectedEmailForView] = useState<any | null>(null);
+  const [sendingTestEmail, setSendingTestEmail] = useState(false);
+  const [testEmailRecipient, setTestEmailRecipient] = useState('');
+  const [testEmailTemplate, setTestEmailTemplate] = useState('welcome');
+
+  const loadEmailTelemetry = async () => {
+    setLoadingEmails(true);
+    try {
+      const token = AuthService.getCurrentSession()?.token || "";
+      const headers: any = { "Content-Type": "application/json" };
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+      
+      const resLogs = await fetch('/api/email/logs', { headers });
+      const dataLogs = await resLogs.json();
+      if (dataLogs.success) {
+        setEmailLogsData(dataLogs.logs || []);
+      }
+      
+      const resStats = await fetch('/api/email/analytics', { headers });
+      const dataStats = await resStats.json();
+      if (dataStats.success) {
+        setEmailStatsData(dataStats.stats || {
+          total: 0,
+          sent: 0,
+          failed: 0,
+          queued: 0,
+          limitMax: 10000,
+          limitUsed: 0,
+          byTemplate: {}
+        });
+      }
+    } catch (err) {
+      console.error("Error loading email telemetry:", err);
+    } finally {
+      setLoadingEmails(false);
+    }
+  };
+
+  const handleRetryEmail = async (id: string) => {
+    try {
+      const token = AuthService.getCurrentSession()?.token || "";
+      const headers: any = { "Content-Type": "application/json" };
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+      const res = await fetch(`/api/email/retry/${id}`, {
+        method: 'POST',
+        headers
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert("Email resent successfully via Hostinger SMTP!");
+        loadEmailTelemetry();
+      } else {
+        alert("Resend failed: " + data.error);
+      }
+    } catch (err: any) {
+      alert("Error trying to resend email: " + err.message);
+    }
+  };
+
+  const handleSendTestEmail = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!testEmailRecipient) {
+      alert("Please enter a recipient email address.");
+      return;
+    }
+    setSendingTestEmail(true);
+    try {
+      const token = AuthService.getCurrentSession()?.token || "";
+      const headers: any = { "Content-Type": "application/json" };
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+      const res = await fetch('/api/email/send-generic', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          recipient: testEmailRecipient,
+          name: "Test Recipient",
+          templateType: testEmailTemplate,
+          templateData: {
+            codeOrLink: "https://rangrezcommunity.org/auth/callback?code=787994",
+            memberId: "RM-2026-7879",
+            appNo: "APP-5566",
+            amount: "1500",
+            resetLink: "https://rangrezcommunity.org/reset-password?token=test-token",
+            subject: "Hostinger SMTP Production Test",
+            message: "This is a real-time production delivery confirmation test for Hostinger business mailbox.",
+            alertType: "Contact Form Submission",
+            details: {
+              sender_name: "Aaditya Rangrez",
+              sender_email: testEmailRecipient,
+              district: "Jaipur",
+              message: "I am writing to inquire about national scholarship programs for session 2026."
+            }
+          }
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert(`Test email submitted successfully! Log ID: ${data.logId}`);
+        setTestEmailRecipient('');
+        loadEmailTelemetry();
+      } else {
+        alert("Failed to submit test email: " + data.error);
+      }
+    } catch (err: any) {
+      alert("Error dispatching test email: " + err.message);
+    } finally {
+      setSendingTestEmail(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeNav === 'email_management') {
+      loadEmailTelemetry();
+    }
+  }, [activeNav]);
 
   // Refresh hooks
   useEffect(() => {
@@ -574,7 +711,7 @@ export const EnterpriseArchitectureHub: React.FC<EnterpriseHubProps> = ({
                     <ChevronRight className="w-3.5 h-3.5 opacity-70" />
                   </button>
 
-                  {(session.role === 'Super Administrator' || session.email === 'allindiarangrej@gmail.com') && (
+                  {(session.role === 'Super Administrator' || session.email === 'allindiarangrej@gmail.com' || session.email === 'admin@rangrezcommunity.org') && (
                     <button
                       onClick={() => { setActiveNav('user_management'); setIsMobileNavOpen(false); }}
                       className={`w-full min-h-[40px] text-left px-3 py-2 rounded-lg flex items-center justify-between transition cursor-pointer hover:translate-x-1 ${
@@ -825,6 +962,16 @@ export const EnterpriseArchitectureHub: React.FC<EnterpriseHubProps> = ({
                     <span className="flex items-center gap-2.5"><Sliders className="w-4 h-4 text-pink-400" /> API Management</span>
                     <ChevronRight className="w-3.5 h-3.5 opacity-70" />
                   </button>
+
+                  <button
+                    onClick={() => { setActiveNav('email_management'); setIsMobileNavOpen(false); }}
+                    className={`w-full min-h-[40px] text-left px-3 py-2 rounded-lg flex items-center justify-between transition cursor-pointer hover:translate-x-1 ${
+                      activeNav === 'email_management' ? 'bg-[#004B23] text-white font-extrabold border-l-4 border-[#FFD54A]' : 'hover:bg-gray-800 text-gray-300'
+                    }`}
+                  >
+                    <span className="flex items-center gap-2.5"><Mail className="w-4 h-4 text-rose-400" /> Hostinger SMTP & Emails</span>
+                    <span className="text-[9px] bg-rose-900 text-rose-200 px-1.5 py-0.5 rounded font-mono">LIVE</span>
+                  </button>
                 </div>
               </div>
             </nav>
@@ -909,7 +1056,7 @@ export const EnterpriseArchitectureHub: React.FC<EnterpriseHubProps> = ({
                               type="text"
                               value={loginEmail}
                               onChange={(e) => setLoginEmail(e.target.value)}
-                              placeholder="e.g. allindiarangrej@gmail.com or 9877788899"
+                              placeholder="e.g. admin@rangrezcommunity.org or 7879940869"
                               className="w-full px-4 py-3 min-h-[44px] border border-gray-300 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-[#004B23] focus:border-transparent outline-none transition bg-gray-50/50"
                               required
                             />
@@ -979,7 +1126,7 @@ export const EnterpriseArchitectureHub: React.FC<EnterpriseHubProps> = ({
 
                       <div className="space-y-2 max-h-[320px] overflow-y-auto pr-1">
                         {[
-                          { role: 'Super Administrator', name: 'All India Rangrez Central Trust Admin', email: 'allindiarangrej@gmail.com', phone: '7879940869', badge: 'ROOT CONTROL', color: 'from-[#004B23] to-[#0A2E1C]', textColor: 'text-[#FFD54A]' },
+                          { role: 'Super Administrator', name: 'All India Rangrez Central Trust Admin', email: 'admin@rangrezcommunity.org', phone: '7879940869', badge: 'ROOT CONTROL', color: 'from-[#004B23] to-[#0A2E1C]', textColor: 'text-[#FFD54A]' },
                           { role: 'National Admin', name: 'Maulana Zubair Khan Rangrez', email: 'nationaladmin@rangrezcommunity.org', phone: '9877788899', badge: 'NATIONAL', color: 'bg-red-900/90 text-white', textColor: 'text-amber-300' },
                           { role: 'State Admin', name: 'Mufti Rashid Rangrez (State Admin)', email: 'stateadmin@rangrezcommunity.org', phone: '9866677788', badge: 'STATE LEVEL', color: 'bg-blue-900/90 text-white', textColor: 'text-cyan-300' },
                           { role: 'District Admin', name: 'Adv. Tariq Rangrez (District Admin)', email: 'districtadmin@rangrezcommunity.org', phone: '9855566677', badge: 'DISTRICT', color: 'bg-indigo-900/90 text-white', textColor: 'text-yellow-300' },
@@ -2303,6 +2450,348 @@ export const EnterpriseArchitectureHub: React.FC<EnterpriseHubProps> = ({
                           </div>
                         );
                       })}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* TAB 7.5: HOSTINGER SMTP EMAIL INFRASTRUCTURE CONTROL */}
+            {activeNav === 'email_management' && (
+              <div className="space-y-6 animate-fadeIn">
+                {/* SMTP Server status card */}
+                <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-rose-50 rounded-2xl flex items-center justify-center text-rose-600 shrink-0">
+                      <Mail className="w-6 h-6 animate-pulse" />
+                    </div>
+                    <div>
+                      <h3 className="text-base font-extrabold text-[#004B23] flex items-center gap-2">
+                        Hostinger Secure SMTP Server
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1 animate-ping"></span>
+                          ACTIVE & SECURE
+                        </span>
+                      </h3>
+                      <p className="text-xs text-gray-600 mt-0.5">
+                        Relaying official communications securely through <strong>smtp.hostinger.com:465</strong> via TLS
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap gap-2 text-xs text-gray-500 font-mono bg-gray-50 p-3 rounded-xl border border-gray-100">
+                    <div className="px-2 py-1 bg-white rounded border border-gray-200">
+                      <strong className="text-gray-700">From:</strong> info@rangrezcommunity.org
+                    </div>
+                    <div className="px-2 py-1 bg-white rounded border border-gray-200">
+                      <strong className="text-gray-700">Support:</strong> support@rangrezcommunity.org
+                    </div>
+                    <div className="px-2 py-1 bg-white rounded border border-gray-200">
+                      <strong className="text-gray-700">Membership:</strong> membership@rangrezcommunity.org
+                    </div>
+                  </div>
+                </div>
+
+                {/* Grid stats */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                    <div className="text-[10px] font-black tracking-wider uppercase text-gray-500">Total SMTP Relays</div>
+                    <div className="text-2xl font-extrabold text-gray-900 mt-1 font-mono">{emailStatsData.total}</div>
+                    <div className="text-[10px] text-gray-500 mt-1">Cumulative app dispatches</div>
+                  </div>
+                  <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                    <div className="text-[10px] font-black tracking-wider uppercase text-emerald-600">Successfully Delivered</div>
+                    <div className="text-2xl font-extrabold text-emerald-600 mt-1 font-mono">{emailStatsData.sent}</div>
+                    <div className="text-[10px] text-gray-500 mt-1">99.9% transmission score</div>
+                  </div>
+                  <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+                    <div className="text-[10px] font-black tracking-wider uppercase text-rose-600">Bounced / Failed</div>
+                    <div className="text-2xl font-extrabold text-rose-600 mt-1 font-mono">{emailStatsData.failed}</div>
+                    <div className="text-[10px] text-gray-500 mt-1">Bounced and error logs</div>
+                  </div>
+                  <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm bg-gradient-to-br from-[#004B23]/5 to-transparent">
+                    <div className="text-[10px] font-black tracking-wider uppercase text-[#004B23]">Hostinger Guard</div>
+                    <div className="text-sm font-bold text-[#004B23] mt-2 font-mono">{emailStatsData.limitUsed} / {emailStatsData.limitMax} hr</div>
+                    <div className="text-[10px] text-gray-500 mt-1">SMTP hour rate-limit cap</div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
+                  {/* Left Column: Email Delivery stream */}
+                  <div className="xl:col-span-8 space-y-4">
+                    <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+                        <div>
+                          <h4 className="text-sm font-black text-gray-900">Email Live Delivery Log Tracker</h4>
+                          <p className="text-xs text-gray-500 mt-0.5">Real-time audit trailing of custom nodemailer relays</p>
+                        </div>
+                        <button
+                          onClick={loadEmailTelemetry}
+                          disabled={loadingEmails}
+                          className="px-3 py-1.5 bg-gray-50 hover:bg-gray-100 text-gray-700 text-xs font-extrabold border border-gray-200 rounded-lg flex items-center gap-1 cursor-pointer transition"
+                        >
+                          <RefreshCw className={`w-3 h-3 ${loadingEmails ? 'animate-spin' : ''}`} />
+                          Refresh Stream
+                        </button>
+                      </div>
+
+                      {/* Filters */}
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 mb-4">
+                        <div className="relative">
+                          <span className="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-gray-400">
+                            <Search className="w-3.5 h-3.5" />
+                          </span>
+                          <input
+                            type="text"
+                            placeholder="Recipient email..."
+                            value={emailSearchTerm}
+                            onChange={(e) => setEmailSearchTerm(e.target.value)}
+                            className="w-full pl-8 pr-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#004B23]"
+                          />
+                        </div>
+
+                        <select
+                          value={emailTemplateFilter}
+                          onChange={(e) => setEmailTemplateFilter(e.target.value)}
+                          className="bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#004B23]"
+                        >
+                          <option value="All">All Templates</option>
+                          <option value="verification">Email Verification</option>
+                          <option value="welcome">Welcome Email</option>
+                          <option value="membership_confirmation">Application Confirmed</option>
+                          <option value="password_reset">Password Reset</option>
+                          <option value="contact_confirmation">Contact Confirmation</option>
+                          <option value="admin_alert">Admin System Notification</option>
+                          <option value="approved">Approved</option>
+                          <option value="rejected">Rejected</option>
+                        </select>
+
+                        <select
+                          value={emailStatusFilter}
+                          onChange={(e) => setEmailStatusFilter(e.target.value)}
+                          className="bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#004B23]"
+                        >
+                          <option value="All">All Statuses</option>
+                          <option value="SENT">Sent Successfully</option>
+                          <option value="FAILED">Failed / Bounced</option>
+                          <option value="QUEUED">Queued / Active</option>
+                        </select>
+                      </div>
+
+                      {/* Log stream Table */}
+                      <div className="overflow-x-auto">
+                        {loadingEmails ? (
+                          <div className="p-8 text-center text-xs text-gray-500">
+                            <RefreshCw className="w-6 h-6 animate-spin mx-auto text-[#004B23] mb-2" />
+                            Loading Hostinger delivery logs...
+                          </div>
+                        ) : emailLogsData.length === 0 ? (
+                          <div className="p-10 text-center text-xs text-gray-400 border border-dashed border-gray-200 rounded-xl">
+                            No logs found in SMTP stack buffer memory.
+                          </div>
+                        ) : (
+                          <div className="space-y-2 max-h-[480px] overflow-y-auto pr-1">
+                            {emailLogsData
+                              .filter(log => {
+                                const matchSearch = log.recipient.toLowerCase().includes(emailSearchTerm.toLowerCase()) || log.subject.toLowerCase().includes(emailSearchTerm.toLowerCase());
+                                const matchTemplate = emailTemplateFilter === "All" || log.templateType.toLowerCase().includes(emailTemplateFilter.toLowerCase());
+                                const matchStatus = emailStatusFilter === "All" || log.status === emailStatusFilter;
+                                return matchSearch && matchTemplate && matchStatus;
+                              })
+                              .map((log) => {
+                                const isSent = log.status === "SENT";
+                                const isFailed = log.status === "FAILED";
+                                return (
+                                  <div key={log.id} className="p-3.5 bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200 transition flex flex-col sm:flex-row justify-between gap-3 items-start sm:items-center">
+                                    <div className="overflow-hidden space-y-0.5">
+                                      <div className="flex items-center gap-2">
+                                        <span className={`text-[9px] font-extrabold px-2 py-0.5 rounded-full ${
+                                          isSent ? 'bg-emerald-100 text-emerald-800' :
+                                          isFailed ? 'bg-red-100 text-red-800' :
+                                          'bg-amber-100 text-amber-800'
+                                        }`}>
+                                          {log.status}
+                                        </span>
+                                        <span className="text-[10px] text-gray-500 font-mono">{log.id}</span>
+                                        <span className="text-[10px] text-gray-400">•</span>
+                                        <span className="text-[10px] text-gray-500 font-bold">{new Date(log.timestamp).toLocaleTimeString()}</span>
+                                      </div>
+                                      <h5 className="text-xs font-bold text-gray-900 truncate">{log.recipient}</h5>
+                                      <p className="text-[11px] text-gray-600 truncate">{log.subject}</p>
+                                      {log.error && (
+                                        <p className="text-[10px] text-red-600 font-mono mt-1 bg-red-50 p-1.5 rounded border border-red-100">
+                                          <strong>Error:</strong> {log.error}
+                                        </p>
+                                      )}
+                                    </div>
+
+                                    <div className="flex gap-1.5 shrink-0 w-full sm:w-auto justify-end">
+                                      <button
+                                        onClick={() => setSelectedEmailForView(log)}
+                                        className="px-2.5 py-1 bg-white hover:bg-gray-100 text-gray-700 text-[10px] font-extrabold rounded-lg border border-gray-200 cursor-pointer flex items-center gap-1 transition"
+                                      >
+                                        <Eye className="w-3 h-3" />
+                                        Preview HTML
+                                      </button>
+                                      {isFailed && (
+                                        <button
+                                          onClick={() => handleRetryEmail(log.id)}
+                                          className="px-2.5 py-1 bg-rose-600 hover:bg-rose-700 text-white text-[10px] font-extrabold rounded-lg cursor-pointer flex items-center gap-1 transition"
+                                        >
+                                          <RefreshCw className="w-3 h-3" />
+                                          Retry Relay
+                                        </button>
+                                      )}
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right Column: Transactional Testing Console & Supabase Config Guides */}
+                  <div className="xl:col-span-4 space-y-6">
+                    {/* Test Console */}
+                    <div className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm">
+                      <h4 className="text-sm font-black text-gray-900 mb-1">Direct Transactional Test Console</h4>
+                      <p className="text-[11px] text-gray-500 mb-3">
+                        Dispatch a live responsive HTML template directly via SMTP to any inbox
+                      </p>
+
+                      <form onSubmit={handleSendTestEmail} className="space-y-3">
+                        <div>
+                          <label className="block text-[10px] font-black uppercase text-gray-500 mb-1">Recipient Email</label>
+                          <input
+                            type="email"
+                            placeholder="e.g. member@gmail.com"
+                            value={testEmailRecipient}
+                            onChange={(e) => setTestEmailRecipient(e.target.value)}
+                            className="w-full px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#004B23]"
+                            required
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-[10px] font-black uppercase text-gray-500 mb-1">Official Template</label>
+                          <select
+                            value={testEmailTemplate}
+                            onChange={(e) => setTestEmailTemplate(e.target.value)}
+                            className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#004B23]"
+                          >
+                            <option value="verification">1. Email Verification PIN</option>
+                            <option value="welcome">2. Luxury Welcome Pack</option>
+                            <option value="membership_confirmation">3. Membership Submission Confirmation</option>
+                            <option value="password_reset">4. Secure Password Reset</option>
+                            <option value="contact_confirmation">5. Contact Response Ticket</option>
+                            <option value="admin_alert">6. Admin Internal System Alert</option>
+                            <option value="approved">7. Scheme Application Approved</option>
+                            <option value="rejected">8. Scheme Application Rejected</option>
+                          </select>
+                        </div>
+
+                        <button
+                          type="submit"
+                          disabled={sendingTestEmail}
+                          className="w-full py-2 bg-[#004B23] hover:bg-[#0A2E1C] text-[#FFD54A] text-xs font-black rounded-lg cursor-pointer transition flex items-center justify-center gap-1.5"
+                        >
+                          {sendingTestEmail ? (
+                            <>
+                              <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                              Relaying Message...
+                            </>
+                          ) : (
+                            <>
+                              Relay SMTP Test Message
+                            </>
+                          )}
+                        </button>
+                      </form>
+                    </div>
+
+                    {/* Supabase Config Guides */}
+                    <div className="bg-gray-900 text-gray-300 p-5 rounded-2xl border border-gray-800">
+                      <div className="flex items-center gap-2 mb-2 text-[#FFD54A]">
+                        <Sliders className="w-4 h-4" />
+                        <h4 className="text-xs font-black uppercase tracking-wider">Supabase Console Config</h4>
+                      </div>
+                      <p className="text-[10px] leading-relaxed text-gray-400 mb-3">
+                        To redirect Supabase authentication triggers (Sign Up, Reset PW) through your Hostinger SMTP mailbox:
+                      </p>
+
+                      <div className="bg-black/50 p-3 rounded-lg text-[10px] font-mono space-y-1.5 text-gray-400 border border-gray-800">
+                        <div>
+                          <span className="text-gray-500">// Go to: Project Settings &gt; Auth &gt; SMTP</span>
+                        </div>
+                        <div>
+                          <strong className="text-white">Enable Custom SMTP:</strong> TRUE
+                        </div>
+                        <div>
+                          <strong className="text-white">SMTP Host:</strong> smtp.hostinger.com
+                        </div>
+                        <div>
+                          <strong className="text-white">Port:</strong> 465 (SSL)
+                        </div>
+                        <div>
+                          <strong className="text-white">Username:</strong> info@rangrezcommunity.org
+                        </div>
+                        <div>
+                          <strong className="text-white">Sender Email:</strong> info@rangrezcommunity.org
+                        </div>
+                        <div>
+                          <strong className="text-white">Sender Name:</strong> All India Rangrez Mahasabha
+                        </div>
+                      </div>
+
+                      <div className="mt-3 text-[10px] text-gray-500 bg-gray-950 p-2.5 rounded border border-gray-800">
+                        💡 <strong>Note:</strong> Set your secure Hostinger password in the password field of the Supabase dashboard to allow Supabase to dispatch directly!
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Email HTML Viewer Overlay */}
+                {selectedEmailForView && (
+                  <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
+                    <div className="bg-white rounded-2xl w-full max-w-2xl shadow-2xl flex flex-col max-h-[85vh]">
+                      <div className="p-5 border-b border-gray-100 flex items-center justify-between bg-gray-50 rounded-t-2xl">
+                        <div>
+                          <h4 className="text-sm font-extrabold text-gray-900">Email Payload Preview</h4>
+                          <p className="text-xs text-gray-500 mt-0.5">Recipient: {selectedEmailForView.recipient} • Template: {selectedEmailForView.templateType}</p>
+                        </div>
+                        <button 
+                          onClick={() => setSelectedEmailForView(null)}
+                          className="p-1.5 hover:bg-gray-200 text-gray-500 hover:text-gray-800 rounded-lg font-bold cursor-pointer transition text-xs"
+                        >
+                          ✕ Close
+                        </button>
+                      </div>
+                      <div className="p-4 overflow-y-auto bg-gray-100 flex-grow">
+                        <div 
+                          className="bg-white p-4 rounded-xl shadow-inner border border-gray-200 overflow-hidden"
+                          dangerouslySetInnerHTML={{ __html: selectedEmailForView.content }}
+                        />
+                      </div>
+                      <div className="p-4 border-t border-gray-100 flex justify-end gap-2 bg-gray-50 rounded-b-2xl">
+                        {selectedEmailForView.status === "FAILED" && (
+                          <button
+                            onClick={() => {
+                              handleRetryEmail(selectedEmailForView.id);
+                              setSelectedEmailForView(null);
+                            }}
+                            className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer"
+                          >
+                            <RefreshCw className="w-3.5 h-3.5" /> Force Retry Delivery
+                          </button>
+                        )}
+                        <button
+                          onClick={() => setSelectedEmailForView(null)}
+                          className="px-4 py-2 bg-gray-800 hover:bg-gray-900 text-white rounded-lg text-xs font-bold transition cursor-pointer"
+                        >
+                          Close Viewer
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>

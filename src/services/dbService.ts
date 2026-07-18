@@ -624,7 +624,7 @@ export class DBService {
       requireEmailVerification: true,
       defaultLanguage: 'hi',
       helplinePhone: '+91 78799 40869',
-      helplineEmail: 'allindiarangrej@gmail.com',
+      helplineEmail: 'info@rangrezcommunity.org',
       announcementTextEn: '📢 National Scholarship Applications 2026 are now OPEN! Apply before 31st August 2026. | National Career Seminar in Jaipur on 5th Aug.',
       announcementTextHi: '📢 राष्ट्रीय छात्रवृत्ति आवेदन 2026 अब खुले हैं! 31 अगस्त 2026 से पहले आवेदन करें। | 5 अगस्त को जयपुर में राष्ट्रीय करियर संगोष्ठी।',
       announcementActive: true,

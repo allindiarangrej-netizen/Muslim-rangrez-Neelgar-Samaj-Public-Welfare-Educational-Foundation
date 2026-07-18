@@ -208,9 +208,14 @@ export default function Footer({ currentLanguage, onNavigate, onOpenArchitecture
               <Phone className="h-4 w-4 mr-2 text-[#F4C430]" />
               <span>+91 78799 40869</span>
             </li>
-            <li className="flex items-center">
-              <Mail className="h-4 w-4 mr-2 text-[#F4C430]" />
-              <span>allindiarangrej@gmail.com</span>
+            <li className="flex items-start">
+              <Mail className="h-4 w-4 mr-2 text-[#F4C430] flex-shrink-0 mt-0.5" />
+              <div className="flex flex-col space-y-1">
+                <span>General: <a href="mailto:info@rangrezcommunity.org" className="hover:underline text-white font-mono">info@rangrezcommunity.org</a></span>
+                <span>Membership: <a href="mailto:membership@rangrezcommunity.org" className="hover:underline text-white font-mono">membership@rangrezcommunity.org</a></span>
+                <span>Admin Trust: <a href="mailto:admin@rangrezcommunity.org" className="hover:underline text-white font-mono">admin@rangrezcommunity.org</a></span>
+                <span>Support: <a href="mailto:support@rangrezcommunity.org" className="hover:underline text-white font-mono">support@rangrezcommunity.org</a></span>
+              </div>
             </li>
           </ul>
         </div>
@@ -360,7 +365,7 @@ export default function Footer({ currentLanguage, onNavigate, onOpenArchitecture
       <div className="border-t border-white/10 mt-12 pt-8 text-center text-xs text-gray-500 font-mono space-y-1" id="footer_copyright">
         <p>© 2026 RANGREZ COMMUNITY BHARAT. ALL RIGHTS RESERVED.</p>
         <p>OFFICIALLY MANAGED BY: MUSLIM RANGREZ NEELGAR SAMAJ PUBLIC WELFARE & EDUCATIONAL FOUNDATION</p>
-        <p>{currentLanguage === 'en' ? 'Bilingual Modern Portal v2.5.0 • Designed for WordPress Elementor Integration' : currentLanguage === 'ur' ? 'سہ لسانی پورٹل v2.5.0 • ورڈپریس ایلیمنٹر انٹیگریشن کے لیے ڈیزائن کیا گیا' : 'द्विभाषी मॉडर्न पोर्टल v2.5.0 • वर्डप्रेस एलिमेंटर इंटीग्रेशन के लिए डिजाइन किया गया'}</p>
+        <p>{currentLanguage === 'en' ? 'Multilingual National Portal v2.5.0 • Powered by Secure Enterprise Cloud' : currentLanguage === 'ur' ? 'سہ لسانی پورٹل v2.5.0 • محفوظ انٹرپرائز کلاؤڈ کے ذریعے تقویت یافتہ' : 'बहुभाषी राष्ट्रीय पोर्टल v2.5.0 • सुरक्षित एंटरप्राइज क्लाउड द्वारा संचालित'}</p>
       </div>
 
       {/* Interactive Modal overlay for Privacy and Terms */}

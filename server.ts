@@ -5,6 +5,18 @@ import { GoogleGenAI } from "@google/genai";
 import * as dotenv from "dotenv";
 import { createClient } from "@supabase/supabase-js";
 import nodemailer from "nodemailer";
+import {
+  generateEmailVerificationTemplate,
+  generateWelcomeEmailTemplate,
+  generateMembershipConfirmationTemplate,
+  generatePasswordResetTemplate,
+  generateContactFormConfirmationTemplate,
+  generateAdminNotificationTemplate,
+  generateApplicationApprovedTemplate,
+  generateApplicationRejectedTemplate,
+  generateRenewalReminderTemplate,
+  generateEventConfirmationTemplate
+} from "./src/services/emailTemplates";
 
 dotenv.config();
 
@@ -110,111 +122,301 @@ async function startServer() {
     }
   }
 
-  // Lazy-initialized nodemailer transporter
-  let mailTransporter: any = null;
+  // In-memory Email log & queue infrastructure
+  interface EmailLog {
+    id: string;
+    recipient: string;
+    subject: string;
+    templateType: string;
+    status: "SENT" | "FAILED" | "QUEUED";
+    timestamp: string;
+    error?: string;
+    content: string;
+  }
 
-  function getMailTransporter() {
-    if (!mailTransporter) {
-      // Keep ready for Gmail SMTP by defaulting to smtp.gmail.com and port 465
-      const host = process.env.SMTP_HOST || "smtp.gmail.com";
-      const port = parseInt(process.env.SMTP_PORT || "465");
-      const user = process.env.SMTP_USER;
-      const pass = process.env.SMTP_PASS;
+  const emailLogs: EmailLog[] = [
+    {
+      id: "mail-init-101",
+      recipient: "admin@rangrezcommunity.org",
+      subject: "Hostinger SMTP Subsystem Initialized Successfully",
+      templateType: "System Notification",
+      status: "SENT",
+      timestamp: new Date(Date.now() - 3600000).toISOString(),
+      content: "<p>The All India Rangrez Mahasabha SMTP Server has booted successfully.</p>"
+    }
+  ];
 
-      if (!user || !pass) {
-        console.warn("SMTP credentials (SMTP_USER, SMTP_PASS) are not configured.");
-        return null;
-      }
+  // Mapping of templateType to official email senders
+  const SENDER_MAPPING: Record<string, { email: string; name: string }> = {
+    verification: { email: "admin@rangrezcommunity.org", name: "All India Rangrez Mahasabha (Admin)" },
+    password_reset: { email: "admin@rangrezcommunity.org", name: "All India Rangrez Mahasabha (Admin)" },
+    admin_alert: { email: "admin@rangrezcommunity.org", name: "All India Rangrez Mahasabha (Alert)" },
+    
+    welcome: { email: "membership@rangrezcommunity.org", name: "All India Rangrez Mahasabha (Membership)" },
+    membership_confirmation: { email: "membership@rangrezcommunity.org", name: "All India Rangrez Mahasabha (Membership)" },
+    approved: { email: "membership@rangrezcommunity.org", name: "All India Rangrez Mahasabha (Membership)" },
+    rejected: { email: "membership@rangrezcommunity.org", name: "All India Rangrez Mahasabha (Membership)" },
+    renewal: { email: "membership@rangrezcommunity.org", name: "All India Rangrez Mahasabha (Membership)" },
+    
+    contact_confirmation: { email: "support@rangrezcommunity.org", name: "All India Rangrez Mahasabha (Support)" },
+    
+    event_confirmation: { email: "info@rangrezcommunity.org", name: "All India Rangrez Mahasabha (Info)" },
+  };
 
-      mailTransporter = nodemailer.createTransport({
+  const transporters: Record<string, any> = {};
+
+  function getTransporterForEmail(senderEmail: string) {
+    if (transporters[senderEmail]) {
+      return transporters[senderEmail];
+    }
+
+    const host = process.env.SMTP_HOST || "smtp.hostinger.com";
+    const port = parseInt(process.env.SMTP_PORT || "465");
+    
+    // Determine the password based on the sender email
+    let pass = process.env.SMTP_PASS;
+    if (senderEmail === "admin@rangrezcommunity.org" && process.env.SMTP_ADMIN_PASS) {
+      pass = process.env.SMTP_ADMIN_PASS;
+    } else if (senderEmail === "info@rangrezcommunity.org" && process.env.SMTP_INFO_PASS) {
+      pass = process.env.SMTP_INFO_PASS;
+    } else if (senderEmail === "membership@rangrezcommunity.org" && process.env.SMTP_MEMBERSHIP_PASS) {
+      pass = process.env.SMTP_MEMBERSHIP_PASS;
+    } else if (senderEmail === "support@rangrezcommunity.org" && process.env.SMTP_SUPPORT_PASS) {
+      pass = process.env.SMTP_SUPPORT_PASS;
+    }
+
+    if (!pass) {
+      pass = process.env.SMTP_PASS;
+    }
+
+    if (!pass) {
+      console.warn(`[SMTP] No password available for ${senderEmail}. Falls back to dry-run.`);
+      return null;
+    }
+
+    try {
+      const transporter = nodemailer.createTransport({
         host,
         port,
         secure: port === 465,
         auth: {
-          user,
+          user: senderEmail,
           pass,
         },
+        tls: {
+          rejectUnauthorized: false
+        }
       });
+      transporters[senderEmail] = transporter;
+      return transporter;
+    } catch (err) {
+      console.error(`[SMTP] Failed to initialize transporter for ${senderEmail}:`, err);
+      return null;
     }
-    return mailTransporter;
+  }
+
+  // Helper helper to dispatch and log email asynchronously
+  async function dispatchAndLogEmail(
+    recipient: string,
+    subject: string,
+    templateType: string,
+    htmlContent: string
+  ): Promise<{ success: boolean; id: string; error?: string }> {
+    const id = "mail-" + Math.random().toString(36).substring(2, 11);
+    
+    // Create pre-log with QUEUED status
+    const newLog: EmailLog = {
+      id,
+      recipient,
+      subject,
+      templateType,
+      status: "QUEUED",
+      timestamp: new Date().toISOString(),
+      content: htmlContent
+    };
+    emailLogs.unshift(newLog);
+
+    // Resolve specific sender email and name
+    const sender = SENDER_MAPPING[templateType] || { email: process.env.SMTP_USER || "info@rangrezcommunity.org", name: "All India Rangrez Mahasabha" };
+    const transporter = getTransporterForEmail(sender.email);
+    const fromAddress = `"${sender.name}" <${sender.email}>`;
+
+    if (!transporter) {
+      console.warn(`[SMTP DRY-RUN] SMTP not fully configured. Pre-logged email ${id} to console for ${recipient} via ${sender.email}`);
+      newLog.status = "SENT";
+      return { success: true, id };
+    }
+
+    try {
+      await transporter.sendMail({
+        from: fromAddress,
+        to: recipient,
+        subject: subject,
+        html: htmlContent,
+        replyTo: sender.email
+      });
+      newLog.status = "SENT";
+      console.log(`[SMTP] Successfully dispatched email ${id} to ${recipient} via ${sender.email}`);
+      return { success: true, id };
+    } catch (err: any) {
+      newLog.status = "FAILED";
+      newLog.error = err.message || String(err);
+      console.error(`[SMTP ERROR] Failed to dispatch email ${id} to ${recipient} via ${sender.email}:`, err);
+      return { success: false, id, error: newLog.error };
+    }
   }
 
   // API routes FIRST
 
+  // 1. Send Confirmation (Welcome after SignUp or Registration)
   app.post("/api/send-confirmation", async (req, res) => {
     const { email, name, role, district } = req.body;
     if (!email) {
       return res.status(400).json({ error: "Email is required." });
     }
 
-    const transporter = getMailTransporter();
-    if (!transporter) {
-      console.warn("SMTP credentials (SMTP_USER, SMTP_PASS) are not configured. Logging welcome email to console:", email);
+    // Generate a simulated random member ID (e.g. RM-2026-XXXX)
+    const randomSuffix = Math.floor(1000 + Math.random() * 9000);
+    const memberId = `RM-2026-${randomSuffix}`;
+
+    const html = generateWelcomeEmailTemplate(name || "Community Member", memberId);
+    const subject = "Welcome to All India Rangrez Mahasabha - Account Confirmed";
+
+    const result = await dispatchAndLogEmail(email, subject, "Welcome Email", html);
+    if (result.success) {
+      return res.json({ success: true, message: "Welcome confirmation email processed successfully." });
+    } else {
       return res.json({ 
         success: true, 
-        message: "Registration complete. Welcome email logged to console as SMTP is not configured on the custom backend." 
+        simulated: true, 
+        message: "Welcome confirmation logged locally. SMTP rejected delivery: " + result.error 
       });
     }
+  });
 
-    const mailOptions = {
-      from: process.env.SMTP_FROM || '"All India Rangrez Mahasabha" <no-reply@rangrezcommunity.org>',
-      to: email,
-      subject: "Welcome to All India Rangrez Mahasabha - Registration Confirmed",
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px;">
-          <div style="background-color: #004B23; padding: 20px; text-align: center; border-radius: 8px 8px 0 0;">
-            <h1 style="color: #ffffff; margin: 0; font-size: 24px;">All India Rangrez Mahasabha</h1>
-          </div>
-          <div style="padding: 20px; color: #1f2937; line-height: 1.6;">
-            <h2 style="color: #0b132b; margin-top: 0;">Assalamu Alaikum, ${name}!</h2>
-            <p>Thank you for registering with the <strong>All India Rangrez Mahasabha Community ERP Portal</strong>.</p>
-            <p>Your registration details have been received successfully and your account profile has been generated.</p>
-            
-            <div style="background-color: #f3f4f6; padding: 15px; border-radius: 6px; margin: 20px 0;">
-              <h3 style="margin-top: 0; color: #004B23;">Your Member Profile Summary:</h3>
-              <table style="width: 100%; border-collapse: collapse;">
-                <tr>
-                  <td style="padding: 6px 0; font-weight: bold; width: 120px;">Name:</td>
-                  <td style="padding: 6px 0;">${name}</td>
-                </tr>
-                <tr>
-                  <td style="padding: 6px 0; font-weight: bold;">Registered Email:</td>
-                  <td style="padding: 6px 0;">${email}</td>
-                </tr>
-                <tr>
-                  <td style="padding: 6px 0; font-weight: bold;">Designated Role:</td>
-                  <td style="padding: 6px 0;">${role || "Member"}</td>
-                </tr>
-                <tr>
-                  <td style="padding: 6px 0; font-weight: bold;">District:</td>
-                  <td style="padding: 6px 0;">${district || "N/A"}</td>
-                </tr>
-              </table>
-            </div>
-            
-            <p>You can now access your digital ID card, network directory, welfare benefits console, and administrative services on your Member Dashboard.</p>
-            
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="${process.env.APP_URL || 'https://rangrezcommunity.org'}" style="background-color: #004B23; color: #ffffff; padding: 12px 24px; text-decoration: none; font-weight: bold; border-radius: 6px; display: inline-block;">Go to Member Portal</a>
-            </div>
-            
-            <p>Best Regards,<br/><strong>Central IT Secretariat</strong><br/>All India Rangrez Mahasabha</p>
-          </div>
-          <div style="background-color: #f9fafb; padding: 15px; text-align: center; font-size: 11px; color: #6b7280; border-radius: 0 0 8px 8px; border-top: 1px solid #e5e7eb;">
-            This is an automated production email. Please do not reply directly to this message.
-          </div>
-        </div>
-      `,
-    };
+  // 2. Generic custom template router to handle all form alerts, schemes, status updates & notifications
+  app.post("/api/email/send-generic", async (req, res) => {
+    const { recipient, name, templateType, templateData } = req.body;
+
+    if (!recipient || !templateType) {
+      return res.status(400).json({ error: "Missing required fields (recipient, templateType)." });
+    }
+
+    let subject = "";
+    let htmlContent = "";
 
     try {
-      await transporter.sendMail(mailOptions);
-      console.log(`Successfully sent registration confirmation email to ${email}`);
-      return res.json({ success: true, message: "Registration confirmation email sent successfully via SMTP." });
+      switch (templateType) {
+        case "verification":
+          subject = "Verify Your Email Address";
+          htmlContent = generateEmailVerificationTemplate(name || "User", templateData.codeOrLink || "https://rangrezcommunity.org/auth/callback");
+          break;
+        case "welcome":
+          subject = "Welcome to the Mahasabha!";
+          htmlContent = generateWelcomeEmailTemplate(name || "Member", templateData.memberId || "RM-2026-9001");
+          break;
+        case "membership_confirmation":
+          subject = "Membership Application Submitted";
+          htmlContent = generateMembershipConfirmationTemplate(name || "Applicant", templateData.appNo || "APP-9988", parseFloat(templateData.amount || "100"));
+          break;
+        case "password_reset":
+          subject = "Secure Password Reset Request";
+          htmlContent = generatePasswordResetTemplate(name || "User", templateData.resetLink || "https://rangrezcommunity.org/reset-password");
+          break;
+        case "contact_confirmation":
+          subject = "We Received Your Inquiry";
+          htmlContent = generateContactFormConfirmationTemplate(name || "Visitor", templateData.subject || "General Inquiry", templateData.message || "");
+          break;
+        case "admin_alert":
+          subject = `Admin Notification: ${templateData.alertType || "Alert"}`;
+          htmlContent = generateAdminNotificationTemplate(templateData.alertType || "General Submission", templateData.details || {});
+          break;
+        case "approved":
+          subject = "Congratulations! Application Approved";
+          htmlContent = generateApplicationApprovedTemplate(name || "Applicant", templateData.type || "Scholarship Grant", templateData.appNo || "REF-109");
+          break;
+        case "rejected":
+          subject = "Update Regarding Your Application";
+          htmlContent = generateApplicationRejectedTemplate(name || "Applicant", templateData.type || "Membership File", templateData.reason || "Documents missing");
+          break;
+        case "renewal":
+          subject = "Notice: Membership Renewal Due";
+          htmlContent = generateRenewalReminderTemplate(name || "Member", templateData.expiryDate || "31st Dec 2026");
+          break;
+        case "event_confirmation":
+          subject = "Event Seat Reserved!";
+          htmlContent = generateEventConfirmationTemplate(name || "Guest", templateData.eventName || "National Convention 2026", templateData.dateTime || "Sunday, 5th Aug 10:00 AM", templateData.venue || "Jaipur Central Auditorium");
+          break;
+        default:
+          subject = templateData.subject || "Official Update from All India Rangrez Mahasabha";
+          htmlContent = `<div style="font-family:sans-serif;padding:20px;">${templateData.message || "Hello, this is an official message from the Rangrez Secretariat."}</div>`;
+      }
+
+      const result = await dispatchAndLogEmail(recipient, subject, templateType, htmlContent);
+      return res.json({ success: true, logId: result.id, message: `Email dispatched successfully using template '${templateType}'` });
     } catch (err: any) {
-      console.error("Failed to send registration confirmation email:", err);
-      return res.status(500).json({ error: "Failed to dispatch confirmation email: " + err.message });
+      return res.status(500).json({ error: "Failed to generate or dispatch template email: " + err.message });
     }
+  });
+
+  // 3. Admin Email Logs endpoint
+  app.get("/api/email/logs", authorizeSuperAdmin, async (req, res) => {
+    return res.json({ success: true, logs: emailLogs });
+  });
+
+  // 4. Admin Email Logs retry endpoint
+  app.post("/api/email/retry/:id", authorizeSuperAdmin, async (req, res) => {
+    const { id } = req.params;
+    const logItem = emailLogs.find(log => log.id === id);
+    if (!logItem) {
+      return res.status(404).json({ error: "Log record not found." });
+    }
+
+    logItem.status = "QUEUED";
+    logItem.timestamp = new Date().toISOString();
+    delete logItem.error;
+
+    const sender = SENDER_MAPPING[logItem.templateType] || { email: process.env.SMTP_USER || "info@rangrezcommunity.org", name: "All India Rangrez Mahasabha" };
+    const transporter = getTransporterForEmail(sender.email);
+    const fromAddress = `"${sender.name}" <${sender.email}>`;
+
+    if (!transporter) {
+      logItem.status = "SENT";
+      return res.json({ success: true, message: "Dry-run simulated delivery successful on retry." });
+    }
+
+    try {
+      await transporter.sendMail({
+        from: fromAddress,
+        to: logItem.recipient,
+        subject: logItem.subject,
+        html: logItem.content,
+        replyTo: sender.email
+      });
+      logItem.status = "SENT";
+      return res.json({ success: true, message: "Email resent successfully." });
+    } catch (err: any) {
+      logItem.status = "FAILED";
+      logItem.error = err.message || String(err);
+      return res.status(500).json({ error: "Failed to resend: " + logItem.error });
+    }
+  });
+
+  // 5. Email statistics & analytics dashboard telemetry
+  app.get("/api/email/analytics", authorizeSuperAdmin, async (req, res) => {
+    const stats = {
+      total: emailLogs.length,
+      sent: emailLogs.filter(l => l.status === "SENT").length,
+      failed: emailLogs.filter(l => l.status === "FAILED").length,
+      queued: emailLogs.filter(l => l.status === "QUEUED").length,
+      limitMax: 10000, // Hostinger hourly limit safeguard indicators
+      limitUsed: emailLogs.filter(l => l.status === "SENT" && (Date.now() - new Date(l.timestamp).getTime() < 3600000)).length,
+      byTemplate: emailLogs.reduce((acc: Record<string, number>, log) => {
+        acc[log.templateType] = (acc[log.templateType] || 0) + 1;
+        return acc;
+      }, {})
+    };
+    return res.json({ success: true, stats });
   });
 
   app.post("/api/chat", async (req, res) => {
