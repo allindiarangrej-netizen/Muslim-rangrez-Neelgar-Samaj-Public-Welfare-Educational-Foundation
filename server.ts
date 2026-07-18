@@ -17,6 +17,16 @@ import {
   generateRenewalReminderTemplate,
   generateEventConfirmationTemplate
 } from "./src/services/emailTemplates";
+import {
+  INITIAL_COUNTRIES,
+  INITIAL_STATES,
+  INITIAL_DIVISIONS,
+  INITIAL_DISTRICTS,
+  INITIAL_SUB_DIVISIONS,
+  INITIAL_TEHSILS,
+  INITIAL_BLOCKS,
+  INITIAL_CITIES_VILLAGES
+} from "./src/data/indiaGeographicMaster";
 
 dotenv.config();
 
@@ -267,6 +277,509 @@ async function startServer() {
   }
 
   // API routes FIRST
+
+  // --------------------------------------------------------------------------
+  // CENTRALIZED ENTERPRISE INDIAN GEOGRAPHIC MASTER APIS
+  // Caching enabled, supports cascading dropdown requests and advanced searches
+  // --------------------------------------------------------------------------
+  let serverStates = [...INITIAL_STATES];
+  let serverDistricts = [...INITIAL_DISTRICTS];
+  let serverTehsils = [...INITIAL_TEHSILS];
+  let serverCitiesVillages = [...INITIAL_CITIES_VILLAGES];
+
+  // GET States
+  app.get("/api/geographic/states", (req, res) => {
+    res.setHeader("Cache-Control", "public, max-age=3600");
+    const activeStates = serverStates.filter(s => s.isActive && !s.isDeleted);
+    return res.json({ success: true, count: activeStates.length, states: activeStates });
+  });
+
+  // GET Districts
+  app.get("/api/geographic/districts", (req, res) => {
+    res.setHeader("Cache-Control", "public, max-age=1800");
+    const { stateId } = req.query;
+    if (!stateId) {
+      return res.status(400).json({ error: "Missing required parameter: stateId" });
+    }
+    const filtered = serverDistricts.filter(d => d.stateId === stateId && d.isActive && !d.isDeleted);
+    return res.json({ success: true, count: filtered.length, districts: filtered });
+  });
+
+  // GET Tehsils
+  app.get("/api/geographic/tehsils", (req, res) => {
+    res.setHeader("Cache-Control", "public, max-age=1800");
+    const { districtId } = req.query;
+    if (!districtId) {
+      return res.status(400).json({ error: "Missing required parameter: districtId" });
+    }
+    const filtered = serverTehsils.filter(t => t.districtId === districtId && t.isActive && !t.isDeleted);
+    return res.json({ success: true, count: filtered.length, tehsils: filtered });
+  });
+
+  // GET Villages / Cities
+  app.get("/api/geographic/cities-villages", (req, res) => {
+    res.setHeader("Cache-Control", "public, max-age=1800");
+    const { districtId, tehsilId } = req.query;
+    if (!districtId) {
+      return res.status(400).json({ error: "Missing required parameter: districtId" });
+    }
+    const filtered = serverCitiesVillages.filter(cv => 
+      cv.districtId === districtId && 
+      (!tehsilId || cv.tehsilId === tehsilId) && 
+      cv.isActive && 
+      !cv.isDeleted
+    );
+    return res.json({ success: true, count: filtered.length, citiesVillages: filtered });
+  });
+
+  // Search Locations (English, Hindi, Alternate spellings, LGD codes)
+  app.get("/api/geographic/search", (req, res) => {
+    const { q } = req.query;
+    if (!q || typeof q !== "string") {
+      return res.json({ success: true, count: 0, results: [] });
+    }
+    const query = q.toLowerCase().trim();
+    const results = serverCitiesVillages.filter(cv => {
+      if (!cv.isActive || cv.isDeleted) return false;
+      const nameEn = cv.nameEn.toLowerCase().includes(query);
+      const nameHi = cv.nameHi.includes(query);
+      const pin = cv.pinCode.includes(query);
+      const lgd = cv.lgdCode?.toLowerCase().includes(query) || false;
+      const spelling = cv.alternativeSpellings?.some(sp => sp.toLowerCase().includes(query)) || false;
+      return nameEn || nameHi || pin || lgd || spelling;
+    }).slice(0, 50);
+
+    return res.json({ success: true, count: results.length, results });
+  });
+
+  // Search PIN Code
+  app.get("/api/geographic/pin", (req, res) => {
+    const { pinCode } = req.query;
+    if (!pinCode) {
+      return res.status(400).json({ error: "Missing required parameter: pinCode" });
+    }
+    const matches = serverCitiesVillages.filter(cv => cv.pinCode === pinCode && cv.isActive && !cv.isDeleted);
+    return res.json({ success: true, count: matches.length, results: matches });
+  });
+
+  // Super Admin geographic import endpoint
+  app.post("/api/geographic/import", authorizeSuperAdmin, (req, res) => {
+    const { data } = req.body;
+    if (!Array.isArray(data)) {
+      return res.status(400).json({ error: "Invalid format. Expected data to be a JSON array." });
+    }
+
+    const errors: string[] = [];
+    let importedCount = 0;
+
+    // Snapshot state for rollback
+    const originalStates = [...serverStates];
+    const originalDistricts = [...serverDistricts];
+    const originalTehsils = [...serverTehsils];
+    const originalCities = [...serverCitiesVillages];
+
+    try {
+      for (let i = 0; i < data.length; i++) {
+        const item = data[i];
+        const row = i + 1;
+        if (!item.type) {
+          errors.push(`Row ${row}: Missing 'type' field.`);
+          continue;
+        }
+
+        const type = String(item.type).toUpperCase();
+        if (type === "STATE") {
+          if (!item.id || !item.nameEn || !item.nameHi) {
+            errors.push(`Row ${row}: Missing state fields (id, nameEn, nameHi).`);
+            continue;
+          }
+          if (serverStates.some(s => s.id === item.id)) {
+            errors.push(`Row ${row}: Duplicate State ID '${item.id}'.`);
+            continue;
+          }
+          serverStates.push({
+            id: item.id,
+            countryId: "IND",
+            nameEn: item.nameEn,
+            nameHi: item.nameHi,
+            lgdCode: item.lgdCode || "N/A",
+            isUt: !!item.isUt,
+            isActive: true,
+            isDeleted: false
+          });
+          importedCount++;
+        } else if (type === "DISTRICT") {
+          if (!item.id || !item.stateId || !item.nameEn || !item.nameHi) {
+            errors.push(`Row ${row}: Missing district fields.`);
+            continue;
+          }
+          if (serverDistricts.some(d => d.id === item.id)) {
+            errors.push(`Row ${row}: Duplicate District ID '${item.id}'.`);
+            continue;
+          }
+          serverDistricts.push({
+            id: item.id,
+            stateId: item.stateId,
+            nameEn: item.nameEn,
+            nameHi: item.nameHi,
+            lgdCode: item.lgdCode || "N/A",
+            isActive: true,
+            isDeleted: false
+          });
+          importedCount++;
+        } else if (type === "TEHSIL") {
+          if (!item.id || !item.districtId || !item.nameEn || !item.nameHi) {
+            errors.push(`Row ${row}: Missing tehsil fields.`);
+            continue;
+          }
+          if (serverTehsils.some(t => t.id === item.id)) {
+            errors.push(`Row ${row}: Duplicate Tehsil ID '${item.id}'.`);
+            continue;
+          }
+          serverTehsils.push({
+            id: item.id,
+            districtId: item.districtId,
+            nameEn: item.nameEn,
+            nameHi: item.nameHi,
+            lgdCode: item.lgdCode || "N/A",
+            isActive: true,
+            isDeleted: false
+          });
+          importedCount++;
+        } else if (type === "CITY" || type === "VILLAGE") {
+          if (!item.id || !item.districtId || !item.nameEn || !item.nameHi || !item.pinCode) {
+            errors.push(`Row ${row}: Missing city/village fields.`);
+            continue;
+          }
+          if (serverCitiesVillages.some(c => c.id === item.id)) {
+            errors.push(`Row ${row}: Duplicate City/Village ID '${item.id}'.`);
+            continue;
+          }
+          serverCitiesVillages.push({
+            id: item.id,
+            districtId: item.districtId,
+            tehsilId: item.tehsilId,
+            nameEn: item.nameEn,
+            nameHi: item.nameHi,
+            pinCode: item.pinCode,
+            isCity: type === "CITY",
+            lgdCode: item.lgdCode || "N/A",
+            isActive: true,
+            isDeleted: false
+          });
+          importedCount++;
+        } else {
+          errors.push(`Row ${row}: Unknown type '${item.type}'.`);
+        }
+      }
+
+      if (errors.length > 0) {
+        // Rollback
+        serverStates = originalStates;
+        serverDistricts = originalDistricts;
+        serverTehsils = originalTehsils;
+        serverCitiesVillages = originalCities;
+        return res.status(400).json({ success: false, errors });
+      }
+
+      return res.json({ success: true, importedCount });
+    } catch (e: any) {
+      serverStates = originalStates;
+      serverDistricts = originalDistricts;
+      serverTehsils = originalTehsils;
+      serverCitiesVillages = originalCities;
+      return res.status(500).json({ error: "Exception during bulk import. Rollback completed.", details: e.message });
+    }
+  });
+
+  // Auth: Generate real verification link via Supabase and deliver via Hostinger SMTP
+  app.post("/api/auth/send-verification-link", async (req, res) => {
+    const { email, password, name, phone } = req.body;
+    if (!email) {
+      return res.status(400).json({ error: "Email is required." });
+    }
+
+    const logs: string[] = [];
+    logs.push(`[AUTH] Generating verification link for: ${email}`);
+
+    const supabaseAdmin = getSupabaseAdmin();
+    if (!supabaseAdmin) {
+      const err = "Supabase Admin client not configured on server.";
+      logs.push(`[ERROR] ${err}`);
+      return res.status(500).json({ 
+        success: false, 
+        error: err, 
+        logs 
+      });
+    }
+
+    try {
+      let userId: string | null = null;
+      let isVerified = false;
+
+      logs.push(`[AUTH] Checking if user ${email} already exists...`);
+      try {
+        const { data: created, error: createError } = await supabaseAdmin.auth.admin.createUser({
+          email,
+          password: password || "tempPass123!",
+          email_confirm: false,
+          user_metadata: { full_name: name, phone }
+        });
+
+        if (createError) {
+          if (createError.message.includes("already exists") || createError.message.includes("already registered") || createError.message.includes("email_exists")) {
+            logs.push(`[AUTH] User already exists in auth schema. Fetching user info...`);
+            const { data: { users }, error: listError } = await supabaseAdmin.auth.admin.listUsers();
+            const existingUser = (users as any[])?.find((u: any) => u.email === email);
+            if (existingUser) {
+              userId = existingUser.id;
+              isVerified = !!existingUser.email_confirmed_at;
+              logs.push(`[AUTH] Existing User ID: ${userId}, email_confirmed: ${isVerified}`);
+              
+              if (isVerified) {
+                logs.push(`[AUTH] User is already verified. Aborting email send.`);
+                return res.json({ 
+                  success: true, 
+                  alreadyVerified: true, 
+                  message: "Your email is already verified. You can proceed directly to submit registration." 
+                });
+              }
+
+              if (password) {
+                logs.push(`[AUTH] Updating password & metadata for unconfirmed user ${userId}...`);
+                const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(userId, {
+                  password,
+                  user_metadata: { full_name: name, phone }
+                });
+                if (updateError) {
+                  logs.push(`[WARNING] Failed to update password: ${updateError.message}`);
+                } else {
+                  logs.push(`[AUTH] User password & metadata updated successfully.`);
+                }
+              }
+            }
+          } else {
+            throw createError;
+          }
+        } else if (created?.user) {
+          userId = created.user.id;
+          logs.push(`[AUTH] New unconfirmed user created with ID: ${userId}`);
+        }
+      } catch (authSetupErr: any) {
+        logs.push(`[WARNING] Non-blocking auth setup error: ${authSetupErr.message || authSetupErr}`);
+      }
+
+      const redirectUrl = `${req.protocol}://${req.get('host')}/auth/callback`;
+      logs.push(`[AUTH] Generating signup action link with redirect: ${redirectUrl}`);
+      
+      let linkResponse = await supabaseAdmin.auth.admin.generateLink({
+        type: 'signup',
+        email,
+        password: password || "tempPass123!",
+        options: { redirectTo: redirectUrl }
+      } as any);
+
+      if (linkResponse.error) {
+        logs.push(`[AUTH] Signup link generation failed: ${linkResponse.error.message}. Trying 'magiclink' type...`);
+        linkResponse = await supabaseAdmin.auth.admin.generateLink({
+          type: 'magiclink',
+          email,
+          options: { redirectTo: redirectUrl }
+        } as any);
+      }
+
+      if (linkResponse.error) {
+        const errStr = `Failed to generate auth link: ${linkResponse.error.message}`;
+        logs.push(`[AUTH] ${errStr}`);
+        return res.status(400).json({
+          success: false,
+          error: errStr,
+          logs
+        });
+      }
+
+      const actionLink = linkResponse.data?.properties?.action_link;
+      if (!actionLink) {
+        const errStr = "Auth link was not returned in Supabase response properties.";
+        logs.push(`[AUTH] ${errStr}`);
+        return res.status(500).json({
+          success: false,
+          error: errStr,
+          logs
+        });
+      }
+
+      logs.push(`[AUTH] Supabase link generated successfully. Supabase Response: ${JSON.stringify(linkResponse.data)}`);
+
+      // Prepare & send email via Hostinger SMTP
+      const subject = "Verify Your Email Address - All India Rangrez Mahasabha";
+      const htmlContent = generateEmailVerificationTemplate(name || "Community Member", actionLink);
+
+      logs.push(`[SMTP] Checking SMTP credentials for admin@rangrezcommunity.org...`);
+      const sender = { email: "admin@rangrezcommunity.org", name: "All India Rangrez Mahasabha (Admin)" };
+      const transporter = getTransporterForEmail(sender.email);
+
+      if (!transporter) {
+        const errStr = `SMTP Configuration/Transporter could not be initialized for mailbox: ${sender.email}`;
+        logs.push(`[ERROR] ${errStr}`);
+        return res.status(500).json({
+          success: false,
+          error: errStr,
+          logs
+        });
+      }
+
+      const fromAddress = `"${sender.name}" <${sender.email}>`;
+      logs.push(`[SMTP] Sender Address: ${fromAddress}`);
+      logs.push(`[SMTP] Recipient Address: ${email}`);
+      logs.push(`[SMTP] Attempting connection & authentication...`);
+
+      const info = await transporter.sendMail({
+        from: fromAddress,
+        to: email,
+        subject: subject,
+        html: htmlContent,
+        replyTo: sender.email
+      });
+
+      logs.push(`[SMTP] Delivery result: accepted. SMTP Response: ${info.response}`);
+
+      // Log to in-memory logs for administrators
+      const newLog = {
+        id: "EML-" + Math.floor(100000 + Math.random() * 900000),
+        recipient: email,
+        subject: subject,
+        templateType: "verification",
+        timestamp: new Date().toISOString(),
+        status: "SENT" as const,
+        content: htmlContent
+      };
+      emailLogs.unshift(newLog);
+
+      return res.json({
+        success: true,
+        message: "Verification email sent successfully.",
+        logs
+      });
+
+    } catch (err: any) {
+      logs.push(`[ERROR] Exception during verification delivery: ${err.message || err}`);
+      if (err.stack) {
+        logs.push(`[STACK] ${err.stack}`);
+      }
+      console.error("[AUTH ENDPOINT ERROR]:", err);
+      return res.status(500).json({
+        success: false,
+        error: err.message || String(err),
+        logs
+      });
+    }
+  });
+
+  // Admin SMTP Diagnostic Tool
+  app.post("/api/admin/send-test-email", authorizeSuperAdmin, async (req, res) => {
+    const { recipient } = req.body;
+    if (!recipient) {
+      return res.status(400).json({ error: "Recipient email is required." });
+    }
+
+    const logs: string[] = [];
+    logs.push(`[DIAGNOSTIC] Starting SMTP test to ${recipient}...`);
+
+    const host = process.env.SMTP_HOST || "smtp.hostinger.com";
+    const port = parseInt(process.env.SMTP_PORT || "465");
+    const user = "admin@rangrezcommunity.org";
+    let pass = process.env.SMTP_ADMIN_PASS || process.env.SMTP_PASS;
+
+    logs.push(`[CONFIG] Host: ${host}, Port: ${port}, Sender email (SMTP Mailbox): ${user}`);
+
+    if (!pass) {
+      logs.push(`[ERROR] No password configured for ${user} (checked SMTP_ADMIN_PASS and SMTP_PASS).`);
+      return res.json({
+        success: false,
+        connectionSuccess: false,
+        authSuccess: false,
+        deliverySuccess: false,
+        error: "SMTP password is not configured for admin mailbox.",
+        logs
+      });
+    }
+
+    let connectionSuccess = false;
+    let authSuccess = false;
+    let deliverySuccess = false;
+    let errMessage = "";
+
+    try {
+      logs.push(`[SMTP] Attempting connection to ${host}:${port}...`);
+      const transporter = nodemailer.createTransport({
+        host,
+        port,
+        secure: port === 465,
+        auth: {
+          user,
+          pass,
+        },
+        tls: {
+          rejectUnauthorized: false
+        }
+      });
+
+      try {
+        await transporter.verify();
+        connectionSuccess = true;
+        authSuccess = true;
+        logs.push(`[SMTP] Connection & SMTP Authentication verified successfully.`);
+      } catch (verifyErr: any) {
+        errMessage = verifyErr.message || String(verifyErr);
+        logs.push(`[ERROR] Authentication/Connection failed: ${errMessage}`);
+        if (verifyErr.stack) logs.push(`[STACK] ${verifyErr.stack}`);
+        return res.json({
+          success: false,
+          connectionSuccess,
+          authSuccess,
+          deliverySuccess,
+          error: errMessage,
+          logs
+        });
+      }
+
+      logs.push(`[SMTP] Dispatching test email...`);
+      logs.push(`[SMTP] Sender Address: "All India Rangrez Mahasabha (Admin)" <${user}>`);
+      logs.push(`[SMTP] Recipient Address: ${recipient}`);
+
+      const info = await transporter.sendMail({
+        from: `"All India Rangrez Mahasabha (Admin)" <${user}>`,
+        to: recipient,
+        subject: "SMTP Diagnostic Test Email - All India Rangrez Mahasabha",
+        html: `<h3>SMTP Diagnostic Successful</h3><p>This is a real SMTP delivery test requested by the Administrator. If you see this, the email flow is fully functional and authenticated.</p><p>Timestamp: ${new Date().toISOString()}</p>`,
+      });
+
+      deliverySuccess = true;
+      logs.push(`[SMTP] Delivery Accepted: ${info.response}`);
+      return res.json({
+        success: true,
+        connectionSuccess,
+        authSuccess,
+        deliverySuccess,
+        logs,
+        response: info.response
+      });
+
+    } catch (err: any) {
+      errMessage = err.message || String(err);
+      logs.push(`[ERROR] Delivery failed: ${errMessage}`);
+      if (err.stack) logs.push(`[STACK] ${err.stack}`);
+      return res.json({
+        success: false,
+        connectionSuccess,
+        authSuccess,
+        deliverySuccess,
+        error: errMessage,
+        logs
+      });
+    }
+  });
 
   // 1. Send Confirmation (Welcome after SignUp or Registration)
   app.post("/api/send-confirmation", async (req, res) => {

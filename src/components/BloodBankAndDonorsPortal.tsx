@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Language } from '../types';
+import { GeographicService } from '../services/geographicService';
 
 interface BloodBankAndDonorsPortalProps {
   currentLanguage: Language;
@@ -235,7 +236,18 @@ export default function BloodBankAndDonorsPortal({ currentLanguage, defaultTab =
   });
 
   const bloodGroups = ['ALL', 'A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-', 'Bombay (Oh)'];
-  const cities = ['ALL', 'Jaipur', 'Bhopal', 'Indore', 'Lucknow', 'New Delhi'];
+  
+  // Dynamically query master geographic service database instead of maintaining local arrays
+  GeographicService.init();
+  const allMasterCities = [
+    ...new Set([
+      ...GeographicService.getStates('IND').flatMap(s => 
+        GeographicService.getDistricts(s.id).map(d => d.nameEn)
+      ),
+      'Jaipur', 'Bhopal', 'Indore', 'Lucknow', 'New Delhi' // Backwards compatibility fallbacks
+    ])
+  ];
+  const cities = ['ALL', ...allMasterCities];
 
   const handleExport = (format: 'pdf' | 'excel') => {
     if (format === 'pdf') {

@@ -5,7 +5,8 @@ import { Language } from '../types';
 import { IMAGES } from '../data/mediaRegistry';
 import { useAuth } from '../context/AuthContext';
 import { getSupabase } from '../lib/supabaseClient';
-import { INDIAN_STATES, DISTRICTS, TEHSILS } from '../data/indiaData';
+import LocationSelector from './LocationSelector';
+import GeoAdminConsole from './GeoAdminConsole';
 
 interface Volunteer {
   id: string;
@@ -438,80 +439,28 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
     setEmailVerificationError(null);
 
     try {
-      const redirectUrl = `${window.location.origin}/auth/callback`;
-      const signUpOptions: any = {
-        emailRedirectTo: redirectUrl,
-        data: {
-          full_name: formData.name,
-          phone: formData.phone,
-        }
-      };
-
-      // Attempt standard signUp to register the user and send verification email
-      const { data: signUpData, error } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.password,
-        options: signUpOptions
+      const response = await fetch('/api/auth/send-verification-link', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: formData.email,
+          password: formData.password,
+          name: formData.name,
+          phone: formData.phone
+        })
       });
 
-      if (error) {
-        // If user already exists but email is not confirmed, try to resend the verification email
-        if (
-          error.message.includes('already registered') || 
-          error.message.includes('User already exists') || 
-          error.message.includes('already been registered') ||
-          error.message.includes('email_exists')
-        ) {
-          const { error: resendError } = await supabase.auth.resend({
-            type: 'signup',
-            email: formData.email,
-            options: {
-              emailRedirectTo: redirectUrl
-            }
-          });
+      const data = await response.json();
 
-          if (resendError) {
-            // Handle if email is already confirmed
-            if (
-              resendError.message.includes('already confirmed') || 
-              resendError.message.includes('already verified') || 
-              resendError.message.includes('verified')
-            ) {
-              setFormData(prev => ({ ...prev, emailVerified: true }));
-              alert(currentLanguage === 'en' 
-                ? 'This email is already verified! You can proceed.' 
-                : 'यह ईमेल पहले से ही सत्यापित है! आप आगे बढ़ सकते हैं।');
-              return;
-            }
-            throw resendError;
-          }
-          
-          setEmailVerifySent(true);
-          setEmailVerifyTimer(60);
-          const timer = setInterval(() => {
-            setEmailVerifyTimer((prev) => {
-              if (prev <= 1) {
-                clearInterval(timer);
-                return 0;
-              }
-              return prev - 1;
-            });
-          }, 1000);
-
-          alert(currentLanguage === 'en' 
-            ? 'Verification email sent successfully. Please check your Inbox and Spam folder.' 
-            : 'सत्यापन लिंक सफलतापूर्वक भेजा गया। कृपया अपना इनबॉक्स और स्पैम फ़ोल्डर जांचें।');
-          return;
-        }
-        throw error;
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || 'Server rejected verification email dispatch.');
       }
 
-      // Check if user is already confirmed/verified
-      if (signUpData?.user && signUpData.user.email_confirmed_at) {
+      if (data.alreadyVerified) {
         setFormData(prev => ({ ...prev, emailVerified: true }));
-        alert(currentLanguage === 'en' 
-          ? 'Identity auto-verified!' 
-          : 'पहचान स्वतः सत्यापित हो गई!');
+        alert(currentLanguage === 'en'
+          ? 'Your email address is already verified! You may proceed with registration.'
+          : 'आपका ईमेल पता पहले से सत्यापित है! आप पंजीकरण के साथ आगे बढ़ सकते हैं।');
         return;
       }
 
@@ -527,14 +476,16 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
         });
       }, 1000);
 
-      alert(currentLanguage === 'en' 
-        ? 'Verification email sent successfully. Please check your Inbox and Spam folder.' 
+      alert(currentLanguage === 'en'
+        ? 'Verification link sent successfully. Please check your Inbox and Spam folders.'
         : 'सत्यापन लिंक सफलतापूर्वक भेजा गया। कृपया अपना इनबॉक्स और स्पैम फ़ोल्डर जांचें।');
     } catch (err: any) {
-      console.error("Email verification error:", err);
+      console.error("Email verification dispatch error:", err);
       const errMsg = err.message || String(err);
       setEmailVerificationError(errMsg);
-      alert(errMsg);
+      alert(currentLanguage === 'en' 
+        ? `Failed to deliver verification link: ${errMsg}` 
+        : `सत्यापन लिंक भेजने में विफल: ${errMsg}`);
     } finally {
       setIsSendingEmail(false);
     }
@@ -1463,74 +1414,26 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
                     </select>
                   </div>
 
-                  {/* State */}
-                  <div>
-                    <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">
-                      ★ {currentLanguage === 'en' ? 'State' : 'राज्य'}
-                    </label>
-                    <select
-                      required
-                      value={formData.stateId}
-                      onChange={(e) => setFormData({ ...formData, stateId: e.target.value, districtId: '', tehsilId: '' })}
-                      className="w-full bg-white border border-gray-200 text-xs p-3 rounded focus:outline-none focus:ring-1 focus:ring-[#004B23]"
-                    >
-                      <option value="">{currentLanguage === 'en' ? '-- Select State --' : '-- राज्य चुनें --'}</option>
-                      {INDIAN_STATES.map(s => (
-                        <option key={s.id} value={s.id}>{currentLanguage === 'en' ? s.nameEn : s.nameHi}</option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {/* District */}
-                  <div>
-                    <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">
-                      ★ {currentLanguage === 'en' ? 'District' : 'जिला'}
-                    </label>
-                    <select
-                      required
-                      disabled={!formData.stateId}
-                      value={formData.districtId}
-                      onChange={(e) => setFormData({ ...formData, districtId: e.target.value, tehsilId: '' })}
-                      className="w-full bg-white border border-gray-200 text-xs p-3 rounded focus:outline-none focus:ring-1 focus:ring-[#004B23] disabled:opacity-50"
-                    >
-                      <option value="">{currentLanguage === 'en' ? '-- Select District --' : '-- जिला चुनें --'}</option>
-                      {DISTRICTS.filter(d => d.stateId === formData.stateId).map(d => (
-                        <option key={d.id} value={d.id}>{currentLanguage === 'en' ? d.nameEn : d.nameHi}</option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {/* Tehsil / Area */}
-                  <div>
-                    <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">
-                      ★ {currentLanguage === 'en' ? 'Tehsil / Block' : 'तहसील / ब्लॉक'}
-                    </label>
-                    <select
-                      required
-                      disabled={!formData.districtId}
-                      value={formData.tehsilId}
-                      onChange={(e) => setFormData({ ...formData, tehsilId: e.target.value })}
-                      className="w-full bg-white border border-gray-200 text-xs p-3 rounded focus:outline-none focus:ring-1 focus:ring-[#004B23] disabled:opacity-50"
-                    >
-                      <option value="">{currentLanguage === 'en' ? '-- Select Tehsil --' : '-- तहसील चुनें --'}</option>
-                      {TEHSILS.filter(t => t.districtId === formData.districtId).map(t => (
-                        <option key={t.id} value={t.id}>{currentLanguage === 'en' ? t.nameEn : t.nameHi}</option>
-                      ))}
-                    </select>
-                  </div>
-
-                  {/* City / Village */}
-                  <div>
-                    <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">
-                      ★ {currentLanguage === 'en' ? 'City / Village' : 'शहर / गाँव'}
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      placeholder={currentLanguage === 'en' ? 'e.g. Morena Town' : 'जैसे, मुरैना टाउन'}
-                      value={formData.city}
-                      onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                      className="w-full bg-white border border-gray-200 text-xs p-3 rounded focus:outline-none focus:ring-1 focus:ring-[#004B23]"
+                  {/* Centralized Indian Geographic Master Location Selector */}
+                  <div className="sm:col-span-2">
+                    <LocationSelector
+                      currentLanguage={currentLanguage}
+                      required={true}
+                      initialValues={{
+                        stateId: formData.stateId,
+                        districtId: formData.districtId,
+                        tehsilId: formData.tehsilId,
+                        countryId: 'IND'
+                      }}
+                      onLocationChange={(loc) => {
+                        setFormData({
+                          ...formData,
+                          stateId: loc.stateId,
+                          districtId: loc.districtId,
+                          tehsilId: loc.tehsilId,
+                          city: loc.locationTextEn
+                        });
+                      }}
                     />
                   </div>
 
@@ -2673,34 +2576,21 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
               </div>
             )}
 
-            {/* TAB 4: AREA COMMITTEES */}
+            {/* TAB 4: GEOGRAPHIC MASTER DATABASE ADMINISTRATIVE CONTROL PANEL */}
             {adminTab === 'areas' && (
-              <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
-                <div className="flex justify-between items-center border-b border-gray-100 pb-3">
-                  <div>
-                    <h4 className="text-sm font-bold text-gray-900">{currentLanguage === 'en' ? 'Regional Area Committees & Office Bearer Governance' : 'क्षेत्रीय समितियां एवं पदाधिकारी प्रबंधन'}</h4>
-                    <p className="text-xs text-gray-500">Manage 11 hierarchical regional levels: Country, State, Division, District, Tehsil, Block, City, Town, Village, Ward & Mohalla.</p>
-                  </div>
-                  <button 
-                    onClick={() => {
-                      const btn = document.querySelector('button[onClick*="areas"]') as HTMLButtonElement;
-                      if (btn) btn.click();
-                    }}
-                    className="px-4 py-2 bg-[#004B23] text-white text-xs font-bold rounded shadow-sm hover:bg-[#00381a] transition"
-                  >
-                    Open 11-Level Directory
-                  </button>
+              <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-6" id="geographic_master_admin_module">
+                <div className="border-b border-gray-100 pb-4">
+                  <h4 className="text-base font-bold text-gray-900 flex items-center gap-2">
+                    <Database className="h-5 w-5 text-emerald-700" />
+                    <span>{currentLanguage === 'en' ? 'Centralized National Indian Geographic Master Console' : 'केंद्रीय राष्ट्रीय भारतीय भौगोलिक मास्टर प्रशासनिक पैनल'}</span>
+                  </h4>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Manage normalized, enterprise-grade administrative nodes covering States, Union Territories, Districts, Tehsils, Blocks, Cities, Villages, and PIN Codes.
+                  </p>
                 </div>
 
-                <div className="p-4 bg-gray-50 rounded-xl border border-gray-200 text-xs text-gray-700 space-y-2">
-                  <p className="font-bold text-gray-900">📍 Active Regional Infrastructure Summary:</p>
-                  <ul className="list-disc pl-5 space-y-1 text-gray-600">
-                    <li><strong>National Body (Country):</strong> All India Muslim Rangrez Neelgar Foundation Headquarters</li>
-                    <li><strong>State Chapters (18 States):</strong> Madhya Pradesh, Rajasthan, Uttar Pradesh, Maharashtra, Gujarat, Delhi NCR, etc.</li>
-                    <li><strong>Districts & Divisions (120+ Nodes):</strong> Indore, Bhopal, Jaipur, Jodhpur, Lucknow, Kanpur, Mumbai, Ahmedabad, etc.</li>
-                    <li><strong>Tehsils, Blocks & Villages (700+ Nodes):</strong> Kailaras, Morena, Sabalgarh, Sikar, Churu, Tonk, etc.</li>
-                  </ul>
-                </div>
+                {/* Local component state for Geo Panel */}
+                <GeoAdminConsole currentLanguage={currentLanguage} setAdminNotification={setAdminNotification} />
               </div>
             )}
 

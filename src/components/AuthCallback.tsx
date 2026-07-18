@@ -104,20 +104,25 @@ export default function AuthCallback({ currentLanguage, setActiveTab }: AuthCall
   }, [supabase]);
 
   const handleResend = async () => {
-    if (!supabase || !emailToResend) return;
+    if (!emailToResend) return;
     setResending(true);
     setErrorMessage('');
     
     try {
-      const { error } = await supabase.auth.resend({
-        type: 'signup',
-        email: emailToResend,
-        options: {
-          emailRedirectTo: window.location.origin
-        }
+      const response = await fetch('/api/auth/send-verification-link', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: emailToResend
+        })
       });
-      
-      if (error) throw error;
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || 'Failed to dispatch verification email from backend SMTP.');
+      }
+
       setResendSuccess(true);
     } catch (err: any) {
       setErrorMessage(err.message || 'Failed to resend verification email.');
