@@ -450,7 +450,15 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
         })
       });
 
-      const data = await response.json();
+      const contentType = response.headers.get('content-type');
+      let data;
+      if (contentType && contentType.includes('application/json')) {
+        data = await response.json();
+      } else {
+        const text = await response.text();
+        console.error("Non-JSON response from server:", text);
+        throw new Error(`Server returned ${response.status} ${response.statusText}. Expected JSON but received ${contentType || 'unknown'}.`);
+      }
 
       if (!response.ok || !data.success) {
         throw new Error(data.error || 'Server rejected verification email dispatch.');

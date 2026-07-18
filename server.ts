@@ -79,7 +79,290 @@ async function startServer() {
   const app = express();
   const PORT = 3000;
 
+  // In-memory Email log & queue infrastructure
+  interface EmailLog {
+    id: string;
+    recipient: string;
+    subject: string;
+    templateType: string;
+    status: "SENT" | "FAILED" | "QUEUED";
+    timestamp: string;
+    error?: string;
+    content: string;
+  }
+
+  const emailLogs: EmailLog[] = [
+    {
+      id: "mail-init-101",
+      recipient: "admin@rangrezcommunity.org",
+      subject: "Hostinger SMTP Subsystem Initialized Successfully",
+      templateType: "System Notification",
+      status: "SENT",
+      timestamp: new Date(Date.now() - 3600000).toISOString(),
+      content: "<p>The All India Rangrez Mahasabha SMTP Server has booted successfully.</p>"
+    }
+  ];
+
+  const transporters: Record<string, any> = {};
+
+  // Mapping of templateType to official email senders
+  const SENDER_MAPPING: Record<string, { email: string; name: string }> = {
+    verification: { email: "admin@rangrezcommunity.org", name: "All India Rangrez Mahasabha (Admin)" },
+    password_reset: { email: "admin@rangrezcommunity.org", name: "All India Rangrez Mahasabha (Admin)" },
+    admin_alert: { email: "admin@rangrezcommunity.org", name: "All India Rangrez Mahasabha (Alert)" },
+    
+    welcome: { email: "membership@rangrezcommunity.org", name: "All India Rangrez Mahasabha (Membership)" },
+    membership_confirmation: { email: "membership@rangrezcommunity.org", name: "All India Rangrez Mahasabha (Membership)" },
+    approved: { email: "membership@rangrezcommunity.org", name: "All India Rangrez Mahasabha (Membership)" },
+    rejected: { email: "membership@rangrezcommunity.org", name: "All India Rangrez Mahasabha (Membership)" },
+    renewal: { email: "membership@rangrezcommunity.org", name: "All India Rangrez Mahasabha (Membership)" },
+    
+    contact_confirmation: { email: "support@rangrezcommunity.org", name: "All India Rangrez Mahasabha (Support)" },
+    
+    event_confirmation: { email: "info@rangrezcommunity.org", name: "All India Rangrez Mahasabha (Info)" },
+  };
+
+  function getTransporterForEmail(senderEmail: string) {
+    if (transporters[senderEmail]) {
+      return transporters[senderEmail];
+    }
+
+    const host = process.env.SMTP_HOST || "smtp.hostinger.com";
+    const port = parseInt(process.env.SMTP_PORT || "465");
+    
+    // Determine the password based on the sender email
+    let pass = process.env.SMTP_PASS;
+    if (senderEmail === "admin@rangrezcommunity.org" && process.env.SMTP_ADMIN_PASS) {
+      pass = process.env.SMTP_ADMIN_PASS;
+    } else if (senderEmail === "info@rangrezcommunity.org" && process.env.SMTP_INFO_PASS) {
+      pass = process.env.SMTP_INFO_PASS;
+    } else if (senderEmail === "membership@rangrezcommunity.org" && process.env.SMTP_MEMBERSHIP_PASS) {
+      pass = process.env.SMTP_MEMBERSHIP_PASS;
+    } else if (senderEmail === "support@rangrezcommunity.org" && process.env.SMTP_SUPPORT_PASS) {
+      pass = process.env.SMTP_SUPPORT_PASS;
+    }
+
+    if (!pass) {
+      pass = process.env.SMTP_PASS;
+    }
+
+    if (!pass) {
+      console.warn(`[SMTP] No password available for ${senderEmail}. Falls back to dry-run.`);
+      return null;
+    }
+
+    try {
+      const transporter = nodemailer.createTransport({
+        host,
+        port,
+        secure: port === 465,
+        auth: {
+          user: senderEmail,
+          pass,
+        },
+        tls: {
+          rejectUnauthorized: false
+        }
+      });
+      transporters[senderEmail] = transporter;
+      return transporter;
+    } catch (err) {
+      console.error(`[SMTP] Failed to initialize transporter for ${senderEmail}:`, err);
+      return null;
+    }
+  }
+
   app.use(express.json());
+
+  // Diagnostic health check
+  app.get("/api/health", (req, res) => {
+    res.json({ status: "ok", timestamp: new Date().toISOString() });
+  });
+
+  // Auth: Generate real verification link via Supabase and deliver via Hostinger SMTP
+  // Moved up to ensure priority registration
+  app.post("/api/auth/send-verification-link", async (req, res) => {
+    const { email, password, name, phone } = req.body;
+    if (!email) {
+      return res.status(400).json({ error: "Email is required." });
+    }
+
+    const logs: string[] = [];
+    logs.push(`[AUTH] Generating verification link for: ${email}`);
+
+    const supabaseAdmin = getSupabaseAdmin();
+    if (!supabaseAdmin) {
+      const err = "Supabase Admin client not configured on server.";
+      logs.push(`[ERROR] ${err}`);
+      return res.status(500).json({ 
+        success: false, 
+        error: err, 
+        logs 
+      });
+    }
+
+    try {
+      let userId: string | null = null;
+      let isVerified = false;
+
+      logs.push(`[AUTH] Checking if user ${email} already exists...`);
+      try {
+        const { data: created, error: createError } = await supabaseAdmin.auth.admin.createUser({
+          email,
+          password: password || "tempPass123!",
+          email_confirm: false,
+          user_metadata: { full_name: name, phone }
+        });
+
+        if (createError) {
+          if (createError.message.includes("already exists") || createError.message.includes("already registered") || createError.message.includes("email_exists")) {
+            logs.push(`[AUTH] User already exists in auth schema. Fetching user info...`);
+            const { data: { users }, error: listError } = await supabaseAdmin.auth.admin.listUsers();
+            const existingUser = (users as any[])?.find((u: any) => u.email === email);
+            if (existingUser) {
+              userId = existingUser.id;
+              isVerified = !!existingUser.email_confirmed_at;
+              logs.push(`[AUTH] Existing User ID: ${userId}, email_confirmed: ${isVerified}`);
+              
+              if (isVerified) {
+                logs.push(`[AUTH] User is already verified. Aborting email send.`);
+                return res.json({ 
+                  success: true, 
+                  alreadyVerified: true, 
+                  message: "Your email is already verified. You can proceed directly to submit registration." 
+                });
+              }
+
+              if (password) {
+                logs.push(`[AUTH] Updating password & metadata for unconfirmed user ${userId}...`);
+                const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(userId, {
+                  password,
+                  user_metadata: { full_name: name, phone }
+                });
+                if (updateError) {
+                  logs.push(`[WARNING] Failed to update password: ${updateError.message}`);
+                } else {
+                  logs.push(`[AUTH] User password & metadata updated successfully.`);
+                }
+              }
+            }
+          } else {
+            throw createError;
+          }
+        } else if (created?.user) {
+          userId = created.user.id;
+          logs.push(`[AUTH] New unconfirmed user created with ID: ${userId}`);
+        }
+      } catch (authSetupErr: any) {
+        logs.push(`[WARNING] Non-blocking auth setup error: ${authSetupErr.message || authSetupErr}`);
+      }
+
+      const redirectUrl = `${req.protocol}://${req.get('host')}/auth/callback`;
+      logs.push(`[AUTH] Generating signup action link with redirect: ${redirectUrl}`);
+      
+      let linkResponse = await supabaseAdmin.auth.admin.generateLink({
+        type: 'signup',
+        email,
+        password: password || "tempPass123!",
+        options: { redirectTo: redirectUrl }
+      } as any);
+
+      if (linkResponse.error) {
+        logs.push(`[AUTH] Signup link generation failed: ${linkResponse.error.message}. Trying 'magiclink' type...`);
+        linkResponse = await supabaseAdmin.auth.admin.generateLink({
+          type: 'magiclink',
+          email,
+          options: { redirectTo: redirectUrl }
+        } as any);
+      }
+
+      if (linkResponse.error) {
+        const errStr = `Failed to generate auth link: ${linkResponse.error.message}`;
+        logs.push(`[AUTH] ${errStr}`);
+        return res.status(400).json({
+          success: false,
+          error: errStr,
+          logs
+        });
+      }
+
+      const actionLink = linkResponse.data?.properties?.action_link;
+      if (!actionLink) {
+        const errStr = "Auth link was not returned in Supabase response properties.";
+        logs.push(`[AUTH] ${errStr}`);
+        return res.status(500).json({
+          success: false,
+          error: errStr,
+          logs
+        });
+      }
+
+      logs.push(`[AUTH] Supabase link generated successfully. Supabase Response: ${JSON.stringify(linkResponse.data)}`);
+
+      // Prepare & send email via Hostinger SMTP
+      const subject = "Verify Your Email Address - All India Rangrez Mahasabha";
+      const htmlContent = generateEmailVerificationTemplate(name || "Community Member", actionLink);
+
+      logs.push(`[SMTP] Checking SMTP credentials for admin@rangrezcommunity.org...`);
+      const sender = { email: "admin@rangrezcommunity.org", name: "All India Rangrez Mahasabha (Admin)" };
+      const transporter = getTransporterForEmail(sender.email);
+
+      if (!transporter) {
+        const errStr = `SMTP Configuration/Transporter could not be initialized for mailbox: ${sender.email}`;
+        logs.push(`[ERROR] ${errStr}`);
+        return res.status(500).json({
+          success: false,
+          error: errStr,
+          logs
+        });
+      }
+
+      const fromAddress = `"${sender.name}" <${sender.email}>`;
+      logs.push(`[SMTP] Sender Address: ${fromAddress}`);
+      logs.push(`[SMTP] Recipient Address: ${email}`);
+      logs.push(`[SMTP] Attempting connection & authentication...`);
+
+      const info = await transporter.sendMail({
+        from: fromAddress,
+        to: email,
+        subject: subject,
+        html: htmlContent,
+        replyTo: sender.email
+      });
+
+      logs.push(`[SMTP] Delivery result: accepted. SMTP Response: ${info.response}`);
+
+      // Log to in-memory logs for administrators
+      const newLog = {
+        id: "EML-" + Math.floor(100000 + Math.random() * 900000),
+        recipient: email,
+        subject: subject,
+        templateType: "verification",
+        timestamp: new Date().toISOString(),
+        status: "SENT" as const,
+        content: htmlContent
+      };
+      emailLogs.unshift(newLog);
+
+      return res.json({
+        success: true,
+        message: "Verification email sent successfully.",
+        logs
+      });
+
+    } catch (err: any) {
+      logs.push(`[ERROR] Exception during verification delivery: ${err.message || err}`);
+      if (err.stack) {
+        logs.push(`[STACK] ${err.stack}`);
+      }
+      console.error("[AUTH ENDPOINT ERROR]:", err);
+      return res.status(500).json({
+        success: false,
+        error: err.message || String(err),
+        logs
+      });
+    }
+  });
 
   // Middleware to authorize Super Administrator requests
   async function authorizeSuperAdmin(req: any, res: any, next: any) {
@@ -129,99 +412,6 @@ async function startServer() {
       next();
     } catch (err: any) {
       return res.status(500).json({ error: "Internal Auth Verification Failure: " + err.message });
-    }
-  }
-
-  // In-memory Email log & queue infrastructure
-  interface EmailLog {
-    id: string;
-    recipient: string;
-    subject: string;
-    templateType: string;
-    status: "SENT" | "FAILED" | "QUEUED";
-    timestamp: string;
-    error?: string;
-    content: string;
-  }
-
-  const emailLogs: EmailLog[] = [
-    {
-      id: "mail-init-101",
-      recipient: "admin@rangrezcommunity.org",
-      subject: "Hostinger SMTP Subsystem Initialized Successfully",
-      templateType: "System Notification",
-      status: "SENT",
-      timestamp: new Date(Date.now() - 3600000).toISOString(),
-      content: "<p>The All India Rangrez Mahasabha SMTP Server has booted successfully.</p>"
-    }
-  ];
-
-  // Mapping of templateType to official email senders
-  const SENDER_MAPPING: Record<string, { email: string; name: string }> = {
-    verification: { email: "admin@rangrezcommunity.org", name: "All India Rangrez Mahasabha (Admin)" },
-    password_reset: { email: "admin@rangrezcommunity.org", name: "All India Rangrez Mahasabha (Admin)" },
-    admin_alert: { email: "admin@rangrezcommunity.org", name: "All India Rangrez Mahasabha (Alert)" },
-    
-    welcome: { email: "membership@rangrezcommunity.org", name: "All India Rangrez Mahasabha (Membership)" },
-    membership_confirmation: { email: "membership@rangrezcommunity.org", name: "All India Rangrez Mahasabha (Membership)" },
-    approved: { email: "membership@rangrezcommunity.org", name: "All India Rangrez Mahasabha (Membership)" },
-    rejected: { email: "membership@rangrezcommunity.org", name: "All India Rangrez Mahasabha (Membership)" },
-    renewal: { email: "membership@rangrezcommunity.org", name: "All India Rangrez Mahasabha (Membership)" },
-    
-    contact_confirmation: { email: "support@rangrezcommunity.org", name: "All India Rangrez Mahasabha (Support)" },
-    
-    event_confirmation: { email: "info@rangrezcommunity.org", name: "All India Rangrez Mahasabha (Info)" },
-  };
-
-  const transporters: Record<string, any> = {};
-
-  function getTransporterForEmail(senderEmail: string) {
-    if (transporters[senderEmail]) {
-      return transporters[senderEmail];
-    }
-
-    const host = process.env.SMTP_HOST || "smtp.hostinger.com";
-    const port = parseInt(process.env.SMTP_PORT || "465");
-    
-    // Determine the password based on the sender email
-    let pass = process.env.SMTP_PASS;
-    if (senderEmail === "admin@rangrezcommunity.org" && process.env.SMTP_ADMIN_PASS) {
-      pass = process.env.SMTP_ADMIN_PASS;
-    } else if (senderEmail === "info@rangrezcommunity.org" && process.env.SMTP_INFO_PASS) {
-      pass = process.env.SMTP_INFO_PASS;
-    } else if (senderEmail === "membership@rangrezcommunity.org" && process.env.SMTP_MEMBERSHIP_PASS) {
-      pass = process.env.SMTP_MEMBERSHIP_PASS;
-    } else if (senderEmail === "support@rangrezcommunity.org" && process.env.SMTP_SUPPORT_PASS) {
-      pass = process.env.SMTP_SUPPORT_PASS;
-    }
-
-    if (!pass) {
-      pass = process.env.SMTP_PASS;
-    }
-
-    if (!pass) {
-      console.warn(`[SMTP] No password available for ${senderEmail}. Falls back to dry-run.`);
-      return null;
-    }
-
-    try {
-      const transporter = nodemailer.createTransport({
-        host,
-        port,
-        secure: port === 465,
-        auth: {
-          user: senderEmail,
-          pass,
-        },
-        tls: {
-          rejectUnauthorized: false
-        }
-      });
-      transporters[senderEmail] = transporter;
-      return transporter;
-    } catch (err) {
-      console.error(`[SMTP] Failed to initialize transporter for ${senderEmail}:`, err);
-      return null;
     }
   }
 
@@ -489,190 +679,6 @@ async function startServer() {
       serverTehsils = originalTehsils;
       serverCitiesVillages = originalCities;
       return res.status(500).json({ error: "Exception during bulk import. Rollback completed.", details: e.message });
-    }
-  });
-
-  // Auth: Generate real verification link via Supabase and deliver via Hostinger SMTP
-  app.post("/api/auth/send-verification-link", async (req, res) => {
-    const { email, password, name, phone } = req.body;
-    if (!email) {
-      return res.status(400).json({ error: "Email is required." });
-    }
-
-    const logs: string[] = [];
-    logs.push(`[AUTH] Generating verification link for: ${email}`);
-
-    const supabaseAdmin = getSupabaseAdmin();
-    if (!supabaseAdmin) {
-      const err = "Supabase Admin client not configured on server.";
-      logs.push(`[ERROR] ${err}`);
-      return res.status(500).json({ 
-        success: false, 
-        error: err, 
-        logs 
-      });
-    }
-
-    try {
-      let userId: string | null = null;
-      let isVerified = false;
-
-      logs.push(`[AUTH] Checking if user ${email} already exists...`);
-      try {
-        const { data: created, error: createError } = await supabaseAdmin.auth.admin.createUser({
-          email,
-          password: password || "tempPass123!",
-          email_confirm: false,
-          user_metadata: { full_name: name, phone }
-        });
-
-        if (createError) {
-          if (createError.message.includes("already exists") || createError.message.includes("already registered") || createError.message.includes("email_exists")) {
-            logs.push(`[AUTH] User already exists in auth schema. Fetching user info...`);
-            const { data: { users }, error: listError } = await supabaseAdmin.auth.admin.listUsers();
-            const existingUser = (users as any[])?.find((u: any) => u.email === email);
-            if (existingUser) {
-              userId = existingUser.id;
-              isVerified = !!existingUser.email_confirmed_at;
-              logs.push(`[AUTH] Existing User ID: ${userId}, email_confirmed: ${isVerified}`);
-              
-              if (isVerified) {
-                logs.push(`[AUTH] User is already verified. Aborting email send.`);
-                return res.json({ 
-                  success: true, 
-                  alreadyVerified: true, 
-                  message: "Your email is already verified. You can proceed directly to submit registration." 
-                });
-              }
-
-              if (password) {
-                logs.push(`[AUTH] Updating password & metadata for unconfirmed user ${userId}...`);
-                const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(userId, {
-                  password,
-                  user_metadata: { full_name: name, phone }
-                });
-                if (updateError) {
-                  logs.push(`[WARNING] Failed to update password: ${updateError.message}`);
-                } else {
-                  logs.push(`[AUTH] User password & metadata updated successfully.`);
-                }
-              }
-            }
-          } else {
-            throw createError;
-          }
-        } else if (created?.user) {
-          userId = created.user.id;
-          logs.push(`[AUTH] New unconfirmed user created with ID: ${userId}`);
-        }
-      } catch (authSetupErr: any) {
-        logs.push(`[WARNING] Non-blocking auth setup error: ${authSetupErr.message || authSetupErr}`);
-      }
-
-      const redirectUrl = `${req.protocol}://${req.get('host')}/auth/callback`;
-      logs.push(`[AUTH] Generating signup action link with redirect: ${redirectUrl}`);
-      
-      let linkResponse = await supabaseAdmin.auth.admin.generateLink({
-        type: 'signup',
-        email,
-        password: password || "tempPass123!",
-        options: { redirectTo: redirectUrl }
-      } as any);
-
-      if (linkResponse.error) {
-        logs.push(`[AUTH] Signup link generation failed: ${linkResponse.error.message}. Trying 'magiclink' type...`);
-        linkResponse = await supabaseAdmin.auth.admin.generateLink({
-          type: 'magiclink',
-          email,
-          options: { redirectTo: redirectUrl }
-        } as any);
-      }
-
-      if (linkResponse.error) {
-        const errStr = `Failed to generate auth link: ${linkResponse.error.message}`;
-        logs.push(`[AUTH] ${errStr}`);
-        return res.status(400).json({
-          success: false,
-          error: errStr,
-          logs
-        });
-      }
-
-      const actionLink = linkResponse.data?.properties?.action_link;
-      if (!actionLink) {
-        const errStr = "Auth link was not returned in Supabase response properties.";
-        logs.push(`[AUTH] ${errStr}`);
-        return res.status(500).json({
-          success: false,
-          error: errStr,
-          logs
-        });
-      }
-
-      logs.push(`[AUTH] Supabase link generated successfully. Supabase Response: ${JSON.stringify(linkResponse.data)}`);
-
-      // Prepare & send email via Hostinger SMTP
-      const subject = "Verify Your Email Address - All India Rangrez Mahasabha";
-      const htmlContent = generateEmailVerificationTemplate(name || "Community Member", actionLink);
-
-      logs.push(`[SMTP] Checking SMTP credentials for admin@rangrezcommunity.org...`);
-      const sender = { email: "admin@rangrezcommunity.org", name: "All India Rangrez Mahasabha (Admin)" };
-      const transporter = getTransporterForEmail(sender.email);
-
-      if (!transporter) {
-        const errStr = `SMTP Configuration/Transporter could not be initialized for mailbox: ${sender.email}`;
-        logs.push(`[ERROR] ${errStr}`);
-        return res.status(500).json({
-          success: false,
-          error: errStr,
-          logs
-        });
-      }
-
-      const fromAddress = `"${sender.name}" <${sender.email}>`;
-      logs.push(`[SMTP] Sender Address: ${fromAddress}`);
-      logs.push(`[SMTP] Recipient Address: ${email}`);
-      logs.push(`[SMTP] Attempting connection & authentication...`);
-
-      const info = await transporter.sendMail({
-        from: fromAddress,
-        to: email,
-        subject: subject,
-        html: htmlContent,
-        replyTo: sender.email
-      });
-
-      logs.push(`[SMTP] Delivery result: accepted. SMTP Response: ${info.response}`);
-
-      // Log to in-memory logs for administrators
-      const newLog = {
-        id: "EML-" + Math.floor(100000 + Math.random() * 900000),
-        recipient: email,
-        subject: subject,
-        templateType: "verification",
-        timestamp: new Date().toISOString(),
-        status: "SENT" as const,
-        content: htmlContent
-      };
-      emailLogs.unshift(newLog);
-
-      return res.json({
-        success: true,
-        message: "Verification email sent successfully.",
-        logs
-      });
-
-    } catch (err: any) {
-      logs.push(`[ERROR] Exception during verification delivery: ${err.message || err}`);
-      if (err.stack) {
-        logs.push(`[STACK] ${err.stack}`);
-      }
-      console.error("[AUTH ENDPOINT ERROR]:", err);
-      return res.status(500).json({
-        success: false,
-        error: err.message || String(err),
-        logs
-      });
     }
   });
 
