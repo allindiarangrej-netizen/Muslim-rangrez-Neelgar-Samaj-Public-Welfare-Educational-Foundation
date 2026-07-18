@@ -265,18 +265,60 @@ export default function BloodBankAndDonorsPortal({ currentLanguage, defaultTab =
     setIsEligible(eligible);
   };
 
-  const handleRequestSubmit = (e: React.FormEvent) => {
+  const handleRequestSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setRequestSubmitted(true);
+    
+    const supabase = getSupabase();
+    if (supabase) {
+      try {
+        const { data: userData } = await supabase.auth.getUser();
+        await supabase.from('relief_requests').insert({
+          applicant_name: requestForm.contactPerson || requestForm.patientName,
+          applicant_phone: requestForm.contactPhone,
+          city_district: requestForm.city,
+          aid_type: `Blood Requirement: ${requestForm.bloodGroup} (${requestForm.unitsRequired} Units)`,
+          amount_needed: 0,
+          details: `Patient: ${requestForm.patientName}. Hospital: ${requestForm.hospital}. Urgency: ${requestForm.urgency}.`,
+          user_id: userData?.user?.id || null,
+          status: 'Pending'
+        });
+      } catch (err) {
+        console.error("Error saving blood request to Supabase:", err);
+      }
+    }
+
     setTimeout(() => {
       setRequestSubmitted(false);
       setShowRequestModal(false);
     }, 2500);
   };
 
-  const handlePledgeSubmit = (e: React.FormEvent) => {
+  const handlePledgeSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setPledgeSubmitted(true);
+
+    const supabase = getSupabase();
+    if (supabase) {
+      try {
+        await supabase.from('blood_donors').insert({
+          name: pledgeForm.fullName,
+          blood_group: pledgeForm.bloodGroup,
+          bloodGroup: pledgeForm.bloodGroup,
+          city: pledgeForm.city,
+          locality: pledgeForm.locality,
+          phone: pledgeForm.phone,
+          status: 'Available',
+          verified: true,
+          total_donations: 0,
+          totalDonations: 0,
+          badge: 'Verified Regular Donor'
+        });
+      } catch (err) {
+        console.error("Error saving blood donor pledge:", err);
+      }
+    }
+
     setTimeout(() => {
       setPledgeSubmitted(false);
       setShowCertificateModal(true);

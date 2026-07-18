@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { getSupabase } from '../lib/supabaseClient';
 import { COMMUNITY_MODULES, Module as CommunityModule, Activity } from '../data/communityData';
 import { 
   Search, Filter, HeartHandshake, UserCheck, Award, Building2, 
@@ -2168,40 +2169,70 @@ export default function CommunityPortal({
                     </div>
                   </div>
 
-                  <form onSubmit={(e) => { e.preventDefault(); alert(currentLanguage === 'en' ? 'Medical volunteer registration submitted! Our health coordinator will verify your credentials within 24 hours.' : 'पंजीकरण जमा किया गया! 24 घंटे के भीतर सत्यापन किया जाएगा।'); setShowMedVolModal(false); }} className="space-y-4 text-left">
+                  <form onSubmit={async (e) => { 
+                    e.preventDefault(); 
+                    const fd = new FormData(e.currentTarget);
+                    const name = fd.get('fullName') as string;
+                    const qual = fd.get('qualification') as string;
+                    const spec = fd.get('specialization') as string;
+                    const aff = fd.get('affiliation') as string;
+                    const phone = fd.get('phone') as string;
+                    const regNo = fd.get('regNo') as string;
+                    const contr = fd.get('contribution') as string;
+
+                    const sb = getSupabase();
+                    if (sb) {
+                      try {
+                        const { data: userData } = await sb.auth.getUser();
+                        await sb.from('volunteers').insert({
+                          full_name: name,
+                          phone: phone,
+                          interest_areas: [spec, qual, contr],
+                          bio: `Medical Registration: ${regNo}. Affiliation: ${aff}. Qualification: ${qual}.`,
+                          user_id: userData?.user?.id || null,
+                          status: 'Active'
+                        });
+                      } catch (err) {
+                        console.error("Error saving medical volunteer:", err);
+                      }
+                    }
+
+                    alert(currentLanguage === 'en' ? 'Medical volunteer registration submitted! Our health coordinator will verify your credentials within 24 hours.' : 'पंजीकरण जमा किया गया! 24 घंटे के भीतर सत्यापन किया जाएगा।'); 
+                    setShowMedVolModal(false); 
+                  }} className="space-y-4 text-left">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-xs font-bold text-slate-700 mb-1">Full Name with Title *</label>
-                        <input type="text" required placeholder="e.g. Dr. Aamir Khan / Nurse Saima" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-teal-600 outline-none" />
+                        <input type="text" name="fullName" required placeholder="e.g. Dr. Aamir Khan / Nurse Saima" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-teal-600 outline-none" />
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-slate-700 mb-1">Medical Qualification *</label>
-                        <input type="text" required placeholder="e.g. MBBS, MD, BAMS, BSc Nursing" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-teal-600 outline-none" />
+                        <input type="text" name="qualification" required placeholder="e.g. MBBS, MD, BAMS, BSc Nursing" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-teal-600 outline-none" />
                       </div>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-xs font-bold text-slate-700 mb-1">Specialization / Department *</label>
-                        <input type="text" required placeholder="e.g. Ophthalmology, Pediatrics, General" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-teal-600 outline-none" />
+                        <input type="text" name="specialization" required placeholder="e.g. Ophthalmology, Pediatrics, General" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-teal-600 outline-none" />
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-slate-700 mb-1">Hospital / Clinic Affiliation</label>
-                        <input type="text" placeholder="e.g. SMS Medical College Jaipur" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-teal-600 outline-none" />
+                        <input type="text" name="affiliation" placeholder="e.g. SMS Medical College Jaipur" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-teal-600 outline-none" />
                       </div>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-xs font-bold text-slate-700 mb-1">Contact Phone / WhatsApp *</label>
-                        <input type="tel" required placeholder="+91 98XXX XXXXX" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-teal-600 outline-none" />
+                        <input type="tel" name="phone" required placeholder="+91 98XXX XXXXX" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-teal-600 outline-none" />
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-slate-700 mb-1">Medical Registration Number *</label>
-                        <input type="text" required placeholder="e.g. MCI / State Council Reg No." className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-teal-600 outline-none" />
+                        <input type="text" name="regNo" required placeholder="e.g. MCI / State Council Reg No." className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-teal-600 outline-none" />
                       </div>
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-slate-700 mb-1">Available Camp Contribution *</label>
-                      <select className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-teal-600 outline-none">
+                      <select name="contribution" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-teal-600 outline-none">
                         <option>Weekend Free Camp Screening (Sundays)</option>
                         <option>Online Tele-Consultation (On-Call)</option>
                         <option>Free Surgical Reference & Diagnostics</option>
@@ -2436,21 +2467,51 @@ export default function CommunityPortal({
                     </div>
                   </div>
 
-                  <form onSubmit={(e) => { e.preventDefault(); alert(currentLanguage === 'en' ? 'Sapling request submitted! Our Green Bharat chapter coordinator will dispatch the saplings within 5 business days.' : 'पौधों का अनुरोध जमा किया गया! 5 दिनों के भीतर पौधे भेजे जाएंगे।'); setShowSaplingModal(false); }} className="space-y-4 text-left">
+                  <form onSubmit={async (e) => { 
+                    e.preventDefault(); 
+                    const fd = new FormData(e.currentTarget);
+                    const orgName = fd.get('orgName') as string;
+                    const phone = fd.get('phone') as string;
+                    const saplingType = fd.get('saplingType') as string;
+                    const count = fd.get('count') as string;
+                    const address = fd.get('address') as string;
+
+                    const sb = getSupabase();
+                    if (sb) {
+                      try {
+                        const { data: userData } = await sb.auth.getUser();
+                        await sb.from('relief_requests').insert({
+                          applicant_name: orgName,
+                          applicant_phone: phone,
+                          city_district: address.substring(0, 50),
+                          aid_type: `Saplings Request: ${saplingType} (${count} Pcs)`,
+                          amount_needed: 0,
+                          details: `Plantation location: ${address}. Requester agreed to water & protect for 2 years.`,
+                          user_id: userData?.user?.id || null,
+                          status: 'Pending'
+                        });
+                      } catch (err) {
+                        console.error("Error saving sapling request:", err);
+                      }
+                    }
+
+                    alert(currentLanguage === 'en' ? 'Sapling request submitted! Our Green Bharat chapter coordinator will dispatch the saplings within 5 business days.' : 'पौधों का अनुरोध जमा किया गया! 5 दिनों के भीतर पौधे भेजे जाएंगे।'); 
+                    setShowSaplingModal(false); 
+                  }} className="space-y-4 text-left">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-xs font-bold text-slate-700 mb-1">Requester / Organization Name *</label>
-                        <input type="text" required placeholder="e.g. Al-Falah Housing Society" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-green-600 outline-none" />
+                        <input type="text" name="orgName" required placeholder="e.g. Al-Falah Housing Society" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-green-600 outline-none" />
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-slate-700 mb-1">Contact Phone *</label>
-                        <input type="tel" required placeholder="+91 98XXX XXXXX" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-green-600 outline-none" />
+                        <input type="tel" name="phone" required placeholder="+91 98XXX XXXXX" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-green-600 outline-none" />
                       </div>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-xs font-bold text-slate-700 mb-1">Sapling Type Preferred *</label>
-                        <select className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-green-600 outline-none">
+                        <select name="saplingType" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-green-600 outline-none">
                           <option>Shade Trees (Neem, Peepal, Banyan)</option>
                           <option>Fruit Trees (Mango, Guava, Jamun)</option>
                           <option>Ornamental & flowering shrubs</option>
@@ -2459,12 +2520,12 @@ export default function CommunityPortal({
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-slate-700 mb-1">Number of Saplings *</label>
-                        <input type="number" required defaultValue={25} min={5} max={500} className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-green-600 outline-none" />
+                        <input type="number" name="count" required defaultValue={25} min={5} max={500} className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-green-600 outline-none" />
                       </div>
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-slate-700 mb-1">Plantation Location / Address *</label>
-                      <input type="text" required placeholder="Full street address, district, and pin code" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-green-600 outline-none" />
+                      <input type="text" name="address" required placeholder="Full street address, district, and pin code" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-green-600 outline-none" />
                     </div>
                     <div className="flex items-center space-x-2 text-xs text-slate-600 bg-green-50 p-3 rounded-xl border border-green-200">
                       <input type="checkbox" required id="pledgeCare" className="rounded text-green-600" />
@@ -2668,7 +2729,36 @@ export default function CommunityPortal({
                     </div>
                   </div>
 
-                  <form onSubmit={(e) => { e.preventDefault(); alert(currentLanguage === 'en' ? 'Thank you for your generous pledge! Official 80G tax exemption receipt will be generated automatically upon bank clearance.' : 'आपके उदार योगदान के लिए धन्यवाद! 80G रसीद स्वतः जारी होगी।'); setShowReliefFundModal(false); }} className="space-y-4 text-left">
+                  <form onSubmit={async (e) => { 
+                    e.preventDefault(); 
+                    const fd = new FormData(e.currentTarget);
+                    const amountStr = fd.get('amount') as string;
+                    const amount = parseFloat(amountStr) || 1000;
+                    const donorName = fd.get('donorName') as string;
+                    const pan = fd.get('pan') as string;
+                    const phone = fd.get('phone') as string;
+                    const paymentMethod = fd.get('paymentMethod') as string;
+
+                    const sb = getSupabase();
+                    if (sb) {
+                      try {
+                        const { data: userData } = await sb.auth.getUser();
+                        await sb.from('donations').insert({
+                          donor_name: donorName,
+                          donor_phone: phone,
+                          donor_pan: pan,
+                          amount: amount,
+                          fund_type: `Chief Calamity Relief Fund (${paymentMethod})`,
+                          user_id: userData?.user?.id || null
+                        });
+                      } catch (err) {
+                        console.error("Error saving donation pledge:", err);
+                      }
+                    }
+
+                    alert(currentLanguage === 'en' ? 'Thank you for your generous pledge! Official 80G tax exemption receipt will be generated automatically upon bank clearance.' : 'आपके उदार योगदान के लिए धन्यवाद! 80G रसीद स्वतः जारी होगी।'); 
+                    setShowReliefFundModal(false); 
+                  }} className="space-y-4 text-left">
                     <div>
                       <label className="block text-xs font-bold text-slate-700 mb-1">Select Contribution Amount *</label>
                       <div className="grid grid-cols-3 gap-2 mb-2">
@@ -2676,33 +2766,38 @@ export default function CommunityPortal({
                           <button 
                             type="button" 
                             key={idx}
-                            onClick={() => alert(`Selected contribution: ${amt}`)}
+                            onClick={() => {
+                              const input = document.getElementById('reliefAmountInput') as HTMLInputElement;
+                              if (input && amt !== 'Custom') {
+                                input.value = amt.replace(/[^\d]/g, '');
+                              }
+                            }}
                             className="py-2 rounded-xl border border-slate-300 text-xs font-bold hover:border-orange-600 hover:bg-orange-50 text-slate-700 transition cursor-pointer"
                           >
                             {amt}
                           </button>
                         ))}
                       </div>
-                      <input type="number" placeholder="Enter custom amount in INR" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-orange-600 outline-none" />
+                      <input id="reliefAmountInput" type="number" name="amount" required defaultValue={5000} min={10} placeholder="Enter custom amount in INR" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-orange-600 outline-none" />
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-xs font-bold text-slate-700 mb-1">Donor Name *</label>
-                        <input type="text" required placeholder="Full name for tax receipt" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-orange-600 outline-none" />
+                        <input type="text" name="donorName" required placeholder="Full name for tax receipt" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-orange-600 outline-none" />
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-slate-700 mb-1">PAN Number (For 80G) *</label>
-                        <input type="text" required placeholder="ABCDE1234F" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-orange-600 outline-none uppercase" />
+                        <input type="text" name="pan" required placeholder="ABCDE1234F" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-orange-600 outline-none uppercase" />
                       </div>
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-xs font-bold text-slate-700 mb-1">Mobile Phone *</label>
-                        <input type="tel" required placeholder="+91 98XXX XXXXX" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-orange-600 outline-none" />
+                        <input type="tel" name="phone" required placeholder="+91 98XXX XXXXX" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-orange-600 outline-none" />
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-slate-700 mb-1">Payment Method *</label>
-                        <select className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-orange-600 outline-none">
+                        <select name="paymentMethod" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-orange-600 outline-none">
                           <option>UPI / Google Pay / PhonePe</option>
                           <option>Direct Bank NEFT / RTGS</option>
                           <option>Net Banking / Debit Card</option>
@@ -2893,15 +2988,47 @@ export default function CommunityPortal({
                     </div>
                   </div>
 
-                  <form onSubmit={(e) => { e.preventDefault(); alert(currentLanguage === 'en' ? 'Project proposal submitted successfully! Our audit and evaluation committee will review it within 7 working days.' : 'प्रोजेक्ट प्रस्ताव जमा किया गया! 7 कार्य दिवसों के भीतर समीक्षा की जाएगी।'); setShowProposalModal(false); }} className="space-y-4 text-left">
+                  <form onSubmit={async (e) => { 
+                    e.preventDefault(); 
+                    const fd = new FormData(e.currentTarget);
+                    const title = fd.get('title') as string;
+                    const category = fd.get('category') as string;
+                    const budget = fd.get('budget') as string;
+                    const location = fd.get('location') as string;
+                    const summary = fd.get('summary') as string;
+                    const proposer = fd.get('proposer') as string;
+                    const phone = fd.get('phone') as string;
+
+                    const sb = getSupabase();
+                    if (sb) {
+                      try {
+                        const { data: userData } = await sb.auth.getUser();
+                        await sb.from('relief_requests').insert({
+                          applicant_name: proposer,
+                          applicant_phone: phone,
+                          city_district: location,
+                          aid_type: `Project Proposal: ${category}`,
+                          amount_needed: parseFloat(budget.replace(/[^\d.]/g, '')) || 0,
+                          details: `Title: ${title}. Budget: ${budget}. Summary: ${summary}`,
+                          user_id: userData?.user?.id || null,
+                          status: 'Pending'
+                        });
+                      } catch (err) {
+                        console.error("Error saving project proposal:", err);
+                      }
+                    }
+
+                    alert(currentLanguage === 'en' ? 'Project proposal submitted successfully! Our audit and evaluation committee will review it within 7 working days.' : 'प्रोजेक्ट प्रस्ताव जमा किया गया! 7 कार्य दिवसों के भीतर समीक्षा की जाएगी।'); 
+                    setShowProposalModal(false); 
+                  }} className="space-y-4 text-left">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-xs font-bold text-slate-700 mb-1">Project Title *</label>
-                        <input type="text" required placeholder="e.g. Free Computer Center Jaipur" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-emerald-600 outline-none" />
+                        <input type="text" name="title" required placeholder="e.g. Free Computer Center Jaipur" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-emerald-600 outline-none" />
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-slate-700 mb-1">Category *</label>
-                        <select className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-emerald-600 outline-none">
+                        <select name="category" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-emerald-600 outline-none">
                           <option>Public Welfare & Water</option>
                           <option>Healthcare & Medical Aid</option>
                           <option>Education & Scholarships</option>
@@ -2914,25 +3041,25 @@ export default function CommunityPortal({
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-xs font-bold text-slate-700 mb-1">Proposed Budget / Cost *</label>
-                        <input type="text" required placeholder="e.g. ₹ 3.5 Lakhs / Year" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-emerald-600 outline-none" />
+                        <input type="text" name="budget" required placeholder="e.g. ₹ 3.5 Lakhs / Year" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-emerald-600 outline-none" />
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-slate-700 mb-1">Target District / City *</label>
-                        <input type="text" required placeholder="e.g. Jaipur, Rajasthan" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-emerald-600 outline-none" />
+                        <input type="text" name="location" required placeholder="e.g. Jaipur, Rajasthan" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-emerald-600 outline-none" />
                       </div>
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-slate-700 mb-1">Detailed Project Summary & Impact *</label>
-                      <textarea required rows={3} placeholder="Explain the objectives, expected beneficiaries, and execution plan..." className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:border-emerald-600 outline-none" />
+                      <textarea name="summary" required rows={3} placeholder="Explain the objectives, expected beneficiaries, and execution plan..." className="w-full px-3.5 py-2 rounded-xl border border-slate-300 text-sm focus:border-emerald-600 outline-none" />
                     </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-xs font-bold text-slate-700 mb-1">Proposer Name *</label>
-                        <input type="text" required placeholder="Your full name or Committee" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-emerald-600 outline-none" />
+                        <input type="text" name="proposer" required placeholder="Your full name or Committee" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-emerald-600 outline-none" />
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-slate-700 mb-1">Contact Phone *</label>
-                        <input type="tel" required placeholder="+91 98XXX XXXXX" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-emerald-600 outline-none" />
+                        <input type="tel" name="phone" required placeholder="+91 98XXX XXXXX" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-emerald-600 outline-none" />
                       </div>
                     </div>
                     <div className="pt-4 flex items-center justify-end space-x-3 border-t border-slate-100">
