@@ -30,6 +30,7 @@ export default function MediaResourcesHub({
     if (activeSubTab === 'media-photos') return 'photos';
     if (activeSubTab === 'media-videos') return 'videos';
     if (activeSubTab === 'media-events') return 'events';
+    if (activeSubTab === 'media-regional') return 'regional';
     if (activeSubTab === 'media-islamic' || activeSubTab === 'islamic-calendar') return 'islamic';
     if (activeSubTab === 'media-downloads') return 'downloads';
     if (activeSubTab === 'media-publications') return 'publications';
@@ -416,7 +417,8 @@ export default function MediaResourcesHub({
     { id: 'media-news', labelEn: 'News & Updates', labelHi: 'समाचार एवं अपडेट', labelUr: 'خبریں اور اپڈیٹس' },
     { id: 'media-photos', labelEn: 'Photo Gallery', labelHi: 'फोटो गैलरी', labelUr: 'فوٹو گیلری' },
     { id: 'media-videos', labelEn: 'Video Gallery', labelHi: 'वीडियो गैलरी', labelUr: 'ویڈیو گیلری' },
-    { id: 'media-events', labelEn: 'Event Gallery', labelHi: 'समारोह गैलरी', labelUr: 'تقریبات کی گیلری' },
+    { id: 'media-events', labelEn: 'Event Gallery', labelHi: 'समारोह गैलरी', labelUr: 'تقریبات की गیلरी' },
+    { id: 'media-regional', labelEn: 'Regional Galleries', labelHi: 'क्षेत्रीय गैलरी', labelUr: 'علاقائی گیلरी' },
     { id: 'islamic-calendar', labelEn: 'Islamic Resources', labelHi: 'इस्लामिक संसाधन एवं कैलेंडर', labelUr: 'اسلامی وسائل اور کیلنڈر' },
     { id: 'media-downloads', labelEn: 'Downloads', labelHi: 'डाउनलोड्स', labelUr: 'ڈاؤن لوڈز' },
     { id: 'media-publications', labelEn: 'Publications', labelHi: 'पत्रिकाएं एवं साहित्य', labelUr: 'مطبوعات' },
@@ -978,6 +980,13 @@ export default function MediaResourcesHub({
               </h3>
               <MediaCenter currentLanguage={currentLanguage} defaultCategory="Event Albums" />
             </div>
+          </div>
+        )}
+
+        {/* TAB 5.5: REGIONAL GALLERY */}
+        {currentTab === 'regional' && (
+          <div className="space-y-6 animate-fadeIn">
+            <MediaCenter currentLanguage={currentLanguage} defaultCategory="Regional Galleries" />
           </div>
         )}
 

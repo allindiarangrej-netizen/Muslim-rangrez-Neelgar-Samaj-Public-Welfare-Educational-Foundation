@@ -33,7 +33,8 @@ import {
   Layers,
   Copy,
   Check,
-  QrCode
+  QrCode,
+  ZoomIn
 } from 'lucide-react';
 import { Language } from '../types';
 import { getSupabase } from '../lib/supabaseClient';
@@ -49,17 +50,18 @@ import { indianStates, initialDistricts, initialTehsils, initialVillages } from 
 
 interface MediaCenterProps {
   currentLanguage: Language;
-  defaultCategory?: 'Photo Gallery' | 'Video Gallery' | 'Event Albums' | 'Historical Archive' | 'Community Memories' | 'Documentary Library' | 'Awards & Achievements' | 'Press & News Gallery';
+  defaultCategory?: 'Photo Gallery' | 'Video Gallery' | 'Event Albums' | 'Historical Archive' | 'Community Memories' | 'Documentary Library' | 'Awards & Achievements' | 'Press & News Gallery' | 'Regional Galleries';
 }
 
 export default function MediaCenter({ currentLanguage, defaultCategory = 'Photo Gallery' }: MediaCenterProps) {
   // Navigation & Sub-Tab State
   // Media categories mapping to main menu items requested
-  const [activeMenuTab, setActiveMenuTab] = useState<'Photo Gallery' | 'Video Gallery' | 'Event Albums' | 'Historical Archive' | 'Community Memories' | 'Documentary Library' | 'Awards & Achievements' | 'Press & News Gallery'>(defaultCategory);
+  const [activeMenuTab, setActiveMenuTab] = useState<'Photo Gallery' | 'Video Gallery' | 'Event Albums' | 'Historical Archive' | 'Community Memories' | 'Documentary Library' | 'Awards & Achievements' | 'Press & News Gallery' | 'Regional Galleries'>(defaultCategory);
 
   useEffect(() => {
     if (defaultCategory) {
       setActiveMenuTab(defaultCategory);
+      setSelectedRegionalFolder(null);
     }
   }, [defaultCategory]);
   
@@ -67,6 +69,7 @@ export default function MediaCenter({ currentLanguage, defaultCategory = 'Photo 
   const [albums, setAlbums] = useState<HeritageAlbum[]>([]);
   const [videos, setVideos] = useState<HeritageVideo[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedRegionalFolder, setSelectedRegionalFolder] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchMedia() {
@@ -626,6 +629,7 @@ export default function MediaCenter({ currentLanguage, defaultCategory = 'Photo 
             'Photo Gallery',
             'Video Gallery',
             'Event Albums',
+            'Regional Galleries',
             'Historical Archive',
             'Community Memories',
             'Documentary Library',
@@ -796,8 +800,148 @@ export default function MediaCenter({ currentLanguage, defaultCategory = 'Photo 
         {/* ================= PHOTO ALBUMS / VIDEO GALLERY CARDS RENDERER ================= */}
         <div id="media_center_main_view">
           
+          {/* C: Regional Galleries Folders View */}
+          {activeMenuTab === 'Regional Galleries' && (
+            <div className="space-y-8 animate-fadeIn">
+              <div className="flex items-center justify-between border-b border-gray-150 pb-2">
+                <h3 className="text-sm font-bold uppercase tracking-wider text-[#004B23] font-mono flex items-center space-x-2">
+                  <FolderPlus className="h-4 w-4 text-[#F4C430]" />
+                  <span>
+                    {selectedRegionalFolder 
+                      ? `Regional Archive: ${selectedRegionalFolder}` 
+                      : 'Regional Photo Archives & Folders'}
+                  </span>
+                </h3>
+                {selectedRegionalFolder && (
+                  <button 
+                    onClick={() => setSelectedRegionalFolder(null)}
+                    className="text-xs font-bold text-[#004B23] hover:text-[#F4C430] flex items-center space-x-1 transition-colors"
+                  >
+                    <ChevronLeft className="h-3 w-3" />
+                    <span>Back to Folders</span>
+                  </button>
+                )}
+              </div>
+
+              {!selectedRegionalFolder ? (
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+                  {[
+                    "Ambah gallery", "baadi gallery", "kailaras gallery", "banmore gallery", "morena gallery", 
+                    "gwalior gallery", "joura gallery", "sabalgarh gallery", "kattoli gallery", "jaabrol gallery", 
+                    "mandrayal karauli gallery", "vijaypur gallery", "veerpur gallery", "tentara gallery", 
+                    "manpur gallery", "sheopur gallery", "sumawali gallery", "dholpur gallery", "Sainpau gallery"
+                  ].map((folder, idx) => {
+                    const folderName = folder.replace(' gallery', '').toLowerCase();
+                    const count = albums.filter(a => 
+                      a.category === 'Regional Galleries' && 
+                      a.location.tehsil?.toLowerCase() === folderName
+                    ).reduce((acc, curr) => acc + curr.images.length, 0);
+
+                    return (
+                      <div 
+                        key={idx}
+                        onClick={() => setSelectedRegionalFolder(folder)}
+                        className="group bg-white p-4 rounded-2xl border border-gray-150 hover:border-[#F4C430] hover:shadow-lg transition-all duration-300 cursor-pointer flex flex-col items-center text-center space-y-3"
+                      >
+                        <div className="relative">
+                          <div className="w-16 h-16 bg-amber-50 rounded-2xl flex items-center justify-center text-[#F4C430] group-hover:bg-[#F4C430] group-hover:text-white transition-colors duration-300">
+                            <ImageIcon className="h-8 w-8" />
+                          </div>
+                          <div className="absolute -top-1 -right-1 w-5 h-5 bg-[#004B23] text-white text-[9px] font-bold rounded-full flex items-center justify-center border-2 border-white">
+                            {count}
+                          </div>
+                        </div>
+                        <div>
+                          <h4 className="text-xs font-bold text-[#004B23] uppercase tracking-tight group-hover:text-[#F4C430] transition-colors">
+                            {folder}
+                          </h4>
+                          <p className="text-[9px] text-gray-400 font-mono mt-0.5">Regional Archive</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="space-y-12">
+                  {albums
+                    .filter(a => 
+                      a.category === 'Regional Galleries' && 
+                      a.location.tehsil?.toLowerCase() === selectedRegionalFolder.replace(' gallery', '').toLowerCase()
+                    )
+                    .map((album) => (
+                      <div key={album.id} className="space-y-6 animate-fadeIn">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 pb-4">
+                          <div className="space-y-1">
+                            <h4 className="text-xl font-bold text-[#004B23] flex items-center space-x-2">
+                              <ImageIcon className="h-5 w-5 text-[#F4C430]" />
+                              <span>{currentLanguage === 'en' ? album.titleEn : album.titleHi}</span>
+                            </h4>
+                            <p className="text-sm text-gray-500 italic max-w-2xl">
+                              {currentLanguage === 'en' ? album.descriptionEn : album.descriptionHi}
+                            </p>
+                          </div>
+                          <div className="flex items-center space-x-4 bg-gray-50 px-4 py-2 rounded-2xl border border-gray-100">
+                            <div className="text-center">
+                              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Photos</p>
+                              <p className="text-sm font-bold text-[#004B23] font-mono">{album.images.length}</p>
+                            </div>
+                            <div className="w-px h-8 bg-gray-200"></div>
+                            <div className="text-center">
+                              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Views</p>
+                              <p className="text-sm font-bold text-[#004B23] font-mono">{album.views}</p>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 gap-12">
+                          {album.images.map((img, imgIdx) => (
+                            <div 
+                              key={imgIdx}
+                              onClick={() => {
+                                setActiveLightboxAlbum(album);
+                                setLightboxImageIndex(imgIdx);
+                              }}
+                              className="group relative w-full bg-gray-100 rounded-3xl overflow-hidden cursor-pointer ring-1 ring-gray-150 hover:ring-4 hover:ring-[#F4C430] hover:shadow-2xl transition-all duration-500"
+                            >
+                              <img 
+                                src={img} 
+                                alt={`Gallery ${imgIdx + 1}`}
+                                className="w-full h-auto object-contain bg-white group-hover:scale-[1.02] transition-transform duration-1000"
+                                referrerPolicy="no-referrer"
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-8">
+                                <div className="flex items-center space-x-3 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                                  <div className="bg-white/20 backdrop-blur-md p-3 rounded-full">
+                                    <ZoomIn className="h-6 w-6 text-white" />
+                                  </div>
+                                  <span className="text-white font-bold text-sm">View in Full Screen</span>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  
+                  {albums.filter(a => 
+                    a.category === 'Regional Galleries' && 
+                    a.location.tehsil?.toLowerCase() === selectedRegionalFolder.replace(' gallery', '').toLowerCase()
+                  ).length === 0 && (
+                    <div className="col-span-full py-20 text-center bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
+                      <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-gray-300 mx-auto mb-4">
+                        <ImageIcon className="h-8 w-8" />
+                      </div>
+                      <h4 className="text-sm font-bold text-gray-400 uppercase tracking-widest">No Photos Found Yet</h4>
+                      <p className="text-xs text-gray-400 mt-1">Images are currently being archived for this region.</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
           {/* A: Photo Archives View */}
-          {activeMenuTab !== 'Video Gallery' && activeMenuTab !== 'Documentary Library' ? (
+          {activeMenuTab !== 'Video Gallery' && activeMenuTab !== 'Documentary Library' && activeMenuTab !== 'Regional Galleries' ? (
             <div className="space-y-6">
               <div className="flex items-center justify-between border-b border-gray-150 pb-2">
                 <h3 className="text-sm font-bold uppercase tracking-wider text-[#004B23] font-mono flex items-center space-x-2">

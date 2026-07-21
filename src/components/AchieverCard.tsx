@@ -18,6 +18,8 @@ import {
   Check
 } from 'lucide-react';
 
+import { ProfileImage } from './common/ProfileImage';
+
 export interface AchieverCardProps {
   achiever: AchieverProfile;
   currentLanguage: 'en' | 'hi' | 'ur';
@@ -113,13 +115,13 @@ const AchieverCard: React.FC<AchieverCardProps> = ({
       <div className="p-5 pb-4 flex items-start gap-4 relative z-10">
         {/* Achiever Photo with Hover Zoom */}
         <div className="relative shrink-0">
-          <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden border-2 border-[#F4C430] shadow-md bg-slate-100 relative">
-            <img
-              src={achiever.photoUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80'}
-              alt={achiever.name}
-              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[250ms] ease-out"
-            />
-          </div>
+          <ProfileImage
+            src={achiever.photoUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80'}
+            alt={achiever.name}
+            size="xl"
+            containerClassName="sm:w-32 sm:h-32 rounded-2xl border-2 border-[#F4C430] shadow-md group-hover:border-[#004B23] transition-all duration-300"
+            className="group-hover:scale-110 transition-transform duration-500 ease-out"
+          />
 
           {/* Verified Badge Icon */}
           {achiever.isVerified && (

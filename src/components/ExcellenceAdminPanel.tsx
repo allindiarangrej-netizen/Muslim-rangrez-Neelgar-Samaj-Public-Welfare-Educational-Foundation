@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { AchieverProfile, AchieverCategory, MentorshipRequest } from '../data/hallOfExcellenceData';
+import { ProfileImage } from './common/ProfileImage';
 import {
   ShieldCheck,
   Plus,
@@ -297,11 +298,16 @@ const ExcellenceAdminPanel: React.FC<ExcellenceAdminPanelProps> = ({
                   {filteredAchievers.map((ach) => (
                     <tr key={ach.id} className="hover:bg-slate-50 transition">
                       <td className="p-4">
-                        <div className="flex items-center gap-3">
-                          <img src={ach.photoUrl} alt="" className="w-10 h-10 rounded-xl object-cover border border-gray-200 shrink-0" />
+                        <div className="flex items-center gap-4">
+                          <ProfileImage 
+                            src={ach.photoUrl} 
+                            alt="" 
+                            size="md"
+                            containerClassName="rounded-xl border border-gray-200"
+                          />
                           <div>
-                            <div className="font-bold text-[#0B132B]">{ach.name}</div>
-                            <div className="text-xs text-gray-400">ID: {ach.id}</div>
+                            <div className="font-extrabold text-[#0B132B]">{ach.name}</div>
+                            <div className="text-[10px] font-mono text-gray-400">ID: {ach.id}</div>
                           </div>
                         </div>
                       </td>

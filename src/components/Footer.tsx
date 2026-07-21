@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Landmark, Mail, Phone, MapPin, Send, HelpCircle, CheckCircle, ShieldCheck, X, Sparkles, ArrowUp, Shield, Lock, Building, Users, UserCheck } from 'lucide-react';
+import { Landmark, Mail, Phone, MapPin, Send, HelpCircle, CheckCircle, ShieldCheck, X, Sparkles, ArrowUp, Shield, Lock, Building, Users, UserCheck, Facebook, Youtube, MessageCircle } from 'lucide-react';
 import { Language } from '../types';
 
 interface FooterProps {
@@ -229,11 +229,19 @@ export default function Footer({ currentLanguage, onNavigate, onOpenArchitecture
             {currentLanguage === 'en' ? 'Follow official YouTube, Facebook and Telegram circles for assemblies.' : currentLanguage === 'ur' ? 'سرکاری اعلانات کے لیے ہمارے یوٹیوب، فیس بک اور ٹیلی گرام چینلز سے جڑیں۔' : 'अधिकारिक घोषणाओं के लिए हमारे आधिकारिक यूट्यूब, फेसबुक और टेलीग्राम चैनलों से जुड़ें।'}
           </p>
 
-          <div className="flex flex-wrap gap-2 pt-2" id="social_media_chips">
-            <a href="https://www.facebook.com/share/g/1ChFrRk5yq/?mibextid=wwXIfr" target="_blank" rel="noreferrer" className="px-2.5 py-1.5 bg-white/5 hover:bg-white/10 text-xs font-mono rounded text-gray-300 hover:text-white transition font-bold">Facebook</a>
-            <a href="https://youtube.com/@allindiarangrej?si=G6afDaAB4t6p9xuA" target="_blank" rel="noreferrer" className="px-2.5 py-1.5 bg-white/5 hover:bg-white/10 text-xs font-mono rounded text-gray-300 hover:text-[#F4C430] transition">YouTube</a>
-            <a href="https://t.me/+LWzXFGa5mHQzMmVl" target="_blank" rel="noreferrer" className="px-2.5 py-1.5 bg-white/5 hover:bg-white/10 text-xs font-mono rounded text-gray-300 hover:text-white transition">Telegram</a>
-            <a href="https://whatsapp.com/channel/0029Vb8Mq6G6mYPF8BfWpL2N" target="_blank" rel="noreferrer" className="px-2.5 py-1.5 bg-white/5 hover:bg-white/10 text-xs font-mono rounded text-[#F4C430] hover:text-white transition font-bold">WhatsApp Channel</a>
+          <div className="flex flex-wrap gap-4 pt-2" id="social_media_chips">
+            <a href="https://www.facebook.com/share/g/1ChFrRk5yq/?mibextid=wwXIfr" target="_blank" rel="noreferrer" className="text-gray-300 hover:text-white transition" title="Facebook">
+              <Facebook className="h-6 w-6" />
+            </a>
+            <a href="https://youtube.com/@allindiarangrej?si=G6afDaAB4t6p9xuA" target="_blank" rel="noreferrer" className="text-gray-300 hover:text-[#FF0000] transition" title="YouTube">
+              <Youtube className="h-6 w-6" />
+            </a>
+            <a href="https://t.me/+LWzXFGa5mHQzMmVl" target="_blank" rel="noreferrer" className="text-gray-300 hover:text-[#0088cc] transition" title="Telegram">
+              <Send className="h-6 w-6" />
+            </a>
+            <a href="https://whatsapp.com/channel/0029Vb8Mq6G6mYPF8BfWpL2N" target="_blank" rel="noreferrer" className="text-gray-300 hover:text-[#25D366] transition" title="WhatsApp Channel">
+              <MessageCircle className="h-6 w-6" />
+            </a>
           </div>
         </div>
 

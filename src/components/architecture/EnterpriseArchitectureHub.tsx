@@ -22,6 +22,7 @@ import {
   AnalyticsService, SecurityService
 } from '../../services';
 import { Language } from '../../types';
+import { ProfileImage } from '../common/ProfileImage';
 import { getSupabase } from '../../lib/supabaseClient';
 
 interface EnterpriseHubProps {
@@ -676,7 +677,12 @@ export const EnterpriseArchitectureHub: React.FC<EnterpriseHubProps> = ({
                 {session.role === 'Visitor' && <span className="text-[9px] bg-amber-500/20 text-amber-300 px-1.5 py-0.5 rounded font-mono">GUEST</span>}
               </div>
               <div className="flex items-center space-x-2.5">
-                <img src={session.avatarUrl} alt="" className="w-9 h-9 rounded-full border border-[#D4AF37]" />
+                <ProfileImage 
+                  src={session.avatarUrl} 
+                  alt="" 
+                  size="xs"
+                  containerClassName="border border-[#D4AF37]"
+                />
                 <div className="overflow-hidden">
                   <div className="text-xs font-bold text-white truncate">{session.name}</div>
                   <div className="text-[10px] text-[#FFD54A] font-medium">{session.role}</div>

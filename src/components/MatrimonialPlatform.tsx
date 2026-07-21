@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Heart, Search, Eye, Lock, ShieldCheck, CheckCircle2, User, Sparkles, Download, Printer, FileText, MessageSquare } from 'lucide-react';
 import { Language, MatrimonialProfile } from '../types';
+import { ProfileImage } from './common/ProfileImage';
 import { getSupabase } from '../lib/supabaseClient';
 import { matrimonialProfiles } from '../data';
 import SecondMarriagePortal from './SecondMarriagePortal';
@@ -237,12 +238,13 @@ export default function MatrimonialPlatform({ currentLanguage, defaultSubTab = '
               return (
                 <div key={p.id} className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 flex flex-col sm:flex-row gap-6 hover:shadow-md transition">
                   {/* Left Column: Blurred/Normal Photo Frame */}
-                  <div className="w-full sm:w-40 h-48 relative rounded-lg overflow-hidden border border-gray-100 bg-gray-100 flex-shrink-0">
-                    <img
+                  <div className="w-full sm:w-48 h-56 relative rounded-2xl overflow-hidden border-2 border-gray-100 bg-gray-100 flex-shrink-0 group">
+                    <ProfileImage
                       src={p.photoUrl}
                       alt={p.nameEn}
-                      referrerPolicy="no-referrer"
-                      className={`w-full h-full object-cover object-center transition duration-500 ${shouldBlur ? 'blur-md filter scale-105' : ''}`}
+                      size="custom"
+                      containerClassName="w-full h-full"
+                      className={`transition duration-700 group-hover:scale-110 ${shouldBlur ? 'blur-md filter scale-105' : ''}`}
                     />
                     
                     {/* Blurring Security Overlay Block */}

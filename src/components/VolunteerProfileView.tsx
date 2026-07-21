@@ -1,6 +1,7 @@
 import React from 'react';
 import { Language, VolunteerProfile } from '../types';
 import VolunteerMotivationCard from './VolunteerMotivationCard';
+import { ProfileImage } from './common/ProfileImage';
 
 interface VolunteerProfileProps {
   profile: VolunteerProfile;
@@ -12,10 +13,15 @@ export default function VolunteerProfileView({ profile, currentLanguage }: Volun
     <div className="py-12 bg-gray-50 min-h-screen">
       <div className="max-w-4xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="md:col-span-2 bg-white rounded-2xl shadow-sm p-8">
-          <div className="flex items-center space-x-6">
-            <img src={profile.photoUrl} alt={profile.name} className="w-24 h-24 rounded-full object-cover" />
+          <div className="flex items-center space-x-8">
+            <ProfileImage 
+              src={profile.photoUrl} 
+              alt={profile.name} 
+              size="xl"
+              containerClassName="border-4 border-[#004B23] shadow-lg"
+            />
             <div>
-              <h2 className="text-3xl font-bold">{profile.name}</h2>
+              <h2 className="text-3xl font-bold text-[#004B23]">{profile.name}</h2>
               <p className="text-gray-600">{profile.designation} | {profile.committeeName}</p>
               <p className="text-gray-500">{profile.city}, {profile.state}</p>
               <p className="text-sm text-gray-600 mt-1">

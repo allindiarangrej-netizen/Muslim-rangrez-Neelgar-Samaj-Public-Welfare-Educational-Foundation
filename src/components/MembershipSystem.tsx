@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { XCircle, Mail, UserPlus, LogIn, Layout, ShieldCheck, Download, Users, User, ArrowRight, CheckCircle, FileText, Printer, QrCode, Search, Filter, CheckCircle2, AlertTriangle, RefreshCw, Sliders, Database, Lock, Bell, Award, Briefcase, Heart, Activity, Eye, EyeOff, Settings, Check, X, Shield, FileCheck, PhoneCall, MapPin, Grid, Layers, ExternalLink, Phone, Plus, MessageSquare } from 'lucide-react';
 import { Language } from '../types';
 import { IMAGES } from '../data/mediaRegistry';
+import { ProfileImage } from './common/ProfileImage';
 import { useAuth } from '../context/AuthContext';
 import { getSupabase } from '../lib/supabaseClient';
 import LocationSelector from './LocationSelector';
@@ -2120,14 +2121,13 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
                   
                   {/* Photo Frame */}
                   <div className="col-span-4 flex justify-center">
-                    <div className="w-20 h-24 rounded-lg bg-gray-800 border-2 border-[#F4C430]/40 overflow-hidden flex items-center justify-center">
-                      <img
-                        src={IMAGES.avatars.placeholder}
-                        alt="Profile Photo"
-                        referrerPolicy="no-referrer"
-                        className="w-full h-full object-cover object-center"
-                      />
-                    </div>
+                    <ProfileImage
+                      src={IMAGES.avatars.placeholder}
+                      alt="Profile Photo"
+                      size="custom"
+                      containerClassName="w-24 h-28 rounded-lg bg-gray-800 border-2 border-[#F4C430]/40 shadow-inner"
+                      className="object-cover"
+                    />
                   </div>
 
                   {/* Profile Details fields */}

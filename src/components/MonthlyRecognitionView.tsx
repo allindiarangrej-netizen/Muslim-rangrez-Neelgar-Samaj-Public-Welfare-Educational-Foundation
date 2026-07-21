@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Language } from '../types';
 import { Trophy, Award, Calendar, Heart, Users, Sparkles, CheckCircle, MapPin, Building2, BookOpen, ChevronRight, Star } from 'lucide-react';
+import { ProfileImage } from './common/ProfileImage';
 
 interface MonthlyRecognitionProps {
   currentLanguage: Language;
@@ -111,14 +112,19 @@ export default function MonthlyRecognitionView({ currentLanguage }: MonthlyRecog
             </span>
           </div>
           <div className="p-6 space-y-6">
-            <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-5 text-center sm:text-left">
+            <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-8 text-center sm:text-left">
               <div className="relative">
-                <img src={currentData.volunteer.photo} alt="Volunteer" className="w-24 h-24 rounded-2xl object-cover ring-4 ring-emerald-50 shadow-md" />
-                <div className="absolute -bottom-2 -right-2 bg-yellow-400 text-[#0B132B] p-1.5 rounded-full shadow">
-                  <Star className="h-4 w-4 fill-current" />
+                <ProfileImage 
+                  src={currentData.volunteer.photo} 
+                  alt="Volunteer" 
+                  size="xl"
+                  containerClassName="rounded-2xl ring-4 ring-emerald-50 shadow-xl"
+                />
+                <div className="absolute -bottom-2 -right-2 bg-yellow-400 text-[#0B132B] p-2 rounded-full shadow-lg border-2 border-white">
+                  <Star className="h-5 w-5 fill-current" />
                 </div>
               </div>
-              <div className="flex-1">
+              <div className="flex-1 pt-2">
                 <h3 className="text-xl font-bold text-gray-900">
                   {currentLanguage === 'en' ? currentData.volunteer.nameEn : currentData.volunteer.nameHi}
                 </h3>
@@ -165,9 +171,14 @@ export default function MonthlyRecognitionView({ currentLanguage }: MonthlyRecog
             </span>
           </div>
           <div className="p-6 space-y-6">
-            <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-5 text-center sm:text-left">
-              <img src={currentData.committee.photo} alt="Committee" className="w-24 h-24 rounded-2xl object-cover ring-4 ring-blue-50 shadow-md" />
-              <div className="flex-1">
+            <div className="flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-8 text-center sm:text-left">
+              <ProfileImage 
+                src={currentData.committee.photo} 
+                alt="Committee" 
+                size="xl"
+                containerClassName="rounded-2xl ring-4 ring-blue-50 shadow-xl"
+              />
+              <div className="flex-1 pt-2">
                 <h3 className="text-xl font-bold text-gray-900">
                   {currentLanguage === 'en' ? currentData.committee.nameEn : currentData.committee.nameHi}
                 </h3>
@@ -248,13 +259,18 @@ export default function MonthlyRecognitionView({ currentLanguage }: MonthlyRecog
               </span>
             </div>
             <div className="p-6 space-y-4">
-              <div className="flex items-center space-x-4">
-                <img src={currentData.story.photo} alt="Story Author" className="w-16 h-16 rounded-full object-cover ring-2 ring-purple-200" />
+              <div className="flex items-center space-x-6">
+                <ProfileImage 
+                  src={currentData.story.photo} 
+                  alt="Story Author" 
+                  size="lg"
+                  containerClassName="ring-2 ring-purple-200 shadow-lg"
+                />
                 <div>
                   <h3 className="font-bold text-gray-900 leading-snug">
                     {currentLanguage === 'en' ? currentData.story.titleEn : currentData.story.titleHi}
                   </h3>
-                  <p className="text-xs text-purple-600 font-medium mt-0.5">
+                  <p className="text-xs text-purple-600 font-bold mt-0.5 uppercase tracking-wider">
                     {currentLanguage === 'en' ? currentData.story.authorEn : currentData.story.authorHi}
                   </p>
                 </div>

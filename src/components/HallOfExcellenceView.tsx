@@ -15,6 +15,7 @@ import ExcellenceProfileModal from './ExcellenceProfileModal';
 import ExcellenceMentorshipModal from './ExcellenceMentorshipModal';
 import ExcellenceAdminPanel from './ExcellenceAdminPanel';
 import AchieverCard from './AchieverCard';
+import { ProfileImage } from './common/ProfileImage';
 import {
   Trophy,
   Award,
@@ -957,13 +958,18 @@ const HallOfExcellenceView: React.FC<HallOfExcellenceViewProps> = ({ currentLang
               {stories.map((story) => (
                 <div key={story.id} className="bg-white rounded-3xl border border-gray-200 shadow-sm p-6 sm:p-8 space-y-6 hover:shadow-lg transition">
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-gray-100 pb-5">
-                    <div className="flex items-center gap-4">
-                      <img src={story.achieverPhoto} alt="" className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl object-cover border-2 border-[#F4C430] shadow" />
+                    <div className="flex items-center gap-6">
+                      <ProfileImage 
+                        src={story.achieverPhoto} 
+                        alt={story.achieverName} 
+                        size="xl"
+                        containerClassName="rounded-2xl border-4 border-[#F4C430] shadow-xl"
+                      />
                       <div>
-                        <h3 className="text-lg sm:text-xl font-black text-[#0B132B]">
+                        <h3 className="text-xl sm:text-2xl font-black text-[#0B132B]">
                           {story.title[currentLanguage] || story.title.en}
                         </h3>
-                        <p className="text-xs font-bold text-[#004B23] mt-0.5">
+                        <p className="text-sm font-bold text-[#004B23] mt-0.5">
                           By: {story.achieverName} — <span className="text-gray-500 font-normal">{story.profession}</span>
                         </p>
                       </div>

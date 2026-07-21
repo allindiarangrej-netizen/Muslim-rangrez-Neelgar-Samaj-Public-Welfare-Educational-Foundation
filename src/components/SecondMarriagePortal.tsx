@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { Language } from '../types';
 import ReCAPTCHA from 'react-google-recaptcha';
+import { ProfileImage } from './common/ProfileImage';
 
 interface SecondMarriagePortalProps {
   currentLanguage: Language;
@@ -611,16 +612,18 @@ export default function SecondMarriagePortal({ currentLanguage }: SecondMarriage
                       <div className="flex flex-col sm:flex-row gap-5">
                         
                         {/* Profile Photo with Privacy Blur & Lock */}
-                        <div className="w-full sm:w-40 h-48 relative rounded-2xl overflow-hidden border border-gray-700 bg-gray-900 shrink-0">
-                          <img
+                        <div className="w-full sm:w-44 h-56 relative rounded-2xl overflow-hidden border border-gray-700 bg-gray-900 shrink-0 shadow-xl group/photo">
+                          <ProfileImage
                             src={p.photoUrl}
                             alt={p.nameEn}
-                            referrerPolicy="no-referrer"
-                            className={`w-full h-full object-cover object-top transition duration-700 ${!isUnlocked ? 'blur-md filter scale-110 brightness-75' : 'group-hover:scale-105'}`}
+                            size="custom"
+                            objectPosition="top"
+                            containerClassName="w-full h-full !rounded-none !border-0 !shadow-none"
+                            className={`transition duration-700 ${!isUnlocked ? 'blur-md filter scale-110 brightness-75' : 'group-hover:scale-110'}`}
                           />
 
                           {!isUnlocked && (
-                            <div className="absolute inset-0 bg-black/60 backdrop-blur-xs flex flex-col justify-center items-center text-center p-3 space-y-2">
+                            <div className="absolute inset-0 bg-black/60 backdrop-blur-xs flex flex-col justify-center items-center text-center p-3 space-y-2 z-10">
                               <div className="p-2 bg-[#F4C430]/20 rounded-full border border-[#F4C430]/50">
                                 <Lock className="h-5 w-5 text-[#F4C430]" />
                               </div>
@@ -638,13 +641,13 @@ export default function SecondMarriagePortal({ currentLanguage }: SecondMarriage
                           )}
 
                           {isUnlocked && p.privacyMask.blurPhoto && (
-                            <span className="absolute bottom-2 left-2 bg-[#004B23] text-[#FFD54A] font-mono font-bold text-[8px] px-2 py-0.5 rounded-md uppercase tracking-wider shadow">
+                            <span className="absolute bottom-2 left-2 bg-[#004B23] text-[#FFD54A] font-mono font-bold text-[8px] px-2 py-0.5 rounded-md uppercase tracking-wider shadow z-10">
                               UNLOCKED ✔
                             </span>
                           )}
 
                           {/* AI Score Badge overlay */}
-                          <div className="absolute top-2 right-2 bg-[#0B132B]/90 border border-[#F4C430] text-[#F4C430] font-mono font-black text-xs px-2.5 py-1 rounded-xl shadow-lg flex items-center space-x-1">
+                          <div className="absolute top-2 right-2 bg-[#0B132B]/90 border border-[#F4C430] text-[#F4C430] font-mono font-black text-xs px-2.5 py-1 rounded-xl shadow-lg flex items-center space-x-1 z-10">
                             <Sparkles className="h-3 w-3 animate-pulse" />
                             <span>{p.aiScore}% Match</span>
                           </div>
@@ -774,11 +777,11 @@ export default function SecondMarriagePortal({ currentLanguage }: SecondMarriage
                     </button>
 
                     <div className="flex flex-col sm:flex-row items-start gap-6 border-b border-gray-800 pb-6">
-                      <img
+                      <ProfileImage
                         src={selectedProfileModal.photoUrl}
                         alt={selectedProfileModal.nameEn}
-                        referrerPolicy="no-referrer"
-                        className="w-32 h-32 sm:w-40 sm:h-40 rounded-2xl object-cover border-2 border-[#F4C430]/60 shadow-xl"
+                        size="custom"
+                        containerClassName="w-32 h-32 sm:w-48 sm:h-56 rounded-2xl border-2 border-[#F4C430]/60 shadow-2xl"
                       />
                       <div className="space-y-2 flex-1">
                         <div className="flex items-center space-x-2">

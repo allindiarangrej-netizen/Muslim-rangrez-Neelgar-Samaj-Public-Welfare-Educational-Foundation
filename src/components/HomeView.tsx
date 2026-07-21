@@ -12,6 +12,7 @@ import { translate } from '../utils/translator';
 import AnimatedCommunityStats from './AnimatedCommunityStats';
 import NationalLeadership from './NationalLeadership';
 import SuccessStories from './SuccessStories';
+import CommunityHighlightsGallery from './CommunityHighlightsGallery';
 
 interface HomeViewProps {
   currentLanguage: Language;
@@ -351,6 +352,7 @@ export default function HomeView({ currentLanguage, onNavigate }: HomeViewProps)
         <div className="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-t from-[#FDFBF7] to-transparent pointer-events-none"></div>
       </section>
 
+      <CommunityHighlightsGallery currentLanguage={currentLanguage} />
 
       {/* ========================================== */}
       {/* 1. ABOUT SOCIETY: HEROIC ENTRY & IDENTITY  */}

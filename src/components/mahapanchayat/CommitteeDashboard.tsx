@@ -5,6 +5,7 @@ import {
   UserCheck, ShieldCheck, TrendingUp, MapPin, Calendar, Eye
 } from 'lucide-react';
 import { Language } from '../../types';
+import { ProfileImage } from '../common/ProfileImage';
 
 interface CommitteeDashboardProps {
   currentLanguage: Language;
@@ -632,10 +633,11 @@ export default function CommitteeDashboard({ currentLanguage }: CommitteeDashboa
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-gray-50 pb-4">
                     <div className="flex items-center gap-4">
                       {selectedCommittee.photoUrl && (
-                        <img 
+                        <ProfileImage 
                           src={selectedCommittee.photoUrl} 
-                          alt={selectedCommittee.president}
-                          className="w-16 h-16 rounded-2xl object-cover border-2 border-emerald-500/20 shadow-sm shrink-0" 
+                          alt={selectedCommittee.president || ''}
+                          size="lg"
+                          containerClassName="rounded-2xl border-2 border-emerald-500/20 shadow-lg" 
                         />
                       )}
                       <div>

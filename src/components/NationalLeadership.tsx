@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import { MessageSquare, Facebook, Instagram, Youtube, Image as ImageIcon, Linkedin, Copy, Check, Code, MapPin, Mail, Phone, Search, Users, Award, ShieldCheck, Briefcase } from 'lucide-react';
 import { Language } from '../types';
 import { IMAGES } from '../data/mediaRegistry';
+import { ProfileImage } from './common/ProfileImage';
 
 interface LeaderProfile {
   id: string;
@@ -58,9 +59,9 @@ export default function NationalLeadership({ currentLanguage }: NationalLeadersh
       email: 'president@rangrezsamaj.bharat',
       socials: {
         whatsapp: 'https://wa.me/919811000000',
-        facebook: '#',
-        instagram: '#',
-        youtube: '#',
+        facebook: 'https://www.facebook.com/share/g/1ChFrRk5yq/',
+        instagram: 'https://www.instagram.com/allindiarangrezsamajtrust/',
+        youtube: 'https://www.youtube.com/@allindiarangrezsamajtrust',
         gallery: '#gallery',
       },
     },
@@ -130,9 +131,9 @@ export default function NationalLeadership({ currentLanguage }: NationalLeadersh
       email: 'vp@rangrezsamaj.bharat',
       socials: {
         whatsapp: 'https://wa.me/919829022222',
-        facebook: '#',
-        instagram: '#',
-        youtube: '#',
+        facebook: 'https://www.facebook.com/share/g/1ChFrRk5yq/',
+        instagram: 'https://www.instagram.com/allindiarangrezsamajtrust/',
+        youtube: 'https://www.youtube.com/@allindiarangrezsamajtrust',
         gallery: '#gallery',
       },
     },
@@ -154,9 +155,9 @@ export default function NationalLeadership({ currentLanguage }: NationalLeadersh
       email: 'secretary@rangrezsamaj.bharat',
       socials: {
         whatsapp: 'https://wa.me/919425133333',
-        facebook: '#',
-        instagram: '#',
-        youtube: '#',
+        facebook: 'https://www.facebook.com/share/g/1ChFrRk5yq/',
+        instagram: 'https://www.instagram.com/allindiarangrezsamajtrust/',
+        youtube: 'https://www.youtube.com/@allindiarangrezsamajtrust',
         gallery: '#gallery',
       },
     },
@@ -268,12 +269,12 @@ export default function NationalLeadership({ currentLanguage }: NationalLeadersh
       locationHi: 'ग्वालियर, मध्य प्रदेश',
       descriptionEn: 'Islamic scholar, Islamic Judge, Qari, Hafiz, Aalim. Dedicated to social reforms, education, and legal arbitration in Greater Gwalior.',
       descriptionHi: 'इस्लामी विद्वान, इस्लामी न्यायाधीश, कारी, हाफ़िज़, आलिम। ग्रेटर ग्वालियर में सामाजिक सुधारों, शिक्षा और कानूनी मध्यस्थता के लिए समर्पित।',
-      image: IMAGES.leaders.president,
+      image: 'https://lh3.googleusercontent.com/d/1Y1WZyKPrZDIIB1a2hvofprnIpmmkb3hn',
       socials: {
         whatsapp: 'https://wa.me/919617698678',
-        facebook: '#',
-        instagram: '#',
-        youtube: '#',
+        facebook: 'https://www.facebook.com/share/12CoWpE7jC/',
+        instagram: 'https://www.instagram.com/p/DF7-VvGvN4Y/',
+        youtube: 'https://youtube.com/@shaherqazi-gwalior',
         gallery: '#gallery',
       },
     },
@@ -721,21 +722,20 @@ function LeaderCard({ leader, currentLanguage, index }: LeaderCardProps) {
 
       {/* Image Parallax Container */}
       <div 
-        className="relative w-40 h-40 mx-auto mb-6 rounded-full overflow-hidden border-4 border-white shadow-md group-hover:border-[#F4C430] group-hover:shadow-lg transition-all duration-300 flex items-center justify-center bg-gray-50 cursor-crosshair"
+        className="relative w-48 h-48 mx-auto mb-6 cursor-crosshair group"
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
       >
-        <img
+        <ProfileImage
           src={leader.image}
           alt={currentLanguage === 'en' ? leader.nameEn : leader.nameHi}
-          referrerPolicy="no-referrer"
-          onError={(e) => { e.currentTarget.src = '/images/committees/profile_avatar_placeholder.svg'; }}
-          className="w-full h-full object-cover transition-transform duration-300 ease-out select-none"
+          size="custom"
+          containerClassName="w-full h-full border-4 group-hover:border-[#F4C430] group-hover:shadow-2xl transition-all duration-500"
+          className="transition-transform duration-500 ease-out"
           style={{
             transform: isHovered 
-              ? `scale(1.05) translate(${coords.x}px, ${coords.y}px)` 
+              ? `scale(1.1) translate(${coords.x}px, ${coords.y}px)` 
               : 'scale(1) translate(0px, 0px)',
-            filter: isHovered ? 'drop-shadow(0 0 8px rgba(212, 175, 55, 0.4))' : 'none',
           }}
         />
       </div>

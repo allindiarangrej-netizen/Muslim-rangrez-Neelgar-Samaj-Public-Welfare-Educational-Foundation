@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { AchieverProfile } from '../data/hallOfExcellenceData';
+import { ProfileImage } from './common/ProfileImage';
 import {
   X,
   MapPin,
@@ -103,12 +104,13 @@ const ExcellenceProfileModal: React.FC<ExcellenceProfileModalProps> = ({
           </div>
 
           {/* Profile Identity Hero */}
-          <div className="mt-6 flex flex-col sm:flex-row items-center sm:items-start gap-6 relative z-10">
+          <div className="mt-6 flex flex-col sm:flex-row items-center sm:items-start gap-8 relative z-10">
             <div className="relative shrink-0">
-              <img
+              <ProfileImage
                 src={achiever.photoUrl}
                 alt={achiever.name}
-                className="w-28 h-28 sm:w-36 sm:h-36 rounded-2xl object-cover border-4 border-[#F4C430] shadow-xl"
+                size="custom"
+                containerClassName="w-32 h-32 sm:w-48 sm:h-48 rounded-2xl border-4 border-[#F4C430] shadow-2xl"
               />
               {achiever.isFeatured && (
                 <div className="absolute -bottom-2 -right-2 bg-[#F4C430] text-[#0B132B] p-1.5 rounded-full shadow-lg" title="Featured Achiever">

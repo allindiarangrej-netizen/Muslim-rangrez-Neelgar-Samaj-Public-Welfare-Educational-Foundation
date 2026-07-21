@@ -15,6 +15,7 @@ export const IMAGES = {
   },
   leaders: {
     president: '/images/committees/mufti_sirajuddin.jpg',
+    mufti_sirajuddin: 'https://lh3.googleusercontent.com/d/1Y1WZyKPrZDIIB1a2hvofprnIpmmkb3hn',
     secretary: '/images/committees/leader_secretary_rafiq.jpg',
     member_irfan: '/images/committees/leader_member_irfan.svg',
     member_shakeel: '/images/committees/leader_member_shakeel.svg'
