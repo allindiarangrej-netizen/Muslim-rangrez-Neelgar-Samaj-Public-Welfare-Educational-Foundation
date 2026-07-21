@@ -1,0 +1,267 @@
+    volumeNo: 1,
+    titleEn: "Volume 1: Constitution & Bye-Laws (Registration Edition)",
+    titleHi: "खंड 1: संविधान एवं उपविधियाँ (पंजीकरण संस्करण)",
+    parts: [
+      {
+        partNo: "Part-1",
+        titleEn: "Preliminary Provisions (प्रारम्भिक उपबंध)",
+        titleHi: "भाग 1: प्रारम्भिक उपबंध",
+        chapters: [
+          {
+            chapterNo: 1,
+            titleEn: "Name, Registered Office & Jurisdiction",
+            titleHi: "नाम, पंजीकृत कार्यालय एवं कार्यक्षेत्र",
+            summaryEn: "Defines the official registered name of the society, registered headquarters, branch office rules, and geographical area of operations across India.",
+            summaryHi: "संस्था के आधिकारिक पंजीकृत नाम, पंजीकृत मुख्यालय, शाखा कार्यालय नियमों और भारत भर में भौगोलिक कार्यक्षेत्र को परिभाषित करता है।",
+            clauses: [
+              {
+                id: "v1_c1_1.1",
+                titleEn: "1.1 Name of the Society",
+                titleHi: "1.1 संस्था का नाम",
+                textEn: "The name of the Society shall be 'Muslim Rangrez (Neelgar) Samaj Public Welfare & Educational Society' (hereinafter referred to as the 'Society').",
+                textHi: "इस संस्था का नाम 'मस्लिम रंगरेज़ (नीलगर) समाज पब्लिक वेलफेयर एंड एजुकेशनल सोसाइटी' (इसके बाद 'संस्था' के रूप में संदर्भित) होगा।"
+              },
+              {
+                id: "v1_c1_1.2",
+                titleEn: "1.2 Legal Nature & Status",
+                titleHi: "1.2 विधिक स्वरूप",
+                textEn: "The Society shall be a registered, non-profit, non-political, voluntary, social, educational, and welfare-oriented institution governed under applicable Indian laws.",
+                textHi: "यह संस्था एक पंजीकृत, गैर-लाभकारी (Not-for-Profit), गैर-राजनीतिक, स्वैच्छिक, सामाजिक, शैक्षणिक एवं जनकल्याणकारी संस्था होगी, जिसका संचालन लागू भारतीय कानूनों के अनुसार किया जाएगा।"
+              },
+              {
+                id: "v1_c1_1.3",
+                titleEn: "1.3 Registered Office",
+                titleHi: "1.3 पंजीकृत मुख्य कार्यालय",
+                textEn: "The registered head office of the Society shall be situated in India at a place designated by the Executive Committee or National Executive.",
+                textHi: "संस्था का पंजीकृत मुख्य कार्यालय भारत में उस स्थान पर होगा जिसे प्रथम कार्यकारिणी अथवा तत्पश्चात राष्ट्रीय कार्यकारिणी द्वारा विधिवत प्रस्ताव पारित कर निर्धारित किया जाए।"
+              },
+              {
+                id: "v1_c1_1.4",
+                titleEn: "1.4 Branch Offices",
+                titleHi: "1.4 शाखा कार्यालय",
+                textEn: "The Society may establish branches, regional offices, or local units at state, district, city, or village levels across India.",
+                textHi: "संस्था आवश्यकता के अनुसार भारत के किसी भी राज्य, संघ राज्य क्षेत्र, जिला, नगर अथवा ग्राम स्तर पर अपनी शाखाएँ, क्षेत्रीय कार्यालय या इकाइयाँ स्थापित कर सकेगी।"
+              },
+              {
+                id: "v1_c1_1.5",
+                titleEn: "1.5 Area of Operation",
+                titleHi: "1.5 कार्यक्षेत्र",
+                textEn: "The area of operation of the Society shall extend to the entire territory of India and can establish transparent collaborations with non-resident Indian community channels.",
+                textHi: "संस्था का कार्यक्षेत्र सम्पूर्ण भारत होगा। संस्था अपने उद्देश्यों की पूर्ति हेतु प्रवासी भारतीय समुदाय, प्रवासी मुस्लिम रंगरेज़ (नीलगर) समाज तथा अंतर्राष्ट्रीय सहयोग मंचों के साथ वैध एवं पारदर्शी सहयोग स्थापित कर सकेगी।"
+              },
+              {
+                id: "v1_c1_1.6",
+                titleEn: "1.6 Official Language",
+                titleHi: "1.6 आधिकारिक भाषा",
+                textEn: "The official language of the Society shall be Hindi. Official English translations can be generated and utilized as required for legal compliance.",
+                textHi: "संस्था की आधिकारिक भाषा हिन्दी होगी। आवश्यकतानुसार अंग्रेजी अथवा अन्य भाषाओं में अधिकृत अनुवाद तैयार किए जा सकते हैं।"
+              }
+            ]
+          },
+          {
+            chapterNo: 2,
+            titleEn: "Nature of the Society & Constitutional Status",
+            titleHi: "संस्था की प्रकृति एवं संवैधानिक स्थिति",
+            summaryEn: "Specifies the non-profit model, non-political commitment, inclusive framework, and adherence to the Constitution of India.",
+            summaryHi: "गैर-लाभकारी मॉडल, राजनीतिक तटस्थता, समावेशी ढांचे और भारत के संविधान के प्रति निष्ठा को स्पष्ट करता है।",
+            clauses: [
+              {
+                id: "v1_c2_2.1",
+                titleEn: "2.1 Public Welfare Character",
+                titleHi: "2.1 संस्था की प्रकृति",
+                textEn: "The Society is established purely for social welfare, education, healthcare, and humanitarian advancement of the community and the public at large.",
+                textHi: "संस्था पूर्णतः सामाजिक, शैक्षणिक, सांस्कृतिक, जनकल्याणकारी एवं मानव सेवा के उद्देश्य से कार्य करेगी। संस्था का उद्देश्य किसी व्यक्ति, समूह अथवा पदाधिकारी को निजी लाभ पहुँचाना नहीं, बल्कि समाज एवं सार्वजनिक हित में कार्य करना होगा।"
+              },
+              {
+                id: "v1_c2_2.2",
+                titleEn: "2.2 Non-Profit Nature of Income & Assets",
+                titleHi: "2.2 गैर-लाभकारी स्वरूप",
+                textEn: "All income and properties of the Society shall be utilized solely for promoting its constitutional objectives. No part thereof shall be distributed as profit, dividend, or personal gain to any member.",
+                textHi: "संस्था की समस्त आय, संपत्ति एवं संसाधनों का उपयोग केवल उसके संवैधानिक उद्देश्यों की पूर्ति हेतु किया जाएगा। संस्था की आय अथवा संपत्ति का कोई भाग किसी सदस्य, संस्थापक अथवा पदाधिकारी को व्यक्तिगत लाभ के रूप में वितरित नहीं किया जाएगा।"
+              },
+              {
+                id: "v1_c2_2.3",
+                titleEn: "2.3 Political Neutrality",
+                titleHi: "2.3 राजनीतिक निष्पक्षता",
+                textEn: "The Society shall maintain absolute political neutrality. It shall not function as an arm of any political party or use its platform for partisan propaganda.",
+                textHi: "संस्था किसी राजनीतिक दल की शाखा, सहयोगी इकाई अथवा चुनावी मंच के रूप में कार्य नहीं करेगी। संस्था सदस्यों के व्यक्तिगत लोकतांत्रिक अधिकारों का सम्मान करेगी, किन्तु संस्था के नाम या संसाधनों का उपयोग राजनीतिक दल के प्रचार के लिए नहीं किया जाएगा।"
+              },
+              {
+                id: "v1_c2_2.4",
+                titleEn: "2.4 Equality & Inclusive Fraternity",
+                titleHi: "2.4 समानता एवं समावेशन",
+                textEn: "The Society treats every human being with dignity and equality, in line with constitutional values of fraternity, justice, and non-discrimination.",
+                textHi: "संस्था प्रत्येक व्यक्ति के साथ सम्मान, समानता एवं गरिमा का व्यवहार करेगी। संस्था की गतिविधियाँ भारतीय संविधान में निहित समानता, न्याय एवं बंधुत्व की भावना तथा लागू कानूनों के अनुरूप संचालित होंगी।"
+              }
+            ]
+          },
+          {
+            chapterNo: 3,
+            titleEn: "Objectives of the Society",
+            titleHi: "संस्था के उद्देश्य",
+            summaryEn: "Detailed layout of the core mission including Educational advancement, Social reforms, Women's development, and Financial independence.",
+            summaryHi: "शैक्षणिक उन्नति, सामाजिक सुधार, महिला विकास और आर्थिक स्वतंत्रता सहित मूल मिशन का विस्तृत विवरण।",
+            clauses: [
+              {
+                id: "v1_c3_3.1",
+                titleEn: "3.1 Core General Objectives",
+                titleHi: "3.1 मुख्य उद्देश्य",
+                textEn: "To work for the academic, social, economic, moral, and physical development of the Muslim Rangrez (Neelgar) community and broader society.",
+                textHi: "संस्था का मुख्य उद्देश्य मुस्लिम रंगरेज़ (नीलगर) समाज सहित व्यापक समाज के शैक्षणिक, सामाजिक, आर्थिक, नैतिक एवं मानवीय विकास के लिए कार्य करना है।"
+              },
+              {
+                id: "v1_c3_3.2",
+                titleEn: "3.2 Educational Advancement Goals",
+                titleHi: "3.2 शैक्षणिक उद्देश्य",
+                textEn: "To promote literacy, establish schools, coaching institutes, libraries, and vocational training centers, and provide educational scholarships.",
+                textHi: "शिक्षा को प्रोत्साहित करना; छात्रवृत्ति एवं शैक्षणिक सहायता उपलब्ध कराना; पुस्तकालय, अध्ययन केन्द्र, कोचिंग केन्द्र एवं अन्य शैक्षणिक गतिविधियों का संचालन करना तथा करियर मार्गदर्शन को बढ़ावा देना।"
+              },
+              {
+                id: "v1_c3_3.3",
+                titleEn: "3.3 Social Reform & Anti-Dowry Campaign",
+                titleHi: "3.3 सामाजिक सुधार",
+                textEn: "To campaign against substance abuse, promote marital simplicity, eradicate social evils, and foster social harmony.",
+                textHi: "नशामुक्ति अभियान, फिजूलखर्ची उन्मूलन, शिक्षा जागरूकता, सामाजिक सद्भाव, वैवाहिक सादगी, नैतिक मूल्यों के प्रचार तथा जनहितकारी अभियानों का संचालन करना।"
+              },
+              {
+                id: "v1_c3_3.4",
+                titleEn: "3.4 Women, Youth & Child Development",
+                titleHi: "3.4 महिला एवं बाल विकास",
+                textEn: "To empower women through training centers, skill development schemes, and protect child safety and rights.",
+                textHi: "महिलाओं एवं बच्चों के सम्मान, शिक्षा, स्वास्थ्य, सुरक्षा, आत्मनिर्भरता एवं सामाजिक सशक्तीकरण हेतु कार्यक्रम संचालित करना।"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        partNo: "Part-2",
+        titleEn: "Core Principles & Philosophy (मूल सिद्धांत)",
+        titleHi: "भाग 2: मूल सिद्धांत एवं दर्शन",
+        chapters: [
+          {
+            chapterNo: 4,
+            titleEn: "Society's Core Principles (संस्था के मूल सिद्धांत)",
+            titleHi: "संस्था के मूल सिद्धांत",
+            summaryEn: "Explains Sincerity (Ikhlas), Integrity (Amanatdari), Justice (Insaf), Mutual Consultation (Mashwara), and Accountability.",
+            summaryHi: "इख़्लास (ईमानदारी), अमानतदारी (सत्यनिष्ठा), इंसाफ़ (न्याय), मशवरा (परामर्श) और जवाबदेही की व्याख्या करता है।",
+            clauses: [
+              {
+                id: "v1_c4_4.2",
+                titleEn: "4.2 Sincerity (Ikhlas)",
+                titleHi: "4.2 इख़्लास (Sincerity)",
+                textEn: "Every member and officer-bearer must perform their service with absolute sincerity, prioritizing public welfare and community progress over personal fame or greed.",
+                textHi: "संस्था का प्रत्येक सदस्य एवं पदाधिकारी समाज सेवा, शिक्षा एवं जनकल्याण के कार्यों को निष्ठा, ईमानदारी तथा सद्भावना के साथ करेगा। व्यक्तिगत प्रसिद्धि या निजी लाभ की अपेक्षा संस्था एवं समाज के हित को प्राथमिकता दी जाएगी।"
+              },
+              {
+                id: "v1_c4_4.3",
+                titleEn: "4.3 Integrity & Public Trust (Amanatdari)",
+                titleHi: "4.3 अमानतदारी (Integrity)",
+                textEn: "Office-bearers shall act as trustees of the community's assets, funds, and records, ensuring zero leakage and transparent disclosures.",
+                textHi: "संस्था के प्रत्येक पदाधिकारी एवं सदस्य पर संस्था की प्रतिष्ठा, संपत्ति, अभिलेख, वित्तीय संसाधनों एवं सार्वजनिक विश्वास की रक्षा का दायित्व होगा। सभी निर्णय सत्यनिष्ठा, निष्पक्षता एवं उत्तरदायित्व के साथ लिए जाएँगे।"
+              },
+              {
+                id: "v1_c4_4.4",
+                titleEn: "4.4 Justice & Equity (Insaf)",
+                titleHi: "4.4 इंसाफ़ (Justice)",
+                textEn: "The Society shall treat every member equally, ensuring natural justice in disputes, inquiries, and welfare allocations.",
+                textHi: "संस्था के प्रत्येक सदस्य के साथ निष्पक्ष, सम्मानजनक एवं न्यायसंगत व्यवहार किया जाएगा। किसी भी विवाद, अनुशासनात्मक कार्रवाई अथवा प्रशासनिक निर्णय में प्राकृतिक न्याय (Natural Justice) के सिद्धांतों का पालन किया जाएगा।"
+              },
+              {
+                id: "v1_c4_4.5",
+                titleEn: "4.5 Mutual Consultation (Mashwara)",
+                titleHi: "4.5 मशवरा (Consultation)",
+                textEn: "All major strategic, financial, and organizational decisions must be taken via democratic and consultative consensus.",
+                textHi: "संस्था लोकतांत्रिक एवं परामर्श आधारित निर्णय प्रणाली का पालन करेगी। महत्वपूर्ण विषयों पर संबंधित समिति, कार्यकारिणी अथवा महासभा के साथ विचार-विमर्श कर निर्णय लिया जाएगा।"
+              }
+            ]
+          },
+          {
+            chapterNo: 5,
+            titleEn: "Motto of the Society (संस्था का आदर्श वाक्य)",
+            titleHi: "संस्था का आदर्श वाक्य",
+            summaryEn: "Defines the official motto of the society and the detailed conceptual meaning of its core elements: Taalim, Ittehad, Khidmat, and Taraqqi.",
+            summaryHi: "संस्था के आधिकारिक आदर्श वाक्य और इसके प्रमुख तत्वों: तालीम, इत्तेहाद, ख़िदमत और तरक़्क़ी کے वैचारिक अर्थ को परिभाषित करता है।",
+            clauses: [
+              {
+                id: "v1_c5_5.1",
+                titleEn: "5.1 Official Motto",
+                titleHi: "5.1 आधिकारिक आदर्श वाक्य",
+                textEn: "The official Motto of the Society shall be: 'Taalim • Ittehad • Khidmat • Taraqqi' (Education • Unity • Service • Progress).",
+                textHi: "संस्था का आधिकारिक आदर्श वाक्य होगा— 'तालीम • इत्तेहाद • ख़ि दमत • तरक़्क़ी'"
+              },
+              {
+                id: "v1_c5_5.2",
+                titleEn: "5.2 Detailed Definition of the Motto Pillars",
+                titleHi: "5.2 आदर्श वाक्य का अर्थ",
+                textEn: "1. Taalim: Secular and moral education, skill acquisition, and intellectual growth.\n2. Ittehad: Deep unity, brotherhood, mutual respect, and collective responsibility.\n3. Khidmat: Social work, humanitarian aid, and dedicated service to the community.\n4. Taraqqi: Economic progress, spiritual rise, and overall modern empowerment.",
+                textHi: "1. तालीम — शिक्षा, ज्ञान, जागरूकता एवं बौद्धिक विकास।\n2. इत्तेहाद — संगठनात्मक एकता, भाईचारा, सामाजिक समरसता एवं सामूहिक उत्तरदायित्व।\n3. ख़िदमत — समाज सेवा, मानवता की सहायता एवं जनकल्याण।\n4. तरक़्क़ी — सामाजिक, शैक्षणिक, आर्थिक एवं नैतिक उन्नति।"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        partNo: "Part-3",
+        titleEn: "General Body & Membership Governance",
+        titleHi: "भाग 3: महासभा एवं सदस्यता शासन",
+        chapters: [
+          {
+            chapterNo: 11,
+            titleEn: "The General Body (महासभा)",
+            titleHi: "महासभा (General Body)",
+            summaryEn: "Constitutes the supreme democratic platform of the society. Regulates voting rights, approvals of audits, and national executive elections.",
+            summaryHi: "संस्था के सर्वोच्च लोकतांत्रिक मंच का गठन करता है। मतदान अधिकारों, ऑडिट की स्वीकृति और राष्ट्रीय कार्यकारिणी चुनावों को नियंत्रित करता है।",
+            clauses: [
+              {
+                id: "v1_c11_11.1",
+                titleEn: "11.1 Supreme Democratic Authority",
+                titleHi: "11.1 सर्वोच्च निकाय",
+                textEn: "The General Body (Mahasabha) shall be the supreme governing, policy-making, and final approving authority of the Society.",
+                textHi: "महासभा संस्था की सर्वोच्च लोकतांत्रिक एवं नीति-निर्धारण करने वाली निकाय होगी।"
+              },
+              {
+                id: "v1_c11_11.2",
+                titleEn: "11.2 General Body Composition",
+                titleHi: "11.2 संरचना",
+                textEn: "The General Body shall comprise all registered, active, and valid members of the Society who have cleared their membership dues.",
+                textHi: "महासभा में संविधान के अनुसार स्वीकृत सभी सक्रिय एवं वैध सदस्य सम्मिलित होंगे।"
+              },
+              {
+                id: "v1_c11_11.3",
+                titleEn: "11.3 Core Powers & Jurisdiction",
+                titleHi: "11.3 अधिकार व कार्य",
+                textEn: "The General Body is empowered to: 1. Elect the National Executive Council. 2. Approve audited balance sheets. 3. Pass constitutional amendments with a 2/3rd majority.",
+                textHi: "महासभा को निम्नलिखित अधिकार प्राप्त होंगे: 1. संविधान को स्वीकृत एवं संशोधित करना। 2. राष्ट्रीय कार्यकारिणी का निर्वाचन करना। 3. वार्षिक प्रतिवेदन एवं लेखा-प्रतिवेदन पर विचार करना व बजट का अनुमोदन करना।"
+              }
+            ]
+          },
+          {
+            chapterNo: 12,
+            titleEn: "Membership Rules & Categories",
+            titleHi: "सदस्यता नियम एवं श्रेणियाँ",
+            summaryEn: "Defines who can become a member, membership tiers (Founder, Life, Annual, Student, Honorary), and approval workflows.",
+            summaryHi: "सदस्य बनने की पात्रता, सदस्यता के स्तर (संस्थापक, आजीवन, वार्षिक, छात्र, मानद) और स्वीकृति प्रक्रियाओं को परिभाषित करता है।",
+            clauses: [
+              {
+                id: "v1_c12_12.1",
+                titleEn: "12.1 Eligibility for Joining",
+                titleHi: "12.1 सदस्यता का उद्देश्य",
+                textEn: "Membership is open to any individual from the community who accepts the constitutional by-laws, maintains moral character, and clears the registration process.",
+                textHi: "संस्था की सदस्यता उन व्यक्तियों के लिए उपलब्ध होगी जो संस्था के उद्देश्यों, संविधान एवं आचार संहिता का पालन करने के इच्छुक हों।"
+              },
+              {
+                id: "v1_c12_12.2",
+                titleEn: "12.2 Standard Membership Classes",
+                titleHi: "12.2 सदस्यता की श्रेणियाँ",
+                textEn: "The Society offers membership under the following categories:\n1. Founder Members\n2. Life Members\n3. Annual Members\n4. Women & Youth Wing Members\n5. Student & Volunteer Members\n6. Honorary Members (for distinguished personalities)",
+                textHi: "संस्था निम्नलिखित प्रकार की सदस्यता प्रदान कर सकेगी:\n1. संस्थापक सदस्य\n2. आजीवन सदस्य\n3. वार्षिक सदस्य\n4. महिला सदस्य\n5. युवा सदस्य\n6. छात्र / सहयोगी सदस्य\n7. मानद सदस्य (Honorary Member)"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    volumeNo: 2,

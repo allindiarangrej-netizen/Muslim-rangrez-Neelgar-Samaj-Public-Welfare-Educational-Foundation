@@ -92,7 +92,7 @@ export default function Hero({ currentLanguage, onNavigate }: HeroProps) {
               <span className="block">
                 <span className="block text-white">बुराइयों और बेबुनियाद रस्मों से नज़ात,</span>
                 <span className="block mt-1 text-white">
-                  <span className="text-[#F4C430]">तालीम और इल्म की ओर रुख़</span> , दीन व दुनिया दोनों में तरक़्क़ी हमारा मक़सद है !
+                  <span className="text-[#F4C430]">तालीम और इल्म की ओर रुख़</span>, दीन व दुनिया दोनों में तरक्की हमारा मक़सद।
                 </span>
               </span>
             )}

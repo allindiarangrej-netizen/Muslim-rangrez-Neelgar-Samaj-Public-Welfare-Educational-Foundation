@@ -39,6 +39,9 @@ import {
 import { Language } from '../types';
 import { getSupabase } from '../lib/supabaseClient';
 import { IMAGES } from '../data/mediaRegistry';
+import PremiumLightbox from './common/PremiumLightbox';
+import { resolveDriveUrl, EVENT_FALLBACK_IMAGE } from '../lib/driveUtils';
+import SmartImage from './common/SmartImage';
 import {
   initialHeritageAlbums,
   initialHeritageVideos,
@@ -468,7 +471,7 @@ export default function MediaCenter({ currentLanguage, defaultCategory = 'Photo 
       photographerEn: newAlbumData.photographerEn || 'Community Media Cell',
       photographerHi: newAlbumData.photographerHi || 'सामुदायिक मीडिया सेल',
       uploadedBy: newAlbumData.uploadedBy || 'Portal Administrator',
-      images: imageArray.length > 0 ? imageArray : [IMAGES.albums.mahapanchayat_1],
+      images: imageArray.length > 0 ? imageArray : [EVENT_FALLBACK_IMAGE],
       descriptionEn: newAlbumData.descriptionEn || 'Custom uploaded memory album.',
       descriptionHi: newAlbumData.descriptionHi || 'कस्टम अपलोड किया गया मेमोरी एल्बम।',
       views: 12,
@@ -903,11 +906,12 @@ export default function MediaCenter({ currentLanguage, defaultCategory = 'Photo 
                               }}
                               className="group relative w-full bg-gray-100 rounded-3xl overflow-hidden cursor-pointer ring-1 ring-gray-150 hover:ring-4 hover:ring-[#F4C430] hover:shadow-2xl transition-all duration-500"
                             >
-                              <img 
+                              <SmartImage 
                                 src={img} 
                                 alt={`Gallery ${imgIdx + 1}`}
-                                className="w-full h-auto object-contain bg-white group-hover:scale-[1.02] transition-transform duration-1000"
-                                referrerPolicy="no-referrer"
+                                className="w-full h-auto transition-transform duration-1000"
+                                containerClassName="bg-white group-hover:scale-[1.02]"
+                                objectFit="contain"
                               />
                               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-8">
                                 <div className="flex items-center space-x-3 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
@@ -970,11 +974,11 @@ export default function MediaCenter({ currentLanguage, defaultCategory = 'Photo 
                       className="group bg-white rounded-2xl overflow-hidden border border-gray-150 shadow-sm hover:shadow-xl hover:shadow-[#004B23]/5 hover:-translate-y-2 transition-all duration-400 flex flex-col justify-between cursor-pointer"
                     >
                       <div className="relative h-48 overflow-hidden bg-gray-100">
-                        <img
-                          src={album.images[0]}
+                        <SmartImage
+                          src={album.images[0] || ''}
+                          fallbackSrc={EVENT_FALLBACK_IMAGE}
                           alt={album.titleEn}
-                          referrerPolicy="no-referrer"
-                          className="w-full h-full object-cover object-center group-hover:scale-110 group-hover:brightness-105 transition-all duration-500"
+                          className="w-full h-full group-hover:scale-110 group-hover:brightness-105 transition-all duration-500"
                         />
                         {/* Overlay Category badge */}
                         <span className="absolute top-3 left-3 bg-[#004B23] text-white font-mono text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded shadow-sm border border-[#F4C430]/30">
@@ -1059,11 +1063,11 @@ export default function MediaCenter({ currentLanguage, defaultCategory = 'Photo 
                       className="group bg-white rounded-2xl overflow-hidden border border-gray-150 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-400 flex flex-col justify-between cursor-pointer"
                     >
                       <div className="relative h-44 bg-black overflow-hidden">
-                        <img
+                        <SmartImage
                           src={vid.thumbnailUrl}
+                          fallbackSrc={EVENT_FALLBACK_IMAGE}
                           alt={vid.titleEn}
-                          referrerPolicy="no-referrer"
-                          className="w-full h-full object-cover group-hover:scale-105 group-hover:opacity-95 transition-transform duration-500"
+                          className="w-full h-full group-hover:scale-105 group-hover:opacity-95 transition-transform duration-500"
                         />
                         <div className="absolute inset-0 bg-black/30 flex items-center justify-center opacity-80 group-hover:opacity-100 transition">
                           <div className="p-3 bg-[#004B23]/90 text-white rounded-full border border-[#F4C430] group-hover:bg-[#F4C430] group-hover:text-emerald-950 shadow-lg transform transition duration-300">
@@ -1151,11 +1155,11 @@ export default function MediaCenter({ currentLanguage, defaultCategory = 'Photo 
                   onClick={() => handleViewAlbum(mem)}
                   className="bg-white/5 backdrop-blur-sm p-4 rounded-xl border border-white/10 hover:border-[#F4C430] transition duration-300 cursor-pointer space-y-3"
                 >
-                  <img
+                  <SmartImage
                     src={mem.images[0]}
+                    fallbackSrc={EVENT_FALLBACK_IMAGE}
                     alt={mem.titleEn}
-                    referrerPolicy="no-referrer"
-                    className="w-full h-24 object-cover rounded-lg filter sepia"
+                    className="w-full h-24 rounded-lg filter sepia"
                   />
                   <div className="space-y-1">
                     <span className="text-[9px] text-[#F4C430] font-mono">{mem.date}</span>
@@ -1273,11 +1277,14 @@ export default function MediaCenter({ currentLanguage, defaultCategory = 'Photo 
           {/* Core Image Display View */}
           <div className="flex flex-col items-center justify-center max-w-4xl max-h-[75vh] transition-all duration-300 z-10">
             <img
-              src={activeLightboxAlbum.images[lightboxImageIndex]}
+              src={resolveDriveUrl(activeLightboxAlbum.images[lightboxImageIndex])}
               alt={activeLightboxAlbum.titleEn}
               referrerPolicy="no-referrer"
               className={`max-w-full max-h-[60vh] object-contain rounded-xl border border-white/10 transition-transform duration-300 ${lightboxZoom ? 'scale-125 cursor-zoom-out' : 'scale-100'}`}
               onClick={() => setLightboxZoom(!lightboxZoom)}
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = EVENT_FALLBACK_IMAGE;
+              }}
             />
 
             {/* Caption Info Plate */}
@@ -1495,7 +1502,12 @@ export default function MediaCenter({ currentLanguage, defaultCategory = 'Photo 
                         onClick={() => handlePlayVideo(rv)}
                         className="flex items-center space-x-2.5 p-2 bg-white/5 rounded-lg hover:bg-white/10 cursor-pointer transition text-xs border border-white/5"
                       >
-                        <img src={rv.thumbnailUrl} alt={rv.titleEn} referrerPolicy="no-referrer" className="w-12 h-10 object-cover rounded" />
+                        <img 
+                          src={resolveDriveUrl(rv.thumbnailUrl) || EVENT_FALLBACK_IMAGE} 
+                          alt={rv.titleEn} 
+                          referrerPolicy="no-referrer" 
+                          className="w-12 h-10 object-cover rounded" 
+                        />
                         <div className="flex-1 truncate">
                           <p className="font-bold truncate text-gray-200">{rv.titleEn}</p>
                           <p className="text-[9px] text-gray-400 font-mono">{rv.duration} • {rv.views} views</p>

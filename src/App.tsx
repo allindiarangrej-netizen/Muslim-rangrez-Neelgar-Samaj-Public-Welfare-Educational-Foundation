@@ -15,10 +15,12 @@ import GovernmentSchemes from './components/GovernmentSchemes';
 import HelpSupport from './components/HelpSupport';
 import SocialImpact from './components/SocialImpact';
 import MediaCenter from './components/MediaCenter';
+import CommunityMediaCenter from './components/CommunityMediaCenter';
 import ResourcesCenter from './components/ResourcesCenter';
 import MediaResourcesHub from './components/MediaResourcesHub';
 import HistoryDetails from './components/HistoryDetails';
 import TrustConstitution from './components/TrustConstitution';
+import ExecutiveCharter from './components/ExecutiveCharter';
 import DonationSystem from './components/DonationSystem';
 import SocietyRegistration from './components/SocietyRegistration';
 import Footer from './components/Footer';
@@ -354,6 +356,9 @@ export default function App() {
             )}
 
             {/* B. UNIFIED ABOUT US HUB */}
+            {(activeTab === 'executive-charter') && (
+              <ExecutiveCharter />
+            )}
             {(activeTab === 'about' || activeTab.startsWith('about-') || activeTab === 'hall-of-excellence' || activeTab === 'excellence' || activeTab === 'legal-governance' || activeTab === 'legal-constitution' || activeTab === 'legal-awareness' || activeTab === 'legal-rti' || activeTab === 'legal-citizen-rights') && (
               <AboutUsHub
                 currentLanguage={currentLanguage}
@@ -838,7 +843,10 @@ export default function App() {
             )}
 
             {/* I. MEDIA, RESOURCES & ISLAMIC KNOWLEDGE MEGA PORTAL */}
-            {(activeTab === 'media' || activeTab.startsWith('media-') || activeTab === 'islamic-calendar') && (
+            {(activeTab === 'community-media-center') && (
+              <CommunityMediaCenter currentLanguage={currentLanguage} />
+            )}
+            {(activeTab === 'media' || activeTab.startsWith('media-') || activeTab === 'islamic-calendar') && activeTab !== 'community-media-center' && (
               <MediaResourcesHub
                 currentLanguage={currentLanguage}
                 activeSubTab={activeTab}

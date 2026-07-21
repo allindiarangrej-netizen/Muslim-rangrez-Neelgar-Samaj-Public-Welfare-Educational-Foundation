@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronLeft, ChevronRight, X, ZoomIn } from 'lucide-react';
 import { initialHeritageAlbums } from '../data/heritageMedia';
+import { resolveDriveUrl, EVENT_FALLBACK_IMAGE } from '../lib/driveUtils';
 
 interface CommunityHighlightsGalleryProps {
   currentLanguage: 'en' | 'hi' | 'ur';
+  onNavigate: (tab: string) => void;
 }
 
-export default function CommunityHighlightsGallery({ currentLanguage }: CommunityHighlightsGalleryProps) {
+export default function CommunityHighlightsGallery({ currentLanguage, onNavigate }: CommunityHighlightsGalleryProps) {
   const [images, setImages] = useState<string[]>([]);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
@@ -45,14 +47,25 @@ export default function CommunityHighlightsGallery({ currentLanguage }: Communit
                 onClick={() => setLightboxIndex(idx)}
                 whileHover={{ scale: 1.02 }}
               >
-                <img src={img} alt={`Highlight ${idx}`} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                <img 
+                  src={resolveDriveUrl(img)} 
+                  alt={`Highlight ${idx}`} 
+                  className="w-full h-full object-cover" 
+                  referrerPolicy="no-referrer" 
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = EVENT_FALLBACK_IMAGE;
+                  }}
+                />
               </motion.div>
             ))}
           </motion.div>
         </div>
 
         <div className="text-center pt-4">
-            <button className="px-6 py-2 bg-[#004B23] text-white rounded-lg font-bold text-sm hover:bg-emerald-900 transition">
+            <button 
+              onClick={() => onNavigate('community-media-center')}
+              className="px-6 py-2 bg-[#004B23] text-white rounded-lg font-bold text-sm hover:bg-emerald-900 transition"
+            >
                 {currentLanguage === 'en' ? 'View All Photos' : 'सभी तस्वीरें देखें'}
             </button>
         </div>
@@ -69,7 +82,15 @@ export default function CommunityHighlightsGallery({ currentLanguage }: Communit
             >
               <button className="absolute top-4 right-4 text-white p-2" onClick={() => setLightboxIndex(null)}><X /></button>
               <button className="absolute left-4 text-white p-2" onClick={(e) => { e.stopPropagation(); setLightboxIndex((prev) => (prev! > 0 ? prev! - 1 : images.length - 1)); }}><ChevronLeft /></button>
-              <img src={images[lightboxIndex]} alt="Lightbox" className="max-h-[90vh] max-w-[90vw] object-contain" referrerPolicy="no-referrer" />
+              <img 
+                src={resolveDriveUrl(images[lightboxIndex])} 
+                alt="Lightbox" 
+                className="max-h-[90vh] max-w-[90vw] object-contain" 
+                referrerPolicy="no-referrer" 
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = EVENT_FALLBACK_IMAGE;
+                }}
+              />
               <button className="absolute right-4 text-white p-2" onClick={(e) => { e.stopPropagation(); setLightboxIndex((prev) => (prev! < images.length - 1 ? prev! + 1 : 0)); }}><ChevronRight /></button>
             </motion.div>
           )}

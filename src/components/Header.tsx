@@ -63,6 +63,7 @@ export default function Header({
         { id: 'about-transparency-section', labelEn: 'Transparency & Governance', labelHi: 'पारदर्शिता और शासन', labelUr: 'شفافیت और حکمرانی', isHeader: true },
         { id: 'about-transparency', labelEn: 'Transparency Charter & Pledge', labelHi: 'पारदर्शिता चार्टर एवं प्रतिज्ञा', labelUr: 'شفافیت کا چارٹر اور عہد', indent: true },
         { id: 'about-legal-governance', labelEn: 'Governance Overview', labelHi: 'शासन अवलोकन', labelUr: 'انتظامی جائزہ', indent: true },
+        { id: 'executive-charter', labelEn: 'Executive Charter (Premium)', labelHi: 'संक्षिप्त संविधान', labelUr: 'مختصر آئین', indent: true },
         { id: 'legal-constitution', labelEn: 'Constitution Rights', labelHi: 'संवैधानिक अधिकार', labelUr: 'آئینی حقوق', indent: true },
         { id: 'legal-awareness', labelEn: 'Legal Awareness', labelHi: 'कानूनी जागरूकता', labelUr: 'قانونی بیداری', indent: true },
         { id: 'legal-rti', labelEn: 'RTI (Right to Information)', labelHi: 'सूचना का अधिकार (RTI)', labelUr: 'حق معلومات (RTI)', indent: true },
@@ -171,6 +172,7 @@ export default function Header({
       labelUr: 'میڈیا और وسائل',
       icon: Newspaper,
       subItems: [
+        { id: 'community-media-center', labelEn: 'Community Media Center', labelHi: 'सामुदायिक मीडिया केंद्र', labelUr: 'کمیونٹی میڈیا سینٹر' },
         { id: 'media', labelEn: 'Media & Resources Hub', labelHi: 'मीडिया और संसाधन हब', labelUr: 'میڈیا اور وسائل ہب' },
         { id: 'media-news', labelEn: 'Latest Community News', labelHi: 'नवीनतम समाचार', labelUr: 'تازہ ترین خبریں' },
         { id: 'media-photos', labelEn: 'Photo Gallery', labelHi: 'फोटो गैलरी', labelUr: 'تصویری گیلری' },
@@ -338,7 +340,7 @@ export default function Header({
           <nav className="hidden lg:flex items-center justify-between flex-1 min-w-0 gap-0 lg:gap-0.5 xl:gap-1 2xl:gap-2 flex-nowrap mx-0.5 lg:mx-1 xl:mx-1.5 2xl:mx-2 px-0.5" id="desktop_nav_links">
             {navigationItems.map((item) => {
               const isActive = activeTab === item.id || activeTab.startsWith(item.id + '-') || 
-                (item.id === 'about' && (activeTab === 'about' || activeTab.startsWith('about-') || activeTab === 'hall-of-excellence' || activeTab === 'excellence' || activeTab === 'legal-governance' || activeTab === 'governance-overview' || activeTab === 'legal-constitution' || activeTab === 'legal-awareness' || activeTab === 'legal-rti' || activeTab === 'legal-citizen-rights')) || 
+                (item.id === 'about' && (activeTab === 'about' || activeTab.startsWith('about-') || activeTab === 'hall-of-excellence' || activeTab === 'excellence' || activeTab === 'legal-governance' || activeTab === 'governance-overview' || activeTab === 'executive-charter' || activeTab === 'legal-constitution' || activeTab === 'legal-awareness' || activeTab === 'legal-rti' || activeTab === 'legal-citizen-rights')) || 
                 (item.id === 'education' && (activeTab === 'education' || activeTab === 'education-overview' || activeTab === 'education-hub' || activeTab === 'competitive-exams' || activeTab === 'jobs-careers' || activeTab === 'colleges-directory' || activeTab === 'scholarships' || activeTab === 'career-counselling' || activeTab === 'professional-colleges' || activeTab === 'medical-colleges' || activeTab === 'career-portal' || activeTab === 'career-opportunities' || activeTab === 'international-careers')) || 
                 (item.id === 'membership-matrimonial' && (activeTab === 'membership-matrimonial' || activeTab === 'areas' || activeTab === 'portal' || activeTab === 'membership-register' || activeTab === 'membership-census' || activeTab === 'membership-tree' || activeTab === 'membership-id' || activeTab === 'matrimonial' || activeTab === 'matrimonial-second')) || 
                 (item.id === 'welfare-support' && (activeTab === 'welfare-support' || activeTab === 'schemes' || activeTab === 'welfare-minority' || activeTab === 'welfare-scholarships' || activeTab === 'welfare-hospital' || activeTab === 'welfare-blood-bank' || activeTab === 'welfare-blood-donors' || activeTab === 'helplines' || activeTab === 'welfare-charity' || activeTab === 'welfare-volunteer' || activeTab === 'donate' || activeTab === 'welfare-disaster' || activeTab === 'community-portal' || activeTab === 'community-service')) || 

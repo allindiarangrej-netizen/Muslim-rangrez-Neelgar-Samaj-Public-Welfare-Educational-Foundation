@@ -191,7 +191,7 @@ export default function HomeView({ currentLanguage, onNavigate }: HomeViewProps)
               ) : (
                 <>
                   बुराइयों और बेबुनियाद रस्मों से नज़ात, <br />
-                  <span className="text-[#FFD54A]">तालीम और इल्म की ओर रुख़</span> , दीन व दुनिया दोनों में तरक़्क़ी हमारा मक़सद है !
+                  <span className="text-[#FFD54A]">तालीम और इल्म की ओर रुख़</span>, दीन व दुनिया दोनों में तरक्की हमारा मक़सद।
                 </>
               )}
             </h1>
@@ -352,7 +352,7 @@ export default function HomeView({ currentLanguage, onNavigate }: HomeViewProps)
         <div className="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-t from-[#FDFBF7] to-transparent pointer-events-none"></div>
       </section>
 
-      <CommunityHighlightsGallery currentLanguage={currentLanguage} />
+      <CommunityHighlightsGallery currentLanguage={currentLanguage} onNavigate={onNavigate} />
 
       {/* ========================================== */}
       {/* 1. ABOUT SOCIETY: HEROIC ENTRY & IDENTITY  */}

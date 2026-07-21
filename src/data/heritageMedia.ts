@@ -75,138 +75,271 @@ export const eventCategories = [
 
 export const initialHeritageAlbums: HeritageAlbum[] = [
   {
-    id: 'alb_mahapanchayat_2026',
-    titleEn: 'All India Rangrez MahaPanchayat Rally Bhopal',
-    titleHi: 'अखिल भारतीय रंगरेज महापंचायत रैली भोपाल',
-    eventType: 'Mahapanchayat',
-    category: 'Event Albums',
-    location: {
-      state: 'Madhya Pradesh',
-      district: 'Bhopal',
-      tehsil: 'Huzur',
-      village: 'Lal Parade Ground'
+    "id": "alb_samiksha_meeting_joura_2026",
+    "titleEn": "Samiksha Meeting (Review meeting)",
+    "titleHi": "समीक्षा बैठक के महत्वपूर्ण निर्णय एवं प्रस्ताव",
+    "eventType": "Community Meetings",
+    "category": "Event Albums",
+    "location": {
+      "state": "Madhya Pradesh",
+      "district": "Morena",
+      "tehsil": "Joura",
+      "village": "Gram Dhamkan"
     },
-    date: '2026-05-10',
-    year: 2026,
-    photographerEn: 'Siddharth Studio',
-    photographerHi: 'सिद्धार्थ स्टूडियो',
-    uploadedBy: 'Mohammed Adil Rangrez',
-    images: [
-      IMAGES.albums.mahapanchayat_1,
-      IMAGES.albums.mahapanchayat_2
+    "date": "2026-07-05",
+    "year": 2026,
+    "photographerEn": "Community Members",
+    "photographerHi": "समाज के सदस्य",
+    "uploadedBy": "All President & Responsible persons",
+    "images": [
+      "https://lh3.googleusercontent.com/d/1-B2FbhDCj0kTrDjx1cuq85gMRKu_JdPf",
+      "https://lh3.googleusercontent.com/d/12OcjE4gx_yjq5mdRF26xuYCZN6D6nwQE",
+      "https://lh3.googleusercontent.com/d/14JSU4ja5WGuAZYKzEifCjoMpO1Gfkwyc",
+      "https://lh3.googleusercontent.com/d/14gNgw9wEU5QhiTD25WsT5eEQFLXZjitD",
+      "https://lh3.googleusercontent.com/d/154DHipOSls9-qI58yEOYQqBSfBMpqqi6",
+      "https://lh3.googleusercontent.com/d/15gauaipBs6cI47ccwXfl5iWEPg_S5Qza",
+      "https://lh3.googleusercontent.com/d/15rYSc77uwXqNOSF7CgKN__TD9CyugnK_",
+      "https://lh3.googleusercontent.com/d/16GDKOdMXTZSg5iwVAjFA0R6QQUe7G9A1",
+      "https://lh3.googleusercontent.com/d/16lrxkWFqxfLthsuWEj4B5XZkmUTXQe_O",
+      "https://lh3.googleusercontent.com/d/18xN3QRKzoNXGNtQ3AVPp0NfMFT32GdJR",
+      "https://lh3.googleusercontent.com/d/1CgG7CHHwY4yhbPthYjBX_IPxHailzoih",
+      "https://lh3.googleusercontent.com/d/1DmYcsjAKxnF4mXlxn9eQH3ZycaU-gnbl",
+      "https://lh3.googleusercontent.com/d/1H8IonaErJXvkWyb3-yFEmGo_An5v6EPd",
+      "https://lh3.googleusercontent.com/d/1HQktlNOhnlKZFZVNIRRdKeqnF51QBxz8",
+      "https://lh3.googleusercontent.com/d/1I0mcigUmVBgGgsL462K8n_S-UBE9C_-6",
+      "https://lh3.googleusercontent.com/d/1IQDp2_2aZ3oej2MhhypBRySIDywftzQb",
+      "https://lh3.googleusercontent.com/d/1J7-GhDXoUZphfEt3Fuj4OqeN52YpU_eu",
+      "https://lh3.googleusercontent.com/d/1J9zXzub9s1SAu6mPRAeDgnCsmUKf8BV2",
+      "https://lh3.googleusercontent.com/d/1JCY6-vp81YL12D_YpTkazeMFo-kggS-M",
+      "https://lh3.googleusercontent.com/d/1LQTx7rlDAW4oU7ZxHEfiXV0vcPLGwbrH",
+      "https://lh3.googleusercontent.com/d/1N8kxc8GYBwsslF3mkZQ4O8f6T-7uMVdU",
+      "https://lh3.googleusercontent.com/d/1P2HUA7VjacXKB0Jc99s0U-R0wazeZ0tt",
+      "https://lh3.googleusercontent.com/d/1PjstDDCEO8oDL6PVkg5bVE2r14Pxz6bU",
+      "https://lh3.googleusercontent.com/d/1TEiyPnMB2V6D_rZHhlRZNWjteg3PD2e_",
+      "https://lh3.googleusercontent.com/d/1VZXsXXuWb5_7qbroPPSvklMbdw6SBMxn",
+      "https://lh3.googleusercontent.com/d/1XnRAbf3huzJPQUTBEDqStCuhwvNgfpYk",
+      "https://lh3.googleusercontent.com/d/1Y6gBzXo55hD6HFpLmvMHdmAntUSLjunR",
+      "https://lh3.googleusercontent.com/d/1_EjRLmwaOYJOCRDiKD2m25VkCQHSnfJ3",
+      "https://lh3.googleusercontent.com/d/1_nwlCJbjB7Pqb620crOoROtHwWyiaeSE",
+      "https://lh3.googleusercontent.com/d/1apO4WejPKSbNmcuD1jb5nHLx1-_Z7l92",
+      "https://lh3.googleusercontent.com/d/1bEGyiR2Vm-Bn9M_lS_Q57RLU4gH0npwg",
+      "https://lh3.googleusercontent.com/d/1bWdac4AJVFxA7GOALbx5afeYNC3h3-h_",
+      "https://lh3.googleusercontent.com/d/1bs0pNpEA5hWYL4jSDpLzxUJSEBAVDDZ1",
+      "https://lh3.googleusercontent.com/d/1c7tzVLmUagFxXktLy0eikZyD4tIt4u6K",
+      "https://lh3.googleusercontent.com/d/1dZXBLQHJUi-JoDHoEQaAZ-nf3_T_onu0",
+      "https://lh3.googleusercontent.com/d/1fz0vqZ0H_ovb9EGbWF91BseV9djqlEoA",
+      "https://lh3.googleusercontent.com/d/1hMcxyX0NIsZLTeSe7vjFAoBLI3Bwm3GV",
+      "https://lh3.googleusercontent.com/d/1hTUzLdGsbMwv6G8QskcvbcX2WptEiwYZ",
+      "https://lh3.googleusercontent.com/d/1hWbpwBWgkohmbfNZMJI2rORL54kw8a7v",
+      "https://lh3.googleusercontent.com/d/1jCf-0R8Mz5DJIWWfbBkVhZ4DawsG7y8N",
+      "https://lh3.googleusercontent.com/d/1jHeD_zC9wm-2N5xXoFmeA73Rjc2h67UO",
+      "https://lh3.googleusercontent.com/d/1jYOrofa-S8nGGh1AEiFlS6TqJyf8-M8t",
+      "https://lh3.googleusercontent.com/d/1lxHvstZE-53yMUbxr-wKjiytVQfPdXzX",
+      "https://lh3.googleusercontent.com/d/1oKKRkWRapupdvQtGSRIi3-bMK0UIH1dc",
+      "https://lh3.googleusercontent.com/d/1qv9snPc6gq1jXRuN-Gfyc_vv6yzZvO3y",
+      "https://lh3.googleusercontent.com/d/1szXfDZa8gR3cOv9rssaa_m_iP7698EdU",
+      "https://lh3.googleusercontent.com/d/1unYsJnpBGVBzkMH3naUVkRu12C43dyz4",
+      "https://lh3.googleusercontent.com/d/1wKlnAyVDjT8trtJHghq3XoP9SzaJeBnW",
+      "https://lh3.googleusercontent.com/d/1y2y3Sq2vdsecvDvXQaGH3PbTmHvDBrFW",
+      "https://lh3.googleusercontent.com/d/1zeFgG54jZVBI5hoiWpsZ0UpHIGlgOsDR"
     ],
-    descriptionEn: 'The massive community mahapanchayat focused on education reform, dynamic socio-census updates, and state reservation representation.',
-    descriptionHi: 'शिक्षा सुधार, सामाजिक जनगणना और आरक्षण प्रतिनिधित्व पर केंद्रित विशाल राष्ट्रीय सामुदायिक महापंचायत महाधिवेशन।',
-    views: 1420,
-    likes: 420,
-    featured: true
+    "descriptionEn": "Samiksha Meeting (Review meeting) held at Gram Dhamkan, Tehsil Joura on 05/07/2026 (Sunday) at 09:00am. Mashwara ke Ameer: All President & Responsible persons. Important decisions and proposals were discussed regarding the society reform campaign 2026-2027.",
+    "descriptionHi": `#(मुस्लिम रंगरेज़ समाज सुधार मुहिम 2026-2027)
+समीक्षा बैठक के महत्वपूर्ण निर्णय एवं प्रस्ताव
+अल्हम्दुलिल्लाह!
+भरी गर्मी के बीच आज आयोजित समीक्षा बैठक में श्योपुर से लेकर ग्वालियर तक समाज की लगभग 17 कमेटियों के सदर, जिम्मेदार साथी एवं कार्यकर्ता लगभग 200-250 की तादाद में शामिल हुए। सभी कमेटियों ने वर्षभर समाज सुधार मुहिम के अंतर्गत किए गए कार्यों का लेखा-जोखा प्रस्तुत किया तथा भविष्य की कार्ययोजना पर गहन विचार-विमर्श किया।
+सभी जिम्मेदार साथियों ने सर्वसम्मति से इस बात पर सहमति व्यक्त की कि भविष्य में समाज सुधार से संबंधित कोई भी नया मौजू (प्रस्ताव) बिना समाज की राय के पारित नहीं किया जाएगा।
+इसके लिए एक सर्वे फॉर्म तैयार किया जाएगा, जिसके माध्यम से समाज के प्रत्येक घर तक पहुँचकर हर मौजू पर “हाँ” या “ना” में राय ली जाएगी तथा संबंधित परिवार के जिम्मेदार सदस्य के हस्ताक्षर भी लिए जाएँगे। जिन प्रस्तावों को समाज का 60-70% बहुमत प्राप्त होगा, उन्हें आगामी महापंचायत में लागू करने के लिए प्रस्तुत किया जाएगा।
+
+समाज के सर्वे हेतु प्रस्तावित मौजू (वर्ष 2026-2027)
+1. क्या विधवा, विधुर एवं तलाकशुदा लड़का -लड़की के जल्दी पुनः निकाह को समाज में प्राथमिकता दी जाए, जिससे गुनाह से बचा जा सके?
+   ☐ हाँ  ☐ ना
+2. क्या शादी के निमंत्रण पत्र (कार्ड) को अधिक दूर के रिश्तेदारों के लिए (खास बहन-बेटियों को छोड़कर) पूर्णतः डिजिटल माध्यम से, जैसे व्हाट्सऐप, भेजे जाएँ?
+   ☐ हाँ  ☐ ना
+3. क्या रिश्ता तय होने के समय अर्थात् सगाई में ही सभी आवश्यक रस्में एवं लेन-देन की प्रक्रिया पूर्ण कर, उसके बाद सीधे निकाह किया जाए?
+   ☐ हाँ  ☐ ना
+4. क्या शादी में आने वाले मेहमानों को नाश्ता बैठाकर (सुन्नत के अनुसार) कराया जाए?
+   ☐ हाँ  ☐ ना
+5. क्या विवाह में लड़का एवं लड़की पक्ष का भोजन अर्थात् लड़की वाला लड़के वाले के यहाँ जाकर संयुक्त (Combined) रूप से आयोजित किया जाए, जिससे बेटी के बाप पर आर्थिक बोझ कम हो ?
+   ☐ हाँ  ☐ ना
+6. क्या दहेज को पूर्णतः पैक करके दिया जाए, जिससे समाज के हर स्तर पर एक समान व्यवस्था लागू हो?
+   ☐ हाँ  ☐ ना
+7. क्या जैमा अथवा आड़ जैसी बुरी रश्मों को ख़त्म किया जाए ?
+   ☐ हाँ  ☐ ना
+8. क्या विवादित शादीशुदा मामलों में समाज के निर्णय का सहयोग न करने वाले पक्ष के संबंध में समाज की राय के अनुसार अनुशासनात्मक व्यवस्था अर्थात् बहिष्कार किया जाए?
+   ☐ हाँ  ☐ ना
+
+इसके अलावा कुछ और मौजूओं या व्यक्तिगत सलाह के लिए सर्वे फॉर्म में खाली जगह भी रखी जाएगी। इंशा अल्लाह!
+
+आज समाज के सदरों, बुजुर्गों एवं जिम्मेदार लोगों द्वारा लिए गए संगठनात्मक निर्णय:
+- भविष्य में समाज के सभी बड़े कार्यक्रम, सम्मेलन एवं महापंचायत जैसे आयोजन अब सभी कमेटियाँ मिलकर करेंगी।
+- सभी सामाजिक कार्यक्रमों का खर्च एवं व्यवस्थाएँ सभी कमेटियाँ अपनी क्षमता के अनुसार मिल-जुलकर संभालेंगी, ताकि किसी एक क्षेत्र पर आर्थिक बोझ न पड़े।
+- समाज का सम्मेलन अब सभी कमेटियाँ एवं बिरादर भाई आपस में मिलकर प्रत्येक वर्ष नियमित रूप से आयोजित करेंगे तथा स्थान बदल-बदलकर रखा जाएगा, जिससे सभी क्षेत्रों को खिदमत का अवसर मिल सके।
+- वर्ष 2026 की महापंचायत दिनांक 30 अगस्त 2026 को कैलारस में आयोजित करने का सर्वसम्मति से निर्णय लिया गया, जिसे सभी कमेटियाँ मिलकर आयोजित करेंगी।
+
+अल्लाह हम सबको इन निर्णयों पर अमल करने तथा समाज को मजबूत बनाने की तौफ़ीक़ अता फ़रमाए, जिससे हमारा समाज तरक्की की बुलंदियों को छू सके।
+आमीन।`,
+    "views": 120,
+    "likes": 45,
+    "featured": true
   },
   {
-    id: 'alb_heritage_leaders',
-    titleEn: 'Pre-Independence Rangrez Leaders Assembly & Archive',
-    titleHi: 'स्वतंत्रता पूर्व रंगरेज महापुरुषों की दुर्लभ बैठक',
-    eventType: 'Historical Photos',
-    category: 'Community Memories',
-    location: {
-      state: 'Rajasthan',
-      district: 'Jaipur',
-      tehsil: 'Sanganer',
-      village: 'Heritage Chhipa Mohalla'
+    "id": "alb_samiksha_meeting_2026",
+    "titleEn": "Mashwara for agenda Samiksha meeting",
+    "titleHi": "समीक्षा बैठक के एजेंडे के लिए मशवरा",
+    "eventType": "Community Meetings",
+    "category": "Event Albums",
+    "location": {
+      "state": "Madhya Pradesh",
+      "district": "Morena",
+      "tehsil": "Kailaras",
+      "village": "Himanshu Palace"
     },
-    date: '1942-08-15',
-    year: 2023, // Mapped to Older timeline
-    photographerEn: 'Imperial Archive Jaipur',
-    photographerHi: 'शाही अभिलेखागार जयपुर',
-    uploadedBy: 'Al-Haaj Gulam Rasool Rangrez',
-    images: [
-      IMAGES.albums.historical_1,
-      IMAGES.albums.historical_2
+    "date": "2026-06-07",
+    "year": 2026,
+    "photographerEn": "Community Members",
+    "photographerHi": "समाज के सदस्य",
+    "uploadedBy": "Mufti Siraj Sahab (Ameer-e-Mashwara)",
+    "images": [
+      "https://drive.google.com/uc?export=view&id=1u2Nod5hTw_IWQaxavUsUGI3V5h04jnTu",
+      "https://drive.google.com/uc?export=view&id=1-7ndh4A6SnwJTDA1nNiGm51_I9EnZcM0",
+      "https://drive.google.com/uc?export=view&id=10QtfCrQWImdlQDSA5cErkZlo2uKhHibW",
+      "https://drive.google.com/uc?export=view&id=15_uX8mIf_KaDHmFguhw-ECqp2c9SfWyr",
+      "https://drive.google.com/uc?export=view&id=16v0wAgMcAw_9aMTeIKNj7foci2LmQigj",
+      "https://drive.google.com/uc?export=view&id=173pT3SHbZMv2vembeTKZMIC76PNHF6Dw",
+      "https://drive.google.com/uc?export=view&id=17m0seSKL4CIbp1W8j79kzZmGR9moIjiS",
+      "https://drive.google.com/uc?export=view&id=183q-IaqriXQfNPP1pjkmmWJwp_7Rphh6",
+      "https://drive.google.com/uc?export=view&id=18Bbs6YDUORCsHqf4G4Atld6ksFEs4RUW",
+      "https://drive.google.com/uc?export=view&id=19nzGV8e4w-jDtXeM5szKMqJ5rwGS35_m",
+      "https://drive.google.com/uc?export=view&id=1CKHqBG7Kj8N1h5xRG4yolabosj0yHjSb",
+      "https://drive.google.com/uc?export=view&id=1CYu2mlScnopb4Ub89JV-o7RBuUmsTTGs",
+      "https://drive.google.com/uc?export=view&id=1CerfS5-J1dEZjPFAMDsTziIhcew5273h",
+      "https://drive.google.com/uc?export=view&id=1Dv6Rm6M7vjwZoblf26SZCpKGevUDzp4c",
+      "https://drive.google.com/uc?export=view&id=1Flz0qkC1J6op6O9YH6goBlJdfmrz5zFu",
+      "https://drive.google.com/uc?export=view&id=1G7uIC7rIuGA-J9qPqsMip3AdcBA0LNHN",
+      "https://drive.google.com/uc?export=view&id=1I2EwMkTbUJge4yx24KzF63nabDtxs7Iq",
+      "https://drive.google.com/uc?export=view&id=1I437_1m-qENJfneVGkFywQPXloDXqS8o",
+      "https://drive.google.com/uc?export=view&id=1I7ToQeUPaX37uRu4aC7EFS4vFmB6h9ic",
+      "https://drive.google.com/uc?export=view&id=1JifE8zxu9YDLK6i_DddaXBOvvWfnNf7h",
+      "https://drive.google.com/uc?export=view&id=1KZ7m3NXMaqnBztBxtkjLpZdMLilAV1No",
+      "https://drive.google.com/uc?export=view&id=1K_sblkhgjzQjhQ1JHU7UFZ02Nl23s8UK",
+      "https://drive.google.com/uc?export=view&id=1KqxL5kIn0ZcYab0nQTxLRaL1CHSxmnZr",
+      "https://drive.google.com/uc?export=view&id=1LIMF9HKOmvqJwXZZ6u8OeNEmCMA1UB4i",
+      "https://drive.google.com/uc?export=view&id=1MV9IidcwZ82saV6vkrjWEp4yW-ci92F9",
+      "https://drive.google.com/uc?export=view&id=1MVEg5bSTqovHOnZInWzgyDryx1xtb6lA",
+      "https://drive.google.com/uc?export=view&id=1MeAeygwKNfCgRTXlQh5NBuQIPWmvA-KI",
+      "https://drive.google.com/uc?export=view&id=1N8JDKgXKhD6AnkR1KaFNaZ9wxHsfzwMi",
+      "https://drive.google.com/uc?export=view&id=1NO1d9wR1iOpH3AbwZSfCRxUoN00f7TTq",
+      "https://drive.google.com/uc?export=view&id=1O0BVCkUQVou_4ubkWDMqrVc0XkQFAsK6",
+      "https://drive.google.com/uc?export=view&id=1OvTRjpvrnDWS6uMDNTogw9dTArtRsqc2",
+      "https://drive.google.com/uc?export=view&id=1PNXCD0RFaGss0WJfR7xcTLcYwc8zeyxz",
+      "https://drive.google.com/uc?export=view&id=1PVxEmMCjpyZ4ycHA_R2gQmBJAyDq7nsd",
+      "https://drive.google.com/uc?export=view&id=1QFrrsiqfP_a4XB7-VD9k2sUi0nrCv84h",
+      "https://drive.google.com/uc?export=view&id=1QHOHJ4ik76QwWMLyXa0UJRXjjMyaZVz9",
+      "https://drive.google.com/uc?export=view&id=1QaQ4gnQES14qE1rDAPYMYZ9sFX8_ag_z",
+      "https://drive.google.com/uc?export=view&id=1Qg9dSZ4fVXsHqW1jKCj0VGJvd3UtaQBd",
+      "https://drive.google.com/uc?export=view&id=1RDTrAfbJoj0yzWdOFS1jPgHP2Y7IOIcQ",
+      "https://drive.google.com/uc?export=view&id=1SLkMoe7NMG_Fvu6ogvr75wCnqMhA2wSw",
+      "https://drive.google.com/uc?export=view&id=1SRuHp_6DpgK6SJs_cQUajp5-mZGAlOvV",
+      "https://drive.google.com/uc?export=view&id=1SmOW_42V_6W3SQCK3DOpB55ncrcD2WqT",
+      "https://drive.google.com/uc?export=view&id=1TCDPcifxictCx8z6IV5W_URXOndo__yG",
+      "https://drive.google.com/uc?export=view&id=1UTyBVrs02MeRa1J5F7AJBBUr35Gq4EuK",
+      "https://drive.google.com/uc?export=view&id=1Ur6sfpvY3vu3j2xuNvixeyRnVks_CyIn",
+      "https://drive.google.com/uc?export=view&id=1VnCUBTitiFNFyz9gDlsxmg2spPRsEomo",
+      "https://drive.google.com/uc?export=view&id=1VsLInSdTOl6hAsG4mxt1HiiRib3v9kGi",
+      "https://drive.google.com/uc?export=view&id=1XK8s93fomY0OQCKChokFmFoPw4T4w8k_",
+      "https://drive.google.com/uc?export=view&id=1Xsqht2Q--RfyP1MrYO3Rn-IkQSwrP_OI",
+      "https://drive.google.com/uc?export=view&id=1Xtzx7Z11MyxMRfKewzmoQYA6fU2UPFBI",
+      "https://drive.google.com/uc?export=view&id=1Xu0MfCZzq2YfWf0zbJMueHyM_4r9WDEW",
+      "https://drive.google.com/uc?export=view&id=1YSY2sNILs6rYPp05nJXNH7SJeS9miish",
+      "https://drive.google.com/uc?export=view&id=1YSp-Ej_oWxWGALI9p4M5QFqYii-mrqQ-",
+      "https://drive.google.com/uc?export=view&id=1ZfoMlIMpwOBPs9yC916l7zjEwr-L0iaS",
+      "https://drive.google.com/uc?export=view&id=1aSU_gF_F0u1jW75HmfJavdIZmKW3cvay",
+      "https://drive.google.com/uc?export=view&id=1aSyO8kmGzvyVQ-YTh_oVeXdbk5OZGFLf",
+      "https://drive.google.com/uc?export=view&id=1b6N_17mn6Kd1NjN9DJxZmU6rcYQZ4TQ7",
+      "https://drive.google.com/uc?export=view&id=1bA5UR60ly93FwP5xL7gtNUnlmnYix_ma",
+      "https://drive.google.com/uc?export=view&id=1baNqHfI16bLXwhjqUynJhl9TGiyqYqyk",
+      "https://drive.google.com/uc?export=view&id=1ccTRyW5K8fGtPck0yXD4A2Kz_bQcuT6m",
+      "https://drive.google.com/uc?export=view&id=1daeeZSje4KPXEeRwtnwjVXx1rYcIcFGt",
+      "https://drive.google.com/uc?export=view&id=1dgT-GWT3uHozi2b1rdW2oEaSrOFVsihP",
+      "https://drive.google.com/uc?export=view&id=1dwZxXPM3jzKqq1iElQTD_at05CbVO4qQ",
+      "https://drive.google.com/uc?export=view&id=1eCHF5KOKMJq9SLtemL7jfrBfClgIsaou",
+      "https://drive.google.com/uc?export=view&id=1eKTdc1Uy6FXeB6hfcquNkaPfyug1wAhT",
+      "https://drive.google.com/uc?export=view&id=1evDrcv7_qv3U-j-009OAOyHkiNay1p4F",
+      "https://drive.google.com/uc?export=view&id=1g0etsVF5c5Pqq5o2zhJBSEJeeWjVME5l",
+      "https://drive.google.com/uc?export=view&id=1gAyugSVaRyWxMNaVbyVXfpdtixEBDqF8",
+      "https://drive.google.com/uc?export=view&id=1gLPpzMv0Qwxgq2-2CIGIbxLR3TMphJUW",
+      "https://drive.google.com/uc?export=view&id=1gQ2LRtWabAWCiexMLt98QOF9EEw7CWXA",
+      "https://drive.google.com/uc?export=view&id=1gVPkWILAHQ5RC0U-0CbdtznONuWR7KBT",
+      "https://drive.google.com/uc?export=view&id=1hY1ff2GqGVS1ggN-uAYYUv3KtwoQXU3I",
+      "https://drive.google.com/uc?export=view&id=1i-LGQqdGDgR1ZZ508wZt6_P8zRt-HVk3",
+      "https://drive.google.com/uc?export=view&id=1iBxT5iPtoikTVGOd4CfGWW1NFG-lC1TK",
+      "https://drive.google.com/uc?export=view&id=1iVqAjhI2bb-z8hCLSe8qtw7hvEsvfPi9",
+      "https://drive.google.com/uc?export=view&id=1l76YQugxqiByewk81GJkbnWJ_rkmFLQq",
+      "https://drive.google.com/uc?export=view&id=1m3lXIKayUCwP1gKuJ1CwfRcvxB8YTqpL",
+      "https://drive.google.com/uc?export=view&id=1m50PwFCiiTihvTz9vJgvTkuYorXNOJMl",
+      "https://drive.google.com/uc?export=view&id=1mwTr-ray0TDCdDl8ckxbu98PM3NS-5tG",
+      "https://drive.google.com/uc?export=view&id=1nEZGgIsZeGpVrbhBnMfoE9OHu7XDnIlE",
+      "https://drive.google.com/uc?export=view&id=1nSxqklMYeZGEGQdqG16TZa_xMMB1MLzL",
+      "https://drive.google.com/uc?export=view&id=1nTM8kAvWrafIHyeAOl8vaoxOy6V5yRDl",
+      "https://drive.google.com/uc?export=view&id=1o3GAHAzKS2H2G81vRnJn0W-HQ7cw1BTv",
+      "https://drive.google.com/uc?export=view&id=1oBqzU0_hwdWvwhi1zE7KptM1_BZkMMTf",
+      "https://drive.google.com/uc?export=view&id=1oUpAGRpEZTVl9WqFLiSaYY0AVGT-JKAO",
+      "https://drive.google.com/uc?export=view&id=1pDxs9ezTEGtMx8A8pBtj-oI0mCU8lyMD",
+      "https://drive.google.com/uc?export=view&id=1q5w_in_wP6U_IO2QosRJLmb4Cwb3x2zi",
+      "https://drive.google.com/uc?export=view&id=1rXETwetKOYwMWp2RapszIjRsh9MDZzD5",
+      "https://drive.google.com/uc?export=view&id=1s-9A7P5PI1QHiaiSWIkgL3UwRr4XJl3i",
+      "https://drive.google.com/uc?export=view&id=1syYyaQ0lY3rwBwRKx4tuQ2d5zcduX4VM",
+      "https://drive.google.com/uc?export=view&id=1tAMSG29AK3yEETP4cyr9E88VpWdYxcYr",
+      "https://drive.google.com/uc?export=view&id=1tm_bypQ-u_OU6Fb9NvYb3VO6sg26b3jN",
+      "https://drive.google.com/uc?export=view&id=1u2Nod5hTw_IWQaxavUsUGI3V5h04jnTu",
+      "https://drive.google.com/uc?export=view&id=1vCDtY5NO0KO3pMjxF_-lVyzSNQsUm8DW",
+      "https://drive.google.com/uc?export=view&id=1wAZCbOazgef0Wovzu3XhoKeHgFTy3Wr-",
+      "https://drive.google.com/uc?export=view&id=1wG_V9fxhR1VdBiY6uNL8WFPoG6XWcfj6",
+      "https://drive.google.com/uc?export=view&id=1wbTEjrlA5buYFWCa0yNL9a5CjKwOs0PK",
+      "https://drive.google.com/uc?export=view&id=1xHTeSWdSOjI8DeoD2H_rfPlzkOCeaSBr",
+      "https://drive.google.com/uc?export=view&id=1xnSk2KxqgY9-b6o7Zj6p5eiIdtwkO-xZ",
+      "https://drive.google.com/uc?export=view&id=1xoU9v4c7t6aLyamNCubE_vJTXoZV_53J",
+      "https://drive.google.com/uc?export=view&id=1xzSVQLniWWNcM5DCZDDITfk1gRM8kVQl",
+      "https://drive.google.com/uc?export=view&id=1ycmA4S7E21B_c7TNatYpLHWK13guJqSQ"
     ],
-    descriptionEn: 'Extremely rare photographs preserving the historical national leadership and freedom fighters of the dyer guild.',
-    descriptionHi: 'रंगाई उद्योग बिरादरी के स्वतंत्रता सेनानियों और ऐतिहासिक नेताओं की दुर्लभ ऐतिहासिक तस्वीरें।',
-    views: 3100,
-    likes: 980,
-    featured: true
+    "descriptionEn": "Important consultation (Mashwara) held at Himanshu Palace, Kailaras on 07/06/2026 under the leadership of Mufti Siraj sahab to prepare the agenda for the upcoming Samiksha meeting on 05/07/2026 in Joura.",
+    "descriptionHi": "मुस्लिम रंगरेज (नीलगर) समाज सुधार मुहिम 2025-2026. कैलारस मशवरा बैठक की कार्यवाही एवं समीक्षा बैठक की इत्तिला। इस ख़ास मशवरे में कैलारस, सबलगढ़, जौरा, टेंटरा, विजयपुर, वीरपुर, जाबरोल, मुरैना, सुमावली, अंबाह, बानमोर, बाड़ी, कटौली, मण्डरायल तथा ग्रेटर ग्वालियर के सदरान और कमेटी ने शिरकत की।",
+    "views": 105,
+    "likes": 42,
+    "featured": true
   },
   {
-    id: 'alb_education_seminar_2026',
-    titleEn: 'National Merit Scholarship Distribution Ceremony',
-    titleHi: 'राष्ट्रीय मेधावी छात्रवृत्ति वितरण एवं सम्मान समारोह',
-    eventType: 'Scholarship Distribution',
-    category: 'Awards & Achievements',
-    location: {
-      state: 'Madhya Pradesh',
-      district: 'Morena',
-      tehsil: 'Kailaras',
-      village: 'Town Hall'
-    },
-    date: '2026-06-20',
-    year: 2026,
-    photographerEn: 'Anas Media House',
-    photographerHi: 'अनस मीडिया हाउस',
-    uploadedBy: 'Janab Shakeel Ahmed Rangrez',
-    images: [
-      IMAGES.albums.scholarship_1,
-      IMAGES.albums.scholarship_2
-    ],
-    descriptionEn: 'Honoring top high school and university rankers with golden merit certificates and micro-scholarship funds.',
-    descriptionHi: 'कक्षा 10वीं, 12वीं और विश्वविद्यालय के मेधावी छात्र-छात्राओं को स्वर्ण पदक और छात्रवृत्ति वितरण कार्यक्रम।',
-    views: 850,
-    likes: 310,
-    featured: false
-  },
-  {
-    id: 'alb_nikah_sammar_2025',
-    titleEn: '51st Collective Marriage Sammelan Morena',
-    titleHi: '51वां आदर्श सामूहिक निकाह सम्मेलन मुरैना',
-    eventType: 'Nikah',
-    category: 'Event Albums',
-    location: {
-      state: 'Madhya Pradesh',
-      district: 'Morena',
-      tehsil: 'Morena Tehsil',
-      village: 'Bypass Shadi Ground'
-    },
-    date: '2025-11-25',
+    id: 'alb_ambah_gallery',
+    titleEn: 'Ambah Regional Gallery',
+    titleHi: 'अम्बाह क्षेत्रीय गैलरी',
+    eventType: 'Regional Archive',
+    category: 'Regional Galleries',
+    location: { state: 'MP', district: 'Morena', tehsil: 'Ambah' },
+    date: '2025-02-21',
     year: 2025,
-    photographerEn: 'Welfare Cell',
-    photographerHi: 'जनकल्याण सेल',
-    uploadedBy: 'Haji Mohammad Iqbal',
+    photographerEn: 'Community Members',
+    photographerHi: 'सामुदायिक सदस्य',
+    uploadedBy: 'Admin',
     images: [
-      IMAGES.albums.marriage_1,
-      IMAGES.albums.marriage_2
+      'https://lh3.googleusercontent.com/d/1gjcMfXVYETutK-DPxho5YTZk5f4yzH27',
+      'https://lh3.googleusercontent.com/d/1ytUyleBPE_S6v0lxhcEJzWIvO6nMbXGc',
+      'https://lh3.googleusercontent.com/d/1dZWfkXdNxhgq_O4JNhKku7qAQpvPOWre',
+      'https://lh3.googleusercontent.com/d/1Vr4qdOjqp8S8f2yUsrjU-JKqbnfiutNZ',
+      'https://lh3.googleusercontent.com/d/1d3SO44tTpvM_2piUPGH_0lVSNo2YiUK2',
+      'https://lh3.googleusercontent.com/d/1rgZEqiEdXGLMLUuJKLk-XDJQaAil5Rj_',
+      'https://lh3.googleusercontent.com/d/1JC0rINRf8j7T9tC0NF39IJs2KW6yYimF',
+      'https://lh3.googleusercontent.com/d/1TfGNB2uPgSu5mPcSykPo_SQDtTgodTc7',
+      'https://lh3.googleusercontent.com/d/13Tm3mPLQvgvz1tm3J967ta_NFdriwO6i',
+      'https://lh3.googleusercontent.com/d/10A3u2Jna10iZu03UkAvptqM_EpHa9SIs',
+      'https://lh3.googleusercontent.com/d/1UC8Umkn9FEuYdnLRGKfQw7wMageOu_oZ',
+      'https://lh3.googleusercontent.com/d/10UIddX9FnVhO_qthUY4KN5aSp6fgVHvA',
+      'https://lh3.googleusercontent.com/d/1_enq5GxynL7fGf6ny0UacRKaqOYO40sP'
     ],
-    descriptionEn: 'The annual community wedding initiative facilitating seamless, dowry-free marriages for 51 couples with complete household kits.',
-    descriptionHi: 'प्रतिवर्ष आयोजित होने वाला दहेज मुक्त सामूहिक निकाह सम्मेलन, जिसमें 51 जोड़ों का निकाह संपन्न कराया गया।',
-    views: 2200,
-    likes: 670,
-    featured: true
-  },
-  {
-    id: 'alb_charity_covid',
-    titleEn: 'Welfare Kitchen & Ration Kit Distribution Campaign',
-    titleHi: 'निःशुल्क राशन किट एवं भोजन वितरण अभियान',
-    eventType: 'Charity',
-    category: 'Press & News Gallery',
-    location: {
-      state: 'Uttar Pradesh',
-      district: 'Lucknow',
-      village: 'Chowk Area'
-    },
-    date: '2024-04-12',
-    year: 2024,
-    photographerEn: 'Lucknow Bureau',
-    photographerHi: 'लखनऊ ब्यूरो',
-    uploadedBy: 'Er. Irfan Rangrez',
-    images: [
-      IMAGES.albums.charity_1,
-      IMAGES.albums.charity_2
-    ],
-    descriptionEn: 'Emergency support program managed by state youth volunteers providing food security kits and free health checkups.',
-    descriptionHi: 'युवा स्वयंसेवकों द्वारा आयोजित खाद्य सुरक्षा एवं निःशुल्क चिकित्सा शिविर कार्यक्रम।',
-    views: 950,
-    likes: 290,
-    featured: false
+    descriptionEn: 'Official photo gallery for Ambah region community activities.',
+    descriptionHi: 'अम्बाह क्षेत्र की सामुदायिक गतिविधियों के लिए आधिकारिक फोटो गैलरी।',
+    views: 0,
+    likes: 0
   },
   {
     id: 'alb_kailaras_gallery',
@@ -312,38 +445,6 @@ export const initialHeritageAlbums: HeritageAlbum[] = [
     ],
     descriptionEn: 'Official photo gallery for Kailaras Karyakarani activities.',
     descriptionHi: 'कैलारस कार्यकारिणी की गतिविधियों के लिए आधिकारिक फोटो गैलरी।',
-    views: 0,
-    likes: 0
-  },
-  {
-    id: 'alb_ambah_gallery',
-    titleEn: 'Ambah Regional Gallery',
-    titleHi: 'अम्बाह क्षेत्रीय गैलरी',
-    eventType: 'Regional Archive',
-    category: 'Regional Galleries',
-    location: { state: 'MP', district: 'Morena', tehsil: 'Ambah' },
-    date: '2025-02-21',
-    year: 2025,
-    photographerEn: 'Community Members',
-    photographerHi: 'सामुदायिक सदस्य',
-    uploadedBy: 'Admin',
-    images: [
-      'https://lh3.googleusercontent.com/d/1gjcMfXVYETutK-DPxho5YTZk5f4yzH27',
-      'https://lh3.googleusercontent.com/d/1ytUyleBPE_S6v0lxhcEJzWIvO6nMbXGc',
-      'https://lh3.googleusercontent.com/d/1dZWfkXdNxhgq_O4JNhKku7qAQpvPOWre',
-      'https://lh3.googleusercontent.com/d/1Vr4qdOjqp8S8f2yUsrjU-JKqbnfiutNZ',
-      'https://lh3.googleusercontent.com/d/1d3SO44tTpvM_2piUPGH_0lVSNo2YiUK2',
-      'https://lh3.googleusercontent.com/d/1rgZEqiEdXGLMLUuJKLk-XDJQaAil5Rj_',
-      'https://lh3.googleusercontent.com/d/1JC0rINRf8j7T9tC0NF39IJs2KW6yYimF',
-      'https://lh3.googleusercontent.com/d/1TfGNB2uPgSu5mPcSykPo_SQDtTgodTc7',
-      'https://lh3.googleusercontent.com/d/13Tm3mPLQvgvz1tm3J967ta_NFdriwO6i',
-      'https://lh3.googleusercontent.com/d/10A3u2Jna10iZu03UkAvptqM_EpHa9SIs',
-      'https://lh3.googleusercontent.com/d/1UC8Umkn9FEuYdnLRGKfQw7wMageOu_oZ',
-      'https://lh3.googleusercontent.com/d/10UIddX9FnVhO_qthUY4KN5aSp6fgVHvA',
-      'https://lh3.googleusercontent.com/d/1_enq5GxynL7fGf6ny0UacRKaqOYO40sP'
-    ],
-    descriptionEn: 'Official photo gallery for Ambah region community activities.',
-    descriptionHi: 'अम्बाह क्षेत्र की सामुदायिक गतिविधियों के लिए आधिकारिक फोटो गैलरी।',
     views: 0,
     likes: 0
   },
@@ -1091,66 +1192,4 @@ export const initialHeritageAlbums: HeritageAlbum[] = [
   }
 ];
 
-export const initialHeritageVideos: HeritageVideo[] = [
-  {
-    id: 'vid_documentary_rangrez',
-    titleEn: 'Heritage of Dyeing: The Historical Journey of Rangrez Bharat',
-    titleHi: 'रंगसाजी की विरासत: भारतीय रंगरेजों की ऐतिहासिक यात्रा',
-    eventType: 'Historical Photos',
-    category: 'Documentary Library',
-    thumbnailUrl: IMAGES.thumbnails.historical_journey,
-    videoUrl: VIDEOS.documentary_history,
-    platform: 'YouTube',
-    duration: '14:25',
-    location: {
-      state: 'Rajasthan',
-      district: 'Jaipur',
-      tehsil: 'Sanganer'
-    },
-    uploadDate: '2026-02-15',
-    year: 2026,
-    views: 4500,
-    likes: 1200,
-    featured: true
-  },
-  {
-    id: 'vid_mahapanchayat_highlight',
-    titleEn: 'Highlights of National Sammelan Rally Bhopal 2026',
-    titleHi: 'अखिल भारतीय रंगरेज महाधिवेशन भोपाल हाइलाइट्स 2026',
-    eventType: 'Mahapanchayat',
-    category: 'Video Gallery',
-    thumbnailUrl: IMAGES.thumbnails.mahapanchayat_highlights,
-    videoUrl: VIDEOS.mahapanchayat_highlights,
-    platform: 'YouTube',
-    duration: '08:40',
-    location: {
-      state: 'Madhya Pradesh',
-      district: 'Bhopal'
-    },
-    uploadDate: '2026-05-12',
-    year: 2026,
-    views: 2800,
-    likes: 850,
-    featured: true
-  },
-  {
-    id: 'vid_nikah_highlight_2025',
-    titleEn: 'Sammelan Documentary of Morena Collective Nikah',
-    titleHi: 'सामूहिक निकाह सम्मेलन मुरैना ऐतिहासिक वृत्तचित्र',
-    eventType: 'Nikah',
-    category: 'Video Gallery',
-    thumbnailUrl: IMAGES.thumbnails.nikah_highlights,
-    videoUrl: VIDEOS.nikah_highlights,
-    platform: 'Local',
-    duration: '22:15',
-    location: {
-      state: 'Madhya Pradesh',
-      district: 'Morena'
-    },
-    uploadDate: '2025-11-28',
-    year: 2025,
-    views: 1950,
-    likes: 640,
-    featured: false
-  }
-];
+export const initialHeritageVideos: HeritageVideo[] = [];

@@ -1,10 +1,11 @@
 import React, { useState, useMemo, useRef, useEffect, useCallback } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
 import {
   Search, Filter, BarChart3, ShieldCheck, Download, Share2, Printer, Eye,
   FileText, Video, Image as ImageIcon, Calendar, BookOpen, Link as LinkIcon,
   HelpCircle, Newspaper, Award, Sparkles, CheckCircle, AlertCircle, Clock,
   MapPin, User, ChevronRight, ChevronLeft, ExternalLink, SlidersHorizontal, Settings,
-  Lock, RefreshCw, Layers, Bell, Check, Copy
+  Lock, RefreshCw, Layers, Bell, Check, Copy, ArrowRight
 } from 'lucide-react';
 import { Language } from '../types';
 import MediaCenter from './MediaCenter';
@@ -12,6 +13,10 @@ import ResourcesCenter from './ResourcesCenter';
 import IslamicCalendar from './IslamicCalendar';
 import HelpSupport from './HelpSupport';
 import SocialImpact from './SocialImpact';
+import PremiumLightbox from './common/PremiumLightbox';
+import SmartImage from './common/SmartImage';
+import { initialHeritageAlbums } from '../data/heritageMedia';
+import { resolveDriveUrl, EVENT_FALLBACK_IMAGE } from '../lib/driveUtils';
 
 interface MediaResourcesHubProps {
   currentLanguage: Language;
@@ -261,126 +266,28 @@ export default function MediaResourcesHub({
     });
   }, [newsArticles, newsCategory, newsSearchQuery]);
 
-  // Sample Community Events Data
-  const communityEventsList = [
-    {
-      id: 'evt-1',
-      titleEn: 'National All-India Rangrez Mahapanchayat Summit 2026',
-      titleHi: 'अखिल भारतीय रंगरेज महापंचायत शिखर सम्मेलन 2026',
-      category: 'Mahapanchayat Events',
-      date: 'May 10-12, 2026',
-      venue: 'National Eidgah Grounds, New Delhi',
-      descEn: 'Historic assembly of 5,000+ national delegates passing 12 binding resolutions on dowry abolition and educational trusts.',
-      descHi: 'दहेज उन्मूलन और शैक्षिक ट्रस्टों पर 12 ऐतिहासिक प्रस्ताव पारित करने वाले 5,000+ राष्ट्रीय प्रतिनिधियों का सम्मेलन।',
-      photosCount: 145,
-      videosCount: 12,
-      reportSize: '18.4 MB'
-    },
-    {
-      id: 'evt-2',
-      titleEn: 'Central Working Committee Executive Meeting (Q2)',
-      titleHi: 'केंद्रीय कार्यकारिणी समिति बैठक (Q2)',
-      category: 'Community Meetings',
-      date: 'June 05, 2026',
-      venue: 'Samaj Bhawan, Bhopal (MP)',
-      descEn: 'Quarterly review of welfare grant disbursements, state committee elections, and legal aid cell expansion across North India.',
-      descHi: 'उत्तर भारत में कल्याणकारी अनुदान वितरण, राज्य समिति चुनाव और कानूनी सहायता सेल के विस्तार की त्रैमासिक समीक्षा।',
-      photosCount: 42,
-      videosCount: 3,
-      reportSize: '4.2 MB'
-    },
-    {
-      id: 'evt-3',
-      titleEn: 'Free Diagnostic & Cardiology Medical Camp — Kailaras',
-      titleHi: 'निःशुल्क स्वास्थ्य जांच एवं हृदय रोग चिकित्सा शिविर — कैलारस',
-      category: 'Medical Camps',
-      date: 'May 22, 2026',
-      venue: 'Al-Farooq Community Center, Kailaras (Morena)',
-      descEn: 'Over 850 elderly community members screened for diabetes, hypertension, and eye cataracts with free medication distribution.',
-      descHi: '850 से अधिक बुजुर्ग सदस्यों की मधुमेह, उच्च रक्तचाप और मोतियाबिंद की जांच तथा मुफ्त दवाओं का वितरण।',
-      photosCount: 68,
-      videosCount: 5,
-      reportSize: '6.8 MB'
-    },
-    {
-      id: 'evt-4',
-      titleEn: 'Mega Emergency Blood Donation Camp — Indore Chapter',
-      titleHi: 'विशाल आपातकालीन रक्तदान शिविर — इंदौर इकाई',
-      category: 'Blood Donation Camps',
-      date: 'April 18, 2026',
-      venue: 'MY Hospital Blood Bank Courtyard, Indore',
-      descEn: '320 youth volunteers donated blood to establish a dedicated emergency reserve for thalassemia patients and accident emergencies.',
-      descHi: 'थैलेसीमिया रोगियों और दुर्घटनाओं के लिए 320 युवा स्वयंसेवकों द्वारा रक्तदान कर एक विशेष आपातकालीन रिज़र्व की स्थापना।',
-      photosCount: 54,
-      videosCount: 4,
-      reportSize: '3.5 MB'
-    },
-    {
-      id: 'evt-5',
-      titleEn: 'Monsoon Green Bharat 10,000 Tree Plantation Drive',
-      titleHi: 'मानसून ग्रीन भारत 10,000 वृक्षारोपण अभियान',
-      category: 'Plantation Drives',
-      date: 'July 01, 2026',
-      venue: 'Across 40 Districts in UP, MP, and Rajasthan',
-      descEn: 'Community youth clubs planted fruit-bearing and shade trees across graveyard boundaries, schools, and Eidgah approaches.',
-      descHi: 'कब्रिस्तान की सीमाओं, स्कूलों और ईदगाह मार्गों पर फलदार और छायादार 10,000 पेड़ों का रोपण।',
-      photosCount: 92,
-      videosCount: 6,
-      reportSize: '5.1 MB'
-    },
-    {
-      id: 'evt-6',
-      titleEn: 'Annual Pratibha Samman & Scholarship Distribution Ceremony',
-      titleHi: 'वार्षिक प्रतिभा सम्मान एवं छात्रवृत्ति वितरण समारोह',
-      category: 'Education Programs',
-      date: 'May 30, 2026',
-      venue: 'Tagore Bhawan, Jaipur',
-      descEn: 'Felicitation of 180 top-ranking class 10th/12th students and disbursement of merit cheques worth ₹35 Lakhs.',
-      descHi: '10वीं/12वीं के 180 मेधावी छात्रों का सम्मान और ₹35 लाख की मेधावी छात्रवृत्ति राशि का वितरण।',
-      photosCount: 120,
-      videosCount: 8,
-      reportSize: '12.0 MB'
-    },
-    {
-      id: 'evt-7',
-      titleEn: 'Ramadan Ration Kit & Widow Pension Disbursement Drive',
-      titleHi: 'रमजान राशन किट एवं विधवा पेंशन वितरण अभियान',
-      category: 'Welfare Activities',
-      date: 'March 20, 2026',
-      venue: 'State Chapters (National Coverage)',
-      descEn: 'Distribution of one-month grocery supplies and quarterly pension support to 1,500 destitute widow households.',
-      descHi: '1,500 बेसहारा विधवा परिवारों को एक महीने की राशन सामग्री और त्रैमासिक पेंशन सहायता का वितरण।',
-      photosCount: 84,
-      videosCount: 6,
-      reportSize: '9.3 MB'
-    },
-    {
-      id: 'evt-8',
-      titleEn: 'All-India Youth Leadership & Sports Olympiad',
-      titleHi: 'अखिल भारतीय युवा नेतृत्व एवं खेल ओलंपियाड',
-      category: 'Youth Programs',
-      date: 'February 14-16, 2026',
-      venue: 'Nehru Stadium, Indore',
-      descEn: 'Inter-district cricket, football, athletics tournaments paired with career counseling and entrepreneurship seminars.',
-      descHi: 'अंतर-जिला क्रिकेट, फुटबॉल और एथलेटिक्स टूर्नामेंट के साथ करियर मार्गदर्शन और उद्यमिता सेमिनार।',
-      photosCount: 160,
-      videosCount: 14,
-      reportSize: '15.6 MB'
-    },
-    {
-      id: 'evt-9',
-      titleEn: 'National Women Skill Development & Natural Dyeing Workshop',
-      titleHi: 'राष्ट्रीय महिला कौशल विकास एवं प्राकृतिक रंगाई कार्यशाला',
-      category: 'Women’s Programs',
-      date: 'January 25, 2026',
-      venue: 'Handloom Craft Complex, Chanderi',
-      descEn: 'Training 250 women artisans in modern block printing, organic indigo vats, and digital e-commerce marketing.',
-      descHi: '250 महिला कारीगरों को आधुनिक ब्लॉक प्रिंटिंग, जैविक नील रंगाई और डिजिटल ई-कॉमर्स मार्केटिंग का प्रशिक्षण।',
-      photosCount: 110,
-      videosCount: 9,
-      reportSize: '10.8 MB'
-    }
-  ];
+  const [activeAlbum, setActiveAlbum] = useState<any>(null);
+
+  // Map Heritage Albums to Community Events for the Event Gallery tab
+  const communityEventsList = useMemo(() => {
+    return initialHeritageAlbums
+      .filter(alb => alb.category === 'Event Albums' || alb.eventType === 'Community Meetings')
+      .map(alb => ({
+        ...alb,
+        id: alb.id,
+        titleEn: alb.titleEn,
+        titleHi: alb.titleHi,
+        category: alb.eventType,
+        date: new Date(alb.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+        venue: `${alb.location.village ? alb.location.village + ', ' : ''}${alb.location.tehsil ? alb.location.tehsil + ', ' : ''}${alb.location.district}`,
+        descEn: alb.descriptionEn,
+        descHi: alb.descriptionHi,
+        photosCount: alb.images.length,
+        videosCount: 0,
+        reportSize: 'N/A',
+        coverImage: alb.images.length > 0 ? resolveDriveUrl(alb.images[0]) : EVENT_FALLBACK_IMAGE
+      }));
+  }, []);
 
   const filteredEvents = useMemo(() => {
     return communityEventsList.filter(e => {
@@ -428,6 +335,19 @@ export default function MediaResourcesHub({
 
   return (
     <div className="min-h-screen bg-gray-50 pb-16" id="media_resources_hub_container">
+      <AnimatePresence>
+        {activeAlbum && (
+          <PremiumLightbox
+            images={activeAlbum.images}
+            initialIndex={0}
+            isOpen={!!activeAlbum}
+            onClose={() => setActiveAlbum(null)}
+            title={getText(activeAlbum.titleEn, activeAlbum.titleHi, activeAlbum.titleUr || activeAlbum.titleEn)}
+            description={getText(activeAlbum.descriptionEn || activeAlbum.descEn, activeAlbum.descriptionHi || activeAlbum.descHi, activeAlbum.descriptionUr || activeAlbum.descEn)}
+            metadata={`${activeAlbum.date || ''} • ${activeAlbum.venue || activeAlbum.location?.district || ''}`}
+          />
+        )}
+      </AnimatePresence>
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-50 bg-[#0B132B] text-white px-5 py-3 rounded-xl shadow-2xl border border-[#FFD54A] flex items-center space-x-3 animate-slideUp">
@@ -931,13 +851,34 @@ export default function MediaResourcesHub({
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {filteredEvents.map((evt) => (
                 <div key={evt.id} className="bg-white rounded-3xl border border-gray-200 shadow-sm hover:shadow-lg transition flex flex-col justify-between overflow-hidden">
-                  <div className="p-6 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-[#004B23] text-white">
-                        {evt.category}
-                      </span>
-                      <span className="text-xs font-bold text-emerald-700">{evt.date}</span>
+                  {evt.coverImage && (
+                    <div className="relative h-48 overflow-hidden bg-gray-100">
+                      <SmartImage 
+                        src={evt.coverImage} 
+                        alt={evt.titleEn}
+                        className="w-full h-full transition-transform duration-500 hover:scale-105"
+                      />
+                      <div className="absolute top-3 left-3">
+                        <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-[#004B23] text-white shadow-sm border border-[#F4C430]/30">
+                          {evt.category}
+                        </span>
+                      </div>
                     </div>
+                  )}
+                  <div className="p-6 space-y-3">
+                    {!evt.coverImage && (
+                      <div className="flex items-center justify-between">
+                        <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-[#004B23] text-white">
+                          {evt.category}
+                        </span>
+                        <span className="text-xs font-bold text-emerald-700">{evt.date}</span>
+                      </div>
+                    )}
+                    {evt.coverImage && (
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-emerald-700">{evt.date}</span>
+                      </div>
+                    )}
                     <h3 className="font-serif font-bold text-lg text-gray-900">{evt.titleEn}</h3>
                     <div className="flex items-center text-xs text-gray-500 font-medium">
                       <MapPin className="h-3.5 w-3.5 mr-1 text-red-500 shrink-0" />
@@ -956,19 +897,22 @@ export default function MediaResourcesHub({
                     </div>
                   </div>
                   <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between gap-2">
-                    <button
-                      onClick={() => setActiveEventModal(evt)}
-                      className="flex-1 py-2 bg-[#004B23] hover:bg-[#00391a] text-white rounded-xl text-xs font-bold transition shadow-sm"
-                    >
-                      {getText('View Media & Summary', 'मीडिया एवं सारांश देखें', 'میڈیا اور خلاصہ دیکھیں')}
-                    </button>
-                    <button
-                      onClick={() => triggerToast(getText(`Downloading ${evt.titleEn} Report (${evt.reportSize})...`, 'रिपोर्ट डाउनलोड हो रही है...', 'رپورٹ ڈاؤن لوڈ ہو رہی ہے...'))}
-                      className="p-2 bg-white hover:bg-gray-100 text-gray-700 rounded-xl border border-gray-200 transition"
-                      title="Download Event Report PDF"
-                    >
-                      <Download className="h-4 w-4" />
-                    </button>
+                    <div className="flex items-center space-x-2 w-full">
+                      <button 
+                        onClick={() => setActiveAlbum(evt)}
+                        className="flex-1 flex items-center justify-center space-x-2 py-2.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-xl text-xs font-bold transition"
+                      >
+                        <ImageIcon className="h-4 w-4" />
+                        <span>{getText('View Album', 'एल्बम देखें', 'البم دیکھیں')}</span>
+                      </button>
+                      <button 
+                        onClick={() => setActiveEventModal(evt)}
+                        className="p-2.5 bg-gray-50 hover:bg-gray-100 text-gray-400 hover:text-gray-600 rounded-xl transition"
+                        title={getText('View Summary', 'सारांश देखें', 'خلاصہ دیکھیں')}
+                      >
+                        <ArrowRight className="h-4 w-4" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -1620,6 +1564,17 @@ export default function MediaResourcesHub({
             </div>
           </div>
         </div>
+      )}
+      {/* Album Lightbox */}
+      {activeAlbum && (
+        <PremiumLightbox
+          isOpen={!!activeAlbum}
+          onClose={() => setActiveAlbum(null)}
+          images={activeAlbum.images}
+          initialIndex={0}
+          title={currentLanguage === 'en' ? activeAlbum.titleEn : activeAlbum.titleHi}
+          metadata={`${activeAlbum.location.district}, ${activeAlbum.location.state} • ${activeAlbum.dateFormatted} • ${activeAlbum.eventType}`}
+        />
       )}
     </div>
   );
