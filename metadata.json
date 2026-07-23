@@ -1,11 +1,7 @@
 {
-  "name": "All India Rangrej Welfare Association",
-  "description": "National portal for community welfare, matrimonial services, education, and heritage archive.",
-  "requestFramePermissions": [
-    "camera",
-    "microphone",
-    "geolocation"
-  ],
+  "name": "Admin Image Upload Portal",
+  "description": "A secure admin portal for managing image uploads to Supabase Storage with organized folder structures.",
+  "requestFramePermissions": [],
   "majorCapabilities": [
     "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
   ]

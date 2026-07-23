@@ -908,9 +908,9 @@ export default function HelpSupport({ currentLanguage }: HelpSupportProps) {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {(bloodDonors as any[])
+              {bloodDonors
                 .filter(d => bloodSearchGroup === 'All' || d.bloodGroup === bloodSearchGroup)
-                .map((d: any) => (
+                .map((d) => (
                   <div key={d.id} className="bg-white p-5 rounded-3xl border border-gray-200 shadow-sm flex flex-col justify-between hover:shadow-lg hover:border-red-200 transition">
                     <div className="space-y-2">
                       <div className="flex justify-between items-center">

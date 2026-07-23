@@ -1,5 +1,6 @@
 import express from "express";
 import path from "path";
+import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 import * as dotenv from "dotenv";
 import { createClient } from "@supabase/supabase-js";
@@ -234,7 +235,7 @@ async function startServer() {
 
               if (password) {
                 logs.push(`[AUTH] Updating password & metadata for unconfirmed user ${userId}...`);
-                const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(userId!, {
+                const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(userId, {
                   password,
                   user_metadata: { full_name: name, phone }
                 });
@@ -945,7 +946,7 @@ async function startServer() {
     }
     try {
       const response = await ai.models.generateContent({
-        model: "gemini-3.6-flash",
+        model: "gemini-2.5-flash",
         contents: prompt,
       });
       res.json({ text: response.text });
@@ -1122,7 +1123,6 @@ async function startServer() {
 
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {
-    const { createServer: createViteServer } = await import("vite");
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: "spa",

@@ -2338,7 +2338,7 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
                   <Bell className="h-5 w-5 text-amber-600 animate-bounce" />
                   <span className="font-bold">{adminNotification}</span>
                 </div>
-                <button onClick={() => setAdminNotification('')} className="text-gray-500 hover:text-gray-800 font-bold ml-4">✕</button>
+                <button onClick={() => setAdminNotification(null)} className="text-gray-500 hover:text-gray-800 font-bold ml-4">✕</button>
               </div>
             )}
 

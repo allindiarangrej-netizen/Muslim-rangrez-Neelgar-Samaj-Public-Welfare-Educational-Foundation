@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ImageOff, Loader2, RefreshCcw } from 'lucide-react';
 import { resolveDriveUrl } from '../../lib/driveUtils';
 
-interface SmartImageProps extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, 'src'> {
+interface SmartImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   src: string | null | undefined;
   fallbackSrc?: string;
   className?: string;
@@ -23,7 +23,7 @@ export default function SmartImage({
 }: SmartImageProps) {
   const [status, setStatus] = useState<'loading' | 'success' | 'error' | 'retrying'>('loading');
   const [retryCount, setRetryCount] = useState(0);
-  const [resolvedSrc, setResolvedSrc] = useState<string | null | undefined>(null);
+  const [resolvedSrc, setResolvedSrc] = useState<string | null>(null);
   const imgRef = useRef<HTMLImageElement>(null);
   const MAX_RETRIES = 2;
 

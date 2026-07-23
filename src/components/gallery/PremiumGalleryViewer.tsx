@@ -17,13 +17,12 @@ interface PremiumGalleryViewerProps {
   videos: HeritageVideo[];
   currentLanguage: Language;
   initialCategory?: string;
-  onNavigateHome?: () => void;
 }
 
 type ViewMode = 'folders' | 'items';
 
 export default function PremiumGalleryViewer({ 
-  albums, videos, currentLanguage, initialCategory, onNavigateHome 
+  albums, videos, currentLanguage, initialCategory 
 }: PremiumGalleryViewerProps) {
   const [viewMode, setViewMode] = useState<ViewMode>('folders');
   const [currentFolder, setCurrentFolder] = useState<string | null>(initialCategory || null);
@@ -196,10 +195,7 @@ export default function PremiumGalleryViewer({
         <div className="space-y-1">
           <div className="flex items-center space-x-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
             <button 
-              onClick={() => { 
-                if (onNavigateHome) onNavigateHome();
-                else { setViewMode('folders'); setCurrentFolder(null); }
-              }} 
+              onClick={() => { setViewMode('folders'); setCurrentFolder(null); }} 
               className="hover:text-[#004B23] transition-colors flex items-center"
             >
               <Home className="h-3 w-3 mr-1" />
@@ -219,10 +215,10 @@ export default function PremiumGalleryViewer({
                   onClick={() => setViewMode('folders')}
                   className="hover:text-[#004B23] transition-colors"
                 >
-                  {currentFolder.includes('Regional') ? 'Regional Gallery' : 'Collections'}
+                  {currentFolder.includes('Regional') ? 'Regional Gallery' : 'Categories'}
                 </button>
                 <ChevronRight className="h-2 w-2" />
-                <span className="text-[#004B23] truncate max-w-[150px]">{currentFolder.replace(' Regional Gallery', '')}</span>
+                <span className="text-[#004B23] truncate max-w-[150px]">{currentFolder}</span>
               </>
             )}
           </div>
