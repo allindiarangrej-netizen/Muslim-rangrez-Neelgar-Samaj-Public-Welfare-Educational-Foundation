@@ -17,6 +17,8 @@ interface PremiumLightboxProps {
     title?: string;
     description?: string;
     metadata?: string;
+    albumName?: string;
+    regionName?: string;
   }[];
   initialIndex: number;
   isOpen: boolean;
@@ -103,6 +105,10 @@ export default function PremiumLightbox({
     setRotation(prev => (prev + 90) % 360);
   };
 
+  const setZoomLevel = (level: number) => {
+    setZoom(level);
+  };
+
   const handleDownload = () => {
     const link = document.createElement('a');
     link.href = resolveDriveUrl(items[index].src) || '';
@@ -165,74 +171,127 @@ export default function PremiumLightbox({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onWheel={handleWheel}
-        className="fixed inset-0 z-[150] bg-black/90 backdrop-blur-md flex flex-col select-none touch-none"
+        className="fixed inset-0 z-[9000] flex items-center justify-center p-4 md:p-8 lg:p-12 select-none touch-none"
       >
-        {/* Top bar - Professional Metadata & Controls */}
-        <div className="absolute top-0 inset-x-0 h-20 flex items-center justify-between px-4 md:px-8 bg-gradient-to-b from-black/90 to-transparent text-white z-[70]">
-          <div className="flex items-center space-x-4 overflow-hidden">
-            <div className="hidden sm:flex items-center justify-center w-12 h-12 bg-white/10 rounded-xl backdrop-blur-md border border-white/10 shadow-lg">
-              {isVideo ? <Video className="h-6 w-6 text-[#F4C430]" /> : <ImageIcon className="h-6 w-6 text-[#F4C430]" />}
-            </div>
+        {/* Backdrop Overlay - More transparent to show website context */}
+        <div 
+          className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+          onClick={handleClose}
+        />
+
+        {/* Main Modal Container */}
+        <div className="relative w-full h-full max-w-7xl mx-auto flex flex-col bg-[#0B132B] rounded-[2rem] overflow-hidden shadow-2xl border border-white/10 z-10">
+          {/* Top bar - Professional Metadata & Controls */}
+          <div className="h-20 flex items-center justify-between px-6 bg-gradient-to-b from-black/50 to-transparent text-white shrink-0">
             <div className="flex flex-col min-w-0">
-              <div className="flex items-center space-x-2">
-                <h3 className="font-bold text-sm md:text-lg truncate tracking-tight">{currentItem.title || 'Digital Archive'}</h3>
-                <span className="hidden sm:inline-block px-2 py-0.5 bg-white/10 rounded text-[10px] font-bold text-[#F4C430] uppercase">
-                  {index + 1} / {items.length}
-                </span>
+              {/* Breadcrumb row */}
+              <div className="flex items-center space-x-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">
+                <span className="hover:text-[#F4C430] cursor-pointer">Media</span>
+                <ChevronRight className="h-2 w-2" />
+                <span className="hover:text-[#F4C430] cursor-pointer truncate max-w-[100px]">{currentItem.regionName || 'Regional'}</span>
+                <ChevronRight className="h-2 w-2" />
+                <span className="text-[#F4C430] truncate max-w-[120px]">{currentItem.albumName || 'Album'}</span>
               </div>
-              <div className="flex items-center space-x-3 text-[10px] md:text-xs text-gray-400 font-mono mt-0.5">
-                {currentItem.metadata && (
-                  <span className="flex items-center truncate">
-                    <MapPin className="h-3 w-3 mr-1 text-[#F4C430]" />
-                    {currentItem.metadata}
-                  </span>
-                )}
-                <span className="hidden sm:inline-block">• Permanent Heritage Record</span>
+              
+              <div className="flex items-center space-x-4 overflow-hidden">
+                <div className="hidden sm:flex items-center justify-center w-10 h-10 bg-white/10 rounded-lg backdrop-blur-md border border-white/10 shadow-lg shrink-0">
+                  {isVideo ? <Video className="h-5 w-5 text-[#F4C430]" /> : <ImageIcon className="h-5 w-5 text-[#F4C430]" />}
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <div className="flex items-center space-x-2">
+                    <h3 className="font-bold text-sm md:text-lg truncate tracking-tight">{currentItem.title || 'Digital Archive'}</h3>
+                    <span className="px-1.5 py-0.5 bg-white/10 rounded text-[9px] font-bold text-[#F4C430] uppercase shrink-0">
+                      {index + 1} / {items.length}
+                    </span>
+                  </div>
+                  <div className="flex items-center space-x-3 text-[10px] text-gray-400 font-mono mt-0.5">
+                    {currentItem.metadata && (
+                      <span className="flex items-center truncate">
+                        <MapPin className="h-3 w-3 mr-1 text-[#F4C430]" />
+                        {currentItem.metadata}
+                      </span>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-          
-          <div className="flex items-center space-x-2 md:space-x-4">
-            <div className="hidden md:flex items-center bg-white/10 rounded-full p-1 border border-white/5 mr-2">
-              <button onClick={() => setZoom(z => Math.max(1, z - 0.5))} className="p-1.5 hover:bg-white/10 rounded-full transition" title="Zoom Out"><ZoomOut className="h-4 w-4" /></button>
-              <span className="text-[10px] font-bold w-10 text-center">{Math.round(zoom * 100)}%</span>
-              <button onClick={() => setZoom(z => Math.min(5, z + 0.5))} className="p-1.5 hover:bg-white/10 rounded-full transition" title="Zoom In"><ZoomIn className="h-4 w-4" /></button>
+            
+            <div className="flex items-center space-x-1.5 md:space-x-3">
+              {/* Gallery Navigation */}
+              <div className="hidden sm:flex items-center bg-white/10 rounded-xl p-1 border border-white/5">
+                <button 
+                  onClick={handleClose}
+                  className="flex items-center space-x-1 px-3 py-1.5 text-[10px] font-bold text-white hover:bg-white/10 rounded-lg transition"
+                >
+                  <ChevronLeft className="h-3 w-3" />
+                  <span>Back to Album</span>
+                </button>
+              </div>
+
+              {/* Zoom Controls Bar */}
+              <div className="hidden md:flex items-center bg-white/10 rounded-xl p-1 border border-white/5 mr-1 lg:mr-2">
+                <button 
+                  onClick={() => setZoomLevel(1)} 
+                  className={`px-2 py-1.5 text-[10px] font-bold rounded-lg transition-colors ${zoom === 1 ? 'bg-[#F4C430] text-black' : 'hover:bg-white/10 text-gray-300'}`}
+                >
+                  Fit
+                </button>
+                <button 
+                  onClick={() => setZoomLevel(0.75)} 
+                  className={`px-2 py-1.5 text-[10px] font-bold rounded-lg transition-colors ${zoom === 0.75 ? 'bg-[#F4C430] text-black' : 'hover:bg-white/10 text-gray-300'}`}
+                >
+                  75%
+                </button>
+                <button 
+                  onClick={() => setZoomLevel(1.25)} 
+                  className={`px-2 py-1.5 text-[10px] font-bold rounded-lg transition-colors ${zoom === 1.25 ? 'bg-[#F4C430] text-black' : 'hover:bg-white/10 text-gray-300'}`}
+                >
+                  125%
+                </button>
+                <div className="h-4 w-px bg-white/10 mx-1"></div>
+                <button onClick={() => setZoom(z => Math.max(0.25, z - 0.25))} className="p-1.5 hover:bg-white/10 rounded-lg transition" title="Zoom Out"><ZoomOut className="h-4 w-4" /></button>
+                <span className="text-[10px] font-mono w-10 text-center">{Math.round(zoom * 100)}%</span>
+                <button onClick={() => setZoom(z => Math.min(5, z + 0.25))} className="p-1.5 hover:bg-white/10 rounded-lg transition" title="Zoom In"><ZoomIn className="h-4 w-4" /></button>
+              </div>
+
+              <div className="flex items-center bg-white/10 rounded-xl p-1 border border-white/5">
+                <button onClick={handleRotate} className="p-2 hover:bg-white/10 rounded-lg transition" title="Rotate (R)"><RotateCw className="h-4 w-4" /></button>
+                <button onClick={handleDownload} className="p-2 hover:bg-white/10 rounded-lg transition" title="Download"><Download className="h-4 w-4" /></button>
+                <button onClick={toggleFullscreen} className="p-2 hover:bg-white/10 rounded-lg transition hidden sm:block" title="Fullscreen (F)"><Maximize2 className="h-4 w-4" /></button>
+                <button 
+                  onClick={() => setShowInfo(!showInfo)} 
+                  className={`p-2 rounded-lg transition ${showInfo ? 'bg-[#F4C430] text-black' : 'hover:bg-white/10 text-white'}`}
+                  title="Details"
+                >
+                  <Info className="h-4 w-4" />
+                </button>
+              </div>
+
+              <button 
+                onClick={handleClose} 
+                className="w-10 h-10 flex items-center justify-center bg-red-500 hover:bg-red-600 text-white rounded-xl transition shadow-lg ml-1 md:ml-3 shrink-0" 
+                title="Close (Esc)"
+              >
+                <X className="h-6 w-6" />
+              </button>
             </div>
-
-            <button onClick={handleRotate} className="p-2 hover:bg-white/10 rounded-full transition" title="Rotate (R)"><RotateCw className="h-5 w-5" /></button>
-            <button onClick={handleDownload} className="p-2 hover:bg-white/10 rounded-full transition" title="Download"><Download className="h-5 w-5" /></button>
-            <button 
-              onClick={() => setShowInfo(!showInfo)} 
-              className="p-2 hover:bg-white/10 rounded-full transition" 
-              title="Info"
-            >
-              <Info className={`h-5 w-5 ${showInfo ? 'text-[#F4C430]' : 'text-white'}`} />
-            </button>
-            <button 
-              onClick={handleClose} 
-              className="w-10 h-10 flex items-center justify-center bg-red-500/80 hover:bg-red-600 text-white rounded-xl transition shadow-lg ml-2" 
-              title="Close (Esc)"
-            >
-              <X className="h-6 w-6" />
-            </button>
           </div>
-        </div>
 
-        {/* Main Stage - Ensuring maximum space usage */}
-        <div className="relative flex-1 flex items-center justify-center overflow-hidden bg-black/40">
-          {/* Navigation Arrows (Desktop) */}
-          <button 
-            className="absolute left-6 z-50 p-4 bg-black/40 hover:bg-black/60 text-white rounded-full transition-all border border-white/10 hidden md:block group" 
-            onClick={handlePrev}
-          >
-            <ChevronLeft className="h-8 w-8 group-hover:scale-110 transition-transform" />
-          </button>
-          <button 
-            className="absolute right-6 z-50 p-4 bg-black/40 hover:bg-black/60 text-white rounded-full transition-all border border-white/10 hidden md:block group" 
-            onClick={handleNext}
-          >
-            <ChevronRight className="h-8 w-8 group-hover:scale-110 transition-transform" />
-          </button>
+          {/* Main Stage - Ensuring maximum space usage */}
+          <div className="relative flex-1 flex items-center justify-center overflow-hidden bg-black/40">
+            {/* Navigation Arrows (Desktop) */}
+            <button 
+              className="absolute left-6 z-50 p-4 bg-black/40 hover:bg-black/60 text-white rounded-full transition-all border border-white/10 hidden md:block group" 
+              onClick={handlePrev}
+            >
+              <ChevronLeft className="h-8 w-8 group-hover:scale-110 transition-transform" />
+            </button>
+            <button 
+              className="absolute right-6 z-50 p-4 bg-black/40 hover:bg-black/60 text-white rounded-full transition-all border border-white/10 hidden md:block group" 
+              onClick={handleNext}
+            >
+              <ChevronRight className="h-8 w-8 group-hover:scale-110 transition-transform" />
+            </button>
 
           {/* Info Panel Overlay */}
           <AnimatePresence>
@@ -316,15 +375,15 @@ export default function PremiumLightbox({
         {/* Bottom bar with Thumbnails & Controls */}
         <div className="bg-black/95 backdrop-blur-md border-t border-white/5 flex flex-col z-[70]">
           {/* Progress / Strip */}
-          <div className="h-20 flex items-center justify-center px-4 overflow-x-auto no-scrollbar">
-            <div className="flex space-x-2 py-2">
+          <div className="h-24 flex items-center justify-center px-4 overflow-x-auto no-scrollbar scroll-smooth">
+            <div className="flex space-x-3 py-4">
               {items.map((item, idx) => (
                 <button
                   key={idx}
                   onClick={() => { setIndex(idx); setZoom(1); setRotation(0); }}
                   className={`
-                    relative flex-shrink-0 w-12 h-12 rounded-lg overflow-hidden border-2 transition-all duration-300
-                    ${idx === index ? 'border-[#F4C430] scale-110 shadow-[0_0_15px_rgba(244,196,48,0.4)]' : 'border-transparent opacity-40 hover:opacity-100'}
+                    relative flex-shrink-0 w-14 h-14 rounded-xl overflow-hidden border-2 transition-all duration-300
+                    ${idx === index ? 'border-[#F4C430] scale-110 shadow-[0_0_20px_rgba(244,196,48,0.5)] z-10' : 'border-transparent opacity-50 hover:opacity-100'}
                   `}
                 >
                   <SmartImage 
@@ -333,8 +392,8 @@ export default function PremiumLightbox({
                     className="w-full h-full object-cover"
                   />
                   {item.type === 'video' && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-                      <Play className="h-4 w-4 text-white fill-current" />
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                      <Play className="h-5 w-5 text-white fill-current" />
                     </div>
                   )}
                 </button>
@@ -349,6 +408,7 @@ export default function PremiumLightbox({
               {slideshow ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6" />}
             </button>
             <button onClick={handleNext} className="p-2"><ChevronRight className="h-6 w-6 text-white" /></button>
+          </div>
           </div>
         </div>
       </motion.div>

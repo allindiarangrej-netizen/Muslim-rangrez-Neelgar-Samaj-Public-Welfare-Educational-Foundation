@@ -1,61 +1,72 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { Language } from './types';
 import Header from './components/Header';
-import { EnterpriseArchitectureHub } from './components/architecture';
-import { SearchEngine, NotificationService, AnalyticsService, DBService, MediaService } from './services';
-import HomeView from './components/HomeView';
-import AreasModule from './components/AreasModule';
-import MembershipSystem from './components/MembershipSystem';
-import FamilyRegistration from './components/FamilyRegistration';
-import MatrimonialPlatform from './components/MatrimonialPlatform';
-import EducationHub from './components/EducationHub';
-import CareerOpportunities from './components/CareerOpportunities';
-import InternationalCareers from './components/InternationalCareers';
-import GovernmentSchemes from './components/GovernmentSchemes';
-import HelpSupport from './components/HelpSupport';
-import SocialImpact from './components/SocialImpact';
-import MediaCenter from './components/MediaCenter';
-import CommunityMediaCenter from './components/CommunityMediaCenter';
-import ResourcesCenter from './components/ResourcesCenter';
-import MediaResourcesHub from './components/MediaResourcesHub';
-import HistoryDetails from './components/HistoryDetails';
-import TrustConstitution from './components/TrustConstitution';
-import ExecutiveCharter from './components/ExecutiveCharter';
-import DonationSystem from './components/DonationSystem';
-import SocietyRegistration from './components/SocietyRegistration';
+
+// Lazy load major modules to optimize bundle size and prevent artifact upload failures
+const EnterpriseArchitectureHub = lazy(() => import('./components/architecture').then(m => ({ default: m.EnterpriseArchitectureHub })));
+const HomeView = lazy(() => import('./components/HomeView'));
+const AreasModule = lazy(() => import('./components/AreasModule'));
+const MembershipSystem = lazy(() => import('./components/MembershipSystem'));
+const FamilyRegistration = lazy(() => import('./components/FamilyRegistration'));
+const MatrimonialPlatform = lazy(() => import('./components/MatrimonialPlatform'));
+const EducationHub = lazy(() => import('./components/EducationHub'));
+const CareerOpportunities = lazy(() => import('./components/CareerOpportunities'));
+const InternationalCareers = lazy(() => import('./components/InternationalCareers'));
+const GovernmentSchemes = lazy(() => import('./components/GovernmentSchemes'));
+const HelpSupport = lazy(() => import('./components/HelpSupport'));
+const SocialImpact = lazy(() => import('./components/SocialImpact'));
+const MediaCenter = lazy(() => import('./components/MediaCenter'));
+const CommunityMediaCenter = lazy(() => import('./components/CommunityMediaCenter'));
+const ResourcesCenter = lazy(() => import('./components/ResourcesCenter'));
+const MediaResourcesHub = lazy(() => import('./components/MediaResourcesHub'));
+const HistoryDetails = lazy(() => import('./components/HistoryDetails'));
+const TrustConstitution = lazy(() => import('./components/TrustConstitution'));
+const ExecutiveCharter = lazy(() => import('./components/ExecutiveCharter'));
+const DonationSystem = lazy(() => import('./components/DonationSystem'));
+const SocietyRegistration = lazy(() => import('./components/SocietyRegistration'));
+const NationalLeadership = lazy(() => import('./components/NationalLeadership'));
+const IslamicCalendar = lazy(() => import('./components/IslamicCalendar'));
+const EmergencyHelplines = lazy(() => import('./components/EmergencyHelplines'));
+const LegalAwareness = lazy(() => import('./components/LegalAwareness'));
+const BetaNotice = lazy(() => import('./components/BetaNotice'));
+const CareerPortal = lazy(() => import('./components/CareerPortal'));
+const MedicalCollegesDirectory = lazy(() => import('./components/MedicalCollegesDirectory'));
+const ProfessionalCollegesDirectory = lazy(() => import('./components/ProfessionalCollegesDirectory'));
+const EducationOverview = lazy(() => import('./components/EducationOverview'));
+const JobsCareersMaster = lazy(() => import('./components/JobsCareersMaster'));
+const CollegesMasterDirectory = lazy(() => import('./components/CollegesMasterDirectory'));
+const ScholarshipsMasterPortal = lazy(() => import('./components/ScholarshipsMasterPortal'));
+const IqraAIAssistant = lazy(() => import('./components/IqraAIAssistant'));
+const CareerCounsellingPortal = lazy(() => import('./components/CareerCounsellingPortal'));
+const CommunityPortal = lazy(() => import('./components/CommunityPortal'));
+const HallOfService = lazy(() => import('./components/HallOfService'));
+const MahapanchayatSystem = lazy(() => import('./components/MahapanchayatSystem'));
+const MahapanchayatHub = lazy(() => import('./components/MahapanchayatHub'));
+const AboutUsHub = lazy(() => import('./components/AboutUsHub'));
+const SocietyReformMission = lazy(() => import('./components/SocietyReformMission'));
+const CommunitySocialReformSection = lazy(() => import('./components/CommunitySocialReformSection'));
+const VolunteerServiceHub = lazy(() => import('./components/VolunteerServiceHub'));
+const WelfareSupportOverview = lazy(() => import('./components/WelfareSupportOverview'));
+const HospitalNetworkPortal = lazy(() => import('./components/HospitalNetworkPortal'));
+const BloodBankAndDonorsPortal = lazy(() => import('./components/BloodBankAndDonorsPortal'));
+const CommunityServiceDetail = lazy(() => import('./components/CommunityServiceDetail'));
+const AuthCallback = lazy(() => import('./components/AuthCallback'));
+
 import Footer from './components/Footer';
-import NationalLeadership from './components/NationalLeadership';
-import IslamicCalendar from './components/IslamicCalendar';
-import EmergencyHelplines from './components/EmergencyHelplines';
-import LegalAwareness from './components/LegalAwareness';
-import BetaNotice from './components/BetaNotice';
-import CareerPortal from './components/CareerPortal';
-import MedicalCollegesDirectory from './components/MedicalCollegesDirectory';
-import ProfessionalCollegesDirectory from './components/ProfessionalCollegesDirectory';
-import EducationOverview from './components/EducationOverview';
-import JobsCareersMaster from './components/JobsCareersMaster';
-import CollegesMasterDirectory from './components/CollegesMasterDirectory';
-import ScholarshipsMasterPortal from './components/ScholarshipsMasterPortal';
-import IqraAIAssistant from './components/IqraAIAssistant';
-import CareerCounsellingPortal from './components/CareerCounsellingPortal';
-import CommunityPortal from './components/CommunityPortal';
-import HallOfService from './components/HallOfService';
-import MahapanchayatSystem from './components/MahapanchayatSystem';
-import MahapanchayatHub from './components/MahapanchayatHub';
-import AboutUsHub from './components/AboutUsHub';
-import SocietyReformMission from './components/SocietyReformMission';
-import CommunitySocialReformSection from './components/CommunitySocialReformSection';
-import VolunteerServiceHub from './components/VolunteerServiceHub';
-import WelfareSupportOverview from './components/WelfareSupportOverview';
-import HospitalNetworkPortal from './components/HospitalNetworkPortal';
-import BloodBankAndDonorsPortal from './components/BloodBankAndDonorsPortal';
-import CommunityServiceDetail from './components/CommunityServiceDetail';
 import PremiumHero from './components/common/PremiumHero';
-import AuthCallback from './components/AuthCallback';
-import { MapPin, Search, ExternalLink, Calendar, FileText, Info, HelpCircle } from 'lucide-react';
+import { SearchEngine, NotificationService, AnalyticsService, DBService, MediaService } from './services';
+import { MapPin, Search, ExternalLink, Calendar, FileText, Info, HelpCircle, Loader2 } from 'lucide-react';
 import { jobListings, governmentSchemes, communityEvents } from './data';
 import { EXAMS } from './data/careerData';
 import { initialDistricts } from './data/nationalDirectory';
+
+// Loading fallback component
+const PageLoader = () => (
+  <div className="flex flex-col items-center justify-center min-h-[60vh] py-20">
+    <Loader2 className="h-10 w-10 text-[#004B23] animate-spin mb-4" />
+    <p className="text-gray-500 font-medium animate-pulse">Loading secure portal module...</p>
+  </div>
+);
 
 export default function App() {
   // Initialize with browser auto-detection, local storage preference or route checks
@@ -289,8 +300,8 @@ export default function App() {
 
       {/* 2. DYNAMIC CONTENT ROUTER */}
       <main className="flex-grow">
-        
-        {globalSearchQuery.trim() ? (
+        <Suspense fallback={<PageLoader />}>
+          {globalSearchQuery.trim() ? (
           /* Global Search Output Visualizer Panel */
           <div className="py-12 bg-gray-50/50 min-h-[60vh]" id="global_search_results_view">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
@@ -759,6 +770,7 @@ export default function App() {
           </>
         )}
 
+        </Suspense>
       </main>
 
       {/* 3. CORPORATE CONTACT FOOTER */}

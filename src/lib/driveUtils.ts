@@ -3,8 +3,8 @@
  * or preview links suitable for <img> tags.
  */
 
-export function resolveDriveUrl(url: string | null | undefined): string | null {
-  if (!url) return null;
+export function resolveDriveUrl(url: string | null | undefined): string | undefined {
+  if (!url) return undefined;
   
   // If it's already a direct link to lh3 (e.g. from our previous conversion)
   // ensure it has the high-quality parameter if missing, or just return it.
@@ -50,7 +50,7 @@ export function resolveDriveUrl(url: string | null | undefined): string | null {
     console.warn('Error resolving Drive URL:', e, url);
   }
 
-  return url;
+  return url as string;
 }
 
 /**

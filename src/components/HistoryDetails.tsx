@@ -278,9 +278,9 @@ export default function HistoryDetails({ currentLanguage }: HistoryDetailsProps)
     if (!searchQuery.trim()) return historyContent;
     const q = searchQuery.toLowerCase();
     return historyContent.filter(ch => {
-      const title = ch.title[currentLanguage].toLowerCase();
-      const subtitle = ch.subtitle[currentLanguage].toLowerCase();
-      const content = ch.content[currentLanguage].toLowerCase();
+      const title = (ch.title as any)[currentLanguage].toLowerCase();
+      const subtitle = (ch.subtitle as any)[currentLanguage].toLowerCase();
+      const content = (ch.content as any)[currentLanguage].toLowerCase();
       const chapterNum = ch.chapter.toLowerCase();
       return title.includes(q) || subtitle.includes(q) || content.includes(q) || chapterNum.includes(q);
     });
@@ -471,7 +471,7 @@ export default function HistoryDetails({ currentLanguage }: HistoryDetailsProps)
               {filteredChapters.map((chapter) => {
                 const originalIndex = historyContent.findIndex(c => c.chapter === chapter.chapter);
                 const isBookmarked = bookmarkedChapters.includes(originalIndex);
-                const wordCount = (chapter.content?.[currentLanguage] || '').split(/\s+/).length;
+                const wordCount = ((chapter.content as any)?.[currentLanguage] || '').split(/\s+/).length;
                 const readTimeMinutes = Math.max(1, Math.ceil(wordCount / 180));
 
                 return (
@@ -501,15 +501,15 @@ export default function HistoryDetails({ currentLanguage }: HistoryDetailsProps)
                       </div>
 
                       <h3 className="text-base sm:text-lg font-serif font-extrabold text-[#0B132B] group-hover:text-[#004B23] transition line-clamp-2">
-                        {chapter.title[currentLanguage]}
+                        {(chapter.title as any)[currentLanguage]}
                       </h3>
 
                       <p className="text-xs text-emerald-800 font-semibold line-clamp-1 bg-emerald-50/60 px-2 py-1 rounded">
-                        {chapter.subtitle[currentLanguage]}
+                        {(chapter.subtitle as any)[currentLanguage]}
                       </p>
 
                       <p className="text-xs text-gray-600 leading-relaxed font-normal line-clamp-3">
-                        {chapter.content[currentLanguage]}
+                        {(chapter.content as any)[currentLanguage]}
                       </p>
                     </div>
 
@@ -844,14 +844,14 @@ export default function HistoryDetails({ currentLanguage }: HistoryDetailsProps)
                   </span>
                 </div>
                 <h3 className="text-lg sm:text-2xl font-serif font-black text-white">
-                  {historyContent[selectedChapter].title[currentLanguage]}
+                  {(historyContent[selectedChapter].title as any)[currentLanguage]}
                 </h3>
               </div>
 
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => {
-                    navigator.clipboard.writeText(`${historyContent[selectedChapter].chapter}: ${historyContent[selectedChapter].title[currentLanguage]}\n\n${historyContent[selectedChapter].content[currentLanguage]}`);
+                    navigator.clipboard.writeText(`${historyContent[selectedChapter].chapter}: ${(historyContent[selectedChapter].title as any)[currentLanguage]}\n\n${(historyContent[selectedChapter].content as any)[currentLanguage]}`);
                     showToast(currentLanguage === 'en' ? '📋 Chapter text copied to clipboard!' : '📋 अध्याय पाठ कॉपी किया गया!');
                   }}
                   className="p-2 bg-white/10 hover:bg-white/20 text-white rounded-xl transition cursor-pointer"
@@ -872,11 +872,11 @@ export default function HistoryDetails({ currentLanguage }: HistoryDetailsProps)
             {/* Modal Body */}
             <div className="p-6 sm:p-8 overflow-y-auto space-y-6 bg-[#FCFAF5]">
               <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900 font-serif font-extrabold text-base sm:text-lg">
-                {historyContent[selectedChapter].subtitle[currentLanguage]}
+                {(historyContent[selectedChapter].subtitle as any)[currentLanguage]}
               </div>
 
               <div className="prose max-w-none text-gray-800 text-sm sm:text-base leading-relaxed font-normal whitespace-pre-wrap font-sans">
-                {historyContent[selectedChapter].content[currentLanguage]}
+                {(historyContent[selectedChapter].content as any)[currentLanguage]}
               </div>
 
               <div className="p-4 rounded-xl bg-slate-100 border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-gray-600">

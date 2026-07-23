@@ -27,9 +27,10 @@ import PremiumGalleryViewer from './gallery/PremiumGalleryViewer';
 interface MediaCenterProps {
   currentLanguage: Language;
   defaultCategory?: 'Photo Gallery' | 'Video Gallery' | 'Event Albums' | 'Historical Archive' | 'Community Memories' | 'Documentary Library' | 'Awards & Achievements' | 'Press & News Gallery' | 'Regional Galleries';
+  onNavigate?: (tab: string) => void;
 }
 
-export default function MediaCenter({ currentLanguage, defaultCategory = 'Photo Gallery' }: MediaCenterProps) {
+export default function MediaCenter({ currentLanguage, defaultCategory = 'Photo Gallery', onNavigate }: MediaCenterProps) {
   const [activeMenuTab, setActiveMenuTab] = useState(defaultCategory);
   const [albums, setAlbums] = useState<HeritageAlbum[]>(initialHeritageAlbums);
   const [videos, setVideos] = useState<HeritageVideo[]>(initialHeritageVideos);
@@ -166,6 +167,7 @@ export default function MediaCenter({ currentLanguage, defaultCategory = 'Photo 
             videos={videos}
             currentLanguage={currentLanguage}
             initialCategory={activeMenuTab === 'Regional Galleries' ? undefined : activeMenuTab}
+            onNavigateHome={() => onNavigate?.('home')}
           />
         </div>
       </div>

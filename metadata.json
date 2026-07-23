@@ -1,6 +1,12 @@
 {
-  "name": "Rangrez Community Bharat Portal",
-  "description": "An enterprise-grade national community portal, membership system, matrimonial, education, career, and social welfare platform.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "name": "All India Rangrej Welfare Association",
+  "description": "National portal for community welfare, matrimonial services, education, and heritage archive.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }

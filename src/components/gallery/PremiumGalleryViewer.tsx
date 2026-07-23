@@ -17,12 +17,13 @@ interface PremiumGalleryViewerProps {
   videos: HeritageVideo[];
   currentLanguage: Language;
   initialCategory?: string;
+  onNavigateHome?: () => void;
 }
 
 type ViewMode = 'folders' | 'items';
 
 export default function PremiumGalleryViewer({ 
-  albums, videos, currentLanguage, initialCategory 
+  albums, videos, currentLanguage, initialCategory, onNavigateHome 
 }: PremiumGalleryViewerProps) {
   const [viewMode, setViewMode] = useState<ViewMode>('folders');
   const [currentFolder, setCurrentFolder] = useState<string | null>(initialCategory || null);
@@ -33,7 +34,15 @@ export default function PremiumGalleryViewer({
   // Lightbox State
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
-  const [activeItems, setActiveItems] = useState<{ src: string; type: 'image' | 'video'; title?: string; description?: string; metadata?: string; }[]>([]);
+  const [activeItems, setActiveItems] = useState<{ 
+    src: string; 
+    type: 'image' | 'video'; 
+    title?: string; 
+    description?: string; 
+    metadata?: string; 
+    albumName?: string;
+    regionName?: string;
+  }[]>([]);
 
   // 1. Logic to filter data globally
   const filteredAlbums = useMemo(() => {
@@ -103,8 +112,20 @@ export default function PremiumGalleryViewer({
 
   // Handlers
   const handleBack = () => {
-    setCurrentFolder(null);
-    setViewMode('folders');
+    if (viewMode === 'items') {
+      if (currentFolder?.includes('Regional Gallery')) {
+        // If we are in a specific regional folder, go back to the root folder list
+        // which effectively shows all regional and category folders.
+        setCurrentFolder(null);
+        setViewMode('folders');
+      } else {
+        setCurrentFolder(null);
+        setViewMode('folders');
+      }
+    } else {
+      setCurrentFolder(null);
+      setViewMode('folders');
+    }
   };
 
   const openAlbum = (album: HeritageAlbum, initialImgIndex: number = 0) => {
@@ -114,7 +135,9 @@ export default function PremiumGalleryViewer({
       type: 'image' as const,
       title: albumTitle,
       description: currentLanguage === 'en' ? album.descriptionEn : album.descriptionHi,
-      metadata: `${album.location.district}${album.location.tehsil ? ` • ${album.location.tehsil}` : ''} • ${album.year}`
+      metadata: `${album.location.district}${album.location.tehsil ? ` • ${album.location.tehsil}` : ''} • ${album.year}`,
+      albumName: albumTitle,
+      regionName: album.location.tehsil || album.location.district
     }));
     setActiveItems(items);
     setLightboxIndex(initialImgIndex);
@@ -122,12 +145,15 @@ export default function PremiumGalleryViewer({
   };
 
   const openVideo = (video: HeritageVideo) => {
+    const videoTitle = currentLanguage === 'en' ? video.titleEn : video.titleHi;
     setActiveItems([{
       src: video.videoUrl,
       type: 'video' as const,
-      title: currentLanguage === 'en' ? video.titleEn : video.titleHi,
-      description: currentLanguage === 'en' ? video.titleEn : video.titleHi,
-      metadata: `${video.location.district}, ${video.year}`
+      title: videoTitle,
+      description: videoTitle,
+      metadata: `${video.location.district}, ${video.year}`,
+      albumName: 'Video Broadcast',
+      regionName: video.location.district
     }]);
     setLightboxIndex(0);
     setLightboxOpen(true);
@@ -170,10 +196,20 @@ export default function PremiumGalleryViewer({
         <div className="space-y-1">
           <div className="flex items-center space-x-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
             <button 
-              onClick={() => { setViewMode('folders'); setCurrentFolder(null); }} 
+              onClick={() => { 
+                if (onNavigateHome) onNavigateHome();
+                else { setViewMode('folders'); setCurrentFolder(null); }
+              }} 
               className="hover:text-[#004B23] transition-colors flex items-center"
             >
               <Home className="h-3 w-3 mr-1" />
+              Home
+            </button>
+            <ChevronRight className="h-2 w-2" />
+            <button 
+              onClick={() => { setViewMode('folders'); setCurrentFolder(null); }} 
+              className="hover:text-[#004B23] transition-colors"
+            >
               Media Gallery
             </button>
             {currentFolder && (
@@ -183,10 +219,10 @@ export default function PremiumGalleryViewer({
                   onClick={() => setViewMode('folders')}
                   className="hover:text-[#004B23] transition-colors"
                 >
-                  {currentFolder.includes('Regional') ? 'Regional' : 'Categories'}
+                  {currentFolder.includes('Regional') ? 'Regional Gallery' : 'Collections'}
                 </button>
                 <ChevronRight className="h-2 w-2" />
-                <span className="text-[#004B23] truncate max-w-[150px]">{currentFolder}</span>
+                <span className="text-[#004B23] truncate max-w-[150px]">{currentFolder.replace(' Regional Gallery', '')}</span>
               </>
             )}
           </div>
