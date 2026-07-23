@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
-import { MessageSquare, Facebook, Instagram, Youtube, Image as ImageIcon, Linkedin, Copy, Check, Code, MapPin, Mail, Phone, Search, Users, Award, ShieldCheck, Briefcase } from 'lucide-react';
+import { MessageSquare, Facebook, Instagram, Youtube, Image as ImageIcon, Linkedin, Copy, Check, Code, MapPin, Mail, Phone, Search, Users, Award, ShieldCheck, Briefcase, Globe, Twitter } from 'lucide-react';
 import { Language } from '../types';
 import { IMAGES } from '../data/mediaRegistry';
 import { ProfileImage } from './common/ProfileImage';
@@ -26,7 +26,10 @@ interface LeaderProfile {
     facebook: string;
     instagram: string;
     youtube: string;
-    gallery: string; // or linkedin
+    gallery: string;
+    website?: string;
+    twitter?: string;
+    linkedin?: string;
   };
 }
 
@@ -51,7 +54,8 @@ export default function NationalLeadership({ currentLanguage }: NationalLeadersh
       descriptionEn: 'Mufti, Aalim, Hafiz, Qari, Islamic Judge. Devoted to religious and social leadership.',
       descriptionHi: 'मुफ्ती, आलिम, हाफिज, कारी, इस्लामिक जज। धार्मिक और सामाजिक नेतृत्व के लिए समर्पित।',
       image: 'https://lh3.googleusercontent.com/d/1Y1WZyKPrZDIIB1a2hvofprnIpmmkb3hn',
-      socials: { whatsapp: '#', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery' },
+      phone: '+91 96176 98678',
+      socials: { whatsapp: 'https://wa.me/919617698678', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery', website: '#' },
     },
     {
       id: 'leader_sabalgarh_shabbir',
@@ -64,7 +68,8 @@ export default function NationalLeadership({ currentLanguage }: NationalLeadersh
       descriptionEn: 'Senior Social Worker. A respected social worker actively serving the community for many years.',
       descriptionHi: 'वरिष्ठ समाज सेवक। एक सम्मानित समाज सेवक जो कई वर्षों से सक्रिय रूप से समुदाय की सेवा कर रहे हैं।',
       image: 'https://lh3.googleusercontent.com/d/1xOL23KdlwLuESJsGwJfdca_TSHb2RrN5',
-      socials: { whatsapp: '#', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery' },
+      phone: '+91 93149 84897',
+      socials: { whatsapp: 'https://wa.me/919314984897', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery', website: '#' },
     },
     {
       id: 'leader_morena_city',
@@ -77,7 +82,8 @@ export default function NationalLeadership({ currentLanguage }: NationalLeadersh
       descriptionEn: 'Contractor. Serving the Rangrez Community through leadership, social unity and community welfare initiatives in Morena City.',
       descriptionHi: 'ठेकेदार। मुरैना शहर में नेतृत्व, सामाजिक एकता और सामुदायिक कल्याण पहलों के माध्यम से रंगरेज समुदाय की सेवा कर रहे हैं।',
       image: 'https://lh3.googleusercontent.com/d/1YEFWWuLF_KFofFk3SliEvCu3IVHpE0VH',
-      socials: { whatsapp: '#', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery' },
+      phone: '+91 97521 47004',
+      socials: { whatsapp: 'https://wa.me/919752147004', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery', website: '#' },
     },
     // 4. DISTRICT & REGIONAL PRESIDENTS
     {
@@ -91,7 +97,8 @@ export default function NationalLeadership({ currentLanguage }: NationalLeadersh
       descriptionEn: 'Sarpanch (Dhamgan Village). Dedicated to rural development, community welfare and social reforms.',
       descriptionHi: 'सरपंच (धामगन ग्राम)। ग्रामीण विकास, सामुदायिक कल्याण और सामाजिक सुधारों के लिए समर्पित।',
       image: 'https://lh3.googleusercontent.com/d/1glbBBHgyZS_A_e90TZfRIiaNf-GDOEjv',
-      socials: { whatsapp: '#', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery' },
+      phone: '+91 73892 47808',
+      socials: { whatsapp: 'https://wa.me/917389247808', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery', website: '#', twitter: '#', linkedin: '#' },
     },
     {
       id: 'leader_kailaras',
@@ -104,7 +111,8 @@ export default function NationalLeadership({ currentLanguage }: NationalLeadersh
       descriptionEn: 'Businessman. Actively working for education, social harmony and community development.',
       descriptionHi: 'व्यवसायी। शिक्षा, सामाजिक सद्भाव और सामुदायिक विकास के लिए सक्रिय रूप से काम कर रहे हैं।',
       image: 'https://lh3.googleusercontent.com/d/1v311rEiY5iaQ6maUjRJ4k_X3H6wI03YB',
-      socials: { whatsapp: '#', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery' },
+      phone: '+91 96171 16484',
+      socials: { whatsapp: 'https://wa.me/919617116484', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery', website: '#', twitter: '#', linkedin: '#' },
     },
     {
       id: 'leader_sabalgarh_habib',
@@ -117,7 +125,8 @@ export default function NationalLeadership({ currentLanguage }: NationalLeadersh
       descriptionEn: 'Businessman. Committed to strengthening community unity and public welfare.',
       descriptionHi: 'व्यवसायी। सामुदायिक एकता और जन कल्याण को मजबूत करने के लिए प्रतिबद्ध।',
       image: 'https://lh3.googleusercontent.com/d/1M0KxjaOeboPyTAo2EDSL73cpj6n4fo-D',
-      socials: { whatsapp: '#', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery' },
+      phone: '+91 98267 65857',
+      socials: { whatsapp: 'https://wa.me/919826765857', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery', website: '#', twitter: '#', linkedin: '#' },
     },
     {
       id: 'leader_sumawali',
@@ -125,12 +134,13 @@ export default function NationalLeadership({ currentLanguage }: NationalLeadersh
       nameHi: 'जनाब अब्दुर रहमान (बल्लू खान)',
       designationEn: 'City President',
       designationHi: 'शहर अध्यक्ष',
-      locationEn: 'Sumawali, Morena, MP',
-      locationHi: 'सुमावली, मुरैना, मध्य प्रदेश',
+      locationEn: 'Sumaoli, Morena, MP',
+      locationHi: 'सुमाओली, मुरैना, मध्य प्रदेश',
       descriptionEn: 'Farmer. Dedicated to agriculture, education and social development.',
       descriptionHi: 'किसान। कृषि, शिक्षा और सामाजिक विकास के लिए समर्पित।',
       image: 'https://lh3.googleusercontent.com/d/1Ev6pTkxH-aT-97ikZE41FozmcGMDfUn9',
-      socials: { whatsapp: '#', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery' },
+      phone: '+91 70001 99484',
+      socials: { whatsapp: 'https://wa.me/917000199484', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery', website: '#', twitter: '#', linkedin: '#' },
     },
     {
       id: 'leader_banmore',
@@ -143,7 +153,8 @@ export default function NationalLeadership({ currentLanguage }: NationalLeadersh
       descriptionEn: 'Businessman. Serving society through community leadership and welfare activities.',
       descriptionHi: 'व्यवसायी। सामुदायिक नेतृत्व और कल्याणकारी गतिविधियों के माध्यम से समाज की सेवा कर रहे हैं।',
       image: 'https://lh3.googleusercontent.com/d/1x3GaUNTUZ5S41xfWdycGGgvhgeQ_6AU3',
-      socials: { whatsapp: '#', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery' },
+      phone: '+91 98263 08492',
+      socials: { whatsapp: 'https://wa.me/919826308492', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery', website: '#', twitter: '#', linkedin: '#' },
     },
     {
       id: 'leader_ambah',
@@ -156,7 +167,8 @@ export default function NationalLeadership({ currentLanguage }: NationalLeadersh
       descriptionEn: 'Businessman. Actively contributing towards community development and social welfare.',
       descriptionHi: 'व्यवसायी। सामुदायिक विकास और सामाजिक कल्याण के प्रति सक्रिय रूप से योगदान दे रहे हैं।',
       image: 'https://lh3.googleusercontent.com/d/13Tm3mPLQvgvz1tm3J967ta_NFdriwO6i',
-      socials: { whatsapp: '#', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery' },
+      phone: '+91 98262 49086',
+      socials: { whatsapp: 'https://wa.me/919826249086', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery', website: '#', twitter: '#', linkedin: '#' },
     },
     {
       id: 'leader_vijaypur',
@@ -169,7 +181,8 @@ export default function NationalLeadership({ currentLanguage }: NationalLeadersh
       descriptionEn: 'Businessman & Politician. Working for public welfare, education and social progress.',
       descriptionHi: 'व्यवसायी एवं राजनीतिज्ञ। जन कल्याण, शिक्षा और सामाजिक प्रगति के लिए काम कर रहे हैं।',
       image: 'https://lh3.googleusercontent.com/d/1vaLvhCxmnOFFmvIVo--bCJYwH-yIuTki',
-      socials: { whatsapp: '#', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery' },
+      phone: '+91 97555 30808',
+      socials: { whatsapp: 'https://wa.me/919755530808', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery', website: '#', twitter: '#', linkedin: '#' },
     },
     {
       id: 'leader_veerpur',
@@ -182,7 +195,8 @@ export default function NationalLeadership({ currentLanguage }: NationalLeadersh
       descriptionEn: 'Gram Panchayat Secretary. Dedicated to transparent administration and community development.',
       descriptionHi: 'ग्राम पंचायत सचिव। पारदर्शी प्रशासन और सामुदायिक विकास के लिए समर्पित।',
       image: 'https://lh3.googleusercontent.com/d/129EdwpmtL_14WMQNv6CannjSHoGmAyI8',
-      socials: { whatsapp: '#', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery' },
+      phone: '+91 96693 96395',
+      socials: { whatsapp: 'https://wa.me/919669396395', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery', website: '#', twitter: '#', linkedin: '#' },
     },
     {
       id: 'leader_manpur',
@@ -195,7 +209,8 @@ export default function NationalLeadership({ currentLanguage }: NationalLeadersh
       descriptionEn: 'Farmer. Serving society through agriculture and community leadership.',
       descriptionHi: 'किसान। कृषि और सामुदायिक नेतृत्व के माध्यम से समाज की सेवा कर रहे हैं।',
       image: 'https://lh3.googleusercontent.com/d/1-juybNtCiKdx7iRT_2Uvlmmp50II2h8T',
-      socials: { whatsapp: '#', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery' },
+      phone: '+91 97702 71749',
+      socials: { whatsapp: 'https://wa.me/919770271749', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery', website: '#', twitter: '#', linkedin: '#' },
     },
     {
       id: 'leader_sheopur_atiq',
@@ -208,7 +223,8 @@ export default function NationalLeadership({ currentLanguage }: NationalLeadersh
       descriptionEn: 'Advocate. Providing legal awareness and community leadership.',
       descriptionHi: 'अधिवक्ता। कानूनी जागरूकता और सामुदायिक नेतृत्व प्रदान कर रहे हैं।',
       image: 'https://lh3.googleusercontent.com/d/1Q9zyWY2y6-fl5YsDWPp-kjcIA8_W_dWM',
-      socials: { whatsapp: '#', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery' },
+      phone: '+91 97548 02008',
+      socials: { whatsapp: 'https://wa.me/919754802008', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery', website: '#', twitter: '#', linkedin: '#' },
     },
     {
       id: 'leader_jabrol',
@@ -221,7 +237,8 @@ export default function NationalLeadership({ currentLanguage }: NationalLeadersh
       descriptionEn: 'Farmer. Working for village development and community welfare.',
       descriptionHi: 'किसान। ग्राम विकास और सामुदायिक कल्याण के लिए काम कर रहे हैं।',
       image: 'https://lh3.googleusercontent.com/d/19LBcE-anJN1OEpK5WjU0CdaPyAMbq5Q3',
-      socials: { whatsapp: '#', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery' },
+      phone: '+91 96857 98703',
+      socials: { whatsapp: 'https://wa.me/919685798703', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery', website: '#', twitter: '#', linkedin: '#' },
     },
     {
       id: 'leader_kattoli',
@@ -234,7 +251,8 @@ export default function NationalLeadership({ currentLanguage }: NationalLeadersh
       descriptionEn: 'Secretary. Committed to community service and youth empowerment.',
       descriptionHi: 'सचिव। सामुदायिक सेवा और युवा सशक्तिकरण के प्रति प्रतिबद्ध।',
       image: 'https://lh3.googleusercontent.com/d/1Uj1F5JUUtZQXVnwntislwSmW_Zamw8b7',
-      socials: { whatsapp: '#', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery' },
+      phone: '+91 97708 66323',
+      socials: { whatsapp: 'https://wa.me/919770866323', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery', website: '#', twitter: '#', linkedin: '#' },
     },
     {
       id: 'leader_dholpur',
@@ -247,7 +265,8 @@ export default function NationalLeadership({ currentLanguage }: NationalLeadersh
       descriptionEn: 'Teacher. Promoting education, social awareness and community welfare.',
       descriptionHi: 'शिक्षक। शिक्षा, सामाजिक जागरूकता और सामुदायिक कल्याण को बढ़ावा दे रहे हैं।',
       image: 'https://lh3.googleusercontent.com/d/1BxqOo6SScsQXLnuTA714pufjOch90Fz2',
-      socials: { whatsapp: '#', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery' },
+      phone: '+91 98879 83333',
+      socials: { whatsapp: 'https://wa.me/919887983333', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery', website: '#', twitter: '#', linkedin: '#' },
     },
     {
       id: 'leader_mandrayal',
@@ -260,7 +279,8 @@ export default function NationalLeadership({ currentLanguage }: NationalLeadersh
       descriptionEn: 'Farmer. Working for rural welfare, agriculture and social unity.',
       descriptionHi: 'किसान। ग्रामीण कल्याण, कृषि और सामाजिक एकता के लिए काम कर रहे हैं।',
       image: 'https://lh3.googleusercontent.com/d/1_Zg2LuE5Rxvgnx-oDVk7Py-uBlI-L_8G',
-      socials: { whatsapp: '#', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery' },
+      phone: '+91 75685 28700',
+      socials: { whatsapp: 'https://wa.me/917568528700', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery', website: '#', twitter: '#', linkedin: '#' },
     }
   ];
 
@@ -440,35 +460,34 @@ function LeaderCard({ leader, currentLanguage, index }: LeaderCardProps) {
         />
       </div>
 
-      {/* 5 Circular Social Icons */}
-      <div className="flex items-center justify-center gap-2.5 mb-6 z-10">
+      {/* Complete Social Media Row */}
+      <div className="flex flex-wrap items-center justify-center gap-2 mb-6 z-10 px-2">
         {[
           { icon: <MessageSquare className="h-3.5 w-3.5" />, url: leader.socials.whatsapp, label: 'WhatsApp', color: 'hover:bg-green-500 hover:text-white' },
           { icon: <Facebook className="h-3.5 w-3.5" />, url: leader.socials.facebook, label: 'Facebook', color: 'hover:bg-blue-600 hover:text-white' },
           { icon: <Instagram className="h-3.5 w-3.5" />, url: leader.socials.instagram, label: 'Instagram', color: 'hover:bg-pink-600 hover:text-white' },
           { icon: <Youtube className="h-3.5 w-3.5" />, url: leader.socials.youtube, label: 'YouTube', color: 'hover:bg-red-600 hover:text-white' },
+          { icon: <Twitter className="h-3.5 w-3.5" />, url: leader.socials.twitter, label: 'X (Twitter)', color: 'hover:bg-black hover:text-white' },
+          { icon: <Linkedin className="h-3.5 w-3.5" />, url: leader.socials.linkedin, label: 'LinkedIn', color: 'hover:bg-blue-700 hover:text-white' },
+          { icon: <Globe className="h-3.5 w-3.5" />, url: leader.socials.website, label: 'Website', color: 'hover:bg-emerald-600 hover:text-white' },
+          { icon: <Mail className="h-3.5 w-3.5" />, url: leader.email ? `mailto:${leader.email}` : undefined, label: 'Email', color: 'hover:bg-gray-800 hover:text-white' },
+          { icon: <Phone className="h-3.5 w-3.5" />, url: leader.phone ? `tel:${leader.phone}` : undefined, label: 'Phone', color: 'hover:bg-[#004B23] hover:text-white' },
           { icon: <ImageIcon className="h-3.5 w-3.5" />, url: leader.socials.gallery, label: 'Gallery', color: 'hover:bg-[#F4C430] hover:text-emerald-950' }
-        ].map((soc, sIdx) => {
-          const isDisabled = !soc.url || soc.url === '#' || soc.url === '' || (soc.label === 'Gallery' && soc.url === '#gallery');
-          return (
-            <a
-              key={sIdx}
-              href={isDisabled ? undefined : soc.url}
-              onClick={isDisabled ? (e) => e.preventDefault() : undefined}
-              target={isDisabled ? undefined : "_blank"}
-              rel="noreferrer"
-              aria-label={`${leader.nameEn} ${soc.label}`}
-              title={isDisabled ? `${soc.label} not configured` : soc.label}
-              className={`w-7 h-7 rounded-full flex items-center justify-center transition-all duration-300 shadow-sm ${
-                isDisabled 
-                  ? 'bg-gray-50 text-gray-300 cursor-not-allowed opacity-50' 
-                  : `bg-gray-100 text-emerald-900 ${soc.color}`
-              }`}
-            >
-              {soc.icon}
-            </a>
-          );
-        })}
+        ].filter(soc => {
+          // Hide only if strictly empty or undefined. Allow '#' as it indicates intent to show.
+          return soc.url && soc.url !== '' && !(soc.label === 'Gallery' && soc.url === '#gallery');
+        }).map((soc, sIdx) => (
+          <a
+            key={sIdx}
+            href={soc.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={`${leader.nameEn} ${soc.label}`}
+            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 shadow-sm bg-gray-100 text-emerald-900 ${soc.color}`}
+          >
+            {soc.icon}
+          </a>
+        ))}
       </div>
 
       {/* Leader Details */}
@@ -482,19 +501,25 @@ function LeaderCard({ leader, currentLanguage, index }: LeaderCardProps) {
           </p>
         </div>
 
-        {/* Premium Region Badge */}
+        {/* Premium Region Badge with Google Maps Integration */}
         <div className="mt-4 flex justify-center">
-          <div className="relative group/badge cursor-pointer">
+          <a 
+            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(leader.locationEn)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            title={currentLanguage === 'en' ? 'Open in Google Maps' : 'गूगल मैप्स में खोलें'}
+            className="relative group/badge cursor-pointer block w-full max-w-[240px]"
+          >
             <div className="absolute -top-4 left-0 right-0 text-[8px] font-bold text-gray-400 uppercase tracking-widest text-center opacity-70 group-hover/badge:opacity-100 transition-opacity">
               {currentLanguage === 'en' ? 'Region' : 'क्षेत्र'}
             </div>
-            <div className="flex items-center space-x-2 bg-white/50 backdrop-blur-sm border-2 border-[#004B23]/20 shadow-sm rounded-full px-5 py-2 transition-all duration-300 group-hover/badge:bg-[#004B23] group-hover/badge:border-[#F4C430] group-hover/badge:shadow-lg">
-              <MapPin className="h-4 w-4 text-[#004B23] transition-colors duration-300 group-hover/badge:text-[#F4C430]" />
-              <span className="text-sm font-bold uppercase tracking-wider text-[#004B23] transition-colors duration-300 group-hover/badge:text-white">
+            <div className="flex items-center justify-center space-x-2 bg-white/50 backdrop-blur-sm border-2 border-[#004B23]/20 shadow-sm rounded-2xl px-4 py-2 h-14 transition-all duration-300 group-hover/badge:bg-[#004B23] group-hover/badge:border-[#F4C430] group-hover/badge:shadow-lg">
+              <MapPin className="h-4 w-4 shrink-0 text-[#004B23] transition-colors duration-300 group-hover/badge:text-[#F4C430]" />
+              <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#004B23] transition-colors duration-300 group-hover/badge:text-white leading-tight line-clamp-2 text-center">
                 {currentLanguage === 'en' ? leader.locationEn : leader.locationHi}
               </span>
             </div>
-          </div>
+          </a>
         </div>
 
         {leader.tenureEn && (
@@ -509,24 +534,7 @@ function LeaderCard({ leader, currentLanguage, index }: LeaderCardProps) {
       </div>
 
       {/* Aesthetic card foot indicator */}
-      <div className="mt-5 pt-4 border-t border-gray-50 flex items-center justify-center space-x-4 text-gray-400">
-        {leader.email ? (
-          <a href={`mailto:${leader.email}`} title={leader.email} className="flex items-center gap-1 text-xs hover:text-[#004B23] transition font-mono">
-            <Mail className="h-3.5 w-3.5 text-[#004B23]" />
-            <span className="text-[10px] truncate max-w-[120px]">{leader.email}</span>
-          </a>
-        ) : (
-          <Mail className="h-3.5 w-3.5 cursor-pointer hover:text-[#004B23] transition" />
-        )}
-        {leader.phone ? (
-          <a href={`tel:${leader.phone}`} title={leader.phone} className="flex items-center gap-1 text-xs hover:text-[#004B23] transition font-mono">
-            <Phone className="h-3.5 w-3.5 text-[#004B23]" />
-            <span className="text-[10px]">{leader.phone}</span>
-          </a>
-        ) : (
-          <Phone className="h-3.5 w-3.5 cursor-pointer hover:text-[#004B23] transition" />
-        )}
-      </div>
+      <div className="mt-5 h-1 w-12 bg-gray-100 mx-auto rounded-full group-hover:bg-[#F4C430]/30 transition-colors duration-500"></div>
 
     </motion.div>
   );
