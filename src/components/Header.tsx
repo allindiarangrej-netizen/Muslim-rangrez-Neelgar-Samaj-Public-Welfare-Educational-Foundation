@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, Globe, Menu, X, Users, Heart, BookOpen, FileText, PhoneCall, Gift, HelpCircle, Home, Info, GraduationCap, Landmark, Newspaper, HeartHandshake } from 'lucide-react';
 import { Language } from '../types';
+import { SocialButton, COMMUNITY_SOCIAL_URLS } from './common/SocialIcons';
 
 interface HeaderProps {
   currentLanguage: Language;
@@ -180,6 +181,7 @@ export default function Header({
         { id: 'media-events', labelEn: 'Event Gallery', labelHi: 'समारोह गैलरी', labelUr: 'تقریبات کی گیلری' },
         { id: 'islamic-calendar', labelEn: 'Islamic Hijri Calendar', labelHi: 'इस्लामी हिजरी कैलेंडर', labelUr: 'اسلامی ہجری کیلنڈر' },
         { id: 'media-downloads', labelEn: 'Document Downloads', labelHi: 'दस्तावेज़ डाउनलोड', labelUr: 'دستاویزات ڈاؤن لوڈ' },
+        { id: 'admin-media', labelEn: '🔒 Admin Media Management', labelHi: '🔒 एडमिन मीडिया मैनेजमेंट', labelUr: '🔒 ایڈمن میڈیا مینجمنٹ' },
         { id: 'media-publications', labelEn: 'Samaj Publications', labelHi: 'सामुदायिक प्रकाशन', labelUr: 'برادری کی مطبوعات' },
         { id: 'media-links', labelEn: 'Useful External Links', labelHi: 'उपयोगी बाहरी लिंक', labelUr: 'مفید بیرونی لنکس' },
         { id: 'media-faqs', labelEn: 'Help & FAQs', labelHi: 'सहायता और अक्सर पूछे जाने वाले प्रश्न', labelUr: 'مدد اور عام سوالات' },
@@ -236,6 +238,15 @@ export default function Header({
 
         {/* Right Side Controls */}
         <div className="flex items-center space-x-2 sm:space-x-2.5 shrink-0">
+
+          {/* Quick Social Media Header Icons */}
+          <div className="hidden lg:flex items-center space-x-1.5 border-r border-white/20 pr-2" id="header_social_icons">
+            <SocialButton platform="facebook" url={COMMUNITY_SOCIAL_URLS.facebook} title="Facebook Group" size="sm" variant="ghost" className="text-gray-300 hover:text-[#1877F2] p-1" />
+            <SocialButton platform="youtube" url={COMMUNITY_SOCIAL_URLS.youtube} title="YouTube Channel" size="sm" variant="ghost" className="text-gray-300 hover:text-[#FF0000] p-1" />
+            <SocialButton platform="whatsapp" url={COMMUNITY_SOCIAL_URLS.whatsappChannel} title="WhatsApp Channel" size="sm" variant="ghost" className="text-gray-300 hover:text-[#25D366] p-1" />
+            <SocialButton platform="telegram" url={COMMUNITY_SOCIAL_URLS.telegram} title="Telegram Circle" size="sm" variant="ghost" className="text-gray-300 hover:text-[#229ED9] p-1" />
+            <SocialButton platform="instagram" url={COMMUNITY_SOCIAL_URLS.instagram} title="Instagram Page" size="sm" variant="ghost" className="text-gray-300 hover:text-[#E4405F] p-1" />
+          </div>
 
           {/* Language Selector Dropdown Widget */}
           <div className="relative z-[10000] overflow-visible" id="language_switcher_wrapper">

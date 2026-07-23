@@ -308,5 +308,29 @@ CREATE TABLE IF NOT EXISTS media_gallery (
 ALTER TABLE media_gallery ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Public can view media gallery" ON media_gallery FOR SELECT USING (true);
 CREATE POLICY "Admins can manage media gallery" ON media_gallery FOR ALL USING (auth.jwt() ->> 'role' = 'admin');
+
+-- 15A. Media Assets Table (Admin Media Management)
+CREATE TABLE IF NOT EXISTS media_assets (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  filename TEXT NOT NULL,
+  bucket TEXT DEFAULT 'admin-media',
+  folder TEXT DEFAULT 'images',
+  url TEXT NOT NULL,
+  mime_type TEXT,
+  size BIGINT DEFAULT 0,
+  uploaded_by TEXT DEFAULT 'Administrator',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()),
+  status TEXT DEFAULT 'Active',
+  alt_text TEXT,
+  caption TEXT,
+  visibility TEXT DEFAULT 'Public',
+  dimensions TEXT,
+  duration TEXT
+);
+
+ALTER TABLE media_assets ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public can view media_assets" ON media_assets FOR SELECT USING (true);
+CREATE POLICY "Admins can manage media_assets" ON media_assets FOR ALL USING (true);
 [diff_block_end]
 [diff_block_end]

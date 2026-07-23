@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
-  Folder, Search, Filter, ChevronRight, ChevronLeft, Home, 
+  Folder, Search, Filter, ChevronRight, Home, 
   Grid, List, Clock, MapPin, Play,
   Calendar, Sparkles, X
 } from 'lucide-react';
@@ -33,15 +33,7 @@ export default function PremiumGalleryViewer({
   // Lightbox State
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
-  const [activeItems, setActiveItems] = useState<{ 
-    src: string; 
-    type: 'image' | 'video'; 
-    title?: string; 
-    description?: string; 
-    metadata?: string; 
-    albumName?: string;
-    regionName?: string;
-  }[]>([]);
+  const [activeItems, setActiveItems] = useState<{ src: string; type: 'image' | 'video'; title?: string; description?: string; metadata?: string; }[]>([]);
 
   // 1. Logic to filter data globally
   const filteredAlbums = useMemo(() => {
@@ -111,32 +103,17 @@ export default function PremiumGalleryViewer({
 
   // Handlers
   const handleBack = () => {
-    if (viewMode === 'items') {
-      if (currentFolder?.includes('Regional Gallery')) {
-        // If we are in a specific regional folder, go back to the root folder list
-        // which effectively shows all regional and category folders.
-        setCurrentFolder(null);
-        setViewMode('folders');
-      } else {
-        setCurrentFolder(null);
-        setViewMode('folders');
-      }
-    } else {
-      setCurrentFolder(null);
-      setViewMode('folders');
-    }
+    setCurrentFolder(null);
+    setViewMode('folders');
   };
 
   const openAlbum = (album: HeritageAlbum, initialImgIndex: number = 0) => {
-    const albumTitle = currentLanguage === 'en' ? album.titleEn : album.titleHi;
-    const items = album.images.map((img, idx) => ({
+    const items = album.images.map(img => ({
       src: img,
       type: 'image' as const,
-      title: albumTitle,
+      title: currentLanguage === 'en' ? album.titleEn : album.titleHi,
       description: currentLanguage === 'en' ? album.descriptionEn : album.descriptionHi,
-      metadata: `${album.location.district}${album.location.tehsil ? ` • ${album.location.tehsil}` : ''} • ${album.year}`,
-      albumName: albumTitle,
-      regionName: album.location.tehsil || album.location.district
+      metadata: `${album.location.district}, ${album.year}`
     }));
     setActiveItems(items);
     setLightboxIndex(initialImgIndex);
@@ -144,15 +121,12 @@ export default function PremiumGalleryViewer({
   };
 
   const openVideo = (video: HeritageVideo) => {
-    const videoTitle = currentLanguage === 'en' ? video.titleEn : video.titleHi;
     setActiveItems([{
       src: video.videoUrl,
       type: 'video' as const,
-      title: videoTitle,
-      description: videoTitle,
-      metadata: `${video.location.district}, ${video.year}`,
-      albumName: 'Video Broadcast',
-      regionName: video.location.district
+      title: currentLanguage === 'en' ? video.titleEn : video.titleHi,
+      description: currentLanguage === 'en' ? video.titleEn : video.titleHi,
+      metadata: `${video.location.district}, ${video.year}`
     }]);
     setLightboxIndex(0);
     setLightboxOpen(true);
@@ -193,49 +167,21 @@ export default function PremiumGalleryViewer({
       {/* 1. Header & Breadcrumbs */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-100 pb-6">
         <div className="space-y-1">
-          <div className="flex items-center space-x-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-            <button 
-              onClick={() => { setViewMode('folders'); setCurrentFolder(null); }} 
-              className="hover:text-[#004B23] transition-colors flex items-center"
-            >
+          <div className="flex items-center space-x-2 text-xs font-bold text-gray-400 uppercase tracking-widest">
+            <button onClick={handleBack} className="hover:text-[#004B23] transition-colors flex items-center">
               <Home className="h-3 w-3 mr-1" />
-              Home
-            </button>
-            <ChevronRight className="h-2 w-2" />
-            <button 
-              onClick={() => { setViewMode('folders'); setCurrentFolder(null); }} 
-              className="hover:text-[#004B23] transition-colors"
-            >
-              Media Gallery
+              Gallery
             </button>
             {currentFolder && (
               <>
-                <ChevronRight className="h-2 w-2" />
-                <button 
-                  onClick={() => setViewMode('folders')}
-                  className="hover:text-[#004B23] transition-colors"
-                >
-                  {currentFolder.includes('Regional') ? 'Regional Gallery' : 'Categories'}
-                </button>
-                <ChevronRight className="h-2 w-2" />
-                <span className="text-[#004B23] truncate max-w-[150px]">{currentFolder}</span>
+                <ChevronRight className="h-3 w-3" />
+                <span className="text-[#004B23]">{currentFolder}</span>
               </>
             )}
           </div>
-          <div className="flex items-center space-x-3">
-            {currentFolder && (
-              <button 
-                onClick={handleBack}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-500"
-                title="Go Back"
-              >
-                <ChevronLeft className="h-5 w-5" />
-              </button>
-            )}
-            <h2 className="text-2xl md:text-3xl font-serif font-extrabold text-[#004B23]">
-              {currentFolder || 'Digital Archive Hub'}
-            </h2>
-          </div>
+          <h2 className="text-2xl md:text-3xl font-serif font-extrabold text-[#004B23]">
+            {currentFolder || 'Digital Archive Hub'}
+          </h2>
         </div>
 
         {/* Search Bar */}

@@ -510,6 +510,33 @@ INSERT INTO storage.buckets (id, name, public)
 VALUES ('documents', 'documents', true)
 ON CONFLICT (id) DO NOTHING;
 
+INSERT INTO storage.buckets (id, name, public) 
+VALUES ('admin-media', 'admin-media', true)
+ON CONFLICT (id) DO NOTHING;
+
+-- ====================================================================
+-- 21A. MEDIA ASSETS METADATA TABLE (Admin Media Management)
+-- ====================================================================
+CREATE TABLE IF NOT EXISTS public.media_assets (
+    "id" uuid NOT NULL DEFAULT gen_random_uuid(),
+    "filename" text NOT NULL,
+    "bucket" text DEFAULT 'admin-media',
+    "folder" text DEFAULT 'images',
+    "url" text NOT NULL,
+    "mime_type" text,
+    "size" bigint DEFAULT 0,
+    "uploaded_by" text DEFAULT 'Administrator',
+    "created_at" timestamp with time zone DEFAULT now(),
+    "updated_at" timestamp with time zone DEFAULT now(),
+    "status" text DEFAULT 'Active',
+    "alt_text" text,
+    "caption" text,
+    "visibility" text DEFAULT 'Public',
+    "dimensions" text,
+    "duration" text,
+    CONSTRAINT media_assets_pkey PRIMARY KEY (id)
+);
+
 
 -- ====================================================================
 -- 22. INDEXES FOR PERFORMANCE OPTIMIZATION

@@ -15,6 +15,7 @@ import HelpSupport from './HelpSupport';
 import SocialImpact from './SocialImpact';
 import PremiumLightbox from './common/PremiumLightbox';
 import SmartImage from './common/SmartImage';
+import { OfficialSocialChannelsList } from './common/SocialIcons';
 import { initialHeritageAlbums } from '../data/heritageMedia';
 import { resolveDriveUrl, EVENT_FALLBACK_IMAGE } from '../lib/driveUtils';
 
@@ -546,6 +547,20 @@ export default function MediaResourcesHub({
                   </div>
                 ))}
               </div>
+            </div>
+
+            {/* Official Social Media Channels Strip */}
+            <div className="bg-gradient-to-r from-[#0B132B] to-[#004B23] p-6 rounded-3xl text-white shadow-lg space-y-4 border border-[#FFD54A]/30">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
+                <div>
+                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#FFD54A]">Official Verified Handles</span>
+                  <h3 className="font-serif font-bold text-lg">{getText('Connect With All India Rangrez Community', 'अखिल भारतीय रंगरेज समाज के आधिकारिक सोशल मीडिया', 'آل انڈیا رنگریز کمیونٹی کے سوشل میڈیا')}</h3>
+                </div>
+                <p className="text-xs text-gray-200 max-w-md">
+                  {getText('Follow live event broadcasts, gazette notifications, and video documentaries across official platforms.', 'लाइव कार्यक्रमों, सरकारी विज्ञप्तियों और वीडियो वृत्तचित्रों के लिए आधिकारिक प्लेटफॉर्म्स से जुड़ें।', 'سرکاری اعلانات اور لائیو تقریبات کے لیے جڑیں۔')}
+                </p>
+              </div>
+              <OfficialSocialChannelsList />
             </div>
 
             {/* Latest News Spotlight & Featured Gallery Overview */}

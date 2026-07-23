@@ -4,6 +4,7 @@ import { MessageSquare, Facebook, Instagram, Youtube, Image as ImageIcon, Linked
 import { Language } from '../types';
 import { IMAGES } from '../data/mediaRegistry';
 import { ProfileImage } from './common/ProfileImage';
+import { resolveSocialUrl } from './common/SocialIcons';
 
 interface LeaderProfile {
   id: string;
@@ -476,28 +477,21 @@ function LeaderCard({ leader, currentLanguage, index }: LeaderCardProps) {
         ].filter(soc => {
           return soc.url !== undefined && soc.url !== null && !(soc.label === 'Gallery' && soc.url === '#gallery');
         }).map((soc, sIdx) => {
-          const isConfigured = soc.url && soc.url !== '#';
+          const finalUrl = resolveSocialUrl(soc.url, soc.label);
           return (
             <div key={sIdx} className="relative group/soc">
               <a
-                href={isConfigured ? soc.url : undefined}
-                target={isConfigured ? "_blank" : undefined}
+                href={finalUrl}
+                target="_blank"
                 rel="noopener noreferrer"
-                onClick={(e) => !isConfigured && e.preventDefault()}
-                className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 shadow-sm border ${
-                  isConfigured 
-                    ? `bg-white border-gray-100 ${soc.activeColor} ${soc.color}` 
-                    : 'bg-gray-50 border-gray-200 text-gray-300 cursor-not-allowed'
-                }`}
-                title={isConfigured ? soc.label : `${soc.label} not configured`}
+                className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 shadow-sm border bg-white border-gray-200 ${soc.activeColor} ${soc.color} hover:scale-110 cursor-pointer`}
+                title={`${soc.label} - ${leader.nameEn}`}
               >
                 {soc.icon}
               </a>
-              {!isConfigured && (
-                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-[10px] rounded opacity-0 group-hover/soc:opacity-100 transition-opacity whitespace-nowrap pointer-events-none font-bold z-50">
-                   {soc.label} not configured
-                </div>
-              )}
+              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-[10px] rounded opacity-0 group-hover/soc:opacity-100 transition-opacity whitespace-nowrap pointer-events-none font-bold z-50 shadow-md">
+                {soc.label}
+              </div>
             </div>
           );
         })}

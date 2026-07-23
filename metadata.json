@@ -1,8 +1,6 @@
 {
-  "name": "Admin Image Upload Portal",
-  "description": "A secure admin portal for managing image uploads to Supabase Storage with organized folder structures.",
+  "name": "Rangrez Community Bharat Portal",
+  "description": "An enterprise-grade national community portal, membership system, matrimonial, education, career, and social welfare platform.",
   "requestFramePermissions": [],
-  "majorCapabilities": [
-    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
-  ]
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
