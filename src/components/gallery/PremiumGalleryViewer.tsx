@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
-  Folder, Search, Filter, ChevronRight, Home, 
+  Folder, Search, Filter, ChevronRight, ChevronLeft, Home, 
   Grid, List, Clock, MapPin, Play,
   Calendar, Sparkles, X
 } from 'lucide-react';
@@ -108,12 +108,13 @@ export default function PremiumGalleryViewer({
   };
 
   const openAlbum = (album: HeritageAlbum, initialImgIndex: number = 0) => {
-    const items = album.images.map(img => ({
+    const albumTitle = currentLanguage === 'en' ? album.titleEn : album.titleHi;
+    const items = album.images.map((img, idx) => ({
       src: img,
       type: 'image' as const,
-      title: currentLanguage === 'en' ? album.titleEn : album.titleHi,
+      title: albumTitle,
       description: currentLanguage === 'en' ? album.descriptionEn : album.descriptionHi,
-      metadata: `${album.location.district}, ${album.year}`
+      metadata: `${album.location.district}${album.location.tehsil ? ` • ${album.location.tehsil}` : ''} • ${album.year}`
     }));
     setActiveItems(items);
     setLightboxIndex(initialImgIndex);
@@ -167,21 +168,42 @@ export default function PremiumGalleryViewer({
       {/* 1. Header & Breadcrumbs */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-100 pb-6">
         <div className="space-y-1">
-          <div className="flex items-center space-x-2 text-xs font-bold text-gray-400 uppercase tracking-widest">
-            <button onClick={handleBack} className="hover:text-[#004B23] transition-colors flex items-center">
+          <div className="flex items-center space-x-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+            <button 
+              onClick={() => { setViewMode('folders'); setCurrentFolder(null); }} 
+              className="hover:text-[#004B23] transition-colors flex items-center"
+            >
               <Home className="h-3 w-3 mr-1" />
-              Gallery
+              Media Gallery
             </button>
             {currentFolder && (
               <>
-                <ChevronRight className="h-3 w-3" />
-                <span className="text-[#004B23]">{currentFolder}</span>
+                <ChevronRight className="h-2 w-2" />
+                <button 
+                  onClick={() => setViewMode('folders')}
+                  className="hover:text-[#004B23] transition-colors"
+                >
+                  {currentFolder.includes('Regional') ? 'Regional' : 'Categories'}
+                </button>
+                <ChevronRight className="h-2 w-2" />
+                <span className="text-[#004B23] truncate max-w-[150px]">{currentFolder}</span>
               </>
             )}
           </div>
-          <h2 className="text-2xl md:text-3xl font-serif font-extrabold text-[#004B23]">
-            {currentFolder || 'Digital Archive Hub'}
-          </h2>
+          <div className="flex items-center space-x-3">
+            {currentFolder && (
+              <button 
+                onClick={handleBack}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors text-gray-500"
+                title="Go Back"
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </button>
+            )}
+            <h2 className="text-2xl md:text-3xl font-serif font-extrabold text-[#004B23]">
+              {currentFolder || 'Digital Archive Hub'}
+            </h2>
+          </div>
         </div>
 
         {/* Search Bar */}

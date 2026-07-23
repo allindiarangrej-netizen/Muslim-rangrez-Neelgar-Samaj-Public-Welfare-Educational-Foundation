@@ -2,9 +2,10 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence, useDragControls, PanInfo } from 'motion/react';
 import { 
   X, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, 
-  Play, Pause, Maximize, Minimize, Download, 
+  Play, Pause, Maximize2, Download, 
   Info, RotateCw, Share2, Image as ImageIcon,
-  Volume2, VolumeX, FastForward, Rewind
+  Volume2, VolumeX, FastForward, Rewind,
+  Video, MapPin
 } from 'lucide-react';
 import { resolveDriveUrl } from '../../lib/driveUtils';
 import SmartImage from './SmartImage';
@@ -41,10 +42,31 @@ export default function PremiumLightbox({
       setZoom(1);
       setRotation(0);
       document.body.style.overflow = 'hidden';
+      
+      // Push state to history so back button closes lightbox
+      window.history.pushState({ lightbox: true }, '');
     } else {
       document.body.style.overflow = '';
     }
   }, [initialIndex, isOpen]);
+
+  const handleClose = useCallback(() => {
+    if (window.history.state?.lightbox) {
+      window.history.back();
+    }
+    onClose();
+  }, [onClose]);
+
+  // Handle browser back button
+  useEffect(() => {
+    const handlePopState = (e: PopStateEvent) => {
+      if (isOpen) {
+        onClose();
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [isOpen, onClose]);
 
   useEffect(() => {
     if (slideshow && isOpen && items[index] && items[index].type === 'image') {
@@ -113,20 +135,20 @@ export default function PremiumLightbox({
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowRight') handleNext();
       if (e.key === 'ArrowLeft') handlePrev();
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') handleClose();
       if (e.key === 'f') toggleFullscreen();
       if (e.key === 'r') handleRotate();
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleNext, handlePrev, onClose]);
+  }, [handleNext, handlePrev, handleClose]);
 
   const handleDragEnd = (event: any, info: PanInfo) => {
     if (zoom > 1) return;
     const threshold = 100;
     if (info.offset.x < -threshold) handleNext();
     else if (info.offset.x > threshold) handlePrev();
-    else if (info.offset.y > threshold * 1.5) onClose();
+    else if (info.offset.y > threshold * 1.5) handleClose();
   };
 
   if (!isOpen || items.length === 0) return null;
@@ -143,33 +165,56 @@ export default function PremiumLightbox({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onWheel={handleWheel}
-        className="fixed inset-0 z-[100] bg-black flex flex-col select-none touch-none"
+        className="fixed inset-0 z-[150] bg-black/90 backdrop-blur-md flex flex-col select-none touch-none"
       >
-        {/* Top bar - More compact and translucent */}
-        <div className="absolute top-0 inset-x-0 h-16 flex items-center justify-between px-4 md:px-8 bg-gradient-to-b from-black/90 to-transparent text-white z-[70]">
+        {/* Top bar - Professional Metadata & Controls */}
+        <div className="absolute top-0 inset-x-0 h-20 flex items-center justify-between px-4 md:px-8 bg-gradient-to-b from-black/90 to-transparent text-white z-[70]">
           <div className="flex items-center space-x-4 overflow-hidden">
-            <div className="hidden sm:flex items-center justify-center w-10 h-10 bg-emerald-600 rounded-lg shadow-lg border border-emerald-500/50">
-              <ImageIcon className="h-5 w-5 text-white" />
+            <div className="hidden sm:flex items-center justify-center w-12 h-12 bg-white/10 rounded-xl backdrop-blur-md border border-white/10 shadow-lg">
+              {isVideo ? <Video className="h-6 w-6 text-[#F4C430]" /> : <ImageIcon className="h-6 w-6 text-[#F4C430]" />}
             </div>
             <div className="flex flex-col min-w-0">
-              <h3 className="font-bold text-sm md:text-base truncate">{currentItem.title || 'Digital Archive'}</h3>
-              <p className="text-[10px] md:text-xs text-gray-400 font-mono">
-                Item {index + 1} of {items.length} {currentItem.metadata && `• ${currentItem.metadata}`}
-              </p>
+              <div className="flex items-center space-x-2">
+                <h3 className="font-bold text-sm md:text-lg truncate tracking-tight">{currentItem.title || 'Digital Archive'}</h3>
+                <span className="hidden sm:inline-block px-2 py-0.5 bg-white/10 rounded text-[10px] font-bold text-[#F4C430] uppercase">
+                  {index + 1} / {items.length}
+                </span>
+              </div>
+              <div className="flex items-center space-x-3 text-[10px] md:text-xs text-gray-400 font-mono mt-0.5">
+                {currentItem.metadata && (
+                  <span className="flex items-center truncate">
+                    <MapPin className="h-3 w-3 mr-1 text-[#F4C430]" />
+                    {currentItem.metadata}
+                  </span>
+                )}
+                <span className="hidden sm:inline-block">• Permanent Heritage Record</span>
+              </div>
             </div>
           </div>
           
           <div className="flex items-center space-x-2 md:space-x-4">
             <div className="hidden md:flex items-center bg-white/10 rounded-full p-1 border border-white/5 mr-2">
-              <button onClick={() => setZoom(z => Math.max(1, z - 0.5))} className="p-1.5 hover:bg-white/10 rounded-full transition"><ZoomOut className="h-4 w-4" /></button>
+              <button onClick={() => setZoom(z => Math.max(1, z - 0.5))} className="p-1.5 hover:bg-white/10 rounded-full transition" title="Zoom Out"><ZoomOut className="h-4 w-4" /></button>
               <span className="text-[10px] font-bold w-10 text-center">{Math.round(zoom * 100)}%</span>
-              <button onClick={() => setZoom(z => Math.min(5, z + 0.5))} className="p-1.5 hover:bg-white/10 rounded-full transition"><ZoomIn className="h-4 w-4" /></button>
+              <button onClick={() => setZoom(z => Math.min(5, z + 0.5))} className="p-1.5 hover:bg-white/10 rounded-full transition" title="Zoom In"><ZoomIn className="h-4 w-4" /></button>
             </div>
 
-            <button onClick={handleRotate} className="p-2 hover:bg-white/10 rounded-full transition" title="Rotate"><RotateCw className="h-5 w-5" /></button>
+            <button onClick={handleRotate} className="p-2 hover:bg-white/10 rounded-full transition" title="Rotate (R)"><RotateCw className="h-5 w-5" /></button>
             <button onClick={handleDownload} className="p-2 hover:bg-white/10 rounded-full transition" title="Download"><Download className="h-5 w-5" /></button>
-            <button onClick={() => setShowInfo(!showInfo)} className="p-2 hover:bg-white/10 rounded-full transition" title="Info"><Info className={`h-5 w-5 ${showInfo ? 'text-[#F4C430]' : 'text-white'}`} /></button>
-            <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-full transition bg-white/10 border border-white/10 ml-2" title="Close"><X className="h-5 w-5" /></button>
+            <button 
+              onClick={() => setShowInfo(!showInfo)} 
+              className="p-2 hover:bg-white/10 rounded-full transition" 
+              title="Info"
+            >
+              <Info className={`h-5 w-5 ${showInfo ? 'text-[#F4C430]' : 'text-white'}`} />
+            </button>
+            <button 
+              onClick={handleClose} 
+              className="w-10 h-10 flex items-center justify-center bg-red-500/80 hover:bg-red-600 text-white rounded-xl transition shadow-lg ml-2" 
+              title="Close (Esc)"
+            >
+              <X className="h-6 w-6" />
+            </button>
           </div>
         </div>
 
