@@ -49,6 +49,7 @@ import VolunteerServiceHub from './components/VolunteerServiceHub';
 import WelfareSupportOverview from './components/WelfareSupportOverview';
 import HospitalNetworkPortal from './components/HospitalNetworkPortal';
 import BloodBankAndDonorsPortal from './components/BloodBankAndDonorsPortal';
+import CommunityServiceDetail from './components/CommunityServiceDetail';
 import AuthCallback from './components/AuthCallback';
 import { MapPin, Search, ExternalLink, Calendar, FileText, Info, HelpCircle } from 'lucide-react';
 import { jobListings, governmentSchemes, communityEvents } from './data';
@@ -874,6 +875,15 @@ export default function App() {
                 currentLanguage={currentLanguage}
                 activeSubTab={activeTab}
                 onNavigate={(tab) => setActiveTab(tab)}
+              />
+            )}
+
+            {/* Q. COMMUNITY SERVICE DETAILS */}
+            {activeTab.startsWith('service-detail-') && (
+              <CommunityServiceDetail 
+                serviceId={activeTab.replace('service-detail-', '')}
+                currentLanguage={currentLanguage}
+                onNavigate={setActiveTab}
               />
             )}
 

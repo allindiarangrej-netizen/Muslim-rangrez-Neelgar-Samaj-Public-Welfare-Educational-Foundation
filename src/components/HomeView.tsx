@@ -803,7 +803,7 @@ export default function HomeView({ currentLanguage, onNavigate }: HomeViewProps)
             
             {/* Card 1 */}
             <div 
-              onClick={() => onNavigate('education')}
+              onClick={() => onNavigate('service-detail-academic-support-it-literacy')}
               className="bg-white rounded-2xl border border-gray-100 hover:border-emerald-600/30 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group cursor-pointer"
             >
               <div className="p-8 space-y-4">
@@ -827,7 +827,7 @@ export default function HomeView({ currentLanguage, onNavigate }: HomeViewProps)
 
             {/* Card 2 */}
             <div 
-              onClick={() => onNavigate('welfare-support')}
+              onClick={() => onNavigate('service-detail-medical-assistance-blood-bank')}
               className="bg-white rounded-2xl border border-gray-100 hover:border-emerald-600/30 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group cursor-pointer"
             >
               <div className="p-8 space-y-4">
@@ -851,7 +851,7 @@ export default function HomeView({ currentLanguage, onNavigate }: HomeViewProps)
 
             {/* Card 3 */}
             <div 
-              onClick={() => onNavigate('matrimonial')}
+              onClick={() => onNavigate('service-detail-mass-marriage-reform')}
               className="bg-white rounded-2xl border border-gray-100 hover:border-emerald-600/30 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group cursor-pointer"
             >
               <div className="p-8 space-y-4">
@@ -875,7 +875,7 @@ export default function HomeView({ currentLanguage, onNavigate }: HomeViewProps)
 
             {/* Card 4 */}
             <div 
-              onClick={() => onNavigate('media')}
+              onClick={() => onNavigate('service-detail-traditional-textile-art')}
               className="bg-white rounded-2xl border border-gray-100 hover:border-emerald-600/30 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group cursor-pointer"
             >
               <div className="p-8 space-y-4">
@@ -899,7 +899,7 @@ export default function HomeView({ currentLanguage, onNavigate }: HomeViewProps)
 
             {/* Card 5 */}
             <div 
-              onClick={() => onNavigate('membership-census')}
+              onClick={() => onNavigate('service-detail-digital-id-census')}
               className="bg-white rounded-2xl border border-gray-100 hover:border-emerald-600/30 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group cursor-pointer"
             >
               <div className="p-8 space-y-4">
@@ -923,7 +923,7 @@ export default function HomeView({ currentLanguage, onNavigate }: HomeViewProps)
 
             {/* Card 6 */}
             <div 
-              onClick={() => onNavigate('schemes')}
+              onClick={() => onNavigate('service-detail-government-scheme-guidance')}
               className="bg-white rounded-2xl border border-gray-100 hover:border-emerald-600/30 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group cursor-pointer"
             >
               <div className="p-8 space-y-4">
