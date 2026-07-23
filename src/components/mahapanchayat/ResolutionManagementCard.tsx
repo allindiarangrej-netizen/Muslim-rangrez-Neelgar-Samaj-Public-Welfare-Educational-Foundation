@@ -285,17 +285,17 @@ export default function ResolutionManagementCard({
                 </span>
 
                 <div className="space-y-2">
-                  <a
-                    href="#"
-                    onClick={(e) => { e.preventDefault(); alert(getText('Downloading Official Gazette PDF (Certified copy with digital Sharia seal)...', 'आधिकारिक गजट PDF डाउनलोड हो रहा है...', 'باضابطہ گزٹ پی ڈی ایف ڈاؤن لوڈ ہو رہا ہے...')); }}
-                    className="flex items-center justify-between bg-gradient-to-r from-emerald-950 to-black p-3 rounded-xl border border-emerald-500/40 text-xs text-emerald-300 hover:border-emerald-400 transition"
+                  <button
+                    type="button"
+                    onClick={() => alert(getText('Downloading Official Gazette PDF (Certified copy with digital Sharia seal)...', 'आधिकारिक गजट PDF डाउनलोड हो रहा है...', 'باضابطہ گزٹ پی ڈی ایف ڈاؤن لوڈ ہو رہا ہے...'))}
+                    className="w-full text-left flex items-center justify-between bg-gradient-to-r from-emerald-950 to-black p-3 rounded-xl border border-emerald-500/40 text-xs text-emerald-300 hover:border-emerald-400 transition cursor-pointer"
                   >
                     <span className="flex items-center gap-2 font-bold">
                       <span className="text-lg">📜</span>
                       <span>{getText('Download Official Signed Gazette (PDF)', 'हस्ताक्षरित आधिकारिक गजट डाउनलोड करें (PDF)', 'باضابطہ دستخط شدہ گزٹ ڈاؤن لوڈ کریں (پی ڈی ایف)')}</span>
                     </span>
                     <ExternalLink className="h-4 w-4 text-[#F4C430]" />
-                  </a>
+                  </button>
 
                   {(resolution.supportingDocs || [
                     { name: 'Official_Dowry_Abolition_Gazette_2026.pdf', size: '4.2 MB', url: '#' },

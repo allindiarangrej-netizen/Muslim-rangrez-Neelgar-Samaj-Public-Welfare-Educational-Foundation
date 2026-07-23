@@ -802,7 +802,10 @@ export default function HomeView({ currentLanguage, onNavigate }: HomeViewProps)
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             
             {/* Card 1 */}
-            <div className="bg-white rounded-2xl border border-gray-100 hover:border-emerald-600/30 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
+            <div 
+              onClick={() => onNavigate('education')}
+              className="bg-white rounded-2xl border border-gray-100 hover:border-emerald-600/30 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group cursor-pointer"
+            >
               <div className="p-8 space-y-4">
                 <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center group-hover:scale-110 transition duration-300">
                   <GraduationCap className="h-6 w-6" />
@@ -823,7 +826,10 @@ export default function HomeView({ currentLanguage, onNavigate }: HomeViewProps)
             </div>
 
             {/* Card 2 */}
-            <div className="bg-white rounded-2xl border border-gray-100 hover:border-emerald-600/30 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
+            <div 
+              onClick={() => onNavigate('welfare-support')}
+              className="bg-white rounded-2xl border border-gray-100 hover:border-emerald-600/30 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group cursor-pointer"
+            >
               <div className="p-8 space-y-4">
                 <div className="w-12 h-12 rounded-xl bg-amber-50 text-[#F4C430] flex items-center justify-center group-hover:scale-110 transition duration-300">
                   <Heart className="h-6 w-6" />
@@ -844,7 +850,10 @@ export default function HomeView({ currentLanguage, onNavigate }: HomeViewProps)
             </div>
 
             {/* Card 3 */}
-            <div className="bg-white rounded-2xl border border-gray-100 hover:border-emerald-600/30 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
+            <div 
+              onClick={() => onNavigate('matrimonial')}
+              className="bg-white rounded-2xl border border-gray-100 hover:border-emerald-600/30 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group cursor-pointer"
+            >
               <div className="p-8 space-y-4">
                 <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center group-hover:scale-110 transition duration-300">
                   <Users className="h-6 w-6" />
@@ -865,7 +874,10 @@ export default function HomeView({ currentLanguage, onNavigate }: HomeViewProps)
             </div>
 
             {/* Card 4 */}
-            <div className="bg-white rounded-2xl border border-gray-100 hover:border-emerald-600/30 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
+            <div 
+              onClick={() => onNavigate('media')}
+              className="bg-white rounded-2xl border border-gray-100 hover:border-emerald-600/30 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group cursor-pointer"
+            >
               <div className="p-8 space-y-4">
                 <div className="w-12 h-12 rounded-xl bg-amber-50 text-[#F4C430] flex items-center justify-center group-hover:scale-110 transition duration-300">
                   <ImageIcon className="h-6 w-6" />
@@ -886,7 +898,10 @@ export default function HomeView({ currentLanguage, onNavigate }: HomeViewProps)
             </div>
 
             {/* Card 5 */}
-            <div className="bg-white rounded-2xl border border-gray-100 hover:border-emerald-600/30 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
+            <div 
+              onClick={() => onNavigate('membership-census')}
+              className="bg-white rounded-2xl border border-gray-100 hover:border-emerald-600/30 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group cursor-pointer"
+            >
               <div className="p-8 space-y-4">
                 <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center group-hover:scale-110 transition duration-300">
                   <QrCode className="h-6 w-6" />
@@ -907,7 +922,10 @@ export default function HomeView({ currentLanguage, onNavigate }: HomeViewProps)
             </div>
 
             {/* Card 6 */}
-            <div className="bg-white rounded-2xl border border-gray-100 hover:border-emerald-600/30 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group">
+            <div 
+              onClick={() => onNavigate('schemes')}
+              className="bg-white rounded-2xl border border-gray-100 hover:border-emerald-600/30 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group cursor-pointer"
+            >
               <div className="p-8 space-y-4">
                 <div className="w-12 h-12 rounded-xl bg-amber-50 text-[#F4C430] flex items-center justify-center group-hover:scale-110 transition duration-300">
                   <Landmark className="h-6 w-6" />
@@ -2091,12 +2109,16 @@ export default function HomeView({ currentLanguage, onNavigate }: HomeViewProps)
                     descHi: "कैलारस स्वास्थ्य शिविर में 450 से अधिक परिवारों की निशुल्क जांच कर आवश्यक दवाओं का वितरण किया गया।"
                   }
                 ].map((news, nIdx) => (
-                  <div key={nIdx} className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition space-y-2 text-left">
+                  <div 
+                    key={nIdx} 
+                    onClick={() => onNavigate('media-news')}
+                    className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition space-y-2 text-left cursor-pointer group"
+                  >
                     <div className="flex justify-between items-center text-[10px] text-gray-500 font-mono">
                       <span>{currentLanguage === 'en' ? news.sourceEn : news.sourceHi}</span>
                       <span>{news.date}</span>
                     </div>
-                    <h4 className="text-sm font-bold text-emerald-950 font-serif hover:text-[#004B23] transition cursor-pointer">
+                    <h4 className="text-sm font-bold text-emerald-950 font-serif group-hover:text-[#004B23] transition">
                       {currentLanguage === 'en' ? news.titleEn : news.titleHi}
                     </h4>
                     <p className="text-xs text-gray-600 leading-relaxed font-light">
@@ -2152,7 +2174,11 @@ export default function HomeView({ currentLanguage, onNavigate }: HomeViewProps)
                     badgeHi: "छात्र सम्मान"
                   }
                 ].map((e, idx) => (
-                  <div key={idx} className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition space-y-3 text-left">
+                  <div 
+                    key={idx} 
+                    onClick={() => onNavigate('media-events')}
+                    className="bg-white p-5 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition space-y-3 text-left cursor-pointer group"
+                  >
                     <div className="flex justify-between items-center">
                       <span className="px-2 py-0.5 bg-[#F4C430]/10 text-emerald-950 text-[9px] font-mono font-bold rounded">
                         {currentLanguage === 'en' ? e.badgeEn : e.badgeHi}
@@ -2160,7 +2186,7 @@ export default function HomeView({ currentLanguage, onNavigate }: HomeViewProps)
                       <span className="text-xs font-mono text-gray-500 font-bold">{e.date}</span>
                     </div>
                     
-                    <h4 className="text-sm font-bold text-emerald-950 font-serif">
+                    <h4 className="text-sm font-bold text-emerald-950 font-serif group-hover:text-[#004B23] transition">
                       {currentLanguage === 'en' ? e.titleEn : e.titleHi}
                     </h4>
 

@@ -83,11 +83,13 @@ const AchieverCard: React.FC<AchieverCardProps> = ({
   };
 
   return (
-    <a
+    <div
       id={achiever.id === 'ach-1' ? 'hall-of-excellence-achiever-card' : `hall-of-excellence-achiever-card-${achiever.id}`}
       data-testid="hall-of-excellence-achiever-card"
-      href="#"
-      onClick={(e) => { e.preventDefault(); onSelect(achiever); }}
+      role="button"
+      tabIndex={0}
+      onClick={() => onSelect(achiever)}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelect(achiever); } }}
       style={{ transition: 'transform 250ms ease-out, box-shadow 250ms ease-out, border-color 250ms ease-out, background-color 250ms ease-out' }}
       className={`group relative bg-white rounded-3xl border border-gray-200/90 shadow-md hover:shadow-2xl hover:shadow-[#004B23]/20 hover:scale-[1.03] hover:-translate-y-1 hover:border-[#004B23]/80 transition-[transform,box-shadow,border-color,background-color] duration-[250ms] ease-out flex flex-col justify-between overflow-hidden cursor-pointer transform select-none ${
         variant === 'featured' ? 'ring-1 ring-[#F4C430]/30' : ''
@@ -281,7 +283,7 @@ const AchieverCard: React.FC<AchieverCardProps> = ({
           </button>
         </div>
       </div>
-    </a>
+    </div>
   );
 };
 

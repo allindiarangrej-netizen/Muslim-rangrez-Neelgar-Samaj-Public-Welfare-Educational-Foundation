@@ -127,7 +127,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
       } else {
         // No active Supabase session, clear AuthService session
-        if (AuthService.getCurrentSession().role !== 'Visitor') {
+        const currentSession = AuthService.getCurrentSession();
+        if (currentSession && currentSession.role !== 'Visitor') {
           AuthService.logout();
         }
       }

@@ -179,6 +179,22 @@ import { getSupabase } from '../lib/supabaseClient';
 const SESSION_STORAGE_KEY = 'rcb_enterprise_auth_session';
 const REGISTERED_USERS_KEY = 'rcb_registered_users_mock';
 
+export const DEFAULT_VISITOR_SESSION: UserSession = {
+  id: 'guest_visitor',
+  name: 'Guest Visitor',
+  email: 'visitor@rangrezcommunity.org',
+  phone: '',
+  role: 'Visitor',
+  isEmailVerified: true,
+  isOtpVerified: true,
+  district: 'Gwalior',
+  state: 'Madhya Pradesh',
+  createdAt: new Date().toISOString(),
+  lastLoginAt: new Date().toISOString(),
+  token: 'guest_token_visitor_public_access',
+  permissions: ROLE_PERMISSIONS['Visitor']
+};
+
 export class AuthService {
   /**
    * Retrieves all mock registered users from local storage
@@ -200,7 +216,7 @@ export class AuthService {
    */
   static validateSession(): { valid: boolean; session: UserSession | null; reason?: string } {
     const session = this.getCurrentSession();
-    if (!session || !session.token) {
+    if (!session || session.role === 'Visitor' || !session.token) {
       return { valid: false, session: null, reason: 'No active session found.' };
     }
     const lastLogin = new Date(session.lastLoginAt || 0).getTime();
@@ -216,16 +232,19 @@ export class AuthService {
   /**
    * Retrieves the current active user session from local persistence
    */
-  static getCurrentSession(): UserSession | null {
+  static getCurrentSession(): UserSession {
     try {
       const stored = localStorage.getItem(SESSION_STORAGE_KEY);
       if (stored) {
-        return JSON.parse(stored);
+        const parsed = JSON.parse(stored);
+        if (parsed && typeof parsed === 'object' && parsed.role) {
+          return parsed;
+        }
       }
     } catch (e) {
       console.error('Failed to parse user session:', e);
     }
-    return null;
+    return DEFAULT_VISITOR_SESSION;
   }
 
   /**
