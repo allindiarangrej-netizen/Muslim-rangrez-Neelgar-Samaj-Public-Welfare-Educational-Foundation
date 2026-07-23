@@ -128,20 +128,20 @@ export default function NationalLeadership({ currentLanguage }: NationalLeadersh
       phone: '+91 98267 65857',
       socials: { whatsapp: 'https://wa.me/919826765857', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery', website: '#', twitter: '#', linkedin: '#' },
     },
-    {
-      id: 'leader_sumawali',
-      nameEn: 'Janab Abdur Rahman (Ballu Khan)',
-      nameHi: 'जनाब अब्दुर रहमान (बल्लू खान)',
-      designationEn: 'City President',
-      designationHi: 'शहर अध्यक्ष',
-      locationEn: 'Sumaoli, Morena, MP',
-      locationHi: 'सुमाओली, मुरैना, मध्य प्रदेश',
-      descriptionEn: 'Farmer. Dedicated to agriculture, education and social development.',
-      descriptionHi: 'किसान। कृषि, शिक्षा और सामाजिक विकास के लिए समर्पित।',
-      image: 'https://lh3.googleusercontent.com/d/1Ev6pTkxH-aT-97ikZE41FozmcGMDfUn9',
-      phone: '+91 70001 99484',
-      socials: { whatsapp: 'https://wa.me/917000199484', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery', website: '#', twitter: '#', linkedin: '#' },
-    },
+      {
+        id: 'leader_sumawali',
+        nameEn: 'Janab Abdur Rahman (Ballu Khan)',
+        nameHi: 'जनाब अब्दुर रहमान (बल्लू खान)',
+        designationEn: 'City President',
+        designationHi: 'शहर अध्यक्ष',
+        locationEn: 'Sumawali, Morena, MP',
+        locationHi: 'सुमावली, मुरैना, मध्य प्रदेश',
+        descriptionEn: 'Farmer. Dedicated to agriculture, education and social development.',
+        descriptionHi: 'किसान। कृषि, शिक्षा और सामाजिक विकास के लिए समर्पित।',
+        image: 'https://lh3.googleusercontent.com/d/1Ev6pTkxH-aT-97ikZE41FozmcGMDfUn9',
+        phone: '+91 70001 99484',
+        socials: { whatsapp: 'https://wa.me/917000199484', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery', website: '#', twitter: '#', linkedin: '#' },
+      },
     {
       id: 'leader_banmore',
       nameEn: 'Janab Jaan Mohammad Khan',
@@ -461,33 +461,46 @@ function LeaderCard({ leader, currentLanguage, index }: LeaderCardProps) {
       </div>
 
       {/* Complete Social Media Row */}
-      <div className="flex flex-wrap items-center justify-center gap-2 mb-6 z-10 px-2">
+      <div className="flex flex-wrap items-center justify-center gap-2 mb-6 z-10 px-2 min-h-[40px]">
         {[
-          { icon: <MessageSquare className="h-3.5 w-3.5" />, url: leader.socials.whatsapp, label: 'WhatsApp', color: 'hover:bg-green-500 hover:text-white' },
-          { icon: <Facebook className="h-3.5 w-3.5" />, url: leader.socials.facebook, label: 'Facebook', color: 'hover:bg-blue-600 hover:text-white' },
-          { icon: <Instagram className="h-3.5 w-3.5" />, url: leader.socials.instagram, label: 'Instagram', color: 'hover:bg-pink-600 hover:text-white' },
-          { icon: <Youtube className="h-3.5 w-3.5" />, url: leader.socials.youtube, label: 'YouTube', color: 'hover:bg-red-600 hover:text-white' },
-          { icon: <Twitter className="h-3.5 w-3.5" />, url: leader.socials.twitter, label: 'X (Twitter)', color: 'hover:bg-black hover:text-white' },
-          { icon: <Linkedin className="h-3.5 w-3.5" />, url: leader.socials.linkedin, label: 'LinkedIn', color: 'hover:bg-blue-700 hover:text-white' },
-          { icon: <Globe className="h-3.5 w-3.5" />, url: leader.socials.website, label: 'Website', color: 'hover:bg-emerald-600 hover:text-white' },
-          { icon: <Mail className="h-3.5 w-3.5" />, url: leader.email ? `mailto:${leader.email}` : undefined, label: 'Email', color: 'hover:bg-gray-800 hover:text-white' },
-          { icon: <Phone className="h-3.5 w-3.5" />, url: leader.phone ? `tel:${leader.phone}` : undefined, label: 'Phone', color: 'hover:bg-[#004B23] hover:text-white' },
-          { icon: <ImageIcon className="h-3.5 w-3.5" />, url: leader.socials.gallery, label: 'Gallery', color: 'hover:bg-[#F4C430] hover:text-emerald-950' }
+          { icon: <MessageSquare className="h-4 w-4" />, url: leader.socials.whatsapp, label: 'WhatsApp', color: 'hover:bg-green-500 hover:text-white', activeColor: 'text-green-600' },
+          { icon: <Facebook className="h-4 w-4" />, url: leader.socials.facebook, label: 'Facebook', color: 'hover:bg-blue-600 hover:text-white', activeColor: 'text-blue-600' },
+          { icon: <Instagram className="h-4 w-4" />, url: leader.socials.instagram, label: 'Instagram', color: 'hover:bg-pink-600 hover:text-white', activeColor: 'text-pink-600' },
+          { icon: <Youtube className="h-4 w-4" />, url: leader.socials.youtube, label: 'YouTube', color: 'hover:bg-red-600 hover:text-white', activeColor: 'text-red-600' },
+          { icon: <Twitter className="h-4 w-4" />, url: leader.socials.twitter, label: 'Twitter', color: 'hover:bg-black hover:text-white', activeColor: 'text-black' },
+          { icon: <Linkedin className="h-4 w-4" />, url: leader.socials.linkedin, label: 'LinkedIn', color: 'hover:bg-blue-700 hover:text-white', activeColor: 'text-blue-700' },
+          { icon: <Globe className="h-4 w-4" />, url: leader.socials.website, label: 'Website', color: 'hover:bg-emerald-600 hover:text-white', activeColor: 'text-emerald-600' },
+          { icon: <Mail className="h-4 w-4" />, url: leader.email ? `mailto:${leader.email}` : undefined, label: 'Email', color: 'hover:bg-gray-800 hover:text-white', activeColor: 'text-gray-800' },
+          { icon: <Phone className="h-4 w-4" />, url: leader.phone ? `tel:${leader.phone}` : undefined, label: 'Phone', color: 'hover:bg-[#004B23] hover:text-white', activeColor: 'text-[#004B23]' },
+          { icon: <ImageIcon className="h-4 w-4" />, url: leader.socials.gallery, label: 'Gallery', color: 'hover:bg-[#F4C430] hover:text-emerald-950', activeColor: 'text-[#F4C430]' }
         ].filter(soc => {
-          // Hide only if strictly empty or undefined. Allow '#' as it indicates intent to show.
-          return soc.url && soc.url !== '' && !(soc.label === 'Gallery' && soc.url === '#gallery');
-        }).map((soc, sIdx) => (
-          <a
-            key={sIdx}
-            href={soc.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={`${leader.nameEn} ${soc.label}`}
-            className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 shadow-sm bg-gray-100 text-emerald-900 ${soc.color}`}
-          >
-            {soc.icon}
-          </a>
-        ))}
+          return soc.url !== undefined && soc.url !== null && !(soc.label === 'Gallery' && soc.url === '#gallery');
+        }).map((soc, sIdx) => {
+          const isConfigured = soc.url && soc.url !== '#';
+          return (
+            <div key={sIdx} className="relative group/soc">
+              <a
+                href={isConfigured ? soc.url : undefined}
+                target={isConfigured ? "_blank" : undefined}
+                rel="noopener noreferrer"
+                onClick={(e) => !isConfigured && e.preventDefault()}
+                className={`w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 shadow-sm border ${
+                  isConfigured 
+                    ? `bg-white border-gray-100 ${soc.activeColor} ${soc.color}` 
+                    : 'bg-gray-50 border-gray-200 text-gray-300 cursor-not-allowed'
+                }`}
+                title={isConfigured ? soc.label : `${soc.label} not configured`}
+              >
+                {soc.icon}
+              </a>
+              {!isConfigured && (
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-[10px] rounded opacity-0 group-hover/soc:opacity-100 transition-opacity whitespace-nowrap pointer-events-none font-bold z-50">
+                   {soc.label} not configured
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
 
       {/* Leader Details */}
@@ -508,14 +521,14 @@ function LeaderCard({ leader, currentLanguage, index }: LeaderCardProps) {
             target="_blank"
             rel="noopener noreferrer"
             title={currentLanguage === 'en' ? 'Open in Google Maps' : 'गूगल मैप्स में खोलें'}
-            className="relative group/badge cursor-pointer block w-full max-w-[240px]"
+            className="relative group/badge cursor-pointer block w-full"
           >
             <div className="absolute -top-4 left-0 right-0 text-[8px] font-bold text-gray-400 uppercase tracking-widest text-center opacity-70 group-hover/badge:opacity-100 transition-opacity">
               {currentLanguage === 'en' ? 'Region' : 'क्षेत्र'}
             </div>
-            <div className="flex items-center justify-center space-x-2 bg-white/50 backdrop-blur-sm border-2 border-[#004B23]/20 shadow-sm rounded-2xl px-4 py-2 h-14 transition-all duration-300 group-hover/badge:bg-[#004B23] group-hover/badge:border-[#F4C430] group-hover/badge:shadow-lg">
-              <MapPin className="h-4 w-4 shrink-0 text-[#004B23] transition-colors duration-300 group-hover/badge:text-[#F4C430]" />
-              <span className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#004B23] transition-colors duration-300 group-hover/badge:text-white leading-tight line-clamp-2 text-center">
+            <div className="flex items-center justify-center space-x-2 bg-white/50 backdrop-blur-sm border-2 border-[#004B23]/20 shadow-sm rounded-2xl px-4 py-2 h-[64px] min-w-[220px] transition-all duration-300 group-hover/badge:bg-[#004B23] group-hover/badge:border-[#F4C430] group-hover/badge:shadow-lg">
+              <MapPin className="h-5 w-5 shrink-0 text-[#004B23] transition-colors duration-300 group-hover/badge:text-[#F4C430]" />
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#004B23] transition-colors duration-300 group-hover/badge:text-white leading-tight line-clamp-2 text-center">
                 {currentLanguage === 'en' ? leader.locationEn : leader.locationHi}
               </span>
             </div>

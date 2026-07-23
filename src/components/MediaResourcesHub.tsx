@@ -338,13 +338,16 @@ export default function MediaResourcesHub({
       <AnimatePresence>
         {activeAlbum && (
           <PremiumLightbox
-            images={activeAlbum.images}
+            items={activeAlbum.images.map((img: string) => ({
+              src: img,
+              type: 'image',
+              title: getText(activeAlbum.titleEn, activeAlbum.titleHi, activeAlbum.titleUr || activeAlbum.titleEn),
+              description: getText(activeAlbum.descriptionEn || activeAlbum.descEn, activeAlbum.descriptionHi || activeAlbum.descHi, activeAlbum.descriptionUr || activeAlbum.descEn),
+              metadata: `${activeAlbum.date || ''} • ${activeAlbum.venue || activeAlbum.location?.district || ''}`
+            }))}
             initialIndex={0}
             isOpen={!!activeAlbum}
             onClose={() => setActiveAlbum(null)}
-            title={getText(activeAlbum.titleEn, activeAlbum.titleHi, activeAlbum.titleUr || activeAlbum.titleEn)}
-            description={getText(activeAlbum.descriptionEn || activeAlbum.descEn, activeAlbum.descriptionHi || activeAlbum.descHi, activeAlbum.descriptionUr || activeAlbum.descEn)}
-            metadata={`${activeAlbum.date || ''} • ${activeAlbum.venue || activeAlbum.location?.district || ''}`}
           />
         )}
       </AnimatePresence>
@@ -1570,10 +1573,13 @@ export default function MediaResourcesHub({
         <PremiumLightbox
           isOpen={!!activeAlbum}
           onClose={() => setActiveAlbum(null)}
-          images={activeAlbum.images}
+          items={activeAlbum.images.map((img: string) => ({
+            src: img,
+            type: 'image',
+            title: currentLanguage === 'en' ? activeAlbum.titleEn : activeAlbum.titleHi,
+            metadata: `${activeAlbum.location.district}, ${activeAlbum.location.state} • ${activeAlbum.dateFormatted} • ${activeAlbum.eventType}`
+          }))}
           initialIndex={0}
-          title={currentLanguage === 'en' ? activeAlbum.titleEn : activeAlbum.titleHi}
-          metadata={`${activeAlbum.location.district}, ${activeAlbum.location.state} • ${activeAlbum.dateFormatted} • ${activeAlbum.eventType}`}
         />
       )}
     </div>

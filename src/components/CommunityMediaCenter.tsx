@@ -94,10 +94,13 @@ export default function CommunityMediaCenter({ currentLanguage }: CommunityMedia
         <PremiumLightbox
           isOpen={selectedImageIndex !== null}
           onClose={() => setSelectedImageIndex(null)}
-          images={filteredImages.map(img => img.url)}
+          items={filteredImages.map(img => ({
+            src: img.url,
+            type: 'image',
+            title: img.title,
+            metadata: img.region
+          }))}
           initialIndex={selectedImageIndex || 0}
-          title={selectedImageIndex !== null ? filteredImages[selectedImageIndex].title : ''}
-          metadata={selectedImageIndex !== null ? filteredImages[selectedImageIndex].region : ''}
         />
       </div>
     </div>
