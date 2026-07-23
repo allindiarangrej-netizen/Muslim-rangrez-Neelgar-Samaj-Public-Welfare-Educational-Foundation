@@ -47,28 +47,16 @@ interface UploadTask {
 
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml', 'image/avif'];
 const ALLOWED_VIDEO_TYPES = ['video/mp4', 'video/quicktime', 'video/x-msvideo', 'video/webm', 'video/x-matroska'];
-const APPROVED_ADMIN_EMAILS = [
-  'admin@rangrezcommunity.org',
-  'allindiarangrej@gmail.com',
-  'media@rangrezcommunity.org',
-  'trustee@rangrezcommunity.org'
-];
 
 export default function AdminMediaDashboard({ currentLanguage = 'en', onNavigate }: AdminMediaDashboardProps) {
-  // Authentication & Admin Verification
-  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState<boolean>(() => {
-    try {
-      const stored = localStorage.getItem('rcb_admin_media_session');
-      return stored === 'true';
-    } catch {
-      return false;
-    }
-  });
-
+  // Authentication
+  const [session, setSession] = useState<any>(null);
+  const [isAdminAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [adminEmail, setAdminEmail] = useState('');
   const [adminPasscode, setAdminPasscode] = useState('');
   const [authError, setAuthError] = useState('');
   const [isAuthLoading, setIsAuthLoading] = useState(false);
+  const [isAuthChecking, setIsAuthChecking] = useState(true);
 
   // Media Data & UI States
   const [mediaList, setMediaList] = useState<SupabaseMediaAsset[]>([]);
@@ -95,6 +83,30 @@ export default function AdminMediaDashboard({ currentLanguage = 'en', onNavigate
   const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const folderInputRef = useRef<HTMLInputElement>(null);
+
+  // Authentication Setup
+  useEffect(() => {
+    const supabase = getSupabase();
+    if (!supabase) {
+      setIsAuthChecking(false);
+      return;
+    }
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setIsAuthenticated(!!session);
+      setIsAuthChecking(false);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      setIsAuthenticated(!!session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   // Text helper
   const getText = (en: string, hi: string, ur?: string) => {
@@ -192,47 +204,36 @@ export default function AdminMediaDashboard({ currentLanguage = 'en', onNavigate
     setIsAuthLoading(true);
 
     const emailClean = adminEmail.trim().toLowerCase();
-    const isApprovedEmail = APPROVED_ADMIN_EMAILS.includes(emailClean) || emailClean.includes('admin') || emailClean.endsWith('@rangrezcommunity.org');
 
-    if (!emailClean) {
-      setAuthError('Please enter an authorized administrator email address.');
-      setIsAuthLoading(false);
-      return;
-    }
-
-    if (!isApprovedEmail && adminPasscode !== 'RangrezAdmin2026!' && adminPasscode !== 'admin123') {
-      setAuthError('Access Denied: Email is not authorized for Admin Media Management.');
-      setIsAuthLoading(false);
-      return;
-    }
-
-    // Check Supabase Auth if available
+    // Check Supabase Auth
     const supabase = getSupabase();
-    if (supabase && adminPasscode && adminPasscode.length >= 6) {
+    if (supabase) {
       try {
         const { data, error } = await supabase.auth.signInWithPassword({
           email: emailClean,
           password: adminPasscode
         });
+        
         if (error) {
-          console.warn('Supabase auth signin note:', error.message);
+          setAuthError(error.message);
+        } else if (data.session) {
+          showToast('Administrator Access Granted.', 'success');
         }
-      } catch (err) {
-        console.warn('Supabase auth attempt:', err);
+      } catch (err: any) {
+        setAuthError(err.message || 'An unexpected error occurred.');
       }
+    } else {
+      setAuthError('Supabase client not initialized.');
     }
-
-    // Grant Admin Access
-    localStorage.setItem('rcb_admin_media_session', 'true');
-    localStorage.setItem('rcb_admin_email', emailClean);
-    setIsAdminAuthenticated(true);
+    
     setIsAuthLoading(false);
-    showToast('Administrator Access Granted. Welcome to Supabase Media Hub.', 'success');
   };
 
-  const handleSignOutAdmin = () => {
-    localStorage.removeItem('rcb_admin_media_session');
-    setIsAdminAuthenticated(false);
+  const handleSignOutAdmin = async () => {
+    const supabase = getSupabase();
+    if (supabase) {
+      await supabase.auth.signOut();
+    }
     showToast('Signed out of Admin Media Dashboard.', 'info');
   };
 
@@ -329,7 +330,7 @@ export default function AdminMediaDashboard({ currentLanguage = 'en', onNavigate
           url: publicUrl,
           mime_type: file.type || (task.folder === 'videos' ? 'video/mp4' : 'image/jpeg'),
           size: file.size,
-          uploaded_by: localStorage.getItem('rcb_admin_email') || 'Super Administrator',
+          uploaded_by: session?.user?.email || 'Super Administrator',
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
           status: 'Active',
