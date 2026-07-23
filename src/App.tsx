@@ -50,6 +50,7 @@ import WelfareSupportOverview from './components/WelfareSupportOverview';
 import HospitalNetworkPortal from './components/HospitalNetworkPortal';
 import BloodBankAndDonorsPortal from './components/BloodBankAndDonorsPortal';
 import CommunityServiceDetail from './components/CommunityServiceDetail';
+import PremiumHero from './components/common/PremiumHero';
 import AuthCallback from './components/AuthCallback';
 import { MapPin, Search, ExternalLink, Calendar, FileText, Info, HelpCircle } from 'lucide-react';
 import { jobListings, governmentSchemes, communityEvents } from './data';
@@ -371,118 +372,112 @@ export default function App() {
             {/* C. COMMUNITY PORTAL MEGA PORTAL */}
             {(activeTab === 'membership-matrimonial' || activeTab === 'areas' || activeTab === 'portal' || activeTab === 'membership-register' || activeTab === 'membership-census' || activeTab === 'membership-tree' || activeTab === 'membership-id' || activeTab === 'matrimonial' || activeTab === 'matrimonial-second') && (
               <div id="community_view_wrapper" className="bg-white">
-                {/* Sub-Navigation Pills for Community Portal */}
-                <div className="bg-[#0B132B] text-white py-5 px-4 sm:px-6 border-b-2 border-[#D4AF37]">
-                  <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                    <div>
-                      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#004B23] border border-[#FFD54A]/40 text-[#FFD54A] text-xs font-bold uppercase tracking-wider mb-2">
-                        <span>👥</span>
-                        <span>{currentLanguage === 'en' ? 'UNIFIED COMMUNITY MEGA PORTAL' : currentLanguage === 'ur' ? 'متحدہ کمیونٹی میگا پورٹل' : 'एकीकृत सामुदायिक मेगा पोर्टल'}</span>
-                      </div>
-                      <h2 className="text-xl sm:text-2xl md:text-3xl font-serif font-extrabold text-white flex items-center gap-2.5 tracking-tight">
-                        <span>{currentLanguage === 'en' ? 'Community Portal Hub' : currentLanguage === 'ur' ? 'کمیونٹی پورٹل ہب' : 'सामुदायिक पोर्टल हब'}</span>
-                      </h2>
-                      <p className="text-xs sm:text-sm text-gray-300 mt-1 max-w-2xl">
-                        {currentLanguage === 'en' ? 'Unified platform combining community welfare, regional areas directory, member registration, digital ID, family tree census, and matrimonial services.' : currentLanguage === 'ur' ? 'کمیونٹی سروس، علاقائی ڈائریکٹری، رکن کا اندراج، ڈیجیٹل آئی ڈی، خاندانی شجرہ نسب اور شادی بیاہ کی خدمات کا متحدہ پلیٹ فارم۔' : 'सामुदायिक सेवा, क्षेत्रीय निर्देशिका, सदस्य पंजीकरण, डिजिटल पहचान पत्र, वंशावली और निकाह सेवाओं का एकीकृत मंच।'}
-                      </p>
-                    </div>
-                    <div className="flex flex-wrap items-center gap-2 w-full md:w-auto pt-2 md:pt-0">
-
-                      <button
-                        onClick={() => setActiveTab('areas')}
-                        className={`px-3 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
-                          activeTab === 'areas'
-                            ? 'bg-[#004B23] text-[#FFD54A] border-2 border-[#FFD54A] scale-105 shadow-md'
-                            : 'bg-[#142244] text-gray-200 hover:bg-[#1f3366] hover:text-[#FFD54A] border border-gray-700'
-                        }`}
-                      >
-                        <span>📍</span>
-                        <span>{currentLanguage === 'en' ? 'Areas Directory' : currentLanguage === 'ur' ? 'علاقے اور ڈائریکٹری' : 'क्षेत्रीय निर्देशिका'}</span>
-                      </button>
-                      <button
-                        onClick={() => setActiveTab('portal')}
-                        className={`px-3 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
-                          activeTab === 'portal'
-                            ? 'bg-[#004B23] text-[#FFD54A] border-2 border-[#FFD54A] scale-105 shadow-md'
-                            : 'bg-[#142244] text-gray-200 hover:bg-[#1f3366] hover:text-[#FFD54A] border border-gray-700'
-                        }`}
-                      >
-                        <span>📋</span>
-                        <span>{currentLanguage === 'en' ? 'Membership Dashboard' : currentLanguage === 'ur' ? 'رکنیت ڈیش بورڈ' : 'सदस्यता डैशबोर्ड'}</span>
-                      </button>
-                      <button
-                        onClick={() => setActiveTab('membership-register')}
-                        className={`px-3 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
-                          activeTab === 'membership-register'
-                            ? 'bg-[#004B23] text-[#FFD54A] border-2 border-[#FFD54A] scale-105 shadow-md'
-                            : 'bg-[#142244] text-gray-200 hover:bg-[#1f3366] hover:text-[#FFD54A] border border-gray-700'
-                        }`}
-                      >
-                        <span>✍️</span>
-                        <span>{currentLanguage === 'en' ? 'Registration' : currentLanguage === 'ur' ? 'رکن کا اندراج' : 'सदस्य पंजीकरण'}</span>
-                      </button>
-                      <button
-                        onClick={() => setActiveTab('membership-census')}
-                        className={`px-3 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
-                          activeTab === 'membership-census'
-                            ? 'bg-[#004B23] text-[#FFD54A] border-2 border-[#FFD54A] scale-105 shadow-md'
-                            : 'bg-[#142244] text-gray-200 hover:bg-[#1f3366] hover:text-[#FFD54A] border border-gray-700'
-                        }`}
-                      >
-                        <span>👨‍👩‍👧‍👦</span>
-                        <span>{currentLanguage === 'en' ? 'Family Census' : currentLanguage === 'ur' ? 'خاندانی مردم شماری' : 'पारिवारिक जनगणना'}</span>
-                      </button>
-                      <button
-                        onClick={() => setActiveTab('membership-tree')}
-                        className={`px-3 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
-                          activeTab === 'membership-tree'
-                            ? 'bg-[#004B23] text-[#FFD54A] border-2 border-[#FFD54A] scale-105 shadow-md'
-                            : 'bg-[#142244] text-gray-200 hover:bg-[#1f3366] hover:text-[#FFD54A] border border-gray-700'
-                        }`}
-                      >
-                        <span>🌳</span>
-                        <span>{currentLanguage === 'en' ? 'Family Tree' : currentLanguage === 'ur' ? 'خاندانی شجرہ' : 'वंशावली वृक्ष'}</span>
-                      </button>
-                      <button
-                        onClick={() => setActiveTab('membership-id')}
-                        className={`px-3 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
-                          activeTab === 'membership-id'
-                            ? 'bg-[#004B23] text-[#FFD54A] border-2 border-[#FFD54A] scale-105 shadow-md'
-                            : 'bg-[#142244] text-gray-200 hover:bg-[#1f3366] hover:text-[#FFD54A] border border-gray-700'
-                        }`}
-                      >
-                        <span>🪪</span>
-                        <span>{currentLanguage === 'en' ? 'Digital ID' : currentLanguage === 'ur' ? 'ڈیجیٹل آئی ڈی' : 'डिजिटल पहचान'}</span>
-                      </button>
-                      <button
-                        onClick={() => setActiveTab('matrimonial')}
-                        className={`px-3 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
-                          activeTab === 'matrimonial'
-                            ? 'bg-[#004B23] text-[#FFD54A] border-2 border-[#FFD54A] scale-105 shadow-md'
-                            : 'bg-[#142244] text-gray-200 hover:bg-[#1f3366] hover:text-[#FFD54A] border border-gray-700'
-                        }`}
-                      >
-                        <span>💍</span>
-                        <span>{currentLanguage === 'en' ? 'Matrimonial' : currentLanguage === 'ur' ? 'شادی بیاہ' : 'निकाह व शादी-ब्याह'}</span>
-                      </button>
-                      <button
-                        onClick={() => setActiveTab('matrimonial-second')}
-                        className={`px-3 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer relative overflow-hidden group ${
-                          activeTab === 'matrimonial-second'
-                            ? 'bg-gradient-to-r from-[#004B23] to-[#0D2418] text-[#FFD54A] border-2 border-[#FFD54A] scale-105 shadow-md'
-                            : 'bg-[#142244] text-amber-200 hover:bg-[#1f3366] hover:text-[#FFD54A] border border-[#D4AF37]/50'
-                        }`}
-                      >
-                        <span className="absolute -top-1 -right-1 flex h-2 w-2">
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                          <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
-                        </span>
-                        <span>✨</span>
-                        <span>{currentLanguage === 'en' ? 'Second Marriage ✨' : currentLanguage === 'ur' ? 'دوسری شادی ✨' : 'द्वितीय विवाह ✨'}</span>
-                      </button>
-                    </div>
+                <PremiumHero
+                  title={currentLanguage === 'en' ? 'Community Portal Hub' : currentLanguage === 'ur' ? 'کمیونٹی پورٹل ہب' : 'सामुदायिक पोर्टल हब'}
+                  subtitle={currentLanguage === 'en' ? 'Unified platform combining community welfare, regional areas directory, member registration, digital ID, family tree census, and matrimonial services.' : currentLanguage === 'ur' ? 'کمیونٹی سروس، علاقائی ڈائریکٹری، رکن کا اندراج، ڈیجیٹل آئی ڈی، خاندانی شجرہ نسب اور شادی بیاہ کی خدمات کا متحدہ پلیٹ فارم۔' : 'सामुदायिक सेवा, क्षेत्रीय निर्देशिका, सदस्य पंजीकरण, डिजिटल पहचान पत्र, वंशावली और निकाह सेवाओं का एकीकृत मंच।'}
+                  image="https://images.unsplash.com/photo-1511632765486-a01980e01a18?q=80&w=2070&auto=format&fit=crop"
+                  overlayColor="#0B132B"
+                  overlayOpacity={0.8}
+                  breadcrumb={[
+                    { label: currentLanguage === 'en' ? 'Home' : 'होम', action: () => setActiveTab('home') },
+                    { label: currentLanguage === 'en' ? 'Community' : 'समुदाय', action: () => {} }
+                  ]}
+                >
+                  <div className="flex flex-wrap items-center gap-2 w-full md:w-auto pt-2 md:pt-0">
+                    <button
+                      onClick={() => setActiveTab('areas')}
+                      className={`px-3 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
+                        activeTab === 'areas'
+                          ? 'bg-[#F4C430] text-[#004B23] border-2 border-[#FFD54A] scale-105 shadow-md'
+                          : 'bg-white/10 text-white hover:bg-white/20 border border-white/20'
+                      }`}
+                    >
+                      <span>📍</span>
+                      <span>{currentLanguage === 'en' ? 'Areas Directory' : currentLanguage === 'ur' ? 'علاقے اور ڈائریکٹری' : 'क्षेत्रीय निर्देशिका'}</span>
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('portal')}
+                      className={`px-3 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
+                        activeTab === 'portal'
+                          ? 'bg-[#F4C430] text-[#004B23] border-2 border-[#FFD54A] scale-105 shadow-md'
+                          : 'bg-white/10 text-white hover:bg-white/20 border border-white/20'
+                      }`}
+                    >
+                      <span>📋</span>
+                      <span>{currentLanguage === 'en' ? 'Membership Dashboard' : currentLanguage === 'ur' ? 'رکنیت ڈیش بورڈ' : 'सदस्यता डैशबोर्ड'}</span>
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('membership-register')}
+                      className={`px-3 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
+                        activeTab === 'membership-register'
+                          ? 'bg-[#F4C430] text-[#004B23] border-2 border-[#FFD54A] scale-105 shadow-md'
+                          : 'bg-white/10 text-white hover:bg-white/20 border border-white/20'
+                      }`}
+                    >
+                      <span>✍️</span>
+                      <span>{currentLanguage === 'en' ? 'Registration' : currentLanguage === 'ur' ? 'رکن کا اندراج' : 'सदस्य पंजीकरण'}</span>
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('membership-census')}
+                      className={`px-3 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
+                        activeTab === 'membership-census'
+                          ? 'bg-[#F4C430] text-[#004B23] border-2 border-[#FFD54A] scale-105 shadow-md'
+                          : 'bg-white/10 text-white hover:bg-white/20 border border-white/20'
+                      }`}
+                    >
+                      <span>👨‍👩‍👧‍👦</span>
+                      <span>{currentLanguage === 'en' ? 'Family Census' : currentLanguage === 'ur' ? 'خاندانی مردم شماری' : 'पारिवारिक जनगणना'}</span>
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('membership-tree')}
+                      className={`px-3 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
+                        activeTab === 'membership-tree'
+                          ? 'bg-[#F4C430] text-[#004B23] border-2 border-[#FFD54A] scale-105 shadow-md'
+                          : 'bg-white/10 text-white hover:bg-white/20 border border-white/20'
+                      }`}
+                    >
+                      <span>🌳</span>
+                      <span>{currentLanguage === 'en' ? 'Family Tree' : currentLanguage === 'ur' ? 'خاندانی شجرہ' : 'वंशावली वृक्ष'}</span>
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('membership-id')}
+                      className={`px-3 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
+                        activeTab === 'membership-id'
+                          ? 'bg-[#F4C430] text-[#004B23] border-2 border-[#FFD54A] scale-105 shadow-md'
+                          : 'bg-white/10 text-white hover:bg-white/20 border border-white/20'
+                      }`}
+                    >
+                      <span>🪪</span>
+                      <span>{currentLanguage === 'en' ? 'Digital ID' : currentLanguage === 'ur' ? 'ڈیجیٹل آئی ڈی' : 'डिजिटल पहचान'}</span>
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('matrimonial')}
+                      className={`px-3 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
+                        activeTab === 'matrimonial'
+                          ? 'bg-[#F4C430] text-[#004B23] border-2 border-[#FFD54A] scale-105 shadow-md'
+                          : 'bg-white/10 text-white hover:bg-white/20 border border-white/20'
+                      }`}
+                    >
+                      <span>💍</span>
+                      <span>{currentLanguage === 'en' ? 'Matrimonial' : currentLanguage === 'ur' ? 'شادی بیاہ' : 'निकाह व शादी-ब्याह'}</span>
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('matrimonial-second')}
+                      className={`px-3 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer relative overflow-hidden group ${
+                        activeTab === 'matrimonial-second'
+                          ? 'bg-gradient-to-r from-[#F4C430] to-[#D4AF37] text-[#004B23] border-2 border-[#FFD54A] scale-105 shadow-md'
+                          : 'bg-white/10 text-amber-200 hover:bg-white/20 border border-white/20'
+                      }`}
+                    >
+                      <span className="absolute -top-1 -right-1 flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                      </span>
+                      <span>✨</span>
+                      <span>{currentLanguage === 'en' ? 'Second Marriage ✨' : currentLanguage === 'ur' ? 'دوسری شادی ✨' : 'द्वितीय विवाह ✨'}</span>
+                    </button>
                   </div>
-                </div>
+                </PremiumHero>
 
                 {/* Module Rendering - Zero Data Loss */}
                 {activeTab === 'membership-matrimonial' && (
@@ -531,113 +526,64 @@ export default function App() {
             {/* G. EDUCATION, EXAMS & CAREERS */}
             {(activeTab === 'education' || activeTab === 'education-overview' || activeTab === 'education-hub' || activeTab === 'competitive-exams' || activeTab === 'jobs-careers' || activeTab === 'colleges-directory' || activeTab === 'scholarships' || activeTab === 'career-counselling' || activeTab === 'professional-colleges' || activeTab === 'medical-colleges' || activeTab === 'career-portal' || activeTab === 'career-opportunities' || activeTab === 'international-careers' || activeTab === 'legal-awareness') && (
               <div id="education_view_wrapper" className="bg-white">
-                {/* Sub-Navigation Pills for Education, Exams & Careers */}
-                <div className="bg-[#0B132B] text-white py-5 px-4 sm:px-6 border-b-2 border-[#D4AF37]">
-                  <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                    <div>
-                      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#004B23] border border-[#FFD54A]/40 text-[#FFD54A] text-xs font-bold uppercase tracking-wider mb-2">
-                        <span>🎓</span>
-                        <span>{currentLanguage === 'en' ? 'UNIFIED MEGA PORTAL' : currentLanguage === 'ur' ? 'متحدہ میگا پورٹل' : 'एकीकृत मेगा पोर्टल'}</span>
-                      </div>
-                      <h2 className="text-xl sm:text-2xl md:text-3xl font-serif font-extrabold text-white flex items-center gap-2.5 tracking-tight">
-                        <span>{currentLanguage === 'en' ? 'Education, Exams & Careers Hub' : currentLanguage === 'ur' ? 'تعلیم، امتحانات اور روزگار ہب' : 'तालीम, परीक्षा और करियर हब'}</span>
-                      </h2>
-                      <p className="text-xs sm:text-sm text-gray-300 mt-1 max-w-2xl">
-                        {currentLanguage === 'en' ? 'India’s one-stop educational ecosystem. Browse through 7 organized sub-portals covering school education, entrance exams, 19 college streams, scholarships, and 24/7 AI career counseling.' : currentLanguage === 'ur' ? 'تعلیم، امتحانات، 19 کالج شعبے، وظائف اور 24/7 کیریئر کونسلنگ کا مکمل اور منظم پورٹل۔' : 'भारत का एकीकृत शैक्षणिक इकोसिस्टम। स्कूली शिक्षा, प्रतियोगी परीक्षा, 19 कॉलेज स्ट्रीम, छात्रवृत्ति और 24/7 एआई करियर काउंसलिंग से जुड़े 7 व्यवस्थित सब-पोर्टल देखें।'}
-                      </p>
-                    </div>
-                    <div className="flex flex-wrap items-center gap-2 w-full md:w-auto pt-2 md:pt-0">
-                      <button
-                        onClick={() => setActiveTab('education')}
-                        className={`px-3.5 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
-                          activeTab === 'education' || activeTab === 'education-overview'
-                            ? 'bg-[#004B23] text-[#FFD54A] border-2 border-[#FFD54A] scale-105 shadow-md'
-                            : 'bg-[#142244] text-gray-200 hover:bg-[#1f3366] hover:text-[#FFD54A] border border-gray-700'
-                        }`}
-                      >
-                        <span>🌟</span>
-                        <span>{currentLanguage === 'en' ? '1. Overview' : currentLanguage === 'ur' ? '1. جائزہ' : '1. अवलोकन'}</span>
-                      </button>
-                      <button
-                        onClick={() => setActiveTab('education-hub')}
-                        className={`px-3.5 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
-                          activeTab === 'education-hub'
-                            ? 'bg-[#004B23] text-[#FFD54A] border-2 border-[#FFD54A] scale-105 shadow-md'
-                            : 'bg-[#142244] text-gray-200 hover:bg-[#1f3366] hover:text-[#FFD54A] border border-gray-700'
-                        }`}
-                      >
-                        <span>🏫</span>
-                        <span>{currentLanguage === 'en' ? '2. Education Hub' : currentLanguage === 'ur' ? '2. تعلیم ہب' : '2. शिक्षा हब'}</span>
-                      </button>
-                      <button
-                        onClick={() => setActiveTab('competitive-exams')}
-                        className={`px-3.5 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
-                          activeTab === 'competitive-exams' || activeTab === 'career-portal'
-                            ? 'bg-[#004B23] text-[#FFD54A] border-2 border-[#FFD54A] scale-105 shadow-md'
-                            : 'bg-[#142244] text-gray-200 hover:bg-[#1f3366] hover:text-[#FFD54A] border border-gray-700'
-                        }`}
-                      >
-                        <span>📝</span>
-                        <span>{currentLanguage === 'en' ? '3. Competitive Exams' : currentLanguage === 'ur' ? '3. امتحانات' : '3. प्रतियोगी परीक्षाएं'}</span>
-                      </button>
-                      <button
-                        onClick={() => setActiveTab('jobs-careers')}
-                        className={`px-3.5 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
-                          activeTab === 'jobs-careers' || activeTab === 'career-opportunities' || activeTab === 'international-careers'
-                            ? 'bg-[#004B23] text-[#FFD54A] border-2 border-[#FFD54A] scale-105 shadow-md'
-                            : 'bg-[#142244] text-gray-200 hover:bg-[#1f3366] hover:text-[#FFD54A] border border-gray-700'
-                        }`}
-                      >
-                        <span>💼</span>
-                        <span>{currentLanguage === 'en' ? '4. Jobs & Careers' : currentLanguage === 'ur' ? '4. ملازمتیں' : '4. नौकरियां व करियर'}</span>
-                      </button>
-                      <button
-                        onClick={() => setActiveTab('colleges-directory')}
-                        className={`px-3.5 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
-                          activeTab === 'colleges-directory' || activeTab === 'professional-colleges' || activeTab === 'medical-colleges'
-                            ? 'bg-[#004B23] text-[#FFD54A] border-2 border-[#FFD54A] scale-105 shadow-md'
-                            : 'bg-[#142244] text-gray-200 hover:bg-[#1f3366] hover:text-[#FFD54A] border border-gray-700'
-                        }`}
-                      >
-                        <span>🏛️</span>
-                        <span>{currentLanguage === 'en' ? '5. Colleges Directory' : currentLanguage === 'ur' ? '5. کالجز' : '5. कॉलेज निर्देशिका'}</span>
-                      </button>
-                      <button
-                        onClick={() => setActiveTab('scholarships')}
-                        className={`px-3.5 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
-                          activeTab === 'scholarships'
-                            ? 'bg-[#004B23] text-[#FFD54A] border-2 border-[#FFD54A] scale-105 shadow-md'
-                            : 'bg-[#142244] text-gray-200 hover:bg-[#1f3366] hover:text-[#FFD54A] border border-gray-700'
-                        }`}
-                      >
-                        <span>💰</span>
-                        <span>{currentLanguage === 'en' ? '6. Scholarships' : currentLanguage === 'ur' ? '6. اسکالرشپس' : '6. छात्रवृत्ति'}</span>
-                      </button>
-                      <button
-                        onClick={() => setActiveTab('career-counselling')}
-                        className={`px-3.5 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
-                          activeTab === 'career-counselling'
-                            ? 'bg-[#004B23] text-[#FFD54A] border-2 border-[#FFD54A] scale-105 shadow-md'
-                            : 'bg-[#142244] text-gray-200 hover:bg-[#1f3366] hover:text-[#FFD54A] border border-gray-700'
-                        }`}
-                      >
-                        <span>🧭</span>
-                        <span>{currentLanguage === 'en' ? '7. Counselling' : currentLanguage === 'ur' ? '7. کونسلنگ' : '7. काउंसलिंग'}</span>
-                      </button>
-                      <button
-                        onClick={() => setActiveTab('legal-awareness')}
-                        className={`px-3.5 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
-                          activeTab === 'legal-awareness'
-                            ? 'bg-[#004B23] text-[#FFD54A] border-2 border-[#FFD54A] scale-105 shadow-md'
-                            : 'bg-[#142244] text-gray-200 hover:bg-[#1f3366] hover:text-[#FFD54A] border border-gray-700'
-                        }`}
-                      >
-                        <span>⚖️</span>
-                        <span>{currentLanguage === 'en' ? '8. Legal Awareness' : currentLanguage === 'ur' ? '8. قانونی آگاہی' : '8. कानूनी जागरूकता'}</span>
-                      </button>
-                    </div>
+                <PremiumHero
+                  title={currentLanguage === 'en' ? 'Education & Career Hub' : currentLanguage === 'ur' ? 'تعلیم اور روزگار ہب' : 'शिक्षा और करियर हब'}
+                  subtitle={currentLanguage === 'en' ? 'India’s unified educational ecosystem. Explore school education, entrance exams, 19 college streams, and scholarships.' : currentLanguage === 'ur' ? 'تعلیم، امتحانات، کالج اور وظائف کا متحدہ پورٹل۔' : 'स्कूली शिक्षा, प्रतियोगी परीक्षा, कॉलेज और छात्रवृत्ति का एकीकृत मंच।'}
+                  image="https://images.unsplash.com/photo-1523050335191-51ff1895aa97?q=80&w=2070&auto=format&fit=crop"
+                  overlayColor="#0B132B"
+                  overlayOpacity={0.8}
+                  breadcrumb={[
+                    { label: currentLanguage === 'en' ? 'Home' : 'होम', action: () => setActiveTab('home') },
+                    { label: currentLanguage === 'en' ? 'Education' : 'शिक्षा', action: () => {} }
+                  ]}
+                >
+                  <div className="flex flex-wrap items-center gap-2 w-full md:w-auto pt-2 md:pt-0">
+                    <button
+                      onClick={() => setActiveTab('education')}
+                      className={`px-3 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
+                        activeTab === 'education' || activeTab === 'education-overview'
+                          ? 'bg-[#F4C430] text-[#004B23] border-2 border-[#FFD54A] scale-105 shadow-md'
+                          : 'bg-white/10 text-white hover:bg-white/20 border border-white/20'
+                      }`}
+                    >
+                      <span>🌟</span>
+                      <span>{currentLanguage === 'en' ? 'Overview' : 'अवलोकन'}</span>
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('education-hub')}
+                      className={`px-3 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
+                        activeTab === 'education-hub'
+                          ? 'bg-[#F4C430] text-[#004B23] border-2 border-[#FFD54A] scale-105 shadow-md'
+                          : 'bg-white/10 text-white hover:bg-white/20 border border-white/20'
+                      }`}
+                    >
+                      <span>🏫</span>
+                      <span>{currentLanguage === 'en' ? 'Hub' : 'हब'}</span>
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('competitive-exams')}
+                      className={`px-3 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
+                        activeTab === 'competitive-exams' || activeTab === 'career-portal'
+                          ? 'bg-[#F4C430] text-[#004B23] border-2 border-[#FFD54A] scale-105 shadow-md'
+                          : 'bg-white/10 text-white hover:bg-white/20 border border-white/20'
+                      }`}
+                    >
+                      <span>📝</span>
+                      <span>{currentLanguage === 'en' ? 'Exams' : 'परीक्षाएं'}</span>
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('jobs-careers')}
+                      className={`px-3 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
+                        activeTab === 'jobs-careers' || activeTab === 'career-opportunities' || activeTab === 'international-careers'
+                          ? 'bg-[#F4C430] text-[#004B23] border-2 border-[#FFD54A] scale-105 shadow-md'
+                          : 'bg-white/10 text-white hover:bg-white/20 border border-white/20'
+                      }`}
+                    >
+                      <span>💼</span>
+                      <span>{currentLanguage === 'en' ? 'Jobs' : 'नौकरियां'}</span>
+                    </button>
                   </div>
-                </div>
+                </PremiumHero>
 
                 {/* Module Rendering - Zero Data Loss */}
                 {(activeTab === 'education' || activeTab === 'education-overview') && (
@@ -668,133 +614,55 @@ export default function App() {
             )}
 
             {/* H. UNIFIED WELFARE, SCHEMES & SUPPORT MEGA PORTAL */}
-            {(activeTab === 'welfare-support' || activeTab === 'schemes' || activeTab === 'welfare-minority' || activeTab === 'welfare-scholarships' || activeTab === 'welfare-hospital' || activeTab === 'welfare-blood-bank' || activeTab === 'welfare-blood-donors' || activeTab === 'helplines' || activeTab === 'welfare-charity' || activeTab === 'donate') && (
+            {(activeTab === 'welfare-support' || activeTab === 'schemes' || activeTab === 'welfare-minority' || activeTab === 'welfare-scholarships' || activeTab === 'welfare-hospital' || activeTab === 'welfare-blood-bank' || activeTab === 'welfare-blood-donors' || activeTab === 'helplines' || activeTab === 'welfare-charity' || activeTab === 'donate' || activeTab === 'volunteer-service') && (
               <div id="welfare_support_mega_portal" className="bg-white">
-                {/* Sub-Navigation Pills for Welfare & Support */}
-                <div className="bg-[#0B132B] text-white py-5 px-4 sm:px-6 border-b-2 border-[#D4AF37]">
-                  <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                    <div>
-                      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#004B23] border border-[#FFD54A]/40 text-[#FFD54A] text-xs font-bold uppercase tracking-wider mb-2">
-                        <span>🤲</span>
-                        <span>{currentLanguage === 'en' ? 'UNIFIED WELFARE & SUPPORT PORTAL' : currentLanguage === 'ur' ? 'متحدہ فلاح و بہبود اور مدد پورٹل' : 'एकीकृत कल्याण एवं सहायता पोर्टल'}</span>
-                      </div>
-                      <h2 className="text-xl sm:text-2xl md:text-3xl font-serif font-extrabold text-white flex items-center gap-2.5 tracking-tight">
-                        <span>{currentLanguage === 'en' ? 'Welfare, Schemes, Helplines & Support Hub' : currentLanguage === 'ur' ? 'فلاح و بہبود، سرکاری اسکیمیں، ہیلپ لائن اور مدد ہب' : 'कल्याण, सरकारी योजनाएं, हेल्पलाइन और सहायता हब'}</span>
-                      </h2>
-                      <p className="text-xs sm:text-sm text-gray-300 mt-1 max-w-2xl">
-                        {currentLanguage === 'en' ? 'Unified hub combining government schemes, minority aid, scholarships, emergency helplines, hospital help, blood bank, charity, volunteering, and disaster relief.' : currentLanguage === 'ur' ? 'سرکاری اسکیمیں، اقلیتی امداد، اسکالرشپ، ایمرجنسی ہیلپ لائن، ہسپتال کی مدد، بلڈ بینک، خیرات، رضاکاری اور آفات میں ریلیف کا متحدہ مرکز۔' : 'सरकारी योजनाएं, अल्पसंख्यक सहायता, छात्रवृत्ति, आपातकालीन हेल्पलाइन, अस्पताल सहायता, ब्लड बैंक, दान, स्वयंसेवा और आपदा राहत का एकीकृत केंद्र।'}
-                      </p>
-                    </div>
-                    <div className="flex flex-wrap items-center gap-2 w-full md:w-auto pt-2 md:pt-0">
-                      <button
-                        onClick={() => setActiveTab('schemes')}
-                        className={`px-3 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
-                          activeTab === 'welfare-support' || activeTab === 'schemes'
-                            ? 'bg-[#004B23] text-[#FFD54A] border-2 border-[#FFD54A] scale-105 shadow-md'
-                            : 'bg-[#142244] text-gray-200 hover:bg-[#1f3366] hover:text-[#FFD54A] border border-gray-700'
-                        }`}
-                      >
-                        <span>🏛️</span>
-                        <span>{currentLanguage === 'en' ? 'Govt Schemes' : currentLanguage === 'ur' ? 'سرکاری اسکیمیں' : 'सरकारी योजनाएं'}</span>
-                      </button>
-                      <button
-                        onClick={() => setActiveTab('welfare-minority')}
-                        className={`px-3 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
-                          activeTab === 'welfare-minority'
-                            ? 'bg-[#004B23] text-[#FFD54A] border-2 border-[#FFD54A] scale-105 shadow-md'
-                            : 'bg-[#142244] text-gray-200 hover:bg-[#1f3366] hover:text-[#FFD54A] border border-gray-700'
-                        }`}
-                      >
-                        <span>🌟</span>
-                        <span>{currentLanguage === 'en' ? 'Minority Schemes' : currentLanguage === 'ur' ? 'اقلیتی اسکیمیں' : 'अल्पसंख्यक योजनाएं'}</span>
-                      </button>
-                      <button
-                        onClick={() => setActiveTab('welfare-scholarships')}
-                        className={`px-3 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
-                          activeTab === 'welfare-scholarships'
-                            ? 'bg-[#004B23] text-[#FFD54A] border-2 border-[#FFD54A] scale-105 shadow-md'
-                            : 'bg-[#142244] text-gray-200 hover:bg-[#1f3366] hover:text-[#FFD54A] border border-gray-700'
-                        }`}
-                      >
-                        <span>🎓</span>
-                        <span>{currentLanguage === 'en' ? 'Scholarships' : currentLanguage === 'ur' ? 'اسکالرشپ' : 'छात्रवृत्ति'}</span>
-                      </button>
-                      <button
-                        onClick={() => setActiveTab('welfare-hospital')}
-                        className={`px-3 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
-                          activeTab === 'welfare-hospital'
-                            ? 'bg-[#004B23] text-[#FFD54A] border-2 border-[#FFD54A] scale-105 shadow-md'
-                            : 'bg-[#142244] text-gray-200 hover:bg-[#1f3366] hover:text-[#FFD54A] border border-gray-700'
-                        }`}
-                      >
-                        <span>🏥</span>
-                        <span>{currentLanguage === 'en' ? 'Hospital Help' : currentLanguage === 'ur' ? 'ہسپتال کی مدد' : 'अस्पताल सहायता'}</span>
-                      </button>
-                      <button
-                        onClick={() => setActiveTab('welfare-blood-bank')}
-                        className={`px-3 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
-                          activeTab === 'welfare-blood-bank'
-                            ? 'bg-[#004B23] text-[#FFD54A] border-2 border-[#FFD54A] scale-105 shadow-md'
-                            : 'bg-[#142244] text-gray-200 hover:bg-[#1f3366] hover:text-[#FFD54A] border border-gray-700'
-                        }`}
-                      >
-                        <span>🩸</span>
-                        <span>{currentLanguage === 'en' ? 'Blood Bank' : currentLanguage === 'ur' ? 'بلڈ بینک' : 'ब्लड बैंक'}</span>
-                      </button>
-                      <button
-                        onClick={() => setActiveTab('welfare-blood-donors')}
-                        className={`px-3 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
-                          activeTab === 'welfare-blood-donors'
-                            ? 'bg-[#004B23] text-[#FFD54A] border-2 border-[#FFD54A] scale-105 shadow-md'
-                            : 'bg-[#142244] text-gray-200 hover:bg-[#1f3366] hover:text-[#FFD54A] border border-gray-700'
-                        }`}
-                      >
-                        <span>❤️</span>
-                        <span>{currentLanguage === 'en' ? 'Blood Donors' : currentLanguage === 'ur' ? 'خون عطیہ کرنے والے' : 'रक्तदाता'}</span>
-                      </button>
-                      <button
-                        onClick={() => setActiveTab('helplines')}
-                        className={`px-3 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
-                          activeTab === 'helplines'
-                            ? 'bg-[#004B23] text-[#FFD54A] border-2 border-[#FFD54A] scale-105 shadow-md'
-                            : 'bg-[#142244] text-gray-200 hover:bg-[#1f3366] hover:text-[#FFD54A] border border-gray-700'
-                        }`}
-                      >
-                        <span>📞</span>
-                        <span>{currentLanguage === 'en' ? 'Emergency Helplines' : currentLanguage === 'ur' ? 'ایمرجنسی ہیلپ لائن' : 'आपातकालीन हेल्पलाइन'}</span>
-                      </button>
-                      <button
-                        onClick={() => setActiveTab('welfare-charity')}
-                        className={`px-3 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
-                          activeTab === 'welfare-charity'
-                            ? 'bg-[#004B23] text-[#FFD54A] border-2 border-[#FFD54A] scale-105 shadow-md'
-                            : 'bg-[#142244] text-gray-200 hover:bg-[#1f3366] hover:text-[#FFD54A] border border-gray-700'
-                        }`}
-                      >
-                        <span>🤲</span>
-                        <span>{currentLanguage === 'en' ? 'Charity' : currentLanguage === 'ur' ? 'خیرات اور صدقہ' : 'खैरात व दान'}</span>
-                      </button>
-                      <button
-                        onClick={() => setActiveTab('donate')}
-                        className={`px-3 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
-                          activeTab === 'donate'
-                            ? 'bg-[#004B23] text-[#FFD54A] border-2 border-[#FFD54A] scale-105 shadow-md'
-                            : 'bg-[#142244] text-gray-200 hover:bg-[#1f3366] hover:text-[#FFD54A] border border-gray-700'
-                        }`}
-                      >
-                        <span>🎁</span>
-                        <span>{currentLanguage === 'en' ? 'Donations' : currentLanguage === 'ur' ? 'عطیات' : 'दान सहयोग'}</span>
-                      </button>
-                      <button
-                        onClick={() => setActiveTab('volunteer-service')}
-                        className="px-3 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer bg-[#142244] text-gray-200 hover:bg-[#1f3366] hover:text-[#FFD54A] border border-gray-700"
-                      >
-                        <span>🤝</span>
-                        <span>{currentLanguage === 'en' ? 'Community Service →' : currentLanguage === 'ur' ? 'کمیونٹی سروس →' : 'सामुदायिक सेवा →'}</span>
-                      </button>
-                    </div>
+                <PremiumHero
+                  title={currentLanguage === 'en' ? 'Welfare & Medical Portal' : currentLanguage === 'ur' ? 'فلاح و بہبود اور میڈیکل پورٹل' : 'कल्याण एवं चिकित्सा पोर्टल'}
+                  subtitle={currentLanguage === 'en' ? 'Connecting the community with healthcare support, emergency blood services, government schemes, and humanitarian aid.' : currentLanguage === 'ur' ? 'صحت کی سہولیات، بلڈ بینک، حکومتی اسکیموں اور انسانی ہمدردی کی بنیاد پر کمیونٹی کی مدد۔' : 'सामुदायिक स्वास्थ्य सहायता, ब्लड बैंक, सरकारी योजनाओं और मानवीय सहायता का एकीकृत केंद्र।'}
+                  image="https://images.unsplash.com/photo-1584515933487-779824d29309?q=80&w=2070&auto=format&fit=crop"
+                  overlayColor="#064E3B"
+                  overlayOpacity={0.8}
+                  breadcrumb={[
+                    { label: currentLanguage === 'en' ? 'Home' : 'होम', action: () => setActiveTab('home') },
+                    { label: currentLanguage === 'en' ? 'Welfare' : 'कल्याण', action: () => {} }
+                  ]}
+                >
+                  <div className="flex flex-wrap items-center gap-2 w-full md:w-auto pt-2 md:pt-0">
+                    <button
+                      onClick={() => setActiveTab('welfare-hospital')}
+                      className={`px-3 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
+                        activeTab === 'welfare-hospital'
+                          ? 'bg-[#F4C430] text-[#004B23] border-2 border-[#FFD54A] scale-105 shadow-md'
+                          : 'bg-white/10 text-white hover:bg-white/20 border border-white/20'
+                      }`}
+                    >
+                      <span>🏥</span>
+                      <span>{currentLanguage === 'en' ? 'Hospital' : 'अस्पताल'}</span>
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('welfare-blood-bank')}
+                      className={`px-3 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
+                        activeTab === 'welfare-blood-bank'
+                          ? 'bg-[#F4C430] text-[#004B23] border-2 border-[#FFD54A] scale-105 shadow-md'
+                          : 'bg-white/10 text-white hover:bg-white/20 border border-white/20'
+                      }`}
+                    >
+                      <span>🩸</span>
+                      <span>{currentLanguage === 'en' ? 'Blood Bank' : 'ब्लड बैंक'}</span>
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('helplines')}
+                      className={`px-3 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
+                        activeTab === 'helplines'
+                          ? 'bg-[#004B23] text-[#FFD54A] border-2 border-[#FFD54A] scale-105 shadow-md'
+                          : 'bg-white/10 text-white hover:bg-white/20 border border-white/20'
+                      }`}
+                    >
+                      <span>📞</span>
+                      <span>{currentLanguage === 'en' ? 'Helplines' : 'हेल्पलाइन'}</span>
+                    </button>
                   </div>
-                </div>
+                </PremiumHero>
 
                 {/* Module Rendering - Zero Data Loss */}
                 {activeTab === 'welfare-support' && (

@@ -40,11 +40,36 @@ export default function NationalLeadership({ currentLanguage }: NationalLeadersh
 
   // Leadership Profiles List - fully customizable by administrator
   const leaders: LeaderProfile[] = [
-    // 4. DISTRICT & REGIONAL PRESIDENTS
+    {
+      id: 'leader_gwalior_mufti',
+      nameEn: "Mufti Sirajuddin Isha'ati Sahab",
+      nameHi: 'मुफ्ती सिराजुद्दीन इशाती साहब',
+      designationEn: 'City President',
+      designationHi: 'शहर अध्यक्ष',
+      locationEn: 'Greater Gwalior, MP',
+      locationHi: 'ग्रेटर ग्वालियर, मध्य प्रदेश',
+      descriptionEn: 'Mufti, Aalim, Hafiz, Qari, Islamic Judge. Devoted to religious and social leadership.',
+      descriptionHi: 'मुफ्ती, आलिम, हाफिज, कारी, इस्लामिक जज। धार्मिक और सामाजिक नेतृत्व के लिए समर्पित।',
+      image: 'https://lh3.googleusercontent.com/d/1Y1WZyKPrZDIIB1a2hvofprnIpmmkb3hn',
+      socials: { whatsapp: '#', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery' },
+    },
+    {
+      id: 'leader_sabalgarh_shabbir',
+      nameEn: 'Janab Shabbir Baba',
+      nameHi: 'जनाब शब्बीर बाबा',
+      designationEn: 'City President',
+      designationHi: 'शहर अध्यक्ष',
+      locationEn: 'Baadi, District Dholpur, Rajasthan',
+      locationHi: 'बाड़ी, जिला धौलपुर, राजस्थान',
+      descriptionEn: 'Senior Social Worker. A respected social worker actively serving the community for many years.',
+      descriptionHi: 'वरिष्ठ समाज सेवक। एक सम्मानित समाज सेवक जो कई वर्षों से सक्रिय रूप से समुदाय की सेवा कर रहे हैं।',
+      image: 'https://lh3.googleusercontent.com/d/1xOL23KdlwLuESJsGwJfdca_TSHb2RrN5',
+      socials: { whatsapp: '#', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery' },
+    },
     {
       id: 'leader_morena_city',
-      nameEn: 'Janab Sahijad Khan Sikroda',
-      nameHi: 'जनाब सहिजाद खान सिकरौदा',
+      nameEn: 'Janab Sahjad Khan Sikaroda',
+      nameHi: 'जनाब शहजाद खान सिकरौदा',
       designationEn: 'City President',
       designationHi: 'शहर अध्यक्ष',
       locationEn: 'Morena City, MP',
@@ -54,6 +79,7 @@ export default function NationalLeadership({ currentLanguage }: NationalLeadersh
       image: 'https://lh3.googleusercontent.com/d/1YEFWWuLF_KFofFk3SliEvCu3IVHpE0VH',
       socials: { whatsapp: '#', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery' },
     },
+    // 4. DISTRICT & REGIONAL PRESIDENTS
     {
       id: 'leader_joura',
       nameEn: 'Janab Kallu Sarpanch Sahab',
@@ -117,19 +143,6 @@ export default function NationalLeadership({ currentLanguage }: NationalLeadersh
       descriptionEn: 'Businessman. Serving society through community leadership and welfare activities.',
       descriptionHi: 'व्यवसायी। सामुदायिक नेतृत्व और कल्याणकारी गतिविधियों के माध्यम से समाज की सेवा कर रहे हैं।',
       image: 'https://lh3.googleusercontent.com/d/1x3GaUNTUZ5S41xfWdycGGgvhgeQ_6AU3',
-      socials: { whatsapp: '#', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery' },
-    },
-    {
-      id: 'leader_gwalior_mufti',
-      nameEn: "Mufti Sirajuddin Isha'ati Sahab",
-      nameHi: 'मुफ्ती सिराजुद्दीन इशाती साहब',
-      designationEn: 'City President',
-      designationHi: 'शहर अध्यक्ष',
-      locationEn: 'Greater Gwalior, MP',
-      locationHi: 'ग्रेटर ग्वालियर, मध्य प्रदेश',
-      descriptionEn: 'Mufti, Aalim, Hafiz, Qari, Islamic Judge. Devoted to religious and social leadership.',
-      descriptionHi: 'मुफ्ती, आलिम, हाफिज, कारी, इस्लामिक जज। धार्मिक और सामाजिक नेतृत्व के लिए समर्पित।',
-      image: 'https://lh3.googleusercontent.com/d/1Y1WZyKPrZDIIB1a2hvofprnIpmmkb3hn',
       socials: { whatsapp: '#', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery' },
     },
     {
@@ -225,8 +238,8 @@ export default function NationalLeadership({ currentLanguage }: NationalLeadersh
     },
     {
       id: 'leader_dholpur',
-      nameEn: 'Raju Sir',
-      nameHi: 'राजू सर',
+      nameEn: 'Janab Raju Khan',
+      nameHi: 'जनाब राजू खान',
       designationEn: 'City President',
       designationHi: 'शहर अध्यक्ष',
       locationEn: 'Dholpur, Rajasthan',
@@ -234,19 +247,6 @@ export default function NationalLeadership({ currentLanguage }: NationalLeadersh
       descriptionEn: 'Teacher. Promoting education, social awareness and community welfare.',
       descriptionHi: 'शिक्षक। शिक्षा, सामाजिक जागरूकता और सामुदायिक कल्याण को बढ़ावा दे रहे हैं।',
       image: 'https://lh3.googleusercontent.com/d/1BxqOo6SScsQXLnuTA714pufjOch90Fz2',
-      socials: { whatsapp: '#', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery' },
-    },
-    {
-      id: 'leader_sabalgarh_shabbir',
-      nameEn: 'Janab Shabbir Baba',
-      nameHi: 'जनाब शब्बीर बाबा',
-      designationEn: 'City President',
-      designationHi: 'शहर अध्यक्ष',
-      locationEn: 'Sabalgarh, Morena, MP',
-      locationHi: 'सबलगढ़, मुरैना, मध्य प्रदेश',
-      descriptionEn: 'Senior Social Worker. A respected social worker actively serving the community for many years.',
-      descriptionHi: 'वरिष्ठ समाज सेवक। एक सम्मानित समाज सेवक जो कई वर्षों से सक्रिय रूप से समुदाय की सेवा कर रहे हैं।',
-      image: 'https://lh3.googleusercontent.com/d/1xOL23KdlwLuESJsGwJfdca_TSHb2RrN5',
       socials: { whatsapp: '#', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery' },
     },
     {
@@ -449,14 +449,21 @@ function LeaderCard({ leader, currentLanguage, index }: LeaderCardProps) {
           { icon: <Youtube className="h-3.5 w-3.5" />, url: leader.socials.youtube, label: 'YouTube', color: 'hover:bg-red-600 hover:text-white' },
           { icon: <ImageIcon className="h-3.5 w-3.5" />, url: leader.socials.gallery, label: 'Gallery', color: 'hover:bg-[#F4C430] hover:text-emerald-950' }
         ].map((soc, sIdx) => {
+          const isDisabled = !soc.url || soc.url === '#' || soc.url === '' || (soc.label === 'Gallery' && soc.url === '#gallery');
           return (
             <a
               key={sIdx}
-              href={soc.url}
-              target="_blank"
+              href={isDisabled ? undefined : soc.url}
+              onClick={isDisabled ? (e) => e.preventDefault() : undefined}
+              target={isDisabled ? undefined : "_blank"}
               rel="noreferrer"
               aria-label={`${leader.nameEn} ${soc.label}`}
-              className={`w-7 h-7 rounded-full bg-gray-100 text-emerald-900 flex items-center justify-center transition-all duration-300 ${soc.color} shadow-sm`}
+              title={isDisabled ? `${soc.label} not configured` : soc.label}
+              className={`w-7 h-7 rounded-full flex items-center justify-center transition-all duration-300 shadow-sm ${
+                isDisabled 
+                  ? 'bg-gray-50 text-gray-300 cursor-not-allowed opacity-50' 
+                  : `bg-gray-100 text-emerald-900 ${soc.color}`
+              }`}
             >
               {soc.icon}
             </a>

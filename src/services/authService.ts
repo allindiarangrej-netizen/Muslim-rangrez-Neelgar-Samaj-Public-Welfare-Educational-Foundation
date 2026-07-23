@@ -3,6 +3,8 @@
 // Supports Visitor, Member, Volunteer, Committee, Moderator, Super Administrator
 // ============================================================================
 
+import { getSupabase } from '../lib/supabaseClient';
+
 export type UserRole = 
   | 'Visitor' 
   | 'Member' 
@@ -173,8 +175,6 @@ export const ROLE_PERMISSIONS: Record<UserRole, string[]> = {
     'DEPLOYMENT_CONFIG_CONTROL'
   ]
 };
-
-import { getSupabase } from '../lib/supabaseClient';
 
 const SESSION_STORAGE_KEY = 'rcb_enterprise_auth_session';
 const REGISTERED_USERS_KEY = 'rcb_registered_users_mock';

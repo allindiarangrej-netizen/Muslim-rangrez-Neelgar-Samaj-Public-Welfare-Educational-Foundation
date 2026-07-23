@@ -110,43 +110,62 @@ export default function HomeView({ currentLanguage, onNavigate }: HomeViewProps)
       {/* ========================================== */}
       {/* HERO SECTION: CINEMATIC & TRADITIONAL      */}
       {/* ========================================== */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-b from-[#062413] via-[#09351C] to-[#041A0E] text-white py-20 px-4 sm:px-6 lg:px-8" id="hero_cinematic">
+      <section className="relative min-h-[95vh] flex items-center justify-center overflow-hidden bg-[#062413] text-white py-20 px-4 sm:px-6 lg:px-8" id="hero_cinematic">
         
-        {/* Elegant Animated Background Motion Particles */}
-        <div className="absolute inset-0 z-0 pointer-events-none">
-          {Array.from({ length: 15 }).map((_, i) => {
-            const size = Math.floor(Math.sin(i * 9) * 4) + 8;
-            const left = (i * 7) % 100;
-            const top = (i * 13) % 100;
-            const duration = Math.abs(Math.cos(i * 12)) * 12 + 10;
-            return (
-              <motion.div
-                key={i}
-                className="absolute rounded-full bg-[#F4C430]/15"
-                style={{
-                  width: size,
-                  height: size,
-                  left: `${left}%`,
-                  top: `${top}%`,
-                }}
-                animate={{
-                  y: ['0px', '-100px', '0px'],
-                  x: ['0px', '20px', '0px'],
-                  opacity: [0.1, 0.4, 0.1],
-                }}
-                transition={{
-                  duration: duration,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                  delay: i * 0.3,
-                }}
-              />
-            );
-          })}
+        {/* Premium Background Visuals */}
+        <div className="absolute inset-0 z-0 overflow-hidden">
+          {/* Subtle Ambient Video */}
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="absolute min-w-full min-h-full w-auto h-auto top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 object-cover opacity-40 mix-blend-overlay"
+          >
+            <source src="https://assets.mixkit.co/videos/preview/mixkit-hands-planting-a-small-tree-in-the-soil-42211-large.mp4" type="video/mp4" />
+          </video>
+          
+          {/* Multi-layered Gradients for Depth */}
+          <div className="absolute inset-0 bg-gradient-to-br from-[#062413] via-transparent to-[#041A0E] opacity-60"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-[#041A0E] via-transparent to-transparent"></div>
+          
+          {/* Particle Effects */}
+          <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#F4C430_1px,transparent_1px)] [background-size:32px_32px]"></div>
+          
+          {/* Elegant Animated Background Motion Particles */}
+          <div className="absolute inset-0 z-0 pointer-events-none">
+            {Array.from({ length: 20 }).map((_, i) => {
+              const size = Math.floor(Math.sin(i * 9) * 4) + 6;
+              const left = (i * 5) % 100;
+              const top = (i * 17) % 100;
+              const duration = Math.abs(Math.cos(i * 12)) * 15 + 15;
+              return (
+                <motion.div
+                  key={i}
+                  className="absolute rounded-full bg-[#F4C430]/20 blur-[1px]"
+                  style={{
+                    width: size,
+                    height: size,
+                    left: `${left}%`,
+                    top: `${top}%`,
+                  }}
+                  animate={{
+                    y: ['0px', '-150px', '0px'],
+                    x: ['0px', '40px', '0px'],
+                    opacity: [0.1, 0.5, 0.1],
+                    scale: [1, 1.2, 1],
+                  }}
+                  transition={{
+                    duration: duration,
+                    repeat: Infinity,
+                    ease: 'linear',
+                    delay: i * 0.5,
+                  }}
+                />
+              );
+            })}
+          </div>
         </div>
-
-        {/* Animated Background Grid Overlay */}
-        <div className="absolute inset-0 z-0 opacity-15 bg-[radial-gradient(#F4C430_1px,transparent_1px)] [background-size:24px_24px]"></div>
         
         {/* Islamic Arch Border Silhouette Overlay */}
         <div className="absolute inset-0 z-0 pointer-events-none flex items-center justify-center opacity-10">
@@ -802,15 +821,17 @@ export default function HomeView({ currentLanguage, onNavigate }: HomeViewProps)
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             
             {/* Card 1 */}
-            <div 
+            <motion.div 
+              whileHover={{ y: -8, scale: 1.02, rotateX: 2, rotateY: -1 }}
+              transition={{ type: 'spring', stiffness: 300 }}
               onClick={() => onNavigate('service-detail-academic-support-it-literacy')}
-              className="bg-white rounded-2xl border border-gray-100 hover:border-emerald-600/30 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group cursor-pointer"
+              className="bg-white rounded-2xl border border-gray-100 hover:border-emerald-600/30 overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 flex flex-col justify-between group cursor-pointer"
             >
               <div className="p-8 space-y-4">
-                <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center group-hover:scale-110 transition duration-300">
+                <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300">
                   <GraduationCap className="h-6 w-6" />
                 </div>
-                <h3 className="text-lg font-serif font-bold text-emerald-950 group-hover:text-emerald-800 transition duration-300">
+                <h3 className="text-lg font-serif font-bold text-emerald-950 group-hover:text-emerald-700 transition duration-300">
                   {currentLanguage === 'en' ? 'Academic Support & IT Literacy' : 'उच्च शिक्षा स्कॉलरशिप व कंप्यूटर साक्षरता'}
                 </h3>
                 <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
@@ -819,22 +840,26 @@ export default function HomeView({ currentLanguage, onNavigate }: HomeViewProps)
                     : 'ब्लॉक कार्यालयों में डिजिटल आईटी लैब की स्थापना और कंप्यूटर कोर्सेज को प्रायोजित करना ताकि युवा पीढ़ी को तकनीकी कौशल और रोजगार मिल सके।'}
                 </p>
               </div>
-              <div className="px-8 py-4 bg-gray-50 border-t border-gray-100/50 flex justify-between items-center">
+              <div className="px-8 py-4 bg-gray-50 border-t border-gray-100/50 flex justify-between items-center group-hover:bg-emerald-50/30 transition-colors">
                 <span className="text-xs text-emerald-800 font-bold">{currentLanguage === 'en' ? 'Learn More' : 'विस्तार से जानें'}</span>
-                <ArrowRight className="h-4 w-4 text-emerald-600 group-hover:translate-x-1 transition-transform" />
+                <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-all">
+                  <ArrowRight className="h-4 w-4 transition-transform" />
+                </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Card 2 */}
-            <div 
+            <motion.div 
+              whileHover={{ y: -8, scale: 1.02, rotateX: 2, rotateY: 1 }}
+              transition={{ type: 'spring', stiffness: 300 }}
               onClick={() => onNavigate('service-detail-medical-assistance-blood-bank')}
-              className="bg-white rounded-2xl border border-gray-100 hover:border-emerald-600/30 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group cursor-pointer"
+              className="bg-white rounded-2xl border border-gray-100 hover:border-emerald-600/30 overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 flex flex-col justify-between group cursor-pointer"
             >
               <div className="p-8 space-y-4">
-                <div className="w-12 h-12 rounded-xl bg-amber-50 text-[#F4C430] flex items-center justify-center group-hover:scale-110 transition duration-300">
+                <div className="w-12 h-12 rounded-xl bg-amber-50 text-[#F4C430] flex items-center justify-center group-hover:bg-[#F4C430] group-hover:text-white transition-all duration-300">
                   <Heart className="h-6 w-6" />
                 </div>
-                <h3 className="text-lg font-serif font-bold text-emerald-950 group-hover:text-emerald-800 transition duration-300">
+                <h3 className="text-lg font-serif font-bold text-emerald-950 group-hover:text-emerald-700 transition duration-300">
                   {currentLanguage === 'en' ? 'Medical Assistance & Blood Bank' : 'चिकित्सा सहायता और ब्लड डोनर सूची'}
                 </h3>
                 <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
@@ -843,22 +868,26 @@ export default function HomeView({ currentLanguage, onNavigate }: HomeViewProps)
                     : 'गंभीर बीमारियों व सर्जरी के लिए आपातकालीन वित्तीय चिकित्सा सहायता कोष और सत्यापित रक्तदाताओं की राष्ट्रीय डिजिटल निर्देशिका का संचालन।'}
                 </p>
               </div>
-              <div className="px-8 py-4 bg-gray-50 border-t border-gray-100/50 flex justify-between items-center">
+              <div className="px-8 py-4 bg-gray-50 border-t border-gray-100/50 flex justify-between items-center group-hover:bg-amber-50/30 transition-colors">
                 <span className="text-xs text-emerald-800 font-bold">{currentLanguage === 'en' ? 'Learn More' : 'विस्तार से जानें'}</span>
-                <ArrowRight className="h-4 w-4 text-emerald-600 group-hover:translate-x-1 transition-transform" />
+                <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center group-hover:bg-[#F4C430] group-hover:text-white transition-all">
+                  <ArrowRight className="h-4 w-4 transition-transform" />
+                </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Card 3 */}
-            <div 
+            <motion.div 
+              whileHover={{ y: -8, scale: 1.02, rotateX: 1, rotateY: -2 }}
+              transition={{ type: 'spring', stiffness: 300 }}
               onClick={() => onNavigate('service-detail-mass-marriage-reform')}
-              className="bg-white rounded-2xl border border-gray-100 hover:border-emerald-600/30 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group cursor-pointer"
+              className="bg-white rounded-2xl border border-gray-100 hover:border-emerald-600/30 overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 flex flex-col justify-between group cursor-pointer"
             >
               <div className="p-8 space-y-4">
-                <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center group-hover:scale-110 transition duration-300">
+                <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300">
                   <Users className="h-6 w-6" />
                 </div>
-                <h3 className="text-lg font-serif font-bold text-emerald-950 group-hover:text-emerald-800 transition duration-300">
+                <h3 className="text-lg font-serif font-bold text-emerald-950 group-hover:text-emerald-700 transition duration-300">
                   {currentLanguage === 'en' ? 'Mass Marriage & Reform Counseling' : 'सामूहिक आदर्श निकाह एवं सामाजिक सुधार'}
                 </h3>
                 <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
@@ -867,22 +896,26 @@ export default function HomeView({ currentLanguage, onNavigate }: HomeViewProps)
                     : 'गरीब व मध्यमवर्गीय परिवारों को ब्याज के बोझ तले दबने से बचाने के लिए सामूहिक आदर्श विवाहों का गरिमामयी आयोजन व मार्गदर्शन करना।'}
                 </p>
               </div>
-              <div className="px-8 py-4 bg-gray-50 border-t border-gray-100/50 flex justify-between items-center">
+              <div className="px-8 py-4 bg-gray-50 border-t border-gray-100/50 flex justify-between items-center group-hover:bg-emerald-50/30 transition-colors">
                 <span className="text-xs text-emerald-800 font-bold">{currentLanguage === 'en' ? 'Learn More' : 'विस्तार से जानें'}</span>
-                <ArrowRight className="h-4 w-4 text-emerald-600 group-hover:translate-x-1 transition-transform" />
+                <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-all">
+                  <ArrowRight className="h-4 w-4 transition-transform" />
+                </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Card 4 */}
-            <div 
+            <motion.div 
+              whileHover={{ y: -8, scale: 1.02, rotateX: -1, rotateY: 2 }}
+              transition={{ type: 'spring', stiffness: 300 }}
               onClick={() => onNavigate('service-detail-traditional-textile-art')}
-              className="bg-white rounded-2xl border border-gray-100 hover:border-emerald-600/30 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group cursor-pointer"
+              className="bg-white rounded-2xl border border-gray-100 hover:border-emerald-600/30 overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 flex flex-col justify-between group cursor-pointer"
             >
               <div className="p-8 space-y-4">
-                <div className="w-12 h-12 rounded-xl bg-amber-50 text-[#F4C430] flex items-center justify-center group-hover:scale-110 transition duration-300">
+                <div className="w-12 h-12 rounded-xl bg-amber-50 text-[#F4C430] flex items-center justify-center group-hover:bg-[#F4C430] group-hover:text-white transition-all duration-300">
                   <ImageIcon className="h-6 w-6" />
                 </div>
-                <h3 className="text-lg font-serif font-bold text-emerald-950 group-hover:text-emerald-800 transition duration-300">
+                <h3 className="text-lg font-serif font-bold text-emerald-950 group-hover:text-emerald-700 transition duration-300">
                   {currentLanguage === 'en' ? 'Preserving Traditional Textile Art' : 'पारंपरिक नीलगर ब्लॉक प्रिंटिंग कला संरक्षण'}
                 </h3>
                 <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
@@ -891,22 +924,26 @@ export default function HomeView({ currentLanguage, onNavigate }: HomeViewProps)
                     : 'नीलगर समुदाय के पुश्तैनी ब्लॉक प्रिंटिंग व हस्तनिर्मित इंडिगो रंगाई हुनर को वैश्विक बाजारों से जोड़कर कारीगरों को आत्मनिर्भर बनाना।'}
                 </p>
               </div>
-              <div className="px-8 py-4 bg-gray-50 border-t border-gray-100/50 flex justify-between items-center">
+              <div className="px-8 py-4 bg-gray-50 border-t border-gray-100/50 flex justify-between items-center group-hover:bg-amber-50/30 transition-colors">
                 <span className="text-xs text-emerald-800 font-bold">{currentLanguage === 'en' ? 'Learn More' : 'विस्तार से जानें'}</span>
-                <ArrowRight className="h-4 w-4 text-emerald-600 group-hover:translate-x-1 transition-transform" />
+                <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center group-hover:bg-[#F4C430] group-hover:text-white transition-all">
+                  <ArrowRight className="h-4 w-4 transition-transform" />
+                </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Card 5 */}
-            <div 
+            <motion.div 
+              whileHover={{ y: -8, scale: 1.02, rotateX: -2, rotateY: -1 }}
+              transition={{ type: 'spring', stiffness: 300 }}
               onClick={() => onNavigate('service-detail-digital-id-census')}
-              className="bg-white rounded-2xl border border-gray-100 hover:border-emerald-600/30 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group cursor-pointer"
+              className="bg-white rounded-2xl border border-gray-100 hover:border-emerald-600/30 overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 flex flex-col justify-between group cursor-pointer"
             >
               <div className="p-8 space-y-4">
-                <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center group-hover:scale-110 transition duration-300">
+                <div className="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300">
                   <QrCode className="h-6 w-6" />
                 </div>
-                <h3 className="text-lg font-serif font-bold text-emerald-950 group-hover:text-emerald-800 transition duration-300">
+                <h3 className="text-lg font-serif font-bold text-emerald-950 group-hover:text-emerald-700 transition duration-300">
                   {currentLanguage === 'en' ? 'Digital ID Cards & Census Registry' : 'डिजिटल पहचान पत्र एवं जनगणना डेटाबेस'}
                 </h3>
                 <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
@@ -915,22 +952,26 @@ export default function HomeView({ currentLanguage, onNavigate }: HomeViewProps)
                     : 'समाज के प्रत्येक सदस्य को सुरक्षित डिजिटल पहचान पत्र प्रदान करना और जरूरतमंदों की पहचान हेतु जनगणना सूचकांक का संकलन करना।'}
                 </p>
               </div>
-              <div className="px-8 py-4 bg-gray-50 border-t border-gray-100/50 flex justify-between items-center">
+              <div className="px-8 py-4 bg-gray-50 border-t border-gray-100/50 flex justify-between items-center group-hover:bg-emerald-50/30 transition-colors">
                 <span className="text-xs text-emerald-800 font-bold">{currentLanguage === 'en' ? 'Learn More' : 'विस्तार से जानें'}</span>
-                <ArrowRight className="h-4 w-4 text-emerald-600 group-hover:translate-x-1 transition-transform" />
+                <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center group-hover:bg-emerald-600 group-hover:text-white transition-all">
+                  <ArrowRight className="h-4 w-4 transition-transform" />
+                </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Card 6 */}
-            <div 
+            <motion.div 
+              whileHover={{ y: -8, scale: 1.02, rotateX: -2, rotateY: 2 }}
+              transition={{ type: 'spring', stiffness: 300 }}
               onClick={() => onNavigate('service-detail-government-scheme-guidance')}
-              className="bg-white rounded-2xl border border-gray-100 hover:border-emerald-600/30 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group cursor-pointer"
+              className="bg-white rounded-2xl border border-gray-100 hover:border-emerald-600/30 overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 flex flex-col justify-between group cursor-pointer"
             >
               <div className="p-8 space-y-4">
-                <div className="w-12 h-12 rounded-xl bg-amber-50 text-[#F4C430] flex items-center justify-center group-hover:scale-110 transition duration-300">
+                <div className="w-12 h-12 rounded-xl bg-amber-50 text-[#F4C430] flex items-center justify-center group-hover:bg-[#F4C430] group-hover:text-white transition-all duration-300">
                   <Landmark className="h-6 w-6" />
                 </div>
-                <h3 className="text-lg font-serif font-bold text-emerald-950 group-hover:text-emerald-800 transition duration-300">
+                <h3 className="text-lg font-serif font-bold text-emerald-950 group-hover:text-emerald-700 transition duration-300">
                   {currentLanguage === 'en' ? 'Government Scheme Guidance' : 'सरकारी अल्पसंख्यक योजनाओं का मार्गदर्शन'}
                 </h3>
                 <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
@@ -939,11 +980,13 @@ export default function HomeView({ currentLanguage, onNavigate }: HomeViewProps)
                     : 'राष्ट्रीय अल्पसंख्यक कल्याण विभाग, छात्रवृत्ति और कौशल विकास अनुदान योजनाओं के लिए हमारे सूचना केंद्रों द्वारा निःशुल्क मार्गदर्शन।'}
                 </p>
               </div>
-              <div className="px-8 py-4 bg-gray-50 border-t border-gray-100/50 flex justify-between items-center">
+              <div className="px-8 py-4 bg-gray-50 border-t border-gray-100/50 flex justify-between items-center group-hover:bg-amber-50/30 transition-colors">
                 <span className="text-xs text-emerald-800 font-bold">{currentLanguage === 'en' ? 'Learn More' : 'विस्तार से जानें'}</span>
-                <ArrowRight className="h-4 w-4 text-emerald-600 group-hover:translate-x-1 transition-transform" />
+                <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center group-hover:bg-[#F4C430] group-hover:text-white transition-all">
+                  <ArrowRight className="h-4 w-4 transition-transform" />
+                </div>
               </div>
-            </div>
+            </motion.div>
 
           </div>
 
