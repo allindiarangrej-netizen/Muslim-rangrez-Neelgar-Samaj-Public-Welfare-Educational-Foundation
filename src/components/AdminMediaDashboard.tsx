@@ -92,17 +92,38 @@ export default function AdminMediaDashboard({ currentLanguage = 'en', onNavigate
       return;
     }
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setIsAuthenticated(!!session);
+    const checkAuthStatus = async (currentSession: any) => {
+      setSession(currentSession);
+      if (currentSession?.user) {
+        const email = currentSession.user.email?.toLowerCase() || '';
+        const { data: profile } = await supabase
+          .from('member_profiles')
+          .select('role, status')
+          .eq('user_id', currentSession.user.id)
+          .maybeSingle();
+
+        const role = profile?.role || currentSession.user.user_metadata?.role || '';
+        const isAuthorizedAdmin = email === 'allindiarangrej@gmail.com' || email === 'admin@rangrezcommunity.org' || role.includes('Admin') || role === 'Super Administrator';
+        
+        if (isAuthorizedAdmin && profile?.status !== 'Suspended' && profile?.status !== 'Disabled') {
+          setIsAuthenticated(true);
+        } else {
+          setIsAuthenticated(false);
+        }
+      } else {
+        setIsAuthenticated(false);
+      }
       setIsAuthChecking(false);
+    };
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      checkAuthStatus(session);
     });
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setIsAuthenticated(!!session);
+      checkAuthStatus(session);
     });
 
     return () => subscription.unsubscribe();
@@ -207,23 +228,55 @@ export default function AdminMediaDashboard({ currentLanguage = 'en', onNavigate
 
     // Check Supabase Auth
     const supabase = getSupabase();
-    if (supabase) {
-      try {
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email: emailClean,
-          password: adminPasscode
-        });
-        
-        if (error) {
-          setAuthError(error.message);
-        } else if (data.session) {
-          showToast('Administrator Access Granted.', 'success');
-        }
-      } catch (err: any) {
-        setAuthError(err.message || 'An unexpected error occurred.');
+    if (!supabase) {
+      setAuthError('Supabase client not initialized. Please configure VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
+      setIsAuthLoading(false);
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: emailClean,
+        password: adminPasscode
+      });
+      
+      if (error) {
+        setAuthError(`Authentication Failed: ${error.message}`);
+        setIsAuthLoading(false);
+        return;
       }
-    } else {
-      setAuthError('Supabase client not initialized.');
+
+      if (data.user) {
+        // Check authorization (Admin role or super admin email)
+        const { data: profile } = await supabase
+          .from('member_profiles')
+          .select('role, status')
+          .eq('user_id', data.user.id)
+          .maybeSingle();
+
+        const role = profile?.role || data.user.user_metadata?.role || 'Member';
+        const isSuperAdminEmail = emailClean === 'allindiarangrej@gmail.com' || emailClean === 'admin@rangrezcommunity.org';
+        const hasAdminRole = role.includes('Admin') || role === 'Super Administrator';
+
+        if (!isSuperAdminEmail && !hasAdminRole) {
+          await supabase.auth.signOut();
+          setAuthError(`Authentication succeeded for ${emailClean}, but authorization failed: User does not have Administrator privileges (Assigned Role: ${role}).`);
+          setIsAuthLoading(false);
+          return;
+        }
+
+        if (profile?.status === 'Suspended' || profile?.status === 'Disabled') {
+          await supabase.auth.signOut();
+          setAuthError(`Authentication succeeded, but authorization failed: Account status is ${profile.status}.`);
+          setIsAuthLoading(false);
+          return;
+        }
+
+        showToast('Administrator Access Granted.', 'success');
+        setIsAuthenticated(true);
+      }
+    } catch (err: any) {
+      setAuthError(err.message || 'An unexpected error occurred during authentication.');
     }
     
     setIsAuthLoading(false);
