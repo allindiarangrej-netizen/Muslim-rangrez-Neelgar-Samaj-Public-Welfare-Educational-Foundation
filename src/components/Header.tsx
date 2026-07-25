@@ -123,6 +123,7 @@ export default function Header({
         { id: 'colleges-directory', labelEn: '5. Colleges Directory', labelHi: '5. कॉलेज निर्देशिका', labelUr: '5. کالجز ڈائریکٹری' },
         { id: 'scholarships', labelEn: '6. Scholarships', labelHi: '6. छात्रवृत्ति (स्कॉलरशिप)', labelUr: '6. اسکالرشپس' },
         { id: 'career-counselling', labelEn: '7. Career Counselling', labelHi: '7. करियर काउंसलिंग', labelUr: '7. کیریئر کونسلنگ' },
+        { id: 'education-gallery', labelEn: '8. 📸 Education HD Image Gallery (508 Photos)', labelHi: '8. 📸 शिक्षा एचडी फोटो गैलरी (508 चित्र)', labelUr: '8. 📸 تعلیمی ایچ ڈی گیلری (508 تصاویر)' },
       ]
     },
     {

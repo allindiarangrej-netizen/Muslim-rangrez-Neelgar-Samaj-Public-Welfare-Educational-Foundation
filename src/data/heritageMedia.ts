@@ -1,4 +1,5 @@
 import { IMAGES, VIDEOS } from './mediaRegistry';
+import { educationGalleryUrls } from './educationGalleryImages';
 
 export interface HeritageAlbum {
   id: string;
@@ -74,6 +75,30 @@ export const eventCategories = [
 ];
 
 export const initialHeritageAlbums: HeritageAlbum[] = [
+  {
+    "id": "alb_central_education_library",
+    "titleEn": "Central Care Point & Education Image Vault",
+    "titleHi": "केंद्रीय केयर पॉइंट एवं शिक्षा डिजिटल फोटो संग्रह",
+    "eventType": "Education Programs",
+    "category": "Event Albums",
+    "location": {
+      "state": "Madhya Pradesh",
+      "district": "Morena",
+      "tehsil": "Kailaras",
+      "village": "Care Point Classes Kailaras"
+    },
+    "date": "2025-06-22",
+    "year": 2025,
+    "photographerEn": "Care Point Media Cell",
+    "photographerHi": "केयर पॉइंट मीडिया सेल",
+    "uploadedBy": "Education Committee Admin",
+    "images": educationGalleryUrls,
+    "descriptionEn": "Comprehensive central image repository documenting Care Point Classes, educational seminars, NEET/IIT foundation batches, community reform consultations, and student achievement ceremonies.",
+    "descriptionHi": "केयर पॉइंट क्लासेज, शैक्षणिक सेमिनार, नीट/आईआईटी फाउंडेशन बैचों, सामुदायिक सुधार बैठकों और छात्र उपलब्धि समारोहों को दर्शाने वाला संपूर्ण केंद्रीय डिजिटल फोटो संग्रह।",
+    "views": 320,
+    "likes": 140,
+    "featured": true
+  },
   {
     "id": "alb_samiksha_meeting_joura_2026",
     "titleEn": "Samiksha Meeting (Review meeting)",

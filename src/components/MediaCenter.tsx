@@ -23,6 +23,7 @@ import {
   eventCategories 
 } from '../data/heritageMedia';
 import PremiumGalleryViewer from './gallery/PremiumGalleryViewer';
+import EducationGalleryShowcase from './common/EducationGalleryShowcase';
 
 interface MediaCenterProps {
   currentLanguage: Language;
@@ -175,6 +176,9 @@ export default function MediaCenter({ currentLanguage, defaultCategory = 'Photo 
             </button>
           </div>
         </div>
+
+        {/* ================= CENTRAL EDUCATION IMAGE LIBRARY SHOWCASE ================= */}
+        <EducationGalleryShowcase currentLanguage={currentLanguage} />
 
         {/* ================= PREMIUM GALLERY VIEWER HUB ================= */}
         <div className="bg-white p-4 md:p-8 rounded-[2.5rem] border border-gray-150 shadow-2xl relative overflow-hidden">

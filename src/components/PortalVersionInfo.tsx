@@ -36,7 +36,29 @@ import {
 
 interface PortalVersionInfoProps {
   currentLanguage: 'en' | 'hi' | 'ur';
+  onNavigate?: (tabId: string) => void;
 }
+
+const getRouteForHighlight = (id: string) => {
+  switch (id) {
+    case 'comm': return 'community';
+    case 'mem': return 'membership';
+    case 'fam_reg': return 'family';
+    case 'fam_tree': return 'family-tree';
+    case 'dig_id': return 'digital-id';
+    case 'matri': return 'matrimonial';
+    case 'second_mar': return 'second-marriage';
+    case 'comm_srv': return 'community-service';
+    case 'edu_car': return 'education';
+    case 'schol': return 'scholarships';
+    case 'gov_sch': return 'schemes';
+    case 'welf': return 'welfare';
+    case 'panch': return 'mahapanchayat';
+    case 'media': return 'media';
+    case 'iqra': return 'iqra-ai';
+    default: return 'home';
+  }
+};
 
 /**
  * ============================================================================
@@ -176,7 +198,7 @@ const PORTAL_VERSION_CONFIG = {
   ]
 };
 
-export default function PortalVersionInfo({ currentLanguage }: PortalVersionInfoProps) {
+export default function PortalVersionInfo({ currentLanguage, onNavigate }: PortalVersionInfoProps) {
   const [activeTab, setActiveTab] = useState<'overview' | 'notes' | 'roadmap'>('overview');
   const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -455,10 +477,23 @@ export default function PortalVersionInfo({ currentLanguage }: PortalVersionInfo
               {PORTAL_VERSION_CONFIG.highlights.map((item) => {
                 const IconComponent = item.icon;
                 const isGold = item.isGold;
+                const targetRoute = getRouteForHighlight(item.id);
                 return (
                   <div
                     key={item.id}
-                    className={`p-3.5 rounded-2xl border transition-all duration-300 flex items-center gap-3 cursor-pointer hover:scale-105 hover:shadow-lg ${
+                    onClick={() => {
+                      if (onNavigate) onNavigate(targetRoute);
+                    }}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        if (onNavigate) onNavigate(targetRoute);
+                      }
+                    }}
+                    title={`Launch ${item.labelEn}`}
+                    className={`p-3.5 rounded-2xl border transition-all duration-300 flex items-center gap-3 cursor-pointer hover:scale-105 active:scale-95 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-[#004B23] ${
                       isGold
                         ? 'bg-gradient-to-r from-[#004B23] to-[#0A2E1C] text-white border-[#FFD54A] shadow-md group'
                         : 'bg-white hover:bg-slate-50 text-gray-800 border-gray-200 hover:border-[#004B23]'

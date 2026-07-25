@@ -13,6 +13,7 @@ import AnimatedCommunityStats from './AnimatedCommunityStats';
 import NationalLeadership from './NationalLeadership';
 import SuccessStories from './SuccessStories';
 import CommunityHighlightsGallery from './CommunityHighlightsGallery';
+import EducationalExcellenceGallery from './EducationalExcellenceGallery';
 
 interface HomeViewProps {
   currentLanguage: Language;
@@ -2090,6 +2091,12 @@ export default function HomeView({ currentLanguage, onNavigate }: HomeViewProps)
 
         </div>
       </section>
+
+
+      {/* ========================================== */}
+      {/* NEW: EDUCATIONAL EXCELLENCE SCROLLING ROW */}
+      {/* ========================================== */}
+      <EducationalExcellenceGallery currentLanguage={currentLanguage} onNavigate={onNavigate} />
 
 
       {/* ========================================== */}

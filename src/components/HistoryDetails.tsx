@@ -273,14 +273,32 @@ export default function HistoryDetails({ currentLanguage }: HistoryDetailsProps)
     window.print();
   };
 
+  const getLocalizedTitle = (ch: any) => {
+    if (!ch || !ch.title) return '';
+    if (typeof ch.title === 'string') return ch.title;
+    return ch.title[currentLanguage] || ch.title.en || Object.values(ch.title)[0] || '';
+  };
+
+  const getLocalizedSubtitle = (ch: any) => {
+    if (!ch || !ch.subtitle) return '';
+    if (typeof ch.subtitle === 'string') return ch.subtitle;
+    return ch.subtitle[currentLanguage] || ch.subtitle.en || Object.values(ch.subtitle)[0] || '';
+  };
+
+  const getLocalizedContent = (ch: any) => {
+    if (!ch || !ch.content) return '';
+    if (typeof ch.content === 'string') return ch.content;
+    return ch.content[currentLanguage] || ch.content.en || Object.values(ch.content)[0] || '';
+  };
+
   // Filtered chapters for the Encyclopedia tab
   const filteredChapters = useMemo(() => {
     if (!searchQuery.trim()) return historyContent;
     const q = searchQuery.toLowerCase();
     return historyContent.filter(ch => {
-      const title = ch.title[currentLanguage].toLowerCase();
-      const subtitle = ch.subtitle[currentLanguage].toLowerCase();
-      const content = ch.content[currentLanguage].toLowerCase();
+      const title = getLocalizedTitle(ch).toLowerCase();
+      const subtitle = getLocalizedSubtitle(ch).toLowerCase();
+      const content = getLocalizedContent(ch).toLowerCase();
       const chapterNum = ch.chapter.toLowerCase();
       return title.includes(q) || subtitle.includes(q) || content.includes(q) || chapterNum.includes(q);
     });
@@ -396,7 +414,16 @@ export default function HistoryDetails({ currentLanguage }: HistoryDetailsProps)
       </div>
 
       {/* Sub-Navigation Tabs inside History */}
-      <div className="bg-white p-2 rounded-2xl border border-gray-200 shadow-sm flex flex-wrap items-center justify-start sm:justify-center gap-1.5 overflow-x-auto">
+      <div 
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '12px',
+          overflowX: 'hidden',
+          justifyContent: 'flex-start',
+        }}
+        className="bg-white p-4 sm:p-6 rounded-2xl border border-gray-200 shadow-sm"
+      >
         {[
           { id: 'chapters', labelEn: 'Complete History (15 Chapters)', labelHi: 'संपूर्ण इतिहास (15 अध्याय)', labelUr: 'مکمل تاریخ (15 باب)', icon: BookOpen },
           { id: 'timeline', labelEn: 'Historical Timeline & Milestones', labelHi: 'ऐतिहासिक समयरेखा एवं पड़ाव', labelUr: 'تاریخی ٹائم لائن', icon: Clock },
@@ -410,14 +437,17 @@ export default function HistoryDetails({ currentLanguage }: HistoryDetailsProps)
             <button
               key={tab.id}
               onClick={() => setActiveSubTab(tab.id as any)}
-              className={`px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition flex items-center gap-2 whitespace-nowrap cursor-pointer ${
+              style={{
+                width: 'calc(50% - 6px)',
+              }}
+              className={`sm:w-[calc(33.333%-8px)] lg:w-[calc(20%-10px)] px-4 py-3 rounded-xl font-bold text-xs sm:text-sm transition flex items-center justify-center gap-2 cursor-pointer ${
                 isActive
-                  ? 'bg-[#004B23] text-[#FFD54A] shadow-md border border-[#FFD54A]/40'
-                  : 'bg-transparent text-gray-600 hover:bg-gray-100'
+                  ? 'bg-[#004B23] text-[#FFD54A] shadow-lg border border-[#FFD54A]/40'
+                  : 'bg-gray-50 text-gray-700 hover:bg-emerald-50 hover:text-[#004B23] border border-gray-200'
               }`}
             >
-              <IconComponent className={`w-4 h-4 ${isActive ? 'text-[#FFD54A]' : 'text-gray-400'}`} />
-              <span>{currentLanguage === 'en' ? tab.labelEn : currentLanguage === 'ur' ? tab.labelUr : tab.labelHi}</span>
+              <IconComponent className={`w-4 h-4 shrink-0 ${isActive ? 'text-[#FFD54A]' : 'text-gray-500'}`} />
+              <span className="truncate">{currentLanguage === 'en' ? tab.labelEn : currentLanguage === 'ur' ? tab.labelUr : tab.labelHi}</span>
             </button>
           );
         })}
@@ -471,7 +501,7 @@ export default function HistoryDetails({ currentLanguage }: HistoryDetailsProps)
               {filteredChapters.map((chapter) => {
                 const originalIndex = historyContent.findIndex(c => c.chapter === chapter.chapter);
                 const isBookmarked = bookmarkedChapters.includes(originalIndex);
-                const wordCount = (chapter.content?.[currentLanguage] || '').split(/\s+/).length;
+                const wordCount = getLocalizedContent(chapter).split(/\s+/).length;
                 const readTimeMinutes = Math.max(1, Math.ceil(wordCount / 180));
 
                 return (
@@ -501,15 +531,15 @@ export default function HistoryDetails({ currentLanguage }: HistoryDetailsProps)
                       </div>
 
                       <h3 className="text-base sm:text-lg font-serif font-extrabold text-[#0B132B] group-hover:text-[#004B23] transition line-clamp-2">
-                        {chapter.title[currentLanguage]}
+                        {getLocalizedTitle(chapter)}
                       </h3>
 
                       <p className="text-xs text-emerald-800 font-semibold line-clamp-1 bg-emerald-50/60 px-2 py-1 rounded">
-                        {chapter.subtitle[currentLanguage]}
+                        {getLocalizedSubtitle(chapter)}
                       </p>
 
                       <p className="text-xs text-gray-600 leading-relaxed font-normal line-clamp-3">
-                        {chapter.content[currentLanguage]}
+                        {getLocalizedContent(chapter)}
                       </p>
                     </div>
 
@@ -844,14 +874,14 @@ export default function HistoryDetails({ currentLanguage }: HistoryDetailsProps)
                   </span>
                 </div>
                 <h3 className="text-lg sm:text-2xl font-serif font-black text-white">
-                  {historyContent[selectedChapter].title[currentLanguage]}
+                  {getLocalizedTitle(historyContent[selectedChapter])}
                 </h3>
               </div>
 
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => {
-                    navigator.clipboard.writeText(`${historyContent[selectedChapter].chapter}: ${historyContent[selectedChapter].title[currentLanguage]}\n\n${historyContent[selectedChapter].content[currentLanguage]}`);
+                    navigator.clipboard.writeText(`${historyContent[selectedChapter].chapter}: ${getLocalizedTitle(historyContent[selectedChapter])}\n\n${getLocalizedContent(historyContent[selectedChapter])}`);
                     showToast(currentLanguage === 'en' ? '📋 Chapter text copied to clipboard!' : '📋 अध्याय पाठ कॉपी किया गया!');
                   }}
                   className="p-2 bg-white/10 hover:bg-white/20 text-white rounded-xl transition cursor-pointer"
@@ -872,11 +902,11 @@ export default function HistoryDetails({ currentLanguage }: HistoryDetailsProps)
             {/* Modal Body */}
             <div className="p-6 sm:p-8 overflow-y-auto space-y-6 bg-[#FCFAF5]">
               <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900 font-serif font-extrabold text-base sm:text-lg">
-                {historyContent[selectedChapter].subtitle[currentLanguage]}
+                {getLocalizedSubtitle(historyContent[selectedChapter])}
               </div>
 
               <div className="prose max-w-none text-gray-800 text-sm sm:text-base leading-relaxed font-normal whitespace-pre-wrap font-sans">
-                {historyContent[selectedChapter].content[currentLanguage]}
+                {getLocalizedContent(historyContent[selectedChapter])}
               </div>
 
               <div className="p-4 rounded-xl bg-slate-100 border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-gray-600">

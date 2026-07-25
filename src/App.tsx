@@ -37,6 +37,7 @@ import JobsCareersMaster from './components/JobsCareersMaster';
 import CollegesMasterDirectory from './components/CollegesMasterDirectory';
 import ScholarshipsMasterPortal from './components/ScholarshipsMasterPortal';
 import IqraAIAssistant from './components/IqraAIAssistant';
+import IqraAIPage from './components/IqraAIPage';
 import CareerCounsellingPortal from './components/CareerCounsellingPortal';
 import CommunityPortal from './components/CommunityPortal';
 import HallOfService from './components/HallOfService';
@@ -53,6 +54,7 @@ import CommunityServiceDetail from './components/CommunityServiceDetail';
 import PremiumHero from './components/common/PremiumHero';
 import AuthCallback from './components/AuthCallback';
 import AdminMediaDashboard from './components/AdminMediaDashboard';
+import EducationGallery from './components/EducationGallery';
 import { MapPin, Search, ExternalLink, Calendar, FileText, Info, HelpCircle } from 'lucide-react';
 import { jobListings, governmentSchemes, communityEvents } from './data';
 import { EXAMS } from './data/careerData';
@@ -368,6 +370,51 @@ export default function App() {
               <HomeView currentLanguage={currentLanguage} onNavigate={setActiveTab} />
             )}
 
+            {/* DIRECT MODULE ROUTING HANDLERS */}
+            {activeTab === 'community' && (
+              <CommunityPortal currentLanguage={currentLanguage} />
+            )}
+
+            {activeTab === 'membership' && (
+              <MembershipSystem currentLanguage={currentLanguage} defaultSubTab="overview" />
+            )}
+
+            {activeTab === 'family' && (
+              <FamilyRegistration currentLanguage={currentLanguage} focusSection="census" />
+            )}
+
+            {activeTab === 'family-tree' && (
+              <FamilyRegistration currentLanguage={currentLanguage} focusSection="tree" />
+            )}
+
+            {activeTab === 'digital-id' && (
+              <MembershipSystem currentLanguage={currentLanguage} defaultSubTab="dashboard" focusSection="id_card" />
+            )}
+
+            {activeTab === 'second-marriage' && (
+              <MatrimonialPlatform currentLanguage={currentLanguage} defaultSubTab="second-marriage" />
+            )}
+
+            {activeTab === 'community-service' && (
+              <VolunteerServiceHub currentLanguage={currentLanguage} activeSubTab="volunteer-service" onNavigate={setActiveTab} />
+            )}
+
+            {activeTab === 'scholarships' && (
+              <ScholarshipsMasterPortal currentLanguage={currentLanguage} />
+            )}
+
+            {activeTab === 'schemes' && (
+              <GovernmentSchemes currentLanguage={currentLanguage} />
+            )}
+
+            {activeTab === 'welfare' && (
+              <WelfareSupportOverview currentLanguage={currentLanguage} onNavigate={setActiveTab} />
+            )}
+
+            {activeTab === 'iqra-ai' && (
+              <IqraAIPage currentLanguage={currentLanguage} onNavigate={setActiveTab} />
+            )}
+
             {/* B. UNIFIED ABOUT US HUB */}
             {(activeTab === 'executive-charter') && (
               <ExecutiveCharter />
@@ -535,7 +582,7 @@ export default function App() {
             )}
 
             {/* G. EDUCATION, EXAMS & CAREERS */}
-            {(activeTab === 'education' || activeTab === 'education-overview' || activeTab === 'education-hub' || activeTab === 'competitive-exams' || activeTab === 'jobs-careers' || activeTab === 'colleges-directory' || activeTab === 'scholarships' || activeTab === 'career-counselling' || activeTab === 'professional-colleges' || activeTab === 'medical-colleges' || activeTab === 'career-portal' || activeTab === 'career-opportunities' || activeTab === 'international-careers' || activeTab === 'legal-awareness') && (
+            {(activeTab === 'education' || activeTab === 'education-overview' || activeTab === 'education-hub' || activeTab === 'education-gallery' || activeTab === 'competitive-exams' || activeTab === 'jobs-careers' || activeTab === 'colleges-directory' || activeTab === 'scholarships' || activeTab === 'career-counselling' || activeTab === 'professional-colleges' || activeTab === 'medical-colleges' || activeTab === 'career-portal' || activeTab === 'career-opportunities' || activeTab === 'international-careers' || activeTab === 'legal-awareness') && (
               <div id="education_view_wrapper" className="bg-white">
                 <PremiumHero
                   title={currentLanguage === 'en' ? 'Education & Career Hub' : currentLanguage === 'ur' ? 'تعلیم اور روزگار ہب' : 'शिक्षा और करियर हब'}
@@ -572,6 +619,17 @@ export default function App() {
                       <span>{currentLanguage === 'en' ? 'Hub' : 'हब'}</span>
                     </button>
                     <button
+                      onClick={() => setActiveTab('education-gallery')}
+                      className={`px-3 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
+                        activeTab === 'education-gallery'
+                          ? 'bg-[#F4C430] text-[#004B23] border-2 border-[#FFD54A] scale-105 shadow-md'
+                          : 'bg-amber-400/30 text-amber-200 hover:bg-white/20 border border-amber-400/40'
+                      }`}
+                    >
+                      <span>📸</span>
+                      <span>{currentLanguage === 'en' ? 'HD Gallery (508)' : 'एचडी गैलरी (508)'}</span>
+                    </button>
+                    <button
                       onClick={() => setActiveTab('competitive-exams')}
                       className={`px-3 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
                         activeTab === 'competitive-exams' || activeTab === 'career-portal'
@@ -602,6 +660,11 @@ export default function App() {
                 )}
                 {activeTab === 'education-hub' && (
                   <EducationHub currentLanguage={currentLanguage} />
+                )}
+                {activeTab === 'education-gallery' && (
+                  <div className="p-4 sm:p-6 bg-[#F4F6F9]">
+                    <EducationGallery currentLanguage={currentLanguage} />
+                  </div>
                 )}
                 {(activeTab === 'competitive-exams' || activeTab === 'career-portal') && (
                   <CareerPortal currentLanguage={currentLanguage} />

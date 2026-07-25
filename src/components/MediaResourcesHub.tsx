@@ -18,6 +18,7 @@ import SmartImage from './common/SmartImage';
 import { OfficialSocialChannelsList } from './common/SocialIcons';
 import { initialHeritageAlbums } from '../data/heritageMedia';
 import { resolveDriveUrl, EVENT_FALLBACK_IMAGE } from '../lib/driveUtils';
+import EducationalEventsGallery from './EducationalEventsGallery';
 
 interface MediaResourcesHubProps {
   currentLanguage: Language;
@@ -850,21 +851,27 @@ export default function MediaResourcesHub({
                 <span className="text-xs font-bold text-gray-500">Showing {filteredEvents.length} Verified Events</span>
               </div>
               <div className="flex flex-wrap gap-2 pt-2 border-t border-gray-100">
-                {['All', 'Mahapanchayat Events', 'Community Meetings', 'Medical Camps', 'Blood Donation Camps', 'Plantation Drives', 'Education Programs', 'Welfare Activities', 'Youth Programs', 'Women’s Programs'].map(cat => (
+                {['Educational Events', 'All', 'Mahapanchayat Events', 'Community Meetings', 'Medical Camps', 'Blood Donation Camps', 'Plantation Drives', 'Education Programs', 'Welfare Activities', 'Youth Programs', 'Women’s Programs'].map(cat => (
                   <button
                     key={cat}
                     onClick={() => setEventCategory(cat)}
-                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition ${
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1 cursor-pointer ${
                       eventCategory === cat
-                        ? 'bg-[#004B23] text-white shadow-md'
+                        ? 'bg-[#004B23] text-[#FFD54A] shadow-md border border-[#F4C430]'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
-                    {cat}
+                    {cat === 'Educational Events' && <span>🎓</span>}
+                    <span>{cat}</span>
                   </button>
                 ))}
               </div>
             </div>
+
+            {/* EDUCATIONAL EVENTS GALLERY (LOADS FROM EDUCATION IMAGE LIBRARY) */}
+            {(eventCategory === 'Educational Events' || eventCategory === 'Education Programs' || eventCategory === 'All') && (
+              <EducationalEventsGallery currentLanguage={currentLanguage} />
+            )}
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {filteredEvents.map((evt) => (

@@ -5,6 +5,9 @@ import { Language } from '../types';
 import { IMAGES } from '../data/mediaRegistry';
 import { ProfileImage } from './common/ProfileImage';
 import { resolveSocialUrl } from './common/SocialIcons';
+import ImtiyazKhanSlideshow from './ImtiyazKhanSlideshow';
+import FounderTimelineGallery from './FounderTimelineGallery';
+import EducationalBackgroundWrapper from './common/EducationalBackgroundWrapper';
 
 interface LeaderProfile {
   id: string;
@@ -44,6 +47,51 @@ export default function NationalLeadership({ currentLanguage }: NationalLeadersh
 
   // Leadership Profiles List - fully customizable by administrator
   const leaders: LeaderProfile[] = [
+    {
+      id: 'founder_afzal_sir',
+      category: 'founder',
+      nameEn: 'Er. Muhammad Afzal Sir',
+      nameHi: 'इंजीनियर मोहम्मद अफजल सर',
+      designationEn: 'Founder | Mechanical Engineer | Community Strategist | Educationist',
+      designationHi: 'संस्थापक | मैकेनिकल इंजीनियर | सामुदायिक रणनीतिकार | शिक्षाविद्',
+      locationEn: 'Kailaras / Morena, MP',
+      locationHi: 'केलारस / मुरैना, मध्य प्रदेश',
+      descriptionEn: 'B.Tech, M.Tech, MBA, MSc. Professional engineer and strategist driving the Digital Community Portal, modernization, and youth empowerment initiatives.',
+      descriptionHi: 'बी.टेक, एम.टेक, एमबीए, एमएससी। डिजिटल कम्युनिटी पोर्टल, आधुनिकीकरण और युवा सशक्तिकरण पहलों के संचालक।',
+      image: 'https://lh3.googleusercontent.com/d/1Z8uPOqllKg8cZgW6hmID3aXSHmRCR-6v',
+      phone: '+91 98260 12345',
+      socials: { whatsapp: 'https://wa.me/919826012345', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery', website: '#' },
+    },
+    {
+      id: 'founder_fakhruddin',
+      category: 'founder',
+      nameEn: 'Master Fakhruddin Khan',
+      nameHi: 'मास्टर फखरुद्दीन खान',
+      designationEn: 'Founding Member | Govt. Teacher | Community Awareness Volunteer',
+      designationHi: 'संस्थापक सदस्य | शासकीय शिक्षक | सामुदायिक जागरूकता स्वयंसेवक',
+      locationEn: 'Sujarma, Kailaras, Morena, MP',
+      locationHi: 'सुजारमा, केलारस, मुरैना, मध्य प्रदेश',
+      descriptionEn: 'Government Teacher and dedicated founding member. Played an instrumental role in grassroots community awareness, educational reform, and cultural bonding.',
+      descriptionHi: 'शासकीय शिक्षक एवं समर्पित संस्थापक सदस्य। जमीनी स्तर पर सामुदायिक जागरूकता, शैक्षणिक सुधार और सांस्कृतिक जुड़ाव में महत्वपूर्ण भूमिका।',
+      image: 'https://lh3.googleusercontent.com/d/1Kdztnu3S5skaqWdUpbnmQywhbJRbMj2N',
+      phone: '+91 97550 98765',
+      socials: { whatsapp: 'https://wa.me/919755098765', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery', website: '#' },
+    },
+    {
+      id: 'founder_imtiyaz_khan',
+      category: 'founder',
+      nameEn: 'Lecturer Imtiyaz Khan',
+      nameHi: 'व्याख्याता इम्तियाज खान',
+      designationEn: 'Visionary Founder | Government Lecturer | Educationist | Social Reformer',
+      designationHi: 'विज़नरी संस्थापक | शासकीय व्याख्याता | शिक्षाविद् | समाज सुधारक',
+      locationEn: 'Kailaras, District Morena, MP',
+      locationHi: 'केलारस, जिला मुरैना, मध्य प्रदेश',
+      descriptionEn: "Son of Haji Anwar Khan. Founder of Care Point Classes Kailaras. Dedicated to the community's educational mission, NEET/IIT Foundation, science education, and social unity.",
+      descriptionHi: 'हाजी अनवर खान के सुपुत्र। केयर पॉइंट क्लासेज के संस्थापक। समाज के शैक्षणिक मिशन, एनईईट/आईआईटी फाउंडेशन, विज्ञान शिक्षा और सामाजिक एकता के लिए समर्पित।',
+      image: 'https://lh3.googleusercontent.com/d/1dxB_iOkhicXmhdSnETybxKRQ6bMJ8C7y',
+      phone: '+91 94251 23456',
+      socials: { whatsapp: 'https://wa.me/919425123456', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery', website: '#' },
+    },
     {
       id: 'leader_gwalior_mufti',
       nameEn: "Mufti Sirajuddin Isha'ati Sahab",
@@ -371,6 +419,16 @@ export default function NationalLeadership({ currentLanguage }: NationalLeadersh
             ))}
           </div>
         </div>
+
+        {/* Featured Founder Lecturer Imtiyaz Khan Education Library Slideshow & Timeline Gallery */}
+        {(activeCategory === 'all' || activeCategory === 'founder') && !searchQuery && (
+          <EducationalBackgroundWrapper sectionTitle="Founder Profile" className="rounded-3xl p-4 sm:p-6 mb-12 shadow-2xl border-2 border-[#F4C430]">
+            <div className="space-y-8">
+              <ImtiyazKhanSlideshow currentLanguage={currentLanguage} />
+              <FounderTimelineGallery currentLanguage={currentLanguage} />
+            </div>
+          </EducationalBackgroundWrapper>
+        )}
 
         {/* 4 Cards Grid - Desktop (4), Laptop (3), Tablet (2), Mobile (1) */}
         {filteredLeaders.length === 0 ? (

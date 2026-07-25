@@ -84,6 +84,206 @@ export const historyContent = [
     content: "The British colonial period brought profound changes to India's economy and traditional industries. The Industrial Revolution, factory production, synthetic dyes, and colonial trade policies gradually weakened the centuries-old system of handloom weaving and natural dyeing, forcing many artisan families to abandon their traditional craft, struggle for economic survival, and eventually shift towards alternative occupations.\n\nIntroduction\nThe British colonial period (1757–1947 CE) proved to be one of the most challenging eras for Indian artisans, including the Rangrez (Neelgar) community.\n\nColonial policies and the Industrial Revolution in Europe drastically altered the economic landscape of India.\n\nTraditional textile production—especially natural dyeing—faced intense pressure.\n\nColonial Policies\nThe British government implemented policies that favored British textile manufacturing over Indian handloom and cottage industries.\n\nThese included:\nHigh taxes on Indian artisans.\nPreferential access for British goods in the Indian market.\nRaw material export (raw cotton and indigo were sent to Britain for manufacturing, then re-imported as finished goods).\nLack of support for traditional industries.\n\nThese policies devastated the traditional artisanal economy.\n\nIndustrial Revolution and Factory Production\nThe Industrial Revolution in Britain introduced mechanized textile production, which was faster and cheaper than hand-production.\n\nBritish factories flooded Indian markets with cheap machine-made cloth, making it impossible for traditional Indian handloom weavers and dyers to compete.\n\nThis directly impacted the demand for traditional hand-dyed fabrics.\n\nSynthetic Dyes – The Final Blow\nThe development of synthetic (chemical) dyes in Europe in the 19th century severely undermined the natural dyeing industry.\n\nChemical dyes were:\nCheaper.\nFaster to apply.\nAvailable in a wider range of colours.\nEasy to transport.\n\nThis led to a sharp decline in the demand for natural indigo and other traditional dye materials.\n\nImpact on the Rangrez Community\nAs demand for traditional dyeing declined, Rangrez artisans faced:\nEconomic hardship.\nLoss of livelihood.\nSocial stress.\nMigration to cities.\n\nMany families were forced to abandon their centuries-old profession and seek work as labourers, traders, or in alternative services.\n\nStruggle for Survival\nMany Rangrez artisans tried to adapt by:\nUsing cheaper chemical dyes.\nFocusing on repairing old textiles.\nMoving to urban centres for industrial work.\n\nDespite their efforts, the economic decline was widespread and deeply damaging.\n\nLoss of Traditional Knowledge\nWith the decline of the industry, much traditional knowledge—especially regarding natural dyes—began to fade.\n\nAs artisans shifted occupations to survive, they stopped passing on the specialized skills to the next generation.\n\nThis resulted in a significant loss of India's cultural and scientific textile heritage.\n\nHistorical Perspective\nThe colonial period highlights the vulnerability of traditional craftsmanship to unfair economic policies and rapid technological changes.\n\nThe decline of the Rangrez dyeing industry was a reflection of the broader destruction of Indian artisanal industries.\n\nHistorical Note\nThe decline of the indigo industry was so severe that indigo plantations, which had employed many in the community, ceased to be viable, leaving both farmers and dyers in poverty.\n\nKey Points\nBritish colonial policies severely damaged India's traditional cottage industries.\nIndustrial production in Britain made handmade Indian goods less competitive.\nThe introduction of cheap synthetic dyes replaced the centuries-old natural dyeing industry.\nRangrez artisans faced severe economic distress and were often forced to abandon their craft.\nMany families migrated and shifted to alternative, lower-skilled occupations.\nThe decline led to the loss of centuries of specialized traditional knowledge.\nThis era marked one of the most significant challenges in the community's history."
   },
   {
+    chapter: "Chapter 13",
+    title: "The History of the Modern Rangrez Community Movement",
+    subtitle: "The Foundation of a New Beginning After 1999 Sujarma (22 June 2025)",
+    content: `THE HISTORY OF THE MODERN RANGREZ COMMUNITY MOVEMENT
+The Foundation of a New Beginning After 1999 Sujarma (22 June 2025)
+
+A New Chapter in Community History
+For many years following 1999 Sujarma tehsil Kailaras, the Rangrez (Neelgar) community lacked a unified platform through which educated individuals, social workers, religious scholars, professionals, and senior community members could collectively discuss the future of the community.
+Although numerous individuals continued serving society through education, social work, religious activities, and public welfare, there was no organized movement capable of bringing the entire community together under one common vision.
+Recognizing the urgent need for educational advancement, social reform, organizational unity, and youth empowerment, a small group of dedicated individuals began discussing the possibility of establishing a structured community movement.
+These early discussions ultimately laid the foundation for what would later become one of the most significant community reform initiatives in recent history.
+
+Visionary Founder
+Lecturer Imtiyaz Khan
+Visionary Founder | Government Lecturer | Educationist | Social Reformer
+Father's Name: Haji Anwar Khan
+Residence: Kailaras, District Morena, Madhya Pradesh
+Founder of: Care Point Classes, Kailaras
+Educational Mission:
+Lecturer Imtiyaz Khan has devoted his life to education and social service. As a respected Government Lecturer, he believes that education is the strongest foundation for the progress of any community.
+Through his educational institution, Care Point Classes, he has guided thousands of students from different communities and religious backgrounds.
+His coaching institute prepares students for:
+- NEET
+- IIT Foundation
+- Mathematics
+- Physics
+- Classes IX–XII
+Year after year, many of his students secure district-level ranks, state merit positions, and outstanding academic achievements.
+Beyond academics, he has consistently invested his time, resources, and personal efforts toward educational welfare, community development, and humanitarian service.
+Known for his humility, generosity, and compassionate nature, he has become one of the most respected educational personalities in the region.
+
+Founder
+Er. Muhammad Afzal Sir
+Founder | Mechanical Engineer | Community Strategist | Educationist
+Academic Qualifications:
+- Bachelor of Technology (Mechanical Engineering) - Honours
+- Master of Technology (Thermal Systems & Design) – Honours
+- Master of Business Administration (Marketing & Operations Research), Devi Ahilya Vishwavidyalaya (DAVV), Indore
+- Master of Science (Zoology)
+Professional Experience:
+- More than 15 years of industrial engineering experience
+- National and international project experience
+- Mechanical Engineering
+- Quality Assurance & Quality Control
+- Manufacturing Systems
+- Industrial Operations
+- Project Management
+Community Contribution:
+Er. Muhammad Afzal Sir played a significant role in shaping the strategic direction of the movement.
+He introduced the vision of combining education, technology, digital governance, organizational management, and youth empowerment into a single community platform.
+His long-term vision includes:
+- Digital Community Portal
+- Community Membership System
+- Educational Development
+- Career Guidance
+- Organizational Transparency
+- Modern Administrative Structure
+- Digital Historical Archive
+- Community Research & Documentation
+Alongside his engineering profession, he actively participates in educational activities, religious service, and community welfare initiatives.
+
+Founding Member
+Master Fakhruddin Khan (Govt. Teacher)
+Founding Member | Community Awareness Volunteer
+Residence: Sujarma Kailaras
+Master Fakhruddin Khan has been among the early supporters of the movement.
+His awareness regarding social issues and organizational development made him an important participant during the initial planning discussions.
+He continuously encouraged community dialogue, unity, and constructive participation.
+
+The Historic Foundation Meeting
+Date: 22 June 2025
+Venue: Care Point Classes, Alopi Gali, Kailaras, District Morena, Madhya Pradesh
+Purpose of the Meeting:
+The historic consultation meeting was organized to discuss the future direction of the Rangrez (Neelgar) community.
+Major discussion points included:
+- Educational development
+- Social reform
+- Organizational structure
+- Community unity
+- Youth participation
+- Future planning
+- Formation of a district-level community movement
+This meeting marked the first major organized consultation among responsible community members after many years.
+
+Distinguished Participants by Region:
+
+Morena:
+- Master Nasruddin Khan (Govt. Teacher)
+- Alauddin Khan (Samajsevi)
+- Wali Mohammad
+- Parvez khan (Netaji)
+
+Joura:
+- Rafiq Ahmad (Radio) - samajsevi
+- Shakeel Khan - samajsevi
+- Haji Asgar Sahab - varishth samajsevi
+- Master Akhtar Sahab - (Govt. Teacher)
+- Pinki Khan - samajsevi
+
+Kailaras:
+- Haji Imam Baxs - saraparast
+- Haji Abdul Rahman Dongarpur - saraparast
+- Imran Khan Dongarpur - yuva Samajsevi
+- Munna khan Khadiya - saraparast
+- Hasin Khan - yuva Samajsevi
+- Haji Anwar sahab - saraparast
+- Haji Allauddin - saraparast
+- Asgar Mistri - saraparast
+- Basir Mulla Ji - saraparast
+- Idrish Khan - yuva Samajsevi
+- Zahura Mistri Sahib - saraparast
+- Lala Khan (Hath ka Danda) - saraparast
+- Sakir urf Ballu khan bin Lat. Nanne Khan - Samajsevi
+- Afzal Mama Tent - saraparast
+- Noora Mulla Ji - saraparast
+
+Veerpur:
+- Haji Mumtaz Khan - president waqf board veerpur & saraparast
+
+along with many other respected elders, social workers, and community members who participated in this historic consultation.
+
+The Proposal That Changed the Future:
+During this meeting, respected community elder Imam Bakhsha Haji Sahib presented a visionary proposal.
+He emphasized that meaningful social reform could not be achieved through small local gatherings alone.
+Instead, he proposed organizing a District-Level Mahapanchayat, where representatives from every region could come together to discuss common challenges and collectively adopt reforms for the welfare of the entire community.
+His proposal received widespread appreciation and unanimous support from those present.
+The meeting concluded with a shared commitment to continue consultations and explore the feasibility of organizing the first large-scale Mahapanchayat in the district.
+
+This historic consultation became the foundation upon which the modern Rangrez Community Reform Movement was built.
+
+PART – III
+THE HISTORIC JOURA MAHAPANCHAYAT, COMMUNITY REFORM & REGIONAL EXPANSION
+
+From Consultation to Collective Action
+Following the historic Foundation Consultation held on 22 June 2025 at Care Point Classes, Kailaras, the community entered a crucial phase of consultation and planning.
+As resolved during the meeting, the responsible members from Morena were entrusted with consulting local elders and community representatives to determine whether the proposed District-Level Mahapanchayat could be organised in Morena.
+For several weeks, continuous discussions and consultations took place. However, despite sincere efforts, a final confirmation regarding the venue could not be reached within the expected timeframe.
+During this period, discussions remained active through meetings and the community WhatsApp group. The founding members from Kailaras also explored alternative options and mutually agreed that if the Mahapanchayat could not be organised in Morena, it could instead be held in Joura, Kailaras, Sabalgarh, or another suitable location after further consultation.
+The shared objective was never centred on a particular town; rather, it was to ensure that the first district-level gathering of the community after many years would be successfully organised.
+
+A Young Leader's Commitment
+At this critical stage, a young community member stepped forward with remarkable confidence and a strong sense of responsibility:
+Mr. Irfan Khan
+Son of: Ali Muddeen Khan Ahroli wale (MP Electricity Department)
+Region: Joura district Morena
+
+Despite being a young member of the community, Mr. Irfan Khan voluntarily accepted the responsibility of hosting the Mahapanchayat in Joura.
+His commitment brought fresh momentum to the movement. Following detailed discussions among the founding members and senior community representatives, a collective decision was reached to organise the Mahapanchayat in Joura, and 27 July 2025 was agreed upon as the official date.
+This decision marked the beginning of the final phase of preparations for what would become one of the most significant gatherings in the community's modern history.
+
+Organising the Historic Mahapanchayat
+After the venue and date were finalised, the responsible members from Joura immediately began extensive planning and organisational work.
+Among the principal organisers and contributors were:
+- Rafiq Ahmad ("Radio")
+- Shakeel Khan
+- Owais Khan
+- Ajmeri Mulla Ji
+- Ismail Khan
+- Nishar Khan
+- Lala Khan
+- Irfan Khan
+- Iqbal Khan
+- Yunus Khan
+- Haji Asgar Sahib
+- Sanjay Khan
+- Zakir Ali Khan
+- Master Akhtar Sahib
+- Rajjan Khan 
+- Ballu Khan
+- Pinki Khan
+
+Along with these individuals, many respected elders, volunteers, and community members worked collectively with dedication to make the Mahapanchayat successful.
+
+Strategic Planning, Monitoring & Venue Change
+Throughout the planning process, the founding members continued to provide guidance and organisational support.
+Among them, Er. Muhammad Afzal Sir remained actively involved by offering strategic suggestions, participating in consultations, and visiting Joura on multiple occasions to review the progress of preparations.
+He regularly coordinated with the local organising committee—particularly Mr. Owais Khan and other responsible members—to assess arrangements and address emerging challenges.
+As the event approached, the region experienced heavy monsoon conditions, raising concerns that the originally proposed venue, Lodhi Garden, might not be suitable if rainfall continued.
+Following detailed discussions and a collective assessment of the situation, it was mutually decided to relocate the event to Prabhukala Garden, Joura.
+This timely and well-planned decision helped ensure better safety, improved facilities, and uninterrupted arrangements for participants.
+
+The Historic Joura Mahapanchayat
+Date: 27 July 2025
+Venue: Prabhukala Garden, Joura, Madhya Pradesh
+
+On 27 July 2025, the Muslim Rangrez (Neelgar) Community witnessed a historic milestone with the successful organisation of the District-Level Joura Mahapanchayat.
+The event brought together approximately 500–600 participants, including respected elders, educators, professionals, social workers, youth representatives, religious scholars, and responsible members from numerous towns and villages.
+Throughout the Mahapanchayat, extensive discussions were held on the future of the community, culminating in the unanimous adoption of Fourteen Historic Resolutions.
+
+The Fourteenth Resolution – A New Organisational Framework
+Among the resolutions adopted, the Fourteenth Resolution proved to be one of the most significant: Regional Committees would be established across different towns and regions to implement approved reforms at the grassroots level.
+
+Formation of Regional Committees
+Following the Mahapanchayat, the first Regional Committee was formed in Savanar. Over time, committees were successfully established across numerous regions, including:
+Sabalgarh, Vijaypur, Beerpur, Tentara, Manpur, Shiopur, Kailaras, Joura, Kattoli, Morena, Banmore, Sumawali, Ambah, Gwalior, Dholpur, Bari, Sainpau, Mandrayal - Karauli Rajasthan, and several other locations.
+
+The Beginning of a New Reform Era
+The successful organisation of the Joura Mahapanchayat marked the beginning of a new chapter in the modern history of the Muslim Rangrez (Neelgar) Community.`
+  },
+  {
     chapter: "Chapter 14",
     title: "Present Status of the Muslim Rangrez (Neelgar) Community",
     subtitle: "21st Century Perspective",

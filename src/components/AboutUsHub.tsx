@@ -305,13 +305,21 @@ const AboutUsHub: React.FC<AboutUsHubProps> = ({
       </div>
 
       {/* 2. SUB-NAVIGATION PILLS BAR */}
-      <div className="bg-[#F5F2EB] border-b border-gray-200 sticky top-0 z-30 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
-          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+      <div className="bg-[#F5F2EB] border-b border-gray-200 sticky top-0 z-30 shadow-sm py-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div 
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '12px',
+              overflowX: 'hidden',
+              justifyContent: 'flex-start',
+            }}
+          >
             {navItems.map((item: any) => {
               if (item.isSectionHeader) {
                 return (
-                  <div key={item.id} className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-extrabold uppercase tracking-wider text-[#004B23] bg-emerald-100/50 border border-emerald-200 rounded-xl shrink-0 mx-1 shadow-sm">
+                  <div key={item.id} className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-extrabold uppercase tracking-wider text-[#004B23] bg-emerald-100/50 border border-emerald-200 rounded-xl shadow-sm">
                     {item.icon}
                     <span>{currentLanguage === 'en' ? item.labelEn : currentLanguage === 'ur' ? item.labelUr : item.labelHi}</span>
                   </div>
@@ -322,18 +330,21 @@ const AboutUsHub: React.FC<AboutUsHubProps> = ({
                 <button
                   key={item.id}
                   onClick={() => handleTabChange(item.id)}
-                  className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 flex items-center gap-2 whitespace-nowrap shrink-0 cursor-pointer ${
+                  style={{
+                    width: 'calc(50% - 6px)',
+                  }}
+                  className={`sm:w-[calc(20%-10px)] px-3 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 flex items-center justify-center gap-1.5 cursor-pointer ${
                     isActive
-                      ? 'bg-[#004B23] text-[#FFD54A] shadow-md scale-[1.02] border border-[#FFD54A]/50'
-                      : 'bg-white text-gray-700 hover:bg-slate-100 hover:text-[#004B23] border border-gray-200'
+                      ? 'bg-[#004B23] text-[#FFD54A] shadow-lg scale-[1.02] border border-[#FFD54A]/50'
+                      : 'bg-white text-gray-700 hover:bg-emerald-50 hover:text-[#004B23] border border-gray-200'
                   }`}
                 >
-                  {item.icon}
-                  <span>
+                  <span className="shrink-0">{item.icon}</span>
+                  <span className="truncate">
                     {currentLanguage === 'en' ? item.labelEn : currentLanguage === 'ur' ? item.labelUr : item.labelHi}
                   </span>
                   {item.isNew && (
-                    <span className={`text-[9px] px-1.5 py-0.5 rounded-full uppercase font-black tracking-wider ${
+                    <span className={`text-[9px] px-1 py-0.5 rounded-full uppercase font-black tracking-wider shrink-0 ${
                       isActive ? 'bg-[#FFD54A] text-[#004B23]' : 'bg-emerald-100 text-[#004B23]'
                     }`}>
                       {currentLanguage === 'en' ? 'NEW' : 'नया'}

@@ -3,17 +3,21 @@ import {
   BookOpen, GraduationCap, Award, Search, Users, ShieldCheck, 
   Mail, Phone, Briefcase, Video, FileText, Download, Star, 
   Layers, CheckCircle2, ChevronRight, Sparkles, HelpCircle,
-  MessageSquare, Calendar, Send, Clock, UserCheck
+  MessageSquare, Calendar, Send, Clock, UserCheck, Image as ImageIcon
 } from 'lucide-react';
 import { Language } from '../types';
 import { getSupabase } from '../lib/supabaseClient';
+import EducationGallery from './EducationGallery';
+import HallOfAchievements from './HallOfAchievements';
+import EducationalBackgroundWrapper from './common/EducationalBackgroundWrapper';
+import { Trophy } from 'lucide-react';
 
 interface EducationHubProps {
   currentLanguage: Language;
 }
 
 export default function EducationHub({ currentLanguage }: EducationHubProps) {
-  const [activeTab, setActiveTab] = useState<'mentorship' | 'levels' | 'library' | 'stories' | 'webinars' | 'forum'>('mentorship');
+  const [activeTab, setActiveTab] = useState<'mentorship' | 'levels' | 'library' | 'stories' | 'webinars' | 'forum' | 'gallery' | 'achievements'>('mentorship');
   const [activeCategory, setActiveCategory] = useState('All');
   const [professionSearch, setProfessionSearch] = useState('');
   const [selectedLevel, setSelectedLevel] = useState<string>('school');
@@ -119,8 +123,9 @@ export default function EducationHub({ currentLanguage }: EducationHubProps) {
   ];
 
   return (
-    <div className="py-8 sm:py-12 bg-white font-sans animate-fadeIn" id="education_hub_module">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <EducationalBackgroundWrapper sectionTitle="Education & Careers">
+      <div className="py-8 sm:py-12 font-sans animate-fadeIn" id="education_hub_module">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-10">
@@ -204,8 +209,46 @@ export default function EducationHub({ currentLanguage }: EducationHubProps) {
               <MessageSquare className="w-4 h-4 text-[#FFD54A]" />
               <span>{currentLanguage === 'en' ? 'Discussion Forum & Q&A' : 'चर्चा मंच व प्रश्नोत्तर'}</span>
             </button>
+
+            <button
+              onClick={() => setActiveTab('achievements')}
+              className={`px-4 py-2.5 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow-sm cursor-pointer ${
+                activeTab === 'achievements'
+                  ? 'bg-[#004B23] text-white shadow-md scale-105 border-2 border-[#F4C430]'
+                  : 'bg-emerald-100 text-[#004B23] hover:bg-emerald-200 border border-emerald-300 font-black'
+              }`}
+            >
+              <Trophy className="w-4 h-4 text-[#F4C430]" />
+              <span>{currentLanguage === 'en' ? '🏆 Hall of Achievements' : '🏆 सफलता का हॉल (Achievements)'}</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('gallery')}
+              className={`px-4 py-2.5 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow-sm cursor-pointer ${
+                activeTab === 'gallery'
+                  ? 'bg-[#004B23] text-white shadow-md scale-105'
+                  : 'bg-amber-100 text-[#004B23] hover:bg-amber-200 border border-amber-300 font-black'
+              }`}
+            >
+              <ImageIcon className="w-4 h-4 text-[#004B23]" />
+              <span>{currentLanguage === 'en' ? '📸 HD Gallery (508 Photos)' : '📸 एचडी फोटो गैलरी (508 चित्र)'}</span>
+            </button>
           </div>
         </div>
+
+        {/* TAB: HALL OF ACHIEVEMENTS */}
+        {activeTab === 'achievements' && (
+          <div className="animate-fadeIn mt-6">
+            <HallOfAchievements currentLanguage={currentLanguage} />
+          </div>
+        )}
+
+        {/* TAB: HD EDUCATION GALLERY */}
+        {activeTab === 'gallery' && (
+          <div className="animate-fadeIn mt-6">
+            <EducationGallery currentLanguage={currentLanguage} />
+          </div>
+        )}
 
         {/* TAB 1: MENTORSHIP & PROFESSIONAL DIRECTORY (ZERO DATA LOSS) */}
         {activeTab === 'mentorship' && (
@@ -698,5 +741,6 @@ export default function EducationHub({ currentLanguage }: EducationHubProps) {
 
       </div>
     </div>
+    </EducationalBackgroundWrapper>
   );
 }
