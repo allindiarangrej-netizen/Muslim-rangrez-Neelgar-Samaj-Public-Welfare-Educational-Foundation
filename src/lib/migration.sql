@@ -1,4 +1,67 @@
--- Consolidated SQL migration for Rangrez Community Bharat Portal
+-- Consolidated and Fully Idempotent SQL migration for Rangrez Community Bharat Portal
+
+-- 0. Ensure Storage Buckets Exist
+INSERT INTO storage.buckets (id, name, public) 
+VALUES ('member-photos', 'member-photos', true)
+ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO storage.buckets (id, name, public) 
+VALUES ('admin-media', 'admin-media', true)
+ON CONFLICT (id) DO NOTHING;
+
+-- Storage Policies (Idempotent)
+DO $$ 
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies 
+    WHERE schemaname = 'storage' 
+      AND tablename = 'objects' 
+      AND policyname = 'Public Read on member-photos'
+  ) THEN
+    CREATE POLICY "Public Read on member-photos" ON storage.objects 
+      FOR SELECT USING (bucket_id = 'member-photos');
+  END IF;
+END $$;
+
+DO $$ 
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies 
+    WHERE schemaname = 'storage' 
+      AND tablename = 'objects' 
+      AND policyname = 'Authenticated Upload on member-photos'
+  ) THEN
+    CREATE POLICY "Authenticated Upload on member-photos" ON storage.objects 
+      FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+  END IF;
+END $$;
+
+DO $$ 
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies 
+    WHERE schemaname = 'storage' 
+      AND tablename = 'objects' 
+      AND policyname = 'Public Read on admin-media'
+  ) THEN
+    CREATE POLICY "Public Read on admin-media" ON storage.objects 
+      FOR SELECT USING (bucket_id = 'admin-media');
+  END IF;
+END $$;
+
+DO $$ 
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies 
+    WHERE schemaname = 'storage' 
+      AND tablename = 'objects' 
+      AND policyname = 'Authenticated Upload on admin-media'
+  ) THEN
+    CREATE POLICY "Authenticated Upload on admin-media" ON storage.objects 
+      FOR INSERT WITH CHECK (auth.role() = 'authenticated');
+  END IF;
+END $$;
+
 
 -- 1. Family Members Table
 CREATE TABLE IF NOT EXISTS family_members (
@@ -16,10 +79,20 @@ CREATE TABLE IF NOT EXISTS family_members (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );
 
--- RLS for family_members
 ALTER TABLE family_members ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users can manage their own family members" ON family_members
-  FOR ALL USING (auth.uid() = user_id);
+DO $$ 
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies 
+    WHERE schemaname = 'public' 
+      AND tablename = 'family_members' 
+      AND policyname = 'Users can manage their own family members'
+  ) THEN
+    CREATE POLICY "Users can manage their own family members" ON family_members
+      FOR ALL USING (auth.uid() = user_id);
+  END IF;
+END $$;
+
 
 -- 2. Blood Donors Table
 CREATE TABLE IF NOT EXISTS blood_donors (
@@ -34,10 +107,23 @@ CREATE TABLE IF NOT EXISTS blood_donors (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );
 
--- RLS for blood_donors
 ALTER TABLE blood_donors ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Public can view blood donors" ON blood_donors FOR SELECT USING (true);
-CREATE POLICY "Donors can manage their own profile" ON blood_donors FOR ALL USING (auth.uid()::text = id);
+DO $$ 
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies 
+    WHERE schemaname = 'public' AND tablename = 'blood_donors' AND policyname = 'Public can view blood donors'
+  ) THEN
+    CREATE POLICY "Public can view blood donors" ON blood_donors FOR SELECT USING (true);
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies 
+    WHERE schemaname = 'public' AND tablename = 'blood_donors' AND policyname = 'Donors can manage their own profile'
+  ) THEN
+    CREATE POLICY "Donors can manage their own profile" ON blood_donors FOR ALL USING (auth.uid()::text = id::text);
+  END IF;
+END $$;
+
 
 -- 3. Matrimonial Profiles Table
 CREATE TABLE IF NOT EXISTS matrimonial_profiles (
@@ -62,10 +148,23 @@ CREATE TABLE IF NOT EXISTS matrimonial_profiles (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );
 
--- RLS for matrimonial_profiles
 ALTER TABLE matrimonial_profiles ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Public can view verified matrimonial profiles" ON matrimonial_profiles FOR SELECT USING (is_verified = true);
-CREATE POLICY "Users can manage their own matrimonial profile" ON matrimonial_profiles FOR ALL USING (auth.uid() = user_id);
+DO $$ 
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies 
+    WHERE schemaname = 'public' AND tablename = 'matrimonial_profiles' AND policyname = 'Public can view verified matrimonial profiles'
+  ) THEN
+    CREATE POLICY "Public can view verified matrimonial profiles" ON matrimonial_profiles FOR SELECT USING (is_verified = true);
+  END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies 
+    WHERE schemaname = 'public' AND tablename = 'matrimonial_profiles' AND policyname = 'Users can manage their own matrimonial profile'
+  ) THEN
+    CREATE POLICY "Users can manage their own matrimonial profile" ON matrimonial_profiles FOR ALL USING (auth.uid() = user_id);
+  END IF;
+END $$;
+
 
 -- 4. Donation Systems Tables
 CREATE TABLE IF NOT EXISTS donation_campaigns (
@@ -106,18 +205,39 @@ CREATE TABLE IF NOT EXISTS relief_requests (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );
 
--- RLS for donation tables
 ALTER TABLE donation_campaigns ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Public can view donation campaigns" ON donation_campaigns FOR SELECT USING (true);
-CREATE POLICY "Admins can manage donation campaigns" ON donation_campaigns FOR ALL USING (auth.jwt() ->> 'role' = 'admin');
+DO $$ 
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'donation_campaigns' AND policyname = 'Public can view donation campaigns') THEN
+    CREATE POLICY "Public can view donation campaigns" ON donation_campaigns FOR SELECT USING (true);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'donation_campaigns' AND policyname = 'Admins can manage donation campaigns') THEN
+    CREATE POLICY "Admins can manage donation campaigns" ON donation_campaigns FOR ALL USING (auth.jwt() ->> 'role' = 'admin');
+  END IF;
+END $$;
 
 ALTER TABLE donations ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users can view their own donations" ON donations FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "Users can insert their own donations" ON donations FOR INSERT WITH CHECK (auth.uid() = user_id);
+DO $$ 
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'donations' AND policyname = 'Users can view their own donations') THEN
+    CREATE POLICY "Users can view their own donations" ON donations FOR SELECT USING (auth.uid() = user_id);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'donations' AND policyname = 'Users can insert their own donations') THEN
+    CREATE POLICY "Users can insert their own donations" ON donations FOR INSERT WITH CHECK (auth.uid() = user_id);
+  END IF;
+END $$;
 
 ALTER TABLE relief_requests ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users can view their own relief requests" ON relief_requests FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "Users can insert their own relief requests" ON relief_requests FOR INSERT WITH CHECK (auth.uid() = user_id);
+DO $$ 
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'relief_requests' AND policyname = 'Users can view their own relief requests') THEN
+    CREATE POLICY "Users can view their own relief requests" ON relief_requests FOR SELECT USING (auth.uid() = user_id);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'relief_requests' AND policyname = 'Users can insert their own relief requests') THEN
+    CREATE POLICY "Users can insert their own relief requests" ON relief_requests FOR INSERT WITH CHECK (auth.uid() = user_id);
+  END IF;
+END $$;
+
 
 -- 5. Scholarships Table
 CREATE TABLE IF NOT EXISTS scholarships (
@@ -136,10 +256,17 @@ CREATE TABLE IF NOT EXISTS scholarships (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );
 
--- RLS for scholarships
 ALTER TABLE scholarships ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Public can view scholarships" ON scholarships FOR SELECT USING (true);
-CREATE POLICY "Admins can manage scholarships" ON scholarships FOR ALL USING (auth.jwt() ->> 'role' = 'admin');
+DO $$ 
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'scholarships' AND policyname = 'Public can view scholarships') THEN
+    CREATE POLICY "Public can view scholarships" ON scholarships FOR SELECT USING (true);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'scholarships' AND policyname = 'Admins can manage scholarships') THEN
+    CREATE POLICY "Admins can manage scholarships" ON scholarships FOR ALL USING (auth.jwt() ->> 'role' = 'admin');
+  END IF;
+END $$;
+
 
 -- 6. Committee Table
 CREATE TABLE IF NOT EXISTS committees (
@@ -151,10 +278,17 @@ CREATE TABLE IF NOT EXISTS committees (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );
 
--- RLS for committees
 ALTER TABLE committees ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Public can view committees" ON committees FOR SELECT USING (true);
-CREATE POLICY "Admins can manage committees" ON committees FOR ALL USING (auth.jwt() ->> 'role' = 'admin');
+DO $$ 
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'committees' AND policyname = 'Public can view committees') THEN
+    CREATE POLICY "Public can view committees" ON committees FOR SELECT USING (true);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'committees' AND policyname = 'Admins can manage committees') THEN
+    CREATE POLICY "Admins can manage committees" ON committees FOR ALL USING (auth.jwt() ->> 'role' = 'admin');
+  END IF;
+END $$;
+
 
 -- 7. Events Table
 CREATE TABLE IF NOT EXISTS events (
@@ -166,10 +300,17 @@ CREATE TABLE IF NOT EXISTS events (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );
 
--- RLS for events
 ALTER TABLE events ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Public can view events" ON events FOR SELECT USING (true);
-CREATE POLICY "Admins can manage events" ON events FOR ALL USING (auth.jwt() ->> 'role' = 'admin');
+DO $$ 
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'events' AND policyname = 'Public can view events') THEN
+    CREATE POLICY "Public can view events" ON events FOR SELECT USING (true);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'events' AND policyname = 'Admins can manage events') THEN
+    CREATE POLICY "Admins can manage events" ON events FOR ALL USING (auth.jwt() ->> 'role' = 'admin');
+  END IF;
+END $$;
+
 
 -- 8. Volunteers Table
 CREATE TABLE IF NOT EXISTS volunteers (
@@ -182,11 +323,20 @@ CREATE TABLE IF NOT EXISTS volunteers (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );
 
--- RLS for volunteers
 ALTER TABLE volunteers ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Public can view volunteers" ON volunteers FOR SELECT USING (true);
-CREATE POLICY "Admins can manage volunteers" ON volunteers FOR ALL USING (auth.jwt() ->> 'role' = 'admin');
-CREATE POLICY "Users can manage their own volunteer profile" ON volunteers FOR ALL USING (auth.uid() = user_id);
+DO $$ 
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'volunteers' AND policyname = 'Public can view volunteers') THEN
+    CREATE POLICY "Public can view volunteers" ON volunteers FOR SELECT USING (true);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'volunteers' AND policyname = 'Admins can manage volunteers') THEN
+    CREATE POLICY "Admins can manage volunteers" ON volunteers FOR ALL USING (auth.jwt() ->> 'role' = 'admin');
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'volunteers' AND policyname = 'Users can manage their own volunteer profile') THEN
+    CREATE POLICY "Users can manage their own volunteer profile" ON volunteers FOR ALL USING (auth.uid() = user_id);
+  END IF;
+END $$;
+
 
 -- 9. Surveys Table
 CREATE TABLE IF NOT EXISTS surveys (
@@ -196,10 +346,17 @@ CREATE TABLE IF NOT EXISTS surveys (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );
 
--- RLS for surveys
 ALTER TABLE surveys ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Public can view surveys" ON surveys FOR SELECT USING (true);
-CREATE POLICY "Admins can manage surveys" ON surveys FOR ALL USING (auth.jwt() ->> 'role' = 'admin');
+DO $$ 
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'surveys' AND policyname = 'Public can view surveys') THEN
+    CREATE POLICY "Public can view surveys" ON surveys FOR SELECT USING (true);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'surveys' AND policyname = 'Admins can manage surveys') THEN
+    CREATE POLICY "Admins can manage surveys" ON surveys FOR ALL USING (auth.jwt() ->> 'role' = 'admin');
+  END IF;
+END $$;
+
 
 -- 10. Jobs Table
 CREATE TABLE IF NOT EXISTS jobs (
@@ -211,10 +368,17 @@ CREATE TABLE IF NOT EXISTS jobs (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );
 
--- RLS for jobs
 ALTER TABLE jobs ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Public can view jobs" ON jobs FOR SELECT USING (true);
-CREATE POLICY "Admins can manage jobs" ON jobs FOR ALL USING (auth.jwt() ->> 'role' = 'admin');
+DO $$ 
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'jobs' AND policyname = 'Public can view jobs') THEN
+    CREATE POLICY "Public can view jobs" ON jobs FOR SELECT USING (true);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'jobs' AND policyname = 'Admins can manage jobs') THEN
+    CREATE POLICY "Admins can manage jobs" ON jobs FOR ALL USING (auth.jwt() ->> 'role' = 'admin');
+  END IF;
+END $$;
+
 
 -- 12. Member Profiles Table
 CREATE TABLE IF NOT EXISTS member_profiles (
@@ -232,24 +396,25 @@ CREATE TABLE IF NOT EXISTS member_profiles (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );
 
--- In case table already exists, run these migration statements to add columns:
--- ALTER TABLE member_profiles ADD COLUMN IF NOT EXISTS state TEXT DEFAULT 'Madhya Pradesh';
--- ALTER TABLE member_profiles ADD COLUMN IF NOT EXISTS tehsil TEXT;
--- ALTER TABLE member_profiles ADD COLUMN IF NOT EXISTS committee TEXT;
--- ALTER TABLE member_profiles ADD COLUMN IF NOT EXISTS role TEXT DEFAULT 'Member';
--- ALTER TABLE member_profiles ADD COLUMN IF NOT EXISTS permissions TEXT[] DEFAULT '{}';
--- ALTER TABLE member_profiles ADD COLUMN IF NOT EXISTS status TEXT DEFAULT 'Active';
-
--- RLS for member_profiles
 ALTER TABLE member_profiles ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users can view member profiles" ON member_profiles FOR SELECT USING (true);
-CREATE POLICY "Users can manage their own profile" ON member_profiles FOR ALL USING (auth.uid() = user_id);
-CREATE POLICY "Super Admins can manage all profiles" ON member_profiles FOR ALL USING (
-  EXISTS (
-    SELECT 1 FROM member_profiles 
-    WHERE user_id = auth.uid() AND role = 'Super Administrator'
-  )
-);
+DO $$ 
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'member_profiles' AND policyname = 'Users can view member profiles') THEN
+    CREATE POLICY "Users can view member profiles" ON member_profiles FOR SELECT USING (true);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'member_profiles' AND policyname = 'Users can manage their own profile') THEN
+    CREATE POLICY "Users can manage their own profile" ON member_profiles FOR ALL USING (auth.uid() = user_id);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'member_profiles' AND policyname = 'Super Admins can manage all profiles') THEN
+    CREATE POLICY "Super Admins can manage all profiles" ON member_profiles FOR ALL USING (
+      EXISTS (
+        SELECT 1 FROM member_profiles 
+        WHERE user_id = auth.uid() AND role = 'Super Administrator'
+      )
+    );
+  END IF;
+END $$;
+
 
 -- 16. Grievances Table
 CREATE TABLE IF NOT EXISTS grievances (
@@ -261,10 +426,17 @@ CREATE TABLE IF NOT EXISTS grievances (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );
 
--- RLS for grievances
 ALTER TABLE grievances ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users can view their own grievances" ON grievances FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "Users can insert their own grievances" ON grievances FOR INSERT WITH CHECK (auth.uid() = user_id);
+DO $$ 
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'grievances' AND policyname = 'Users can view their own grievances') THEN
+    CREATE POLICY "Users can view their own grievances" ON grievances FOR SELECT USING (auth.uid() = user_id);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'grievances' AND policyname = 'Users can insert their own grievances') THEN
+    CREATE POLICY "Users can insert their own grievances" ON grievances FOR INSERT WITH CHECK (auth.uid() = user_id);
+  END IF;
+END $$;
+
 
 -- 17. Feedback Table
 CREATE TABLE IF NOT EXISTS feedbacks (
@@ -276,10 +448,17 @@ CREATE TABLE IF NOT EXISTS feedbacks (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );
 
--- RLS for feedbacks
 ALTER TABLE feedbacks ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Users can view their own feedbacks" ON feedbacks FOR SELECT USING (auth.uid() = user_id);
-CREATE POLICY "Users can insert their own feedbacks" ON feedbacks FOR INSERT WITH CHECK (auth.uid() = user_id);
+DO $$ 
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'feedbacks' AND policyname = 'Users can view their own feedbacks') THEN
+    CREATE POLICY "Users can view their own feedbacks" ON feedbacks FOR SELECT USING (auth.uid() = user_id);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'feedbacks' AND policyname = 'Users can insert their own feedbacks') THEN
+    CREATE POLICY "Users can insert their own feedbacks" ON feedbacks FOR INSERT WITH CHECK (auth.uid() = user_id);
+  END IF;
+END $$;
+
 
 -- 14. Contact Messages Table
 CREATE TABLE IF NOT EXISTS contact_messages (
@@ -290,10 +469,17 @@ CREATE TABLE IF NOT EXISTS contact_messages (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );
 
--- RLS for contact_messages
 ALTER TABLE contact_messages ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Public can insert contact messages" ON contact_messages FOR INSERT WITH CHECK (true);
-CREATE POLICY "Admins can view contact messages" ON contact_messages FOR SELECT USING (auth.jwt() ->> 'role' = 'admin');
+DO $$ 
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'contact_messages' AND policyname = 'Public can insert contact messages') THEN
+    CREATE POLICY "Public can insert contact messages" ON contact_messages FOR INSERT WITH CHECK (true);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'contact_messages' AND policyname = 'Admins can view contact messages') THEN
+    CREATE POLICY "Admins can view contact messages" ON contact_messages FOR SELECT USING (auth.jwt() ->> 'role' = 'admin');
+  END IF;
+END $$;
+
 
 -- 15. Media Gallery Table
 CREATE TABLE IF NOT EXISTS media_gallery (
@@ -304,10 +490,17 @@ CREATE TABLE IF NOT EXISTS media_gallery (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
 );
 
--- RLS for media_gallery
 ALTER TABLE media_gallery ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Public can view media gallery" ON media_gallery FOR SELECT USING (true);
-CREATE POLICY "Admins can manage media gallery" ON media_gallery FOR ALL USING (auth.jwt() ->> 'role' = 'admin');
+DO $$ 
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'media_gallery' AND policyname = 'Public can view media gallery') THEN
+    CREATE POLICY "Public can view media gallery" ON media_gallery FOR SELECT USING (true);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'media_gallery' AND policyname = 'Admins can manage media gallery') THEN
+    CREATE POLICY "Admins can manage media gallery" ON media_gallery FOR ALL USING (auth.jwt() ->> 'role' = 'admin');
+  END IF;
+END $$;
+
 
 -- 15A. Media Assets Table (Admin Media Management)
 CREATE TABLE IF NOT EXISTS media_assets (
@@ -330,7 +523,12 @@ CREATE TABLE IF NOT EXISTS media_assets (
 );
 
 ALTER TABLE media_assets ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "Public can view media_assets" ON media_assets FOR SELECT USING (true);
-CREATE POLICY "Admins can manage media_assets" ON media_assets FOR ALL USING (true);
-[diff_block_end]
-[diff_block_end]
+DO $$ 
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'media_assets' AND policyname = 'Public can view media_assets') THEN
+    CREATE POLICY "Public can view media_assets" ON media_assets FOR SELECT USING (true);
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE schemaname = 'public' AND tablename = 'media_assets' AND policyname = 'Admins can manage media_assets') THEN
+    CREATE POLICY "Admins can manage media_assets" ON media_assets FOR ALL USING (true);
+  END IF;
+END $$;
