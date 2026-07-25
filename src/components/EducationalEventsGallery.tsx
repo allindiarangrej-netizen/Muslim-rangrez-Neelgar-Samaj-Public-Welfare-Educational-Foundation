@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { educationGalleryImages, EducationImageItem } from '../data/educationGalleryImages';
 import { Language } from '../types';
+import OptimizedEduImage from './common/OptimizedEduImage';
 
 interface EducationalEventsGalleryProps {
   currentLanguage: Language;
@@ -343,13 +344,10 @@ export default function EducationalEventsGallery({ currentLanguage }: Educationa
             >
               {/* Image Container */}
               <div className="relative h-56 overflow-hidden bg-gray-900">
-                <img
+                <OptimizedEduImage
                   src={item.url}
-                  alt={item.titleEn}
-                  loading="lazy"
-                  decoding="async"
-                  referrerPolicy="no-referrer"
-                  className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-500"
+                  alt={currentLanguage === 'en' ? item.titleEn : item.titleHi}
+                  className="w-full h-full"
                 />
 
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">

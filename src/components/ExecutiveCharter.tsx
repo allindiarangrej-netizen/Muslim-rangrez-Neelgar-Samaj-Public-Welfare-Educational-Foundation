@@ -2,8 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, useSpring } from 'motion/react';
 import { BookOpen, ShieldCheck, Scale, Users, ArrowRight, CheckCircle, Award, BookText, Share2, ChevronUp } from 'lucide-react';
 import { EXECUTIVE_CHARTER_DATA } from '../data/executiveCharterData';
+import { Language } from '../types';
 
-export default function ExecutiveCharter() {
+interface ExecutiveCharterProps {
+  currentLanguage?: Language;
+}
+
+export default function ExecutiveCharter({ currentLanguage = 'hi' }: ExecutiveCharterProps) {
   const [activePart, setActivePart] = useState(EXECUTIVE_CHARTER_DATA[0].partNo);
   const [hasCompleted, setHasCompleted] = useState(false);
   const [acknowledged, setAcknowledged] = useState(false);
@@ -84,31 +89,56 @@ export default function ExecutiveCharter() {
         <div className="relative max-w-5xl mx-auto px-6 lg:px-8 text-center">
           <div className="inline-flex items-center justify-center space-x-2 bg-emerald-800/40 border border-emerald-700/50 rounded-full px-4 py-1.5 mb-8 text-sm font-medium tracking-wide backdrop-blur-sm">
             <ShieldCheck className="w-4 h-4 text-emerald-300" />
-            <span className="text-emerald-50">Officially Approved & Ratified</span>
+            <span className="text-emerald-50">
+              {currentLanguage === 'en' ? 'Officially Approved & Ratified' : currentLanguage === 'ur' ? 'باضابطہ طور پر منظور شدہ اور توثیق شدہ' : 'आधिकारिक तौर पर स्वीकृत एवं पुष्टीकृत'}
+            </span>
           </div>
 
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white mb-6 leading-tight">
-            संक्षिप्त संविधान एवं मूल घोषणापत्र
-            <span className="block mt-2 text-2xl md:text-3xl text-emerald-200 font-sans font-light tracking-wide">Executive Constitution & Charter</span>
+            {currentLanguage === 'en' ? 'Executive Constitution & Charter' : currentLanguage === 'ur' ? 'مختصر آئین اور بنیادی منشور' : 'संक्षिप्त संविधान एवं मूल घोषणापत्र'}
+            <span className="block mt-2 text-2xl md:text-3xl text-emerald-200 font-sans font-light tracking-wide">
+              {currentLanguage === 'en' ? 'Muslim Rangrez Community' : currentLanguage === 'ur' ? 'مسلم رنگریز (نیلگر) سماج' : 'मुस्लिम रंगरेज़ (नीलगर) समाज'}
+            </span>
           </h1>
 
           <p className="text-lg md:text-xl text-emerald-100/90 max-w-3xl mx-auto mb-10 leading-relaxed font-light">
-            Muslim Rangrez (Neelgar) Samaj Public Welfare & Educational Society
+            {currentLanguage === 'en' 
+              ? 'Muslim Rangrez (Neelgar) Samaj Public Welfare & Educational Society' 
+              : currentLanguage === 'ur' 
+                ? 'مسلم رنگریز (نیلگر) سماج پبلک ویلفیئر اینڈ ایجوکیشنل سوسائٹی' 
+                : 'Muslim Rangrez (Neelgar) Samaj Public Welfare & Educational Society'}
           </p>
 
           <div className="bg-emerald-900/30 border border-emerald-800/50 rounded-2xl p-6 md:p-8 max-w-2xl mx-auto backdrop-blur-md mb-12 shadow-xl">
             <p className="text-lg md:text-xl italic font-serif text-emerald-50 leading-relaxed">
-              "बुराइयों और बेबुनियाद रस्मों से नज़ात, तालीम और इल्म की ओर रुख़, दीन व दुनिया दोनों में तरक्की हमारा मक़सद।"
+              {currentLanguage === 'en' 
+                ? '"Liberation from social evils and groundless customs, a shift towards education and knowledge, progress in both faith and the material world is our goal."' 
+                : currentLanguage === 'ur' 
+                  ? '"براہیوں اور بے بنیاد رسموں سے نجات، تعلیم اور علم کی طرف رجوع، دین و دنیا دونوں میں ترقی ہمارا مقصد۔"' 
+                  : '"बुराइयों और बेबुनियाद रस्मों से नज़ात, तालीम और इल्म की ओर रुख़, दीन व दुनिया दोनों में तरक्की हमारा मक़सद।"'}
             </p>
             <p className="text-sm font-medium text-emerald-300 uppercase tracking-widest mt-4">
-              एकता (इत्तिहाद) • तालीम • इस्लाही सोच
+              {currentLanguage === 'en' 
+                ? 'Unity • Education • Reformative Thinking' 
+                : currentLanguage === 'ur' 
+                  ? 'اتحاد • تعلیم • اصلاحی سوچ' 
+                  : 'एकता (इत्तिहाद) • तालीम • इस्लाही सोच'}
             </p>
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-6 text-sm font-medium text-emerald-100">
-            <div className="flex items-center"><BookOpen className="w-4 h-4 mr-2 opacity-70" /> 15 Min Read</div>
-            <div className="flex items-center"><BookText className="w-4 h-4 mr-2 opacity-70" /> {EXECUTIVE_CHARTER_DATA.length} Parts</div>
-            <div className="flex items-center"><Scale className="w-4 h-4 mr-2 opacity-70" /> 40 Articles</div>
+            <div className="flex items-center">
+              <BookOpen className="w-4 h-4 mr-2 opacity-70" /> 
+              {currentLanguage === 'en' ? '15 Min Read' : currentLanguage === 'ur' ? '15 منٹ کا مطالعہ' : '15 मिनट का पठन'}
+            </div>
+            <div className="flex items-center">
+              <BookText className="w-4 h-4 mr-2 opacity-70" /> 
+              {EXECUTIVE_CHARTER_DATA.length} {currentLanguage === 'en' ? 'Parts' : currentLanguage === 'ur' ? 'حصے' : 'भाग'}
+            </div>
+            <div className="flex items-center">
+              <Scale className="w-4 h-4 mr-2 opacity-70" /> 
+              40 {currentLanguage === 'en' ? 'Articles' : currentLanguage === 'ur' ? 'دفعات' : 'अनुच्छेद'}
+            </div>
           </div>
 
           <motion.button 
@@ -116,9 +146,9 @@ export default function ExecutiveCharter() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.6 }}
             onClick={() => scrollToPart(EXECUTIVE_CHARTER_DATA[0].partNo)}
-            className="mt-12 group inline-flex items-center bg-white text-[#004B23] px-8 py-4 rounded-full font-bold text-lg hover:bg-emerald-50 transition-all shadow-lg hover:shadow-xl active:scale-95"
+            className="mt-12 group inline-flex items-center bg-white text-[#004B23] px-8 py-4 rounded-full font-bold text-lg hover:bg-emerald-50 transition-all shadow-lg hover:shadow-xl active:scale-95 cursor-pointer"
           >
-            Start Reading
+            {currentLanguage === 'en' ? 'Start Reading' : currentLanguage === 'ur' ? 'مطالعہ شروع کریں' : 'पढ़ना शुरू करें'}
             <ArrowRight className="w-5 h-5 ml-3 group-hover:translate-x-1 transition-transform" />
           </motion.button>
         </div>
@@ -129,7 +159,9 @@ export default function ExecutiveCharter() {
         {/* Sticky Sidebar Navigation (Desktop) */}
         <div className="hidden lg:block w-72 shrink-0 sticky top-24">
           <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-            <h3 className="text-sm font-bold uppercase tracking-widest text-slate-400 mb-6">Contents</h3>
+            <h3 className="text-sm font-bold uppercase tracking-widest text-slate-400 mb-6">
+              {currentLanguage === 'en' ? 'Contents' : currentLanguage === 'ur' ? 'فہرست' : 'विषय-सूची'}
+            </h3>
             <nav className="space-y-1">
               {EXECUTIVE_CHARTER_DATA.map((part) => (
                 <button
@@ -218,9 +250,15 @@ export default function ExecutiveCharter() {
           >
             <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-emerald-400 to-[#004B23]"></div>
             <Award className="w-16 h-16 text-amber-500 mx-auto mb-6" />
-            <h2 className="text-3xl font-serif font-bold text-slate-900 mb-4">You have reached the end.</h2>
+            <h2 className="text-3xl font-serif font-bold text-slate-900 mb-4">
+              {currentLanguage === 'en' ? 'You have reached the end.' : currentLanguage === 'ur' ? 'آپ اختتام تک پہنچ چکے ہیں۔' : 'आप अंत तक पहुँच गए हैं।'}
+            </h2>
             <p className="text-slate-600 text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
-              Thank you for reading the Executive Constitution & Charter of the Muslim Rangrez (Neelgar) Samaj. By understanding these principles, you contribute to a stronger, more united, and transparent community.
+              {currentLanguage === 'en' 
+                ? 'Thank you for reading the Executive Constitution & Charter of the Muslim Rangrez (Neelgar) Samaj. By understanding these principles, you contribute to a stronger, more united, and transparent community.' 
+                : currentLanguage === 'ur'
+                  ? 'مسلم رنگریز (نیلگر) سماج کے مختصر آئین اور بنیادی منشور کو پڑھنے کے لیے آپ کا شکریہ۔ ان اصولوں کو سمجھ کر، آپ ایک مضبوط، زیادہ متحد اور شفاف برادری کی تشکیل میں اپنا حصہ ڈالتے ہیں۔'
+                  : 'मुस्लिम रंगरेज़ (नीलगर) समाज के संक्षिप्त संविधान एवं मूल घोषणापत्र को पढ़ने के लिए आपका धन्यवाद। इन सिद्धांतों को समझकर, आप एक मजबूत, अधिक एकजुट और पारदर्शी समुदाय के निर्माण में अपना योगदान देते हैं।'}
             </p>
             
             <label className="flex items-start justify-center gap-4 cursor-pointer mb-8 max-w-xl mx-auto group">
@@ -236,19 +274,23 @@ export default function ExecutiveCharter() {
                 </div>
               </div>
               <span className="text-slate-700 font-medium text-left select-none group-hover:text-slate-900 transition-colors">
-                I acknowledge that I have read and understood the provisions of the Executive Constitution & Charter, and I commit to upholding its principles.
+                {currentLanguage === 'en' 
+                  ? 'I acknowledge that I have read and understood the provisions of the Executive Constitution & Charter, and I commit to upholding its principles.' 
+                  : currentLanguage === 'ur'
+                    ? 'میں تسلیم کرتا ہوں کہ میں نے مختصر آئین اور بنیادی منشور کی دفعات کو پڑھ اور سمجھ لیا ہے، اور میں اس کے اصولوں کو برقرار رکھنے کا عہد کرتا ہوں۔'
+                    : 'मैं स्वीकार करता हूँ कि मैंने संक्षिप्त संविधान एवं मूल घोषणापत्र के प्रावधानों को पढ़ और समझ लिया है, और मैं इसके सिद्धांतों को बनाए रखने के लिए प्रतिबद्ध हूँ।'}
               </span>
             </label>
 
             <button 
               disabled={!acknowledged}
-              className={`px-8 py-4 rounded-full font-bold text-lg transition-all shadow-sm ${
+              className={`px-8 py-4 rounded-full font-bold text-lg transition-all shadow-sm cursor-pointer ${
                 acknowledged 
                 ? 'bg-[#004B23] text-white hover:bg-emerald-800 hover:shadow-md active:scale-95' 
                 : 'bg-slate-100 text-slate-400 cursor-not-allowed'
               }`}
             >
-              Complete Acknowledgement
+              {currentLanguage === 'en' ? 'Complete Acknowledgement' : currentLanguage === 'ur' ? 'عہد مکمل کریں' : 'स्वीकृति पूर्ण करें'}
             </button>
           </motion.div>
         </div>

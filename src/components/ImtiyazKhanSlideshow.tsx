@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { ChevronLeft, ChevronRight, Pause, Play, Sparkles, Image as ImageIcon, GraduationCap, Award, BookOpen } from 'lucide-react';
 import { educationGalleryImages, EducationImageItem } from '../data/educationGalleryImages';
 import { Language } from '../types';
+import OptimizedEduImage from './common/OptimizedEduImage';
 
 interface ImtiyazKhanSlideshowProps {
   currentLanguage: Language;
@@ -126,16 +127,20 @@ export default function ImtiyazKhanSlideshow({ currentLanguage }: ImtiyazKhanSli
         {/* Main Foreground Image */}
         <div className="relative z-10 flex-1 flex items-center justify-center p-2 sm:p-4 my-auto">
           <AnimatePresence mode="wait">
-            <motion.img
+            <motion.div
               key={currentItem.id}
-              src={currentItem.url}
-              alt={currentItem.titleEn}
               initial={{ opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 1.04 }}
               transition={{ duration: 0.7, ease: "easeInOut" }}
-              className="max-h-[300px] sm:max-h-[380px] md:max-h-[420px] w-auto max-w-full object-contain rounded-2xl shadow-2xl border-2 border-white/20"
-            />
+              className="w-full max-w-2xl h-[300px] sm:h-[380px] md:h-[420px] rounded-2xl overflow-hidden shadow-2xl border-2 border-white/20"
+            >
+              <OptimizedEduImage
+                src={currentItem.url}
+                alt={currentLanguage === 'en' ? currentItem.titleEn : currentItem.titleHi}
+                className="w-full h-full"
+              />
+            </motion.div>
           </AnimatePresence>
         </div>
 

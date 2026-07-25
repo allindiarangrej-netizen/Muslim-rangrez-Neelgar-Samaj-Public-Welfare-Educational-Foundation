@@ -417,7 +417,7 @@ export default function App() {
 
             {/* B. UNIFIED ABOUT US HUB */}
             {(activeTab === 'executive-charter') && (
-              <ExecutiveCharter />
+              <ExecutiveCharter currentLanguage={currentLanguage} />
             )}
             {(activeTab === 'about' || activeTab.startsWith('about-') || activeTab === 'hall-of-excellence' || activeTab === 'excellence' || activeTab === 'legal-governance' || activeTab === 'legal-constitution' || activeTab === 'legal-awareness' || activeTab === 'legal-rti' || activeTab === 'legal-citizen-rights') && (
               <AboutUsHub

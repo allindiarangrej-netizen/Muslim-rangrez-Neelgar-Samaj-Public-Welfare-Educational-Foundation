@@ -30,6 +30,8 @@ import {
   ArrowRight
 } from 'lucide-react';
 import MahapanchayatSystem from './MahapanchayatSystem';
+import MahapanchayatHistoryReader from './MahapanchayatHistoryReader';
+import SocietyReformResolutions from './SocietyReformResolutions';
 
 interface MahapanchayatHubProps {
   currentLanguage: 'en' | 'hi' | 'ur';
@@ -59,6 +61,7 @@ const MahapanchayatHub: React.FC<MahapanchayatHubProps> = ({
 
   const [pledged, setPledged] = useState(false);
   const [selectedGalleryCategory, setSelectedGalleryCategory] = useState('All');
+  const [activeHistorySubSection, setActiveHistorySubSection] = useState<'book' | 'timeline' | 'resolutions' | 'committees'>('book');
 
   const handleTabChange = (tabId: string) => {
     if (onNavigate) {
@@ -323,126 +326,21 @@ const MahapanchayatHub: React.FC<MahapanchayatHubProps> = ({
                 },
                 {
                   titleEn: '4. Social Unity & Local Dispute Settlement',
-                  titleHi: '4. सामाजिक एकता एवं स्थानीय विवाद समाधान',
-                  descEn: 'Resolving family, matrimonial, and property disputes through local Mahapanchayat mediation committees rather than costly litigation, preserving brotherhood and family bonds.',
-                  descHi: 'पारिवारिक, वैवाहिक और संपत्ति विवादों को कोर्ट-कचहरी के भारी खर्च के बजाय स्थानीय महापंचायत सुलाह समितियों द्वारा आपसी भाईचारे से हल करना।',
-                  icon: '🤝',
+                  titleHi: '4. सामाजिक एकता एवं स्थानीय विवाद निपटारा',
+                  descEn: 'Establishing Sulah Samitis (Arbitration Councils) at the district level to settle family, property, and matrimonial disputes through mutual consensus rather than costly litigation.',
+                  descHi: 'महंगे मुकदमों के बजाय आपसी सहमति से पारिवारिक, संपत्ति व वैवाहिक विवादों को सुलझाने के लिए जिला स्तर पर सुलह समितियों (मध्यस्थता परिषदों) की स्थापना।',
+                  icon: '⚖️',
                   bgColor: 'bg-amber-50',
                   iconColor: 'text-amber-600',
                   borderColor: 'border-amber-100 hover:border-amber-300'
                 }
-              ].map((pillar, idx) => (
-                <div key={idx} className={`bg-white border ${pillar.borderColor} p-8 rounded-3xl space-y-5 shadow-sm transition-all duration-300`}>
-                  <div className={`w-14 h-14 rounded-2xl ${pillar.bgColor} ${pillar.iconColor} flex items-center justify-center text-3xl shadow-inner`}>
-                    {pillar.icon}
-                  </div>
-                  <h3 className="text-xl sm:text-2xl font-bold text-[#0B132B]">
-                    {currentLanguage === 'en' ? pillar.titleEn : pillar.titleHi}
-                  </h3>
-                  <p className="text-sm text-gray-600 leading-relaxed">
-                    {currentLanguage === 'en' ? pillar.descEn : pillar.descHi}
-                  </p>
-                </div>
-              ))}
-            </div>
-
-            {/* Interactive Reform Pledge Box */}
-            <div className="bg-gradient-to-br from-[#0B132B] to-[#142244] border-2 border-[#F4C430] rounded-3xl p-8 sm:p-12 text-center space-y-8 text-white relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
-              <div className="max-w-3xl mx-auto space-y-4 relative z-10">
-                <h3 className="text-2xl sm:text-4xl font-serif font-bold text-[#FFD54A]">
-                  {currentLanguage === 'en' ? 'Take The Community Reform Pledge' : 'समाज सुधार संकल्प लें'}
-                </h3>
-                <p className="text-sm sm:text-lg text-gray-300 font-light">
-                  {currentLanguage === 'en'
-                    ? 'I pledge to practice simplicity in family functions, say NO to dowry, prioritize education for my children, and support community unity.'
-                    : 'मैं संकल्प लेता हूँ कि मैं पारिवारिक आयोजनों में सादगी अपनाऊंगा, दहेज का विरोध करूंगा, बच्चों की शिक्षा को सर्वोच्च प्राथमिकता दूंगा और समाज की एकता का समर्थन करूंगा।'}
-                </p>
-              </div>
-
-              {!pledged ? (
-                <button
-                  onClick={() => setPledged(true)}
-                  className="px-10 py-4 rounded-2xl bg-[#004B23] hover:bg-[#00381a] text-[#FFD54A] font-black text-base shadow-2xl transition transform hover:scale-105 cursor-pointer border-2 border-[#FFD54A]/30"
-                >
-                  ✨ {currentLanguage === 'en' ? 'I Take This Pledge Today' : 'मैं आज यह संकल्प लेता हूँ'}
-                </button>
-              ) : (
-                <div className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-emerald-900/40 border-2 border-emerald-500/50 text-emerald-300 font-bold text-base animate-fadeIn backdrop-blur-sm">
-                  <CheckCircle2 className="w-6 h-6 text-emerald-400" />
-                  <span>{currentLanguage === 'en' ? 'Reform Pledge Recorded Successfully' : 'संकल्प सफलतापूर्वक दर्ज किया गया'}</span>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* 3. MAHAPANCHAYAT HISTORY */}
-        {currentTab === 'mahapanchayat-history' && (
-          <div className="space-y-12 animate-fadeIn">
-            <div className="bg-white border border-gray-200 rounded-3xl p-6 sm:p-12 shadow-sm text-center space-y-6 relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-amber-500 to-[#F4C430]"></div>
-              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-50 text-amber-700 text-xs font-bold uppercase tracking-wider border border-amber-100">
-                📜 {currentLanguage === 'en' ? 'Historical Legacy & Evolution' : 'ऐतिहासिक धरोहर व विकास'}
-              </span>
-              <h2 className="text-3xl sm:text-5xl font-serif font-extrabold text-[#0B132B]">
-                {currentLanguage === 'en' ? 'History of The Mahapanchayat' : currentLanguage === 'ur' ? 'رنگریز مہاپنچایت کی تاریخ' : 'महापंचायत का इतिहास'}
-              </h2>
-              <p className="text-sm sm:text-base text-gray-600 max-w-3xl mx-auto leading-relaxed">
-                {currentLanguage === 'en'
-                  ? 'From traditional village assemblies to a nationwide digital e-governance platform, trace over 70 years of collective leadership, social reforms, and constitutional empowerment.'
-                  : 'पारंपरिक ग्रामीण पंचायतों से लेकर राष्ट्रव्यापी डिजिटल ई-गवर्नेंस प्लेटफॉर्म तक, 70 से अधिक वर्षों के सामूहिक नेतृत्व, समाज सुधार और एकता की यात्रा देखें।'}
-              </p>
-            </div>
-
-            {/* Timeline */}
-            <div className="relative border-l-4 border-emerald-100 ml-4 sm:ml-10 pl-6 sm:pl-12 space-y-12 my-12">
-              {[
-                {
-                  year: '1952',
-                  titleEn: 'First National Delegates Assembly',
-                  titleHi: 'प्रथम राष्ट्रीय प्रतिनिधि सभा (दिल्ली)',
-                  descEn: 'Post-independence gathering of community elders and regional leaders in Delhi to establish formal communication channels across North and Central India.',
-                  descHi: 'स्वतंत्रता के बाद दिल्ली में समाज के बुजुर्गों और क्षेत्रीय नेताओं की पहली ऐतिहासिक बैठक, जिसमें उत्तर और मध्य भारत में सामाजिक संपर्क की नींव रखी गई।'
-                },
-                {
-                  year: '1985',
-                  titleEn: 'Adoption of Zonal Councils',
-                  titleHi: 'क्षेत्रीय परिषदें एवं सामाजिक नियमावली लागू',
-                  descEn: 'Establishment of state-level zonal committees in UP, MP, Rajasthan, Bihar, Maharashtra, and Gujarat to address localized educational and trade challenges.',
-                  descHi: 'यूपी, एमपी, राजस्थान, बिहार, महाराष्ट्र और गुजरात में राज्य स्तरीय क्षेत्रीय समितियों का गठन ताकि स्थानीय व्यावसायिक और शैक्षणिक समस्याओं का हल निकाला जा सके।'
-                },
-                {
-                  year: '2004',
-                  titleEn: 'National Social Reform Charter',
-                  titleHi: 'राष्ट्रीय समाज सुधार चार्टर पर हस्ताक्षर',
-                  descEn: 'Landmark Mahapanchayat resolution banning lavish wedding feasts and launching the All India Educational Scholarship & Relief Fund.',
-                  descHi: 'खर्चीली शादियों व मृत्युभोज पर रोक लगाने का ऐतिहासिक महापंचायत निर्णय और अखिल भारतीय शिक्षा छात्रवृत्ति कोष की शुरुआत।'
-                },
-                {
-                  year: '2018',
-                  titleEn: 'Unified National Census Initiative',
-                  titleHi: 'एकीकृत राष्ट्रीय जनगणना एवं डायरेक्टरी अभियान',
-                  descEn: 'Launch of systematic data collection across 500+ districts to connect families, preserve ancestral roots, and streamline matrimonial verified profiles.',
-                  descHi: '500+ जिलों में परिवारों को जोड़ने, वंशावली सुरक्षित रखने और वैवाहिक प्रोफाइल को सत्यापित करने के लिए व्यवस्थित डाटा संग्रह की शुरुआत।'
-                },
-                {
-                  year: '2024 - Present',
-                  titleEn: 'E-Governance 2.0 Digital Portal',
-                  titleHi: 'ई-गवर्नेंस 2.0 एवं डिजिटल महापंचायत पोर्टल',
-                  descEn: 'Revolutionary digital leap enabling real-time online voting, transparent resolution tracking, RTI legal assistance, and instant global diaspora participation.',
-                  descHi: 'क्रांतिकारी डिजिटल कदम जिससे ऑनलाइन मतदान, प्रस्ताव निगरानी, RTI कानूनी सहायता और देश-विदेश के सदस्यों की सीधी भागीदारी संभव हुई।'
-                }
               ].map((item, idx) => (
-                <div key={idx} className="relative group">
-                  <div className="absolute -left-[35px] sm:-left-[58px] top-1 w-8 sm:w-12 h-8 sm:h-12 rounded-2xl bg-white border-2 border-emerald-500 flex items-center justify-center text-xs font-black text-emerald-600 shadow-md group-hover:scale-110 transition-transform duration-300">
-                    {idx + 1}
-                  </div>
-                  <div className="bg-white border border-gray-200 p-8 rounded-3xl shadow-sm hover:border-emerald-300 hover:shadow-md transition-all duration-300 space-y-3">
-                    <span className="inline-block text-xs font-black text-[#004B23] bg-emerald-50 px-3 py-1 rounded-lg border border-emerald-100">
-                      📅 {item.year}
-                    </span>
-                    <h3 className="text-xl sm:text-2xl font-serif font-bold text-[#0B132B]">
+                <div key={idx} className={`p-6 sm:p-8 rounded-2xl border ${item.borderColor} ${item.bgColor} transition duration-300 flex flex-col justify-between`}>
+                  <div>
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl mb-4 ${item.iconColor} bg-white shadow-sm border border-gray-100`}>
+                      {item.icon}
+                    </div>
+                    <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">
                       {currentLanguage === 'en' ? item.titleEn : item.titleHi}
                     </h3>
                     <p className="text-sm text-gray-600 leading-relaxed">
@@ -452,6 +350,215 @@ const MahapanchayatHub: React.FC<MahapanchayatHubProps> = ({
                 </div>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* 3. MAHAPANCHAYAT HISTORY */}
+        {currentTab === 'mahapanchayat-history' && (
+          <div className="space-y-12 animate-fadeIn" id="mahapanchayat-history-tab">
+            <div className="bg-gradient-to-br from-[#004B23] via-[#053218] to-[#0B132B] text-white rounded-3xl p-6 sm:p-12 shadow-xl text-center space-y-6 relative overflow-hidden">
+              <div className="absolute right-0 top-0 translate-x-12 -translate-y-12 w-64 h-64 bg-[#F4C430]/10 rounded-full blur-3xl pointer-events-none"></div>
+              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#FFD54A]/20 text-[#FFD54A] text-xs font-bold uppercase tracking-wider border border-[#FFD54A]/30">
+                📖 {currentLanguage === 'en' ? 'Evolution History Archives' : 'विकास यात्रा अभिलेखागार'}
+              </span>
+              <h2 className="text-3xl sm:text-5xl font-serif font-extrabold text-white">
+                {currentLanguage === 'en' ? 'Mahapanchayat Evolution History' : 'महापंचायत विकास यात्रा का इतिहास'}
+              </h2>
+              <p className="text-sm sm:text-base text-gray-200 max-w-3xl mx-auto leading-relaxed font-light">
+                {currentLanguage === 'en'
+                  ? 'Explore our premium digital book, chronological timeline of organizational milestones, the fourteen historic resolutions of Joura, and our decentralized Regional Committee movement.'
+                  : 'हमारे प्रीमियम डिजिटल ग्रंथ, संगठनात्मक ऐतिहासिक पड़ावों के कालक्रम, जौरा के चौदह ऐतिहासिक प्रस्तावों और हमारे विकेंद्रीकृत क्षेत्रीय समिति आंदोलन का अध्ययन करें।'}
+              </p>
+            </div>
+
+            {/* Premium Interactive History Sub-Navigation */}
+            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 border-b border-gray-200 pb-5" id="history-sub-nav">
+              {[
+                { id: 'book', icon: '📖', labelEn: 'Digital Book Reader', labelHi: 'डिजिटल बुक रीडर' },
+                { id: 'timeline', icon: '🗓️', labelEn: 'Chronological Timeline', labelHi: 'ऐतिहासिक कालक्रम' },
+                { id: 'resolutions', icon: '📜', labelEn: '14 Historic Resolutions', labelHi: '14 ऐतिहासिक प्रस्ताव' },
+                { id: 'committees', icon: '🏢', labelEn: 'Regional Committee Wings', labelHi: 'क्षेत्रीय समितियां एवं विंग' },
+              ].map((subTab) => (
+                <button
+                  key={subTab.id}
+                  onClick={() => setActiveHistorySubSection(subTab.id as any)}
+                  className={`px-4 py-2 sm:px-6 sm:py-2.5 rounded-xl text-xs sm:text-sm font-serif font-black transition-all duration-300 flex items-center gap-2 border shadow-2xs cursor-pointer ${
+                    activeHistorySubSection === subTab.id
+                      ? 'bg-[#004B23] text-white border-[#FFD54A]/30 scale-[1.02]'
+                      : 'bg-white hover:bg-gray-50 text-gray-700 border-gray-200'
+                  }`}
+                >
+                  <span>{subTab.icon}</span>
+                  <span>{currentLanguage === 'en' ? subTab.labelEn : subTab.labelHi}</span>
+                </button>
+              ))}
+            </div>
+
+            {/* 3.1 DIGITAL BOOK READER */}
+            {activeHistorySubSection === 'book' && (
+              <div className="space-y-6 animate-fadeIn">
+                <MahapanchayatHistoryReader currentLanguage={currentLanguage} />
+              </div>
+            )}
+
+            {/* 3.2 CHRONOLOGICAL TIMELINE */}
+            {activeHistorySubSection === 'timeline' && (
+              <div className="space-y-8 animate-fadeIn" id="history-timeline-section">
+                <div className="text-center space-y-2 max-w-2xl mx-auto">
+                  <h3 className="text-2xl font-serif font-extrabold text-[#0B132B]">
+                    {currentLanguage === 'en' ? 'Milestones of Collective Progress' : 'सामूहिक प्रगति के ऐतिहासिक पड़ाव'}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-gray-500">
+                    {currentLanguage === 'en'
+                      ? 'Tracing the historic development of All India Rangrez Samaj organization over seven decades.'
+                      : 'सात दशकों से अधिक समय में ऑल इंडिया रंगरेज़ समाज संगठन के ऐतिहासिक विकास की यात्रा का कालक्रम।'}
+                  </p>
+                </div>
+
+                <div className="relative border-l-4 border-emerald-100 ml-4 sm:ml-10 pl-6 sm:pl-12 space-y-12 my-12">
+                  {[
+                    {
+                      year: '1952',
+                      titleEn: 'First National Delegates Assembly',
+                      titleHi: 'प्रथम राष्ट्रीय प्रतिनिधि सभा (दिल्ली)',
+                      descEn: 'Post-independence gathering of community elders and regional leaders in Delhi to establish formal communication channels across North and Central India.',
+                      descHi: 'स्वतंत्रता के बाद दिल्ली में समाज के बुजुर्गों और क्षेत्रीय नेताओं की पहली ऐतिहासिक बैठक, जिसमें उत्तर और मध्य भारत में सामाजिक संपर्क की नींव रखी गई।'
+                    },
+                    {
+                      year: '1985',
+                      titleEn: 'Adoption of Zonal Councils',
+                      titleHi: 'क्षेत्रीय परिषदें एवं सामाजिक नियमावली लागू',
+                      descEn: 'Establishment of state-level zonal committees in UP, MP, Rajasthan, Bihar, Maharashtra, and Gujarat to address localized educational and trade challenges.',
+                      descHi: 'यूपी, एमपी, राजस्थान, बिहार, महाराष्ट्र और गुजरात में राज्य स्तरीय क्षेत्रीय समितियों का गठन ताकि स्थानीय व्यावसायिक और शैक्षणिक समस्याओं का हल निकाला जा सके।'
+                    },
+                    {
+                      year: '2004',
+                      titleEn: 'National Social Reform Charter',
+                      titleHi: 'राष्ट्रीय समाज सुधार चार्टर पर हस्ताक्षर',
+                      descEn: 'Landmark Mahapanchayat resolution banning lavish wedding feasts and launching the All India Educational Scholarship & Relief Fund.',
+                      descHi: 'खर्चीली शादियों व मृत्युभोज पर रोक लगाने का ऐतिहासिक महापंचायत निर्णय और अखिल भारतीय शिक्षा छात्रवृत्ति कोष की शुरुआत।'
+                    },
+                    {
+                      year: '2018',
+                      titleEn: 'Unified National Census Initiative',
+                      titleHi: 'एकीकृत राष्ट्रीय जनगणना एवं डायरेक्टरी अभियान',
+                      descEn: 'Launch of systematic data collection across 500+ districts to connect families, preserve ancestral roots, and streamline matrimonial verified profiles.',
+                      descHi: '500+ जिलों में परिवारों को जोड़ने, वंशावली सुरक्षित रखने और वैवाहिक प्रोफाइल को सत्यापित करने के लिए व्यवस्थित डाटा संग्रह की शुरुआत।'
+                    },
+                    {
+                      year: '2024 - Present',
+                      titleEn: 'E-Governance 2.0 Digital Portal',
+                      titleHi: 'ई-गवर्नेंस 2.0 एवं डिजिटल महापंचायत पोर्टल',
+                      descEn: 'Revolutionary digital leap enabling real-time online voting, transparent resolution tracking, RTI legal assistance, and instant global diaspora participation.',
+                      descHi: 'क्रांतिकारी डिजिटल कदम जिससे ऑनलाइन मतदान, प्रस्ताव निगरानी, RTI कानूनी सहायता और देश-विदेश के सदस्यों की सीधी भागीदारी संभव हुई।'
+                    }
+                  ].map((item, idx) => (
+                    <div key={idx} className="relative group">
+                      <div className="absolute -left-[35px] sm:-left-[58px] top-1 w-8 sm:w-12 h-8 sm:h-12 rounded-2xl bg-white border-2 border-emerald-500 flex items-center justify-center text-xs font-black text-emerald-600 shadow-md group-hover:scale-110 transition-transform duration-300">
+                        {idx + 1}
+                      </div>
+                      <div className="bg-white border border-gray-200 p-8 rounded-3xl shadow-sm hover:border-emerald-500 hover:shadow-lg transition-all duration-300 space-y-3 relative overflow-hidden">
+                        <div className="absolute top-0 inset-x-0 h-1 bg-[#004B23] opacity-0 group-hover:opacity-100 transition duration-300"></div>
+                        <span className="inline-block text-xs font-black text-[#004B23] bg-emerald-50 px-3 py-1 rounded-lg border border-emerald-100">
+                          📅 {item.year}
+                        </span>
+                        <h3 className="text-xl sm:text-2xl font-serif font-bold text-[#0B132B] group-hover:text-[#004B23] transition duration-200">
+                          {currentLanguage === 'en' ? item.titleEn : item.titleHi}
+                        </h3>
+                        <p className="text-sm text-gray-600 leading-relaxed font-light">
+                          {currentLanguage === 'en' ? item.descEn : item.descHi}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* 3.3 FOURTEEN HISTORIC RESOLUTIONS */}
+            {activeHistorySubSection === 'resolutions' && (
+              <div className="space-y-6 animate-fadeIn" id="history-resolutions-section">
+                <SocietyReformResolutions currentLanguage={currentLanguage} />
+              </div>
+            )}
+
+            {/* 3.4 REGIONAL COMMITTEE MOVEMENT */}
+            {activeHistorySubSection === 'committees' && (
+              <div className="space-y-8 animate-fadeIn" id="history-committees-section">
+                <div className="bg-[#FAF6EC] border border-[#E8DFC9] p-6 sm:p-10 rounded-3xl space-y-8 relative overflow-hidden">
+                  <div className="absolute right-0 top-0 translate-x-12 -translate-y-12 w-64 h-64 bg-amber-500/5 rounded-full blur-3xl pointer-events-none"></div>
+                  
+                  <div className="border-b border-[#EBE3CD] pb-4">
+                    <span className="px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-100 text-[#004B23] font-mono text-[10px] font-black uppercase tracking-widest inline-block mb-3">
+                      🛡️ Grassroots Execution System
+                    </span>
+                    <h3 className="text-2xl sm:text-3xl font-serif font-black text-amber-950 leading-tight">
+                      {currentLanguage === 'en' ? 'The Regional Committee Movement' : 'क्षेत्रीय समिति आंदोलन एवं विकेंद्रीकृत प्रशासन'}
+                    </h3>
+                    <p className="text-xs sm:text-sm text-amber-900 mt-2 leading-relaxed font-light">
+                      {currentLanguage === 'en'
+                        ? 'To ensure that the social reforms are not just documented on paper but actively monitored on the ground, the All India Rangrez Samaj established decentralized regional monitoring cells across states, districts, and tehsils.'
+                        : 'यह सुनिश्चित करने के लिए कि सामाजिक सुधार केवल कागजों पर सीमित न रहें, बल्कि जमीनी स्तर पर सक्रिय रूप से लागू किए जाएं, ऑल इंडिया रंगरेज़ समाज ने राज्यों, जिलों और तहसीलों में विकेंद्रीकृत क्षेत्रीय निगरानी इकाइयों की स्थापना की है।'}
+                    </p>
+                  </div>
+
+                  {/* Wings Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {[
+                      {
+                        titleEn: 'Dispute Settlement Councils (Sulah Samitis)',
+                        titleHi: 'आपसी सुलह समितियां (Arbitration)',
+                        descEn: 'Establishing local alternative dispute resolution councils to resolve matrimonial, family, and land issues out of court, reducing litigation costs and protecting family dignity.',
+                        descHi: 'अदालतों के बाहर पारिवारिक, वैवाहिक और भूमि विवादों को सुलझाने के लिए स्थानीय सुलह समितियों का गठन, जिससे अदालती खर्चों में कमी और सामाजिक प्रतिष्ठा की रक्षा होती है।',
+                        icon: '⚖️',
+                        color: 'from-amber-500/10 to-amber-600/5 border-[#E8DFC9]/70 text-amber-950'
+                      },
+                      {
+                        titleEn: 'Education Vigilance Squads',
+                        titleHi: 'शिक्षा निगरानी दल (Vigilance)',
+                        descEn: 'Grassroots teams that monitor primary and secondary school attendance, track and resolve girl child dropout cases, and manage local disbursement of scholarship funds.',
+                        descHi: 'जमीनी स्तर के दल जो प्राथमिक और माध्यमिक स्कूलों में बच्चों की उपस्थिति की निगरानी करते हैं, बालिकाओं के स्कूल छोड़ने के मामलों को हल करते हैं और छात्रवृत्ति वितरण को पारदर्शी बनाते हैं।',
+                        icon: '🎓',
+                        color: 'from-emerald-500/10 to-emerald-600/5 border-[#DFD8BF]/70 text-emerald-950'
+                      },
+                      {
+                        titleEn: 'Socio-Economic Survey Wings',
+                        titleHi: 'सामाजिक-आर्थिक सर्वेक्षण विंग (Survey)',
+                        descEn: 'Conducting systematic house-to-house demographic surveys, maintaining the unified national database, and verifying matrimonial profiles on the secure central portal.',
+                        descHi: 'घर-घर जाकर जनसांख्यिकीय सर्वेक्षण करना, एकीकृत राष्ट्रीय डेटाबेस का प्रबंधन करना और सुरक्षित केंद्रीय पोर्टल पर वैवाहिक प्रोफाइल को सत्यापित व पंजीकृत करना।',
+                        icon: '📋',
+                        color: 'from-blue-500/10 to-blue-600/5 border-[#E8DFC9]/70 text-blue-950'
+                      }
+                    ].map((wing, idx) => (
+                      <div key={idx} className={`bg-gradient-to-b ${wing.color} p-6 rounded-2xl border shadow-2xs space-y-3 hover:scale-[1.02] transition-transform duration-300`}>
+                        <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-xl shadow-inner shrink-0 border border-[#E8DFC9]/50">
+                          {wing.icon}
+                        </div>
+                        <h4 className="font-serif font-black text-base leading-snug">{currentLanguage === 'en' ? wing.titleEn : wing.titleHi}</h4>
+                        <p className="text-xs text-gray-700 leading-relaxed font-light">{currentLanguage === 'en' ? wing.descEn : wing.descHi}</p>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Governance Card */}
+                  <div className="bg-white border border-[#EBE3CD] p-6 rounded-2xl space-y-4">
+                    <h4 className="font-serif font-extrabold text-amber-950 text-base flex items-center gap-2">
+                      <span>📌</span>
+                      <span>{currentLanguage === 'en' ? 'Administrative Integration & Responsibility' : 'प्रशासनिक एकीकरण एवं जवाबदेही'}</span>
+                    </h4>
+                    <p className="text-xs text-gray-700 leading-relaxed font-light">
+                      {currentLanguage === 'en'
+                        ? 'Each regional committee is linked directly to the Central e-Governance portal. Local secretaries upload monthly compliance checklists, report on girl-child educational enrollments, and coordinate with district Qazis for simple, dowry-free mass wedding programs.'
+                        : 'प्रत्येक क्षेत्रीय समिति सीधे केंद्रीय ई-गवर्नेंस पोर्टल से जुड़ी होती है। स्थानीय सचिव मासिक अनुपालन रिपोर्ट अपलोड करते हैं, बालिकाओं के स्कूल नामांकन की जानकारी दर्ज करते हैं और सामूहिक सादगीपूर्ण विवाह के लिए जिला काजी के साथ समन्वय करते हैं।'}
+                    </p>
+                    <div className="bg-emerald-50 border border-emerald-200/50 p-4 rounded-xl text-xs text-[#004B23] font-mono font-bold flex items-center gap-2">
+                      <span>✓</span>
+                      <span>ACTIVE IMPLEMENTATION TRACKING SYSTEM OPERATIONAL</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 

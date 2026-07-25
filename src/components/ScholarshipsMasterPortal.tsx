@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { Language } from '../types';
 import { getSupabase } from '../lib/supabaseClient';
+import EducationalBackgroundWrapper from './common/EducationalBackgroundWrapper';
 
 const scholarshipsList = [
   {
@@ -161,7 +162,8 @@ export default function ScholarshipsMasterPortal({ currentLanguage }: Scholarshi
   }, [activeCategory, searchQuery]);
 
   return (
-    <div className="bg-slate-50 min-h-screen py-8 sm:py-12 font-sans animate-fadeIn" id="scholarships_master_portal">
+    <EducationalBackgroundWrapper sectionTitle="Scholarships">
+      <div className="min-h-screen py-8 sm:py-12 font-sans animate-fadeIn" id="scholarships_master_portal">
       {/* HEADER SECTION */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
         <div className="bg-gradient-to-r from-[#0B132B] via-[#142244] to-[#004B23] text-white p-6 sm:p-10 rounded-3xl shadow-xl border border-[#D4AF37]/40">
@@ -779,5 +781,6 @@ export default function ScholarshipsMasterPortal({ currentLanguage }: Scholarshi
         </div>
       )}
     </div>
+    </EducationalBackgroundWrapper>
   );
 }

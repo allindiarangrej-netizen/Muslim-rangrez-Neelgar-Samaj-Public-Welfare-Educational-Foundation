@@ -4,6 +4,7 @@ import { Trophy, Award, Star, ZoomIn, ZoomOut, Maximize2, X, ChevronLeft, Chevro
 import { educationGalleryImages, EducationImageItem } from '../data/educationGalleryImages';
 import { Language } from '../types';
 import EducationalBackgroundWrapper from './common/EducationalBackgroundWrapper';
+import OptimizedEduImage from './common/OptimizedEduImage';
 
 interface HallOfAchievementsProps {
   currentLanguage: Language;
@@ -161,13 +162,10 @@ export default function HallOfAchievements({ currentLanguage }: HallOfAchievemen
             >
               {/* Image Box */}
               <div className="relative overflow-hidden bg-gray-900">
-                <img
+                <OptimizedEduImage
                   src={item.url}
-                  alt={item.titleEn}
-                  loading="lazy"
-                  decoding="async"
-                  referrerPolicy="no-referrer"
-                  className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-500"
+                  alt={currentLanguage === 'en' ? item.titleEn : item.titleHi}
+                  className="w-full h-auto min-h-[200px]"
                 />
 
                 {/* Hover Overlay */}

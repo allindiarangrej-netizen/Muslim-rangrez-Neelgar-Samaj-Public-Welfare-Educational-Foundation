@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { educationGalleryImages, EducationImageItem } from '../data/educationGalleryImages';
 import { Language } from '../types';
+import OptimizedEduImage from './common/OptimizedEduImage';
 
 interface FounderTimelineGalleryProps {
   currentLanguage: Language;
@@ -199,10 +200,10 @@ export default function FounderTimelineGallery({ currentLanguage }: FounderTimel
                       onClick={() => setSelectedImage(imgItem)}
                       className="relative h-24 rounded-xl overflow-hidden bg-stone-900 border border-emerald-600/40 hover:border-[#F4C430] transition cursor-pointer group shadow"
                     >
-                      <img
+                      <OptimizedEduImage
                         src={imgItem.url}
-                        alt={imgItem.titleEn}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                        alt={currentLanguage === 'en' ? imgItem.titleEn : imgItem.titleHi}
+                        className="w-full h-full"
                       />
                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
                         <ZoomIn className="w-4 h-4 text-[#F4C430]" />

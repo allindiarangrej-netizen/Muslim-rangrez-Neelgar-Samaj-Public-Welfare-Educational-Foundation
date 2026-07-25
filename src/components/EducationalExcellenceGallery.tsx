@@ -4,6 +4,7 @@ import { GraduationCap, ArrowRight, Sparkles, BookOpen, Award } from 'lucide-rea
 import { educationGalleryImages, EducationImageItem } from '../data/educationGalleryImages';
 import { Language } from '../types';
 import EducationalBackgroundWrapper from './common/EducationalBackgroundWrapper';
+import OptimizedEduImage from './common/OptimizedEduImage';
 
 interface EducationalExcellenceGalleryProps {
   currentLanguage: Language;
@@ -85,13 +86,10 @@ export default function EducationalExcellenceGallery({ currentLanguage, onNaviga
               onClick={() => onNavigate && onNavigate('education-gallery')}
             >
               {/* Lazy Loading Image */}
-              <img
+              <OptimizedEduImage
                 src={item.url}
-                alt={item.titleEn}
-                loading="lazy"
-                decoding="async"
-                referrerPolicy="no-referrer"
-                className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                alt={currentLanguage === 'en' ? item.titleEn : item.titleHi}
+                className="absolute inset-0 w-full h-full"
               />
 
               {/* Dark Gradient Overlay */}

@@ -288,66 +288,63 @@ const AboutUsHub: React.FC<AboutUsHubProps> = ({
           <div className="bg-emerald-950/80 border border-[#F4C430]/30 rounded-2xl p-4 sm:p-5 flex items-center gap-6 shadow-inner w-full md:w-auto backdrop-blur-sm">
             <div className="text-center">
               <div className="text-xl sm:text-2xl font-black text-[#FFD54A]">100%</div>
-              <div className="text-[10px] text-gray-300 uppercase font-bold tracking-wider">{currentLanguage === 'en' ? 'Transparent' : 'पूर्ण पारदर्शिता'}</div>
+              <div className="text-[10px] text-gray-300 uppercase font-bold tracking-wider">
+                {currentLanguage === 'en' ? 'Transparent' : currentLanguage === 'ur' ? 'مکمل شفافیت' : 'पूर्ण पारदर्शिता'}
+              </div>
             </div>
             <div className="h-10 w-[1px] bg-emerald-800"></div>
             <div className="text-center">
               <div className="text-xl sm:text-2xl font-black text-[#FFD54A]">80G</div>
-              <div className="text-[10px] text-gray-300 uppercase font-bold tracking-wider">{currentLanguage === 'en' ? 'Tax Exempt' : 'कर छूट मान्य'}</div>
+              <div className="text-[10px] text-gray-300 uppercase font-bold tracking-wider">
+                {currentLanguage === 'en' ? 'Tax Exempt' : currentLanguage === 'ur' ? 'ٹیکس چھوٹ' : 'कर छूट मान्य'}
+              </div>
             </div>
             <div className="h-10 w-[1px] bg-emerald-800"></div>
             <div className="text-center">
               <div className="text-xl sm:text-2xl font-black text-white">ISO</div>
-              <div className="text-[10px] text-gray-300 uppercase font-bold tracking-wider">{currentLanguage === 'en' ? 'Certified' : 'प्रमाणित संस्था'}</div>
+              <div className="text-[10px] text-gray-300 uppercase font-bold tracking-wider">
+                {currentLanguage === 'en' ? 'Certified' : currentLanguage === 'ur' ? 'تصدیق شدہ' : 'प्रमाणित संस्था'}
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* 2. SUB-NAVIGATION PILLS BAR */}
-      <div className="bg-[#F5F2EB] border-b border-gray-200 sticky top-0 z-30 shadow-sm py-4">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+      {/* 2. SUB-NAVIGATION PILLS BAR (COMPACT MAHAPANCHAYAT-STYLE PILLS) */}
+      <div className="bg-[#F5F2EB] border-b border-gray-200 sticky top-0 z-30 shadow-md py-3 sm:py-4 px-3 sm:px-6">
+        <div className="max-w-7xl mx-auto">
           <div 
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: '12px',
-              overflowX: 'hidden',
-              justifyContent: 'flex-start',
-            }}
+            role="tablist"
+            aria-label="About Us Subsections"
+            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2.5 sm:gap-3"
           >
             {navItems.map((item: any) => {
-              if (item.isSectionHeader) {
-                return (
-                  <div key={item.id} className="flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-extrabold uppercase tracking-wider text-[#004B23] bg-emerald-100/50 border border-emerald-200 rounded-xl shadow-sm">
-                    {item.icon}
-                    <span>{currentLanguage === 'en' ? item.labelEn : currentLanguage === 'ur' ? item.labelUr : item.labelHi}</span>
-                  </div>
-                );
-              }
               const isActive = currentTab === item.id;
+              const label = currentLanguage === 'en' ? item.labelEn : currentLanguage === 'ur' ? item.labelUr : item.labelHi;
               return (
                 <button
                   key={item.id}
+                  role="tab"
+                  aria-selected={isActive}
+                  aria-label={label}
                   onClick={() => handleTabChange(item.id)}
-                  style={{
-                    width: 'calc(50% - 6px)',
-                  }}
-                  className={`sm:w-[calc(20%-10px)] px-3 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 flex items-center justify-center gap-1.5 cursor-pointer ${
+                  className={`h-[38px] sm:h-[40px] lg:h-[44px] px-2.5 sm:px-3 rounded-2xl text-xs sm:text-sm font-bold transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer w-full text-center relative overflow-hidden focus:outline-none focus:ring-2 focus:ring-[#FFD54A] focus:ring-offset-2 ${
                     isActive
-                      ? 'bg-[#004B23] text-[#FFD54A] shadow-lg scale-[1.02] border border-[#FFD54A]/50'
-                      : 'bg-white text-gray-700 hover:bg-emerald-50 hover:text-[#004B23] border border-gray-200'
+                      ? 'bg-[#004B23] text-[#FFD54A] shadow-md shadow-[#004B23]/30 border-2 border-[#F4C430] scale-[1.02]'
+                      : 'bg-white text-gray-800 hover:bg-amber-50/80 hover:text-[#004B23] border border-gray-200/90 shadow-xs hover:shadow-md hover:-translate-y-0.5'
                   }`}
                 >
-                  <span className="shrink-0">{item.icon}</span>
-                  <span className="truncate">
-                    {currentLanguage === 'en' ? item.labelEn : currentLanguage === 'ur' ? item.labelUr : item.labelHi}
+                  <span className={`shrink-0 transition-colors ${isActive ? 'text-[#FFD54A]' : ''}`}>
+                    {item.icon}
+                  </span>
+                  <span className="truncate max-w-[calc(100%-24px)]">
+                    {label}
                   </span>
                   {item.isNew && (
-                    <span className={`text-[9px] px-1 py-0.5 rounded-full uppercase font-black tracking-wider shrink-0 ${
+                    <span className={`text-[8px] sm:text-[9px] px-1 py-0.5 rounded-full uppercase font-black tracking-wider shrink-0 ml-0.5 ${
                       isActive ? 'bg-[#FFD54A] text-[#004B23]' : 'bg-emerald-100 text-[#004B23]'
                     }`}>
-                      {currentLanguage === 'en' ? 'NEW' : 'नया'}
+                      {currentLanguage === 'en' ? 'NEW' : currentLanguage === 'ur' ? 'نیا' : 'नया'}
                     </span>
                   )}
                 </button>
@@ -388,7 +385,7 @@ const AboutUsHub: React.FC<AboutUsHubProps> = ({
                     {currentLanguage === 'en' ? 'Core Mission & Vision Parameters' : currentLanguage === 'ur' ? 'بنیادی مشن اور مقصد' : 'महासभा के मुख्य उद्देश्य और संकल्प'}
                   </h3>
                   <p className="text-xs text-gray-500">
-                    {currentLanguage === 'en' ? 'Pillars driving community empowerment and educational upliftment across India' : 'भारत भर में बिरादरी के सशक्तिकरण और शैक्षिक विकास के आधार स्तंभ'}
+                    {currentLanguage === 'en' ? 'Pillars driving community empowerment and educational upliftment across India' : currentLanguage === 'ur' ? 'پورے ہندوستان میں برادری کی بااختیاری اور تعلیمی ترقی کو آگے بڑھانے والے ستون' : 'भारत भर में बिरादरी के सशक्तिकरण और शैक्षिक विकास के आधार स्तंभ'}
                   </p>
                 </div>
               </div>
@@ -404,6 +401,8 @@ const AboutUsHub: React.FC<AboutUsHubProps> = ({
                   <p className="text-xs text-gray-600 leading-relaxed">
                     {currentLanguage === 'en'
                       ? 'Aiming to support primary and university tuition fees for every underprivileged child in our community, ensuring no student drops out due to financial constraints.'
+                      : currentLanguage === 'ur'
+                      ? 'ہماری برادری کے ہر پسماندہ بچے کے لیے پرائمری اور یونیورسٹی کی تعلیم کی فیس میں مدد کرنا، تاکہ کوئی بھی طالب علم مالی مجبوریوں کی وجہ سے تعلیم نہ چھوڑے۔'
                       : 'हमारे समुदाय के प्रत्येक बच्चे के लिए प्राथमिक और विश्वविद्यालय शिक्षा शुल्क का वहन करना, ताकि आर्थिक तंगी के कारण कोई भी छात्र शिक्षा से वंचित न रहे।'}
                   </p>
                 </div>
@@ -418,6 +417,8 @@ const AboutUsHub: React.FC<AboutUsHubProps> = ({
                   <p className="text-xs text-gray-600 leading-relaxed">
                     {currentLanguage === 'en'
                       ? 'Registering 100,000+ Rangrez members across India to provide streamlined healthcare benefits, emergency blood donor network, and social security coverage.'
+                      : currentLanguage === 'ur'
+                      ? 'پورے ہندوستان میں 1,00,000+ رنگریز اراکین کا رجسٹریشن تاکہ صحت کے فوائد، ہنگامی خون عطیہ کرنے والوں کا نیٹ ورک اور سماجی تحفظ فراہم کیا جا سکے۔'
                       : 'सुव्यवस्थित स्वास्थ्य लाभ, आपातकालीन रक्तदान नेटवर्क और सामाजिक सुरक्षा प्रदान करने के लिए भारत भर में 100,000+ महासभा सदस्यों का पंजीकरण।'}
                   </p>
                 </div>
@@ -432,6 +433,8 @@ const AboutUsHub: React.FC<AboutUsHubProps> = ({
                   <p className="text-xs text-gray-600 leading-relaxed">
                     {currentLanguage === 'en'
                       ? 'Providing business incubator grants, modern technical training, and interest-free micro-finance to traditional handblock printing and textile artisans.'
+                      : currentLanguage === 'ur'
+                      ? 'روایتی ہینڈ بلاک پرنٹنگ اور ٹیکسٹائل کاریگروں کو بزنس انکیوبیٹر گرانٹس، جدید تکنیکی تربیت، اور بِلَا سُود مائیکرو فنانس فراہم کرنا۔'
                       : 'पारंपरिक हैंडब्लॉक प्रिंटिंग और रंगरेज कारीगरों को व्यावसायिक विकास अनुदान, आधुनिक तकनीकी प्रशिक्षण और ब्याज मुक्त लघु ऋण प्रदान करना।'}
                   </p>
                 </div>
@@ -463,7 +466,7 @@ const AboutUsHub: React.FC<AboutUsHubProps> = ({
             <div className="text-center space-y-3 max-w-3xl mx-auto">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-50 text-rose-700 text-xs font-bold uppercase tracking-wider">
                 <HelpCircle className="w-4 h-4" />
-                <span>{currentLanguage === 'en' ? 'KNOWLEDGE & ASSISTANCE' : 'सहायता एवं सामान्य जानकारी'}</span>
+                <span>{currentLanguage === 'en' ? 'KNOWLEDGE & ASSISTANCE' : currentLanguage === 'ur' ? 'معلومات اور مدد' : 'सहायता एवं सामान्य जानकारी'}</span>
               </div>
               <h2 className="text-2xl sm:text-3xl font-serif font-extrabold text-[#0B132B]">
                 {currentLanguage === 'en' ? 'Frequently Asked Questions (FAQ)' : currentLanguage === 'ur' ? 'عام سوالات اور جوابات' : 'अक्सर पूछे जाने वाले सवाल (FAQ)'}
@@ -471,6 +474,8 @@ const AboutUsHub: React.FC<AboutUsHubProps> = ({
               <p className="text-xs sm:text-sm text-gray-600">
                 {currentLanguage === 'en'
                   ? 'Find clear answers regarding trust membership, tax exemptions, digital identity verification, scholarship applications, and community governance.'
+                  : currentLanguage === 'ur'
+                  ? 'ٹرسٹ کی رکنیت، ٹیکس چھوٹ، ڈیجیٹل شناخت کی تصدیق، اسکالرشپ کی درخواستوں، اور برادری کے نظام سے متعلق واضح جوابات یہاں تلاش کریں۔'
                   : 'ट्रस्ट सदस्यता, कर छूट, डिजिटल पहचान सत्यापन, छात्रवृत्ति आवेदन और सामुदायिक शासन से संबंधित प्रश्नों के स्पष्ट उत्तर यहां जानें।'}
               </p>
             </div>
@@ -519,10 +524,10 @@ const AboutUsHub: React.FC<AboutUsHubProps> = ({
             <div className="bg-gradient-to-r from-[#0B132B] to-[#142244] rounded-2xl p-6 text-white text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-6 max-w-4xl mx-auto mt-8">
               <div className="space-y-1">
                 <h4 className="font-bold text-base sm:text-lg text-[#FFD54A]">
-                  {currentLanguage === 'en' ? 'Still have unanswered questions?' : 'क्या आपके पास कोई अन्य सवाल है?'}
+                  {currentLanguage === 'en' ? 'Still have unanswered questions?' : currentLanguage === 'ur' ? 'کیا آپ کے پاس مزید سوالات ہیں؟' : 'क्या आपके पास कोई अन्य सवाल है?'}
                 </h4>
                 <p className="text-xs text-gray-300">
-                  {currentLanguage === 'en' ? 'Our central helpdesk and legal committee are available 24/7 to assist community members.' : 'हमारी केंद्रीय सहायता टीम और कानूनी समिति समुदाय के सदस्यों की सहायता के लिए सदैव उपलब्ध है।'}
+                  {currentLanguage === 'en' ? 'Our central helpdesk and legal committee are available 24/7 to assist community members.' : currentLanguage === 'ur' ? 'ہماری مرکزی ہیلپ ڈیسک اور قانونی کمیٹی برادری کے ممبران کی مدد کے لیے 24/7 دستیاب ہے۔' : 'हमारी केंद्रीय सहायता टीम और कानूनी समिति समुदाय के सदस्यों की सहायता के लिए सदैव उपलब्ध है।'}
                 </p>
               </div>
               <button
@@ -530,7 +535,7 @@ const AboutUsHub: React.FC<AboutUsHubProps> = ({
                 className="px-5 py-2.5 bg-[#004B23] hover:bg-[#00381a] text-white text-xs font-bold rounded-xl border border-[#FFD54A]/40 shadow transition flex items-center gap-2 shrink-0 cursor-pointer"
               >
                 <span>🛡️</span>
-                <span>{currentLanguage === 'en' ? 'View Governance & RTI' : 'शासन एवं RTI देखें'}</span>
+                <span>{currentLanguage === 'en' ? 'View Governance & RTI' : currentLanguage === 'ur' ? 'گورننس اور RTI دیکھیں' : 'शासन एवं RTI देखें'}</span>
               </button>
             </div>
           </div>
@@ -545,7 +550,7 @@ const AboutUsHub: React.FC<AboutUsHubProps> = ({
               <div className="max-w-3xl space-y-4 relative z-10">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur text-[#FFD54A] text-xs font-bold uppercase tracking-wider border border-white/20">
                   <ShieldCheck className="w-4 h-4" />
-                  <span>{currentLanguage === 'en' ? 'ETHICS, INTEGRITY & ACCOUNTABILITY' : 'नैतिकता, निष्ठा और जवाबदेही'}</span>
+                  <span>{currentLanguage === 'en' ? 'ETHICS, INTEGRITY & ACCOUNTABILITY' : currentLanguage === 'ur' ? 'اخلاقیات، دیانت اور جوابدہی' : 'नैतिकता, निष्ठा और जवाबदेही'}</span>
                 </div>
                 <h2 className="text-2xl sm:text-4xl font-serif font-extrabold tracking-tight">
                   {currentLanguage === 'en' ? 'Transparency & Good Governance Charter' : currentLanguage === 'ur' ? 'شفافیت اور اچھی حکمرانی کا منشور' : 'पारदर्शिता और सुशासन घोषणापत्र'}
@@ -553,6 +558,8 @@ const AboutUsHub: React.FC<AboutUsHubProps> = ({
                 <p className="text-xs sm:text-sm text-gray-200 leading-relaxed font-light">
                   {currentLanguage === 'en'
                     ? 'All India Rangrez Samaj Trust operates under strict ethical guidelines, zero-tolerance anti-corruption protocols, open financial audits, and democratic accountability to ensure every rupee donated serves the welfare of our community.'
+                    : currentLanguage === 'ur'
+                    ? 'آل انڈیا رنگریز سماج ٹرسٹ سخت اخلاقی خطوط، انسداد بدعنوانی، کھلے مالیاتی آڈٹ اور جمہوری جوابدہی کے تحت کام کرتا ہے تاکہ اس بات کو یقینی بنایا جا سکے کہ ہر ایک روپیہ برادری کی فلاح و بہبود کے کام آئے۔'
                     : 'ऑल इंडिया रंगरेज समाज ट्रस्ट सख्त नैतिक दिशा-निर्देशों, भ्रष्टाचार-विरोधी प्रोटोकॉल, खुले वित्तीय ऑडिट और लोकतांत्रिक जवाबदेही के तहत काम करता है, ताकि दान किया गया हर एक रुपया बिरादरी के कल्याण में काम आए।'}
                 </p>
               </div>
