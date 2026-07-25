@@ -162,6 +162,37 @@ export default function PremiumGalleryViewer({
     };
   }, [currentFolder, filteredAlbums, filteredVideos]);
 
+  // Flatten all images in view into a single continuous masonry/grid gallery
+  const flatImagesInView = useMemo(() => {
+    const list: { src: string; title: string; description?: string; date?: string; district?: string; albumTitle: string }[] = [];
+    itemsInView.albums.forEach(alb => {
+      alb.images.forEach(img => {
+        list.push({
+          src: img,
+          title: currentLanguage === 'en' ? alb.titleEn : alb.titleHi,
+          description: currentLanguage === 'en' ? alb.descriptionEn : alb.descriptionHi,
+          date: alb.date,
+          district: alb.location.district,
+          albumTitle: currentLanguage === 'en' ? alb.titleEn : alb.titleHi
+        });
+      });
+    });
+    return list;
+  }, [itemsInView.albums, currentLanguage]);
+
+  const openFlatLightbox = (index: number) => {
+    const items = flatImagesInView.map(item => ({
+      src: item.src,
+      type: 'image' as const,
+      title: item.title,
+      description: item.description,
+      metadata: `${item.district || 'Morena'} • ${item.date || '2026'}`
+    }));
+    setActiveItems(items);
+    setLightboxIndex(index);
+    setLightboxOpen(true);
+  };
+
   return (
     <div className="space-y-8 min-h-[600px]">
       {/* 1. Header & Breadcrumbs */}
@@ -256,82 +287,67 @@ export default function PremiumGalleryViewer({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="space-y-12"
+            className="space-y-8"
           >
-            {/* Show Albums in this View */}
-            {itemsInView.albums.length > 0 && (
-              <div className="space-y-6">
-                <div className="flex items-center space-x-2 text-[#004B23]">
-                  <Grid className="h-5 w-5" />
-                  <h3 className="font-serif font-bold text-xl uppercase tracking-wide">Photo Albums</h3>
+            {flatImagesInView.length > 0 ? (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between text-[#004B23] pb-4 border-b border-gray-100">
+                  <div className="flex items-center space-x-2">
+                    <Grid className="h-5 w-5" />
+                    <h3 className="font-serif font-bold text-xl uppercase tracking-wide">
+                      {currentFolder || 'Gallery'} Photos ({flatImagesInView.length})
+                    </h3>
+                  </div>
+                  <p className="text-xs text-gray-400 font-mono">Natural vertical scrolling • Click image for Fullscreen Lightbox</p>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {itemsInView.albums.map((album) => (
-                    <div key={album.id} className="space-y-3 group">
-                      <div 
-                        onClick={() => openAlbum(album)}
-                        className="relative aspect-video rounded-2xl overflow-hidden shadow-sm group-hover:shadow-xl transition-all cursor-pointer ring-1 ring-gray-100"
-                      >
+
+                {/* Responsive Masonry / Grid Gallery with medium-sized HD thumbnails (~300-400px wide) */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
+                  {flatImagesInView.map((item, idx) => (
+                    <motion.div 
+                      key={`${item.src}-${idx}`}
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.3, delay: (idx % 10) * 0.02 }}
+                      className="group bg-white rounded-2xl overflow-hidden border border-gray-150 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col cursor-pointer"
+                      onClick={() => openFlatLightbox(idx)}
+                    >
+                      <div className="relative w-full aspect-[4/3] overflow-hidden bg-gray-100">
                         <SmartImage 
-                          src={album.images[0]} 
-                          alt={album.titleEn}
+                          src={item.src} 
+                          alt={item.title}
                           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                         />
                         <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
-                           <div className="bg-white/20 backdrop-blur-md p-3 rounded-full">
-                              <Sparkles className="h-6 w-6 text-[#F4C430]" />
-                           </div>
+                          <div className="bg-white/25 backdrop-blur-md p-3 rounded-full text-white transform group-hover:scale-110 transition-transform">
+                            <Sparkles className="h-5 w-5 text-[#F4C430]" />
+                          </div>
                         </div>
-                        <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded text-[10px] font-bold text-[#004B23]">
-                          {album.images.length} Photos
-                        </div>
+                        {item.date && (
+                          <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm text-white px-2 py-0.5 rounded text-[10px] font-mono">
+                            {item.date}
+                          </div>
+                        )}
                       </div>
-                      <div className="px-1">
-                        <h4 className="text-sm font-bold text-[#004B23] leading-tight group-hover:text-[#F4C430] transition-colors line-clamp-2">
-                          {currentLanguage === 'en' ? album.titleEn : album.titleHi}
+                      <div className="p-3.5 flex flex-col justify-between flex-1 space-y-2">
+                        <h4 className="text-xs font-bold text-[#004B23] leading-snug line-clamp-2 group-hover:text-emerald-700 transition-colors">
+                          {item.albumTitle}
                         </h4>
-                        <div className="flex items-center justify-between mt-2 text-[10px] text-gray-400 font-mono">
-                          <span className="flex items-center"><Calendar className="h-3 w-3 mr-1" /> {album.year}</span>
-                          <span className="flex items-center"><MapPin className="h-3 w-3 mr-1" /> {album.location.district}</span>
+                        <div className="flex items-center justify-between text-[10px] text-gray-400 font-mono pt-2 border-t border-gray-50">
+                          <span className="flex items-center"><MapPin className="h-3 w-3 mr-0.5 text-emerald-600" /> {item.district || 'Morena'}</span>
+                          <span className="text-[#004B23] font-semibold">HD Preview →</span>
                         </div>
                       </div>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
               </div>
-            )}
-
-            {/* Show Videos in this View */}
-            {itemsInView.videos.length > 0 && (
-              <div className="space-y-6 pt-8 border-t border-gray-100">
-                <div className="flex items-center space-x-2 text-[#004B23]">
-                  <Play className="h-5 w-5" />
-                  <h3 className="font-serif font-bold text-xl uppercase tracking-wide">Video Gallery</h3>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {itemsInView.videos.map((video) => (
-                    <MediaCard
-                      key={video.id}
-                      src={video.thumbnailUrl}
-                      type="video"
-                      title={currentLanguage === 'en' ? video.titleEn : video.titleHi}
-                      views={video.views}
-                      likes={video.likes}
-                      onClick={() => openVideo(video)}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Empty State */}
-            {itemsInView.albums.length === 0 && 
-             itemsInView.videos.length === 0 && (
+            ) : (
               <div className="py-24 text-center space-y-4">
                 <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto text-gray-300">
                   <X className="h-10 w-10" />
                 </div>
-                <h4 className="text-xl font-bold text-gray-400 font-serif">No media items found</h4>
+                <h4 className="text-xl font-bold text-gray-400 font-serif">No images found in this gallery</h4>
                 <p className="text-sm text-gray-400">Try adjusting your search or filters.</p>
                 <button 
                   onClick={() => { setSearchQuery(''); setSelectedYear('All'); setSelectedLocation('All'); }}

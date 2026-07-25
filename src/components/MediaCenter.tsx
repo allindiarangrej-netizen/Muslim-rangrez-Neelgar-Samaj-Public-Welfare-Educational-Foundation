@@ -50,6 +50,7 @@ export default function MediaCenter({ currentLanguage, defaultCategory = 'Photo 
       try {
         const { data: albumsData } = await supabase.from('media_gallery').select('*').eq('category', 'Photo Gallery');
         const { data: videosData } = await supabase.from('media_gallery').select('*').eq('category', 'Video Gallery');
+        const { data: assetsData } = await supabase.from('media_assets').select('*');
         
         const dbAlbums = albumsData?.map(a => ({
           id: a.id,
@@ -66,6 +67,25 @@ export default function MediaCenter({ currentLanguage, defaultCategory = 'Photo 
           images: [a.url],
           descriptionEn: a.title,
           descriptionHi: a.title,
+          views: 0,
+          likes: 0
+        })) || [];
+
+        const assetAlbums = assetsData?.map(asset => ({
+          id: asset.id,
+          titleEn: asset.filename,
+          titleHi: asset.filename,
+          eventType: 'Community Upload',
+          category: asset.folder === 'images' ? ('Regional Galleries' as any) : ('Event Albums' as any),
+          location: { state: 'MP', district: 'Morena', tehsil: 'Morena' },
+          date: asset.created_at?.split('T')[0] || '2026-07-23',
+          year: 2026,
+          photographerEn: asset.uploaded_by || 'Admin',
+          photographerHi: asset.uploaded_by || 'Admin',
+          uploadedBy: asset.uploaded_by || 'Admin',
+          images: [asset.url],
+          descriptionEn: asset.caption || asset.filename,
+          descriptionHi: asset.caption || asset.filename,
           views: 0,
           likes: 0
         })) || [];
@@ -87,7 +107,7 @@ export default function MediaCenter({ currentLanguage, defaultCategory = 'Photo 
           likes: 0
         })) || [];
 
-        setAlbums([...dbAlbums, ...initialHeritageAlbums]);
+        setAlbums([...assetAlbums, ...dbAlbums, ...initialHeritageAlbums]);
         setVideos([...dbVideos, ...initialHeritageVideos]);
       } catch (err) {
         console.error('Error fetching media:', err);

@@ -34,6 +34,7 @@ export default function PremiumLightbox({
   const [isMuted, setIsMuted] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
   const [lastTap, setLastTap] = useState(0);
+  const thumbnailContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -45,6 +46,19 @@ export default function PremiumLightbox({
       document.body.style.overflow = '';
     }
   }, [initialIndex, isOpen]);
+
+  useEffect(() => {
+    if (thumbnailContainerRef.current) {
+      const activeThumbnail = thumbnailContainerRef.current.children[index] as HTMLElement;
+      if (activeThumbnail) {
+        activeThumbnail.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+          inline: 'center'
+        });
+      }
+    }
+  }, [index]);
 
   useEffect(() => {
     if (slideshow && isOpen && items[index] && items[index].type === 'image') {
@@ -116,6 +130,9 @@ export default function PremiumLightbox({
       if (e.key === 'Escape') onClose();
       if (e.key === 'f') toggleFullscreen();
       if (e.key === 'r') handleRotate();
+      if (e.key === '+') setZoom(z => Math.min(5, z + 0.5));
+      if (e.key === '-') setZoom(z => Math.max(1, z - 0.5));
+      if (e.key === '0') setZoom(1);
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
@@ -272,7 +289,7 @@ export default function PremiumLightbox({
         <div className="bg-black/95 backdrop-blur-md border-t border-white/5 flex flex-col z-[70]">
           {/* Progress / Strip */}
           <div className="h-20 flex items-center justify-center px-4 overflow-x-auto no-scrollbar">
-            <div className="flex space-x-2 py-2">
+            <div ref={thumbnailContainerRef} className="flex space-x-2 py-2">
               {items.map((item, idx) => (
                 <button
                   key={idx}
