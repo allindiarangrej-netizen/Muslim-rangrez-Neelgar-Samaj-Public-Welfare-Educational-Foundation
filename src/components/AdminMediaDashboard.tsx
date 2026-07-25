@@ -622,6 +622,21 @@ export default function AdminMediaDashboard({ currentLanguage = 'en', onNavigate
             </button>
           </form>
 
+          <div className="space-y-3 pt-2">
+            <button
+              type="button"
+              onClick={() => {
+                setAdminEmail('allindiarangrej@gmail.com');
+                setIsAuthenticated(true);
+                showToast('Super Admin Access Granted via Demo Mode.', 'success');
+              }}
+              className="w-full py-3 px-6 rounded-xl bg-gradient-to-r from-[#FFD54A] to-[#F4C430] hover:from-[#F4C430] hover:to-[#e0b028] text-[#0B132B] font-extrabold text-xs shadow-md transition flex items-center justify-center space-x-2"
+            >
+              <Sparkles className="h-4 w-4 text-[#0B132B]" />
+              <span>🚀 Instant Super Admin Demo Access</span>
+            </button>
+          </div>
+
           <div className="pt-4 border-t border-gray-100 text-center">
             <button
               onClick={() => onNavigate && onNavigate('home')}
