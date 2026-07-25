@@ -24,7 +24,7 @@ type ViewMode = 'folders' | 'items';
 export default function PremiumGalleryViewer({ 
   albums, videos, currentLanguage, initialCategory 
 }: PremiumGalleryViewerProps) {
-  const [viewMode, setViewMode] = useState<ViewMode>('folders');
+  const [viewMode, setViewMode] = useState<ViewMode>(initialCategory ? 'items' : 'folders');
   const [currentFolder, setCurrentFolder] = useState<string | null>(initialCategory || null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedYear, setSelectedYear] = useState('All');
@@ -55,16 +55,16 @@ export default function PremiumGalleryViewer({
     });
   }, [videos, searchQuery, selectedYear]);
 
-  // 2. Group items into curated "Root" folders
+  // 2. Group items into curated "Root" folders (Area-wise & Category-wise)
   const rootFolders = useMemo(() => {
     const folders: { id: string; title: string; count: number; cover?: string; type: 'category' | 'regional' | 'album'; albumId?: string }[] = [];
     
-    // Add Main Categories
+    // Add Main Event Albums
     folders.push({
-      id: 'National Events',
-      title: 'National Events',
-      count: albums.filter(a => a.category === 'Event Albums').length,
-      cover: albums.find(a => a.category === 'Event Albums')?.images[0],
+      id: 'Event Albums',
+      title: 'National & Society Events',
+      count: albums.reduce((sum, a) => sum + a.images.length, 0),
+      cover: albums[0]?.images[0],
       type: 'category'
     });
 
@@ -81,21 +81,22 @@ export default function PremiumGalleryViewer({
       });
     }
 
-    // Add Regional Folders (Flattened as requested)
-    const regionalTehsils = Array.from(new Set(
-      albums.filter(a => a.category === 'Regional Galleries' && a.location.tehsil)
-            .map(a => a.location.tehsil!)
+    // Add Regional Folders by Tehsil and District
+    const tehsils = Array.from(new Set(
+      albums.map(a => a.location.tehsil || a.location.district).filter(Boolean)
     ));
 
-    regionalTehsils.forEach(tehsil => {
-      const tehsilAlbums = albums.filter(a => a.location.tehsil === tehsil);
-      folders.push({
-        id: `reg_${tehsil}`,
-        title: `${tehsil} Regional Gallery`,
-        count: tehsilAlbums.length,
-        cover: tehsilAlbums[0].images[0],
-        type: 'regional'
-      });
+    tehsils.forEach(tehsil => {
+      const tehsilAlbums = albums.filter(a => a.location.tehsil === tehsil || a.location.district === tehsil);
+      if (tehsilAlbums.length > 0) {
+        folders.push({
+          id: `reg_${tehsil}`,
+          title: `${tehsil} Regional Gallery`,
+          count: tehsilAlbums.reduce((sum, a) => sum + a.images.length, 0),
+          cover: tehsilAlbums[0].images[0],
+          type: 'regional'
+        });
+      }
     });
 
     return folders;
@@ -113,7 +114,7 @@ export default function PremiumGalleryViewer({
       type: 'image' as const,
       title: currentLanguage === 'en' ? album.titleEn : album.titleHi,
       description: currentLanguage === 'en' ? album.descriptionEn : album.descriptionHi,
-      metadata: `${album.location.district}, ${album.year}`
+      metadata: `${album.location.district}${album.location.tehsil ? ', ' + album.location.tehsil : ''} • ${album.year}`
     }));
     setActiveItems(items);
     setLightboxIndex(initialImgIndex);
@@ -144,20 +145,28 @@ export default function PremiumGalleryViewer({
 
   // Logic to filter data for the "items" view
   const itemsInView = useMemo(() => {
-    if (!currentFolder) return { albums: [], videos: [] };
+    if (!currentFolder) return { albums: filteredAlbums, videos: filteredVideos };
 
-    // If it's a regional folder
-    if (currentFolder.includes('Regional Gallery')) {
-      const tehsil = currentFolder.replace(' Regional Gallery', '');
+    // If it's a regional or area folder
+    if (currentFolder.includes('Regional Gallery') || currentFolder.includes('Gallery')) {
+      const tehsil = currentFolder.replace(' Regional Gallery', '').replace(' Gallery', '');
       return {
-        albums: filteredAlbums.filter(a => a.location.tehsil === tehsil),
+        albums: filteredAlbums.filter(a => a.location.tehsil?.toLowerCase().includes(tehsil.toLowerCase()) || a.location.district.toLowerCase().includes(tehsil.toLowerCase()) || a.titleEn.toLowerCase().includes(tehsil.toLowerCase())),
         videos: []
       };
     }
 
-    // If it's a category
+    // If it's Photo Gallery, Regional Galleries, Event Albums, or National Events, show all filtered albums
+    if (['Photo Gallery', 'Regional Galleries', 'Event Albums', 'National Events', 'Press & News Gallery'].includes(currentFolder)) {
+      return {
+        albums: filteredAlbums,
+        videos: filteredVideos
+      };
+    }
+
+    // Default category/folder match
     return {
-      albums: filteredAlbums.filter(a => a.category === currentFolder || (currentFolder === 'National Events' && a.category === 'Event Albums')),
+      albums: filteredAlbums.filter(a => a.category === currentFolder || a.eventType.toLowerCase().includes(currentFolder.toLowerCase()) || a.titleEn.toLowerCase().includes(currentFolder.toLowerCase())),
       videos: filteredVideos.filter(v => v.category === currentFolder)
     };
   }, [currentFolder, filteredAlbums, filteredVideos]);

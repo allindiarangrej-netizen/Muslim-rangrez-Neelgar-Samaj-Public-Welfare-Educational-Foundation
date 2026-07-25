@@ -186,7 +186,14 @@ export default function PremiumLightbox({
             <button onClick={handleRotate} className="p-2 hover:bg-white/10 rounded-full transition" title="Rotate"><RotateCw className="h-5 w-5" /></button>
             <button onClick={handleDownload} className="p-2 hover:bg-white/10 rounded-full transition" title="Download"><Download className="h-5 w-5" /></button>
             <button onClick={() => setShowInfo(!showInfo)} className="p-2 hover:bg-white/10 rounded-full transition" title="Info"><Info className={`h-5 w-5 ${showInfo ? 'text-[#F4C430]' : 'text-white'}`} /></button>
-            <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-full transition bg-white/10 border border-white/10 ml-2" title="Close"><X className="h-5 w-5" /></button>
+            <button 
+              onClick={onClose} 
+              aria-label="Close Image Viewer"
+              className="w-12 h-12 md:w-14 md:h-14 rounded-full bg-black/60 backdrop-blur-md border border-white/20 shadow-2xl flex items-center justify-center text-white transition-all duration-250 hover:bg-red-600 hover:scale-110 active:scale-95 ml-2" 
+              title="Close (Esc)"
+            >
+              <X className="h-6 w-6 md:h-7 md:w-7" />
+            </button>
           </div>
         </div>
 
