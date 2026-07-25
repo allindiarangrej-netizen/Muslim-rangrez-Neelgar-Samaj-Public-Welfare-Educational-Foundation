@@ -82,7 +82,8 @@ export default function App() {
 
   const [activeTab, setActiveTabState] = useState<string>(() => {
     const path = window.location.pathname;
-    if (path.includes('/admin')) return 'admin-media';
+    if (path.includes('/admin/login')) return 'admin-login';
+    if (path.includes('/admin')) return 'admin-dashboard';
     return 'home';
   });
   const [globalSearchQuery, setGlobalSearchQuery] = useState<string>('');
@@ -93,6 +94,11 @@ export default function App() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
       setActiveTabState(tabId);
+      let newPath = '/';
+      if (tabId === 'admin-login') newPath = '/admin/login';
+      else if (tabId === 'admin-dashboard' || tabId === 'admin-media' || tabId === 'admin') newPath = '/admin/dashboard';
+      else if (tabId !== 'home') newPath = `/${tabId}`;
+      window.history.pushState(null, '', newPath);
     }
   };
 
@@ -717,7 +723,7 @@ export default function App() {
             )}
 
             {/* I. MEDIA, RESOURCES & ISLAMIC KNOWLEDGE MEGA PORTAL */}
-            {(activeTab === 'admin-media' || activeTab === 'admin-dashboard') && (
+            {(activeTab === 'admin-media' || activeTab === 'admin-dashboard' || activeTab === 'admin-login' || activeTab === 'admin') && (
               <AdminMediaDashboard
                 currentLanguage={currentLanguage}
                 onNavigate={(tab) => setActiveTab(tab)}

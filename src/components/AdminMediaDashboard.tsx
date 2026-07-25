@@ -551,6 +551,29 @@ export default function AdminMediaDashboard({ currentLanguage = 'en', onNavigate
   const totalMB = (totalBytes / (1024 * 1024)).toFixed(2);
 
   // Unauthenticated Admin View
+  const [resetSent, setResetSent] = useState(false);
+
+  const handleForgotPassword = async () => {
+    if (!adminEmail.trim()) {
+      setAuthError('Please enter your admin email address first.');
+      return;
+    }
+    const supabase = getSupabase();
+    if (!supabase) return;
+    setIsAuthLoading(true);
+    setAuthError('');
+    const { error } = await supabase.auth.resetPasswordForEmail(adminEmail.trim(), {
+      redirectTo: window.location.origin + '/admin/login',
+    });
+    setIsAuthLoading(false);
+    if (error) {
+      setAuthError(`Password reset error: ${error.message}`);
+    } else {
+      setResetSent(true);
+      showToast('Password reset instructions sent to your email.', 'success');
+    }
+  };
+
   if (!isAdminAuthenticated) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#0B132B] via-[#004B23] to-[#0B132B] py-16 px-4 flex items-center justify-center">
@@ -560,10 +583,10 @@ export default function AdminMediaDashboard({ currentLanguage = 'en', onNavigate
               <Shield className="h-8 w-8" />
             </div>
             <h1 className="text-2xl font-serif font-bold text-gray-900">
-              Admin Media Management System
+              Enterprise Admin Login
             </h1>
             <p className="text-xs text-gray-500 font-medium">
-              Secure Supabase Storage & Media Asset Dashboard for All India Rangrez Community Portal.
+              Secure Supabase Authentication & Enterprise Control Portal for All India Rangrez Community.
             </p>
           </div>
 
@@ -571,6 +594,13 @@ export default function AdminMediaDashboard({ currentLanguage = 'en', onNavigate
             <div className="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-800 text-xs font-bold flex items-start space-x-2">
               <AlertCircle className="h-4 w-4 text-red-600 shrink-0 mt-0.5" />
               <span>{authError}</span>
+            </div>
+          )}
+
+          {resetSent && (
+            <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold flex items-start space-x-2">
+              <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" />
+              <span>Password reset instructions have been sent to your email.</span>
             </div>
           )}
 
@@ -587,15 +617,25 @@ export default function AdminMediaDashboard({ currentLanguage = 'en', onNavigate
                 onChange={(e) => setAdminEmail(e.target.value)}
                 className="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-[#004B23] focus:border-transparent text-sm"
               />
-              <span className="block text-[10px] text-gray-400 mt-1">Authorized admin emails only</span>
+              <span className="block text-[10px] text-gray-400 mt-1">Authorized admin accounts only</span>
             </div>
 
             <div>
-              <label className="block text-xs font-bold uppercase text-gray-700 mb-1.5">
-                Passcode / Security Key
-              </label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-xs font-bold uppercase text-gray-700">
+                  Password / Security Key
+                </label>
+                <button
+                  type="button"
+                  onClick={handleForgotPassword}
+                  className="text-[11px] font-bold text-[#004B23] hover:underline"
+                >
+                  Forgot Password?
+                </button>
+              </div>
               <input
                 type="password"
+                required
                 placeholder="••••••••••••"
                 value={adminPasscode}
                 onChange={(e) => setAdminPasscode(e.target.value)}
@@ -611,31 +651,16 @@ export default function AdminMediaDashboard({ currentLanguage = 'en', onNavigate
               {isAuthLoading ? (
                 <>
                   <RefreshCw className="h-4 w-4 animate-spin" />
-                  <span>Verifying Admin Credentials...</span>
+                  <span>Verifying Administrator Credentials...</span>
                 </>
               ) : (
                 <>
                   <Lock className="h-4 w-4" />
-                  <span>Authenticate & Access Dashboard</span>
+                  <span>Secure Login & Access Portal</span>
                 </>
               )}
             </button>
           </form>
-
-          <div className="space-y-3 pt-2">
-            <button
-              type="button"
-              onClick={() => {
-                setAdminEmail('allindiarangrej@gmail.com');
-                setIsAuthenticated(true);
-                showToast('Super Admin Access Granted via Demo Mode.', 'success');
-              }}
-              className="w-full py-3 px-6 rounded-xl bg-gradient-to-r from-[#FFD54A] to-[#F4C430] hover:from-[#F4C430] hover:to-[#e0b028] text-[#0B132B] font-extrabold text-xs shadow-md transition flex items-center justify-center space-x-2"
-            >
-              <Sparkles className="h-4 w-4 text-[#0B132B]" />
-              <span>🚀 Instant Super Admin Demo Access</span>
-            </button>
-          </div>
 
           <div className="pt-4 border-t border-gray-100 text-center">
             <button
