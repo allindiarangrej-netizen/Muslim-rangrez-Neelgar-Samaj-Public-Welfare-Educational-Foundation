@@ -57880,4 +57880,6 @@ export const VERIFIED_SCHOOLS_DATA: SchoolProfile[] = [
     },
     "minorityInstitution": false,
     "minorityType": "None",
-    "description": "DAV Public School, Bareilly is a top accredited school in Bareilly, Uttar Pradesh, offering high quality educati
+    "description": "DAV Public School, Bareilly is a top accredited school in Bareilly, Uttar Pradesh, offering high quality education."
+  }
+];
