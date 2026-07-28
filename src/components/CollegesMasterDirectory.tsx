@@ -8,6 +8,26 @@ import {
 import { Language } from '../types';
 import MedicalCollegesDirectory from './MedicalCollegesDirectory';
 import ProfessionalCollegesDirectory from './ProfessionalCollegesDirectory';
+import EngineeringCollegesDirectory from './EngineeringCollegesDirectory';
+import PharmacyCollegesDirectory from './PharmacyCollegesDirectory';
+import LawCollegesDirectory from './LawCollegesDirectory';
+import AgricultureCollegesDirectory from './AgricultureCollegesDirectory';
+import NursingCollegesDirectory from './NursingCollegesDirectory';
+import VeterinaryCollegesDirectory from './VeterinaryCollegesDirectory';
+import ParamedicalCollegesDirectory from './ParamedicalCollegesDirectory';
+import ArchitectureCollegesDirectory from './ArchitectureCollegesDirectory';
+import ManagementCollegesDirectory from './ManagementCollegesDirectory';
+import ScienceCollegesDirectory from './ScienceCollegesDirectory';
+import ArtsCollegesDirectory from './ArtsCollegesDirectory';
+import CommerceCollegesDirectory from './CommerceCollegesDirectory';
+import PolytechnicCollegesDirectory from './PolytechnicCollegesDirectory';
+import ItiCollegesDirectory from './ItiCollegesDirectory';
+import TeacherEducationCollegesDirectory from './TeacherEducationCollegesDirectory';
+import AviationCollegesDirectory from './AviationCollegesDirectory';
+import HotelCollegesDirectory from './HotelCollegesDirectory';
+import FashionCollegesDirectory from './FashionCollegesDirectory';
+import PerformingArtsCollegesDirectory from './PerformingArtsCollegesDirectory';
+import MinorityCollegesDirectory from './MinorityCollegesDirectory';
 
 interface CollegesMasterDirectoryProps {
   currentLanguage: Language;
@@ -36,6 +56,7 @@ export default function CollegesMasterDirectory({ currentLanguage, initialStream
     { id: 'management', titleEn: 'Management Colleges', titleHi: 'प्रबंधन (मैनेजमेंट) कॉलेज', titleUr: 'مینجمنٹ کالجز', icon: '💼', reg: 'AICTE / IIM Act / UGC', seats: '4,10,000+ MBA/PGDM', type: 'professional' },
     { id: 'science', titleEn: 'Science Colleges', titleHi: 'विज्ञान कॉलेज', titleUr: 'سائنس کالجز', icon: '🧪', reg: 'UGC / NAAC Accredited Universities', seats: '8,50,000+ B.Sc/M.Sc', type: 'custom' },
     { id: 'arts', titleEn: 'Arts & Humanities Colleges', titleHi: 'कला एवं मानविकी कॉलेज', titleUr: 'آرٹس اور ہیومینٹیز کالجز', icon: '🎨', reg: 'UGC / State Universities Act', seats: '12,00,000+ BA/MA', type: 'custom' },
+    { id: 'commerce', titleEn: 'Commerce Colleges', titleHi: 'वाणिज्य कॉलेज', titleUr: 'کامرس کالجز', icon: '📊', reg: 'UGC / State Universities Act', seats: '9,50,000+ B.Com/M.Com', type: 'custom' },
     { id: 'polytechnic', titleEn: 'Polytechnic Colleges', titleHi: 'पॉलिटेक्निक कॉलेज', titleUr: 'پولی ٹیکنک کالجز', icon: '🔧', reg: 'State Boards of Technical Education', seats: '7,80,000+ Diploma', type: 'professional' },
     { id: 'iti', titleEn: 'ITI & Skill Institutes', titleHi: 'आईटीआई एवं कौशल संस्थान', titleUr: 'آئی ٹی آئی اور اسکل انسٹی ٹیوٹس', icon: '🛠️', reg: 'DGT / NCVT (Min. of Skill Dev.)', seats: '24,00,000+ Craftsmen', type: 'custom' },
     { id: 'teacher', titleEn: 'Teacher Education Colleges', titleHi: 'शिक्षक शिक्षा (B.Ed) कॉलेज', titleUr: 'ٹیچر ایجوکیشن کالجز', icon: '📚', reg: 'NCTE (Nat. Council for Teacher Ed.)', seats: '3,50,000+ B.Ed/D.El.Ed', type: 'custom' },
@@ -54,16 +75,6 @@ export default function CollegesMasterDirectory({ currentLanguage, initialStream
       { name: 'Maulana Azad National Urdu University (MANUU)', city: 'Hyderabad', state: 'Telangana', reg: 'Central University Act', courses: ['B.Tech CS', 'Polytechnic Diploma', 'B.Ed', 'Journalism'], website: 'https://manuu.edu.in', fee: '₹8,000 / yr' },
       { name: 'B.S. Abdur Rahman Crescent Institute of Science & Technology', city: 'Chennai', state: 'Tamil Nadu', reg: 'Deemed University / NAAC A+', courses: ['B.Tech AI & ML', 'Aerospace', 'B.Arch', 'MBA'], website: 'https://crescent.education', fee: '₹1,50,000 / yr' },
       { name: 'Integral University', city: 'Lucknow', state: 'Uttar Pradesh', reg: 'Statutory State University / Minority Status', courses: ['B.Tech', 'MBBS', 'Agriculture', 'Law', 'Pharmacy'], website: 'https://www.iul.ac.in', fee: '₹1,10,000 / yr' }
-    ],
-    veterinary: [
-      { name: 'Indian Veterinary Research Institute (IVRI)', city: 'Bareilly', state: 'Uttar Pradesh', reg: 'VCI Approved', courses: ['BVSc & AH', 'MVSc', 'PhD Veterinary'], website: 'http://www.ivri.nic.in', fee: '₹35,000 / yr' },
-      { name: 'College of Veterinary Science & Animal Husbandry', city: 'Mhow', state: 'Madhya Pradesh', reg: 'VCI Approved', courses: ['BVSc & AH', 'Animal Genetics'], website: 'http://www.ndvsu.org', fee: '₹42,000 / yr' },
-      { name: 'Bombay Veterinary College (MAFSU)', city: 'Mumbai', state: 'Maharashtra', reg: 'VCI Approved', courses: ['BVSc & AH', 'Veterinary Surgery'], website: 'http://www.mafsu.in', fee: '₹55,000 / yr' }
-    ],
-    paramedical: [
-      { name: 'All India Institute of Physical Medicine and Rehabilitation', city: 'Mumbai', state: 'Maharashtra', reg: 'Statutory Health Council', courses: ['BPT (Physiotherapy)', 'MOT', 'Prosthetics'], website: 'http://aiipmr.gov.in', fee: '₹22,000 / yr' },
-      { name: 'Jamia Hamdard Department of Paramedical Sciences', city: 'New Delhi', state: 'Delhi', reg: 'UGC / Allied Council', courses: ['B.Sc Medical Lab Tech', 'B.Sc Radiology', 'BPT'], website: 'http://jamiahamdard.edu', fee: '₹1,10,000 / yr' },
-      { name: 'PGIMER Paramedical Institute', city: 'Chandigarh', state: 'Chandigarh', reg: 'Ministry of Health', courses: ['B.Sc MLT', 'Operation Theatre Tech', 'Radiotherapy'], website: 'http://pgimer.edu.in', fee: '₹15,000 / yr' }
     ],
     science: [
       { name: 'St. Stephen’s College', city: 'New Delhi', state: 'Delhi', reg: 'UGC / Delhi University', courses: ['B.Sc Physics Hons', 'B.Sc Chemistry Hons', 'Mathematics'], website: 'https://www.ststephens.edu', fee: '₹45,000 / yr' },
@@ -422,8 +433,284 @@ export default function CollegesMasterDirectory({ currentLanguage, initialStream
     );
   }
 
-  // If user clicked Engineering, Pharmacy, Law, Nursing, Agriculture, Architecture, Management, or Polytechnic, render full ProfessionalCollegesDirectory
-  if (['engineering', 'pharmacy', 'law', 'nursing', 'agriculture', 'architecture', 'management', 'polytechnic'].includes(activeStreamView)) {
+  // If user clicked Engineering, render premium EngineeringCollegesDirectory
+  if (activeStreamView === 'engineering') {
+    return (
+      <div>
+        {renderTopToolbar()}
+        <div className="bg-[#0B132B] text-white py-3 px-4 sm:px-6 border-b border-[#D4AF37]">
+          <div className="max-w-7xl mx-auto flex items-center justify-between">
+            <button
+              onClick={() => setActiveStreamView('overview')}
+              className="flex items-center gap-2 text-xs font-bold text-[#FFD54A] hover:underline cursor-pointer"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>&larr; Back to Master Colleges Directory (All 19 Streams)</span>
+            </button>
+            <span className="text-[11px] font-mono text-slate-400">Stream Selected: Engineering Colleges</span>
+          </div>
+        </div>
+        <EngineeringCollegesDirectory currentLanguage={currentLanguage} />
+        {renderCollegeModal()}
+      </div>
+    );
+  }
+
+  // If user clicked Pharmacy, render full PharmacyCollegesDirectory
+  if (activeStreamView === 'pharmacy') {
+    return (
+      <div>
+        {renderTopToolbar()}
+        <div className="bg-[#0B132B] text-white py-3 px-4 sm:px-6 border-b border-[#D4AF37]">
+          <div className="max-w-7xl mx-auto flex items-center justify-between">
+            <button
+              onClick={() => setActiveStreamView('overview')}
+              className="flex items-center gap-2 text-xs font-bold text-[#FFD54A] hover:underline cursor-pointer"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>&larr; Back to Master Colleges Directory (All 19 Streams)</span>
+            </button>
+            <span className="text-[11px] font-mono text-slate-400">Stream Selected: Pharmacy Colleges</span>
+          </div>
+        </div>
+        <PharmacyCollegesDirectory currentLanguage={currentLanguage} />
+        {renderCollegeModal()}
+      </div>
+    );
+  }
+
+  // If user clicked Law, render full LawCollegesDirectory
+  if (activeStreamView === 'law') {
+    return (
+      <div>
+        {renderTopToolbar()}
+        <div className="bg-[#0B132B] text-white py-3 px-4 sm:px-6 border-b border-[#D4AF37]">
+          <div className="max-w-7xl mx-auto flex items-center justify-between">
+            <button
+              onClick={() => setActiveStreamView('overview')}
+              className="flex items-center gap-2 text-xs font-bold text-[#FFD54A] hover:underline cursor-pointer"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>&larr; Back to Master Colleges Directory (All 19 Streams)</span>
+            </button>
+            <span className="text-[11px] font-mono text-slate-400">Stream Selected: Law Colleges</span>
+          </div>
+        </div>
+        <LawCollegesDirectory currentLanguage={currentLanguage} />
+        {renderCollegeModal()}
+      </div>
+    );
+  }
+
+  // If user clicked Agriculture, render full AgricultureCollegesDirectory
+  if (activeStreamView === 'agriculture') {
+    return (
+      <div>
+        {renderTopToolbar()}
+        <div className="bg-[#0B132B] text-white py-3 px-4 sm:px-6 border-b border-[#D4AF37]">
+          <div className="max-w-7xl mx-auto flex items-center justify-between">
+            <button
+              onClick={() => setActiveStreamView('overview')}
+              className="flex items-center gap-2 text-xs font-bold text-[#FFD54A] hover:underline cursor-pointer"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>&larr; Back to Master Colleges Directory (All 19 Streams)</span>
+            </button>
+            <span className="text-[11px] font-mono text-slate-400">Stream Selected: Agriculture Colleges</span>
+          </div>
+        </div>
+        <AgricultureCollegesDirectory currentLanguage={currentLanguage} />
+        {renderCollegeModal()}
+      </div>
+    );
+  }
+
+  // If user clicked Nursing, render full NursingCollegesDirectory
+  if (activeStreamView === 'nursing') {
+    return (
+      <div>
+        {renderTopToolbar()}
+        <div className="bg-[#0B132B] text-white py-3 px-4 sm:px-6 border-b border-[#D4AF37]">
+          <div className="max-w-7xl mx-auto flex items-center justify-between">
+            <button
+              onClick={() => setActiveStreamView('overview')}
+              className="flex items-center gap-2 text-xs font-bold text-[#FFD54A] hover:underline cursor-pointer"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>&larr; Back to Master Colleges Directory (All 19 Streams)</span>
+            </button>
+            <span className="text-[11px] font-mono text-slate-400">Stream Selected: Nursing Colleges</span>
+          </div>
+        </div>
+        <NursingCollegesDirectory currentLanguage={currentLanguage} />
+        {renderCollegeModal()}
+      </div>
+    );
+  }
+
+  // If user clicked Veterinary, render full VeterinaryCollegesDirectory
+  if (activeStreamView === 'veterinary') {
+    return (
+      <div>
+        {renderTopToolbar()}
+        <div className="bg-[#0B132B] text-white py-3 px-4 sm:px-6 border-b border-[#D4AF37]">
+          <div className="max-w-7xl mx-auto flex items-center justify-between">
+            <button
+              onClick={() => setActiveStreamView('overview')}
+              className="flex items-center gap-2 text-xs font-bold text-[#FFD54A] hover:underline cursor-pointer"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>&larr; Back to Master Colleges Directory (All 19 Streams)</span>
+            </button>
+            <span className="text-[11px] font-mono text-slate-400">Stream Selected: Veterinary Colleges</span>
+          </div>
+        </div>
+        <VeterinaryCollegesDirectory currentLanguage={currentLanguage} />
+        {renderCollegeModal()}
+      </div>
+    );
+  }
+
+  // If user clicked Paramedical, render full ParamedicalCollegesDirectory
+  if (activeStreamView === 'paramedical') {
+    return (
+      <div>
+        {renderTopToolbar()}
+        <div className="bg-[#0B132B] text-white py-3 px-4 sm:px-6 border-b border-[#D4AF37]">
+          <div className="max-w-7xl mx-auto flex items-center justify-between">
+            <button
+              onClick={() => setActiveStreamView('overview')}
+              className="flex items-center gap-2 text-xs font-bold text-[#FFD54A] hover:underline cursor-pointer"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>&larr; Back to Master Colleges Directory (All 19 Streams)</span>
+            </button>
+            <span className="text-[11px] font-mono text-slate-400">Stream Selected: Paramedical Colleges</span>
+          </div>
+        </div>
+        <ParamedicalCollegesDirectory currentLanguage={currentLanguage} />
+        {renderCollegeModal()}
+      </div>
+    );
+  }
+
+  // If user clicked Architecture, render specialized ArchitectureCollegesDirectory
+  if (activeStreamView === 'architecture') {
+    return (
+      <div>
+        {renderTopToolbar()}
+        <div className="bg-[#0B132B] text-white py-3 px-4 sm:px-6 border-b border-[#D4AF37]">
+          <div className="max-w-7xl mx-auto flex items-center justify-between">
+            <button
+              onClick={() => setActiveStreamView('overview')}
+              className="flex items-center gap-2 text-xs font-bold text-[#FFD54A] hover:underline cursor-pointer"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>&larr; Back to Master Colleges Directory (All 19 Streams)</span>
+            </button>
+            <span className="text-[11px] font-mono text-slate-400">Stream Selected: Architecture & Built Environment</span>
+          </div>
+        </div>
+        <ArchitectureCollegesDirectory currentLanguage={currentLanguage} />
+        {renderCollegeModal()}
+      </div>
+    );
+  }
+
+  // If user clicked Science, render specialized ScienceCollegesDirectory
+  if (activeStreamView === 'science') {
+    return (
+      <div>
+        {renderTopToolbar()}
+        <div className="bg-[#0B132B] text-white py-3 px-4 sm:px-6 border-b border-emerald-500">
+          <div className="max-w-7xl mx-auto flex items-center justify-between">
+            <button
+              onClick={() => setActiveStreamView('overview')}
+              className="flex items-center gap-2 text-xs font-bold text-[#FFD54A] hover:underline cursor-pointer"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>&larr; Back to Master Colleges Directory (All 19 Streams)</span>
+            </button>
+            <span className="text-[11px] font-mono text-slate-400">Stream Selected: Science & Research Institutions</span>
+          </div>
+        </div>
+        <ScienceCollegesDirectory currentLanguage={currentLanguage} />
+        {renderCollegeModal()}
+      </div>
+    );
+  }
+
+  // If user clicked Arts, render specialized ArtsCollegesDirectory
+  if (activeStreamView === 'arts') {
+    return (
+      <div>
+        {renderTopToolbar()}
+        <div className="bg-[#0B132B] text-white py-3 px-4 sm:px-6 border-b border-amber-500">
+          <div className="max-w-7xl mx-auto flex items-center justify-between">
+            <button
+              onClick={() => setActiveStreamView('overview')}
+              className="flex items-center gap-2 text-xs font-bold text-[#FFD54A] hover:underline cursor-pointer"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>&larr; Back to Master Colleges Directory (All 19 Streams)</span>
+            </button>
+            <span className="text-[11px] font-mono text-slate-400">Stream Selected: Arts, Humanities & Social Sciences</span>
+          </div>
+        </div>
+        <ArtsCollegesDirectory currentLanguage={currentLanguage} />
+        {renderCollegeModal()}
+      </div>
+    );
+  }
+
+  // If user clicked Commerce, render specialized CommerceCollegesDirectory
+  if (activeStreamView === 'commerce') {
+    return (
+      <div>
+        {renderTopToolbar()}
+        <div className="bg-[#0B132B] text-white py-3 px-4 sm:px-6 border-b border-blue-500">
+          <div className="max-w-7xl mx-auto flex items-center justify-between">
+            <button
+              onClick={() => setActiveStreamView('overview')}
+              className="flex items-center gap-2 text-xs font-bold text-[#FFD54A] hover:underline cursor-pointer"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>&larr; Back to Master Colleges Directory (All Streams)</span>
+            </button>
+            <span className="text-[11px] font-mono text-slate-400">Stream Selected: Commerce, Finance & Business</span>
+          </div>
+        </div>
+        <CommerceCollegesDirectory currentLanguage={currentLanguage} />
+        {renderCollegeModal()}
+      </div>
+    );
+  }
+
+  // If user clicked Management, render specialized ManagementCollegesDirectory
+  if (activeStreamView === 'management') {
+    return (
+      <div>
+        {renderTopToolbar()}
+        <div className="bg-[#0B132B] text-white py-3 px-4 sm:px-6 border-b border-[#3b82f6]">
+          <div className="max-w-7xl mx-auto flex items-center justify-between">
+            <button
+              onClick={() => setActiveStreamView('overview')}
+              className="flex items-center gap-2 text-xs font-bold text-[#FFD54A] hover:underline cursor-pointer"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>&larr; Back to Master Colleges Directory (All 19 Streams)</span>
+            </button>
+            <span className="text-[11px] font-mono text-slate-400">Stream Selected: Management & Business Schools</span>
+          </div>
+        </div>
+        <ManagementCollegesDirectory currentLanguage={currentLanguage} />
+        {renderCollegeModal()}
+      </div>
+    );
+  }
+
+  // If user clicked Polytechnic, render full ProfessionalCollegesDirectory
+  if (activeStreamView === 'polytechnic') {
     return (
       <div>
         {renderTopToolbar()}
@@ -441,7 +728,182 @@ export default function CollegesMasterDirectory({ currentLanguage, initialStream
             </span>
           </div>
         </div>
-        <ProfessionalCollegesDirectory currentLanguage={currentLanguage} />
+        <PolytechnicCollegesDirectory currentLanguage={currentLanguage} />
+        {renderCollegeModal()}
+      </div>
+    );
+  }
+
+  // If user clicked ITI, render full ItiCollegesDirectory with 155 entries
+  if (activeStreamView === 'iti') {
+    return (
+      <div>
+        {renderTopToolbar()}
+        <div className="bg-[#0B132B] text-white py-3 px-4 sm:px-6 border-b border-[#004B23]">
+          <div className="max-w-7xl mx-auto flex items-center justify-between">
+            <button
+              onClick={() => setActiveStreamView('overview')}
+              className="flex items-center gap-2 text-xs font-bold text-[#FFD54A] hover:underline cursor-pointer"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>&larr; Back to Master Colleges Directory (All 19 Streams)</span>
+            </button>
+            <span className="text-[11px] font-mono text-slate-400">
+              Stream Selected: ITI & Skill Development Institutes
+            </span>
+          </div>
+        </div>
+        <ItiCollegesDirectory currentLanguage={currentLanguage} />
+        {renderCollegeModal()}
+      </div>
+    );
+  }
+
+  // If user clicked Teacher Education, render full TeacherEducationCollegesDirectory
+  if (activeStreamView === 'teacher') {
+    return (
+      <div>
+        {renderTopToolbar()}
+        <div className="bg-[#0B132B] text-white py-3 px-4 sm:px-6 border-b border-[#004B23]">
+          <div className="max-w-7xl mx-auto flex items-center justify-between">
+            <button
+              onClick={() => setActiveStreamView('overview')}
+              className="flex items-center gap-2 text-xs font-bold text-[#FFD54A] hover:underline cursor-pointer"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>&larr; Back to Master Colleges Directory (All 19 Streams)</span>
+            </button>
+            <span className="text-[11px] font-mono text-slate-400">
+              Stream Selected: Teacher Education & Teacher Training Colleges
+            </span>
+          </div>
+        </div>
+        <TeacherEducationCollegesDirectory currentLanguage={currentLanguage} />
+        {renderCollegeModal()}
+      </div>
+    );
+  }
+
+  // If user clicked Aviation, render full AviationCollegesDirectory
+  if (activeStreamView === 'aviation') {
+    return (
+      <div>
+        {renderTopToolbar()}
+        <div className="bg-[#0B132B] text-white py-3 px-4 sm:px-6 border-b border-[#004B23]">
+          <div className="max-w-7xl mx-auto flex items-center justify-between">
+            <button
+              onClick={() => setActiveStreamView('overview')}
+              className="flex items-center gap-2 text-xs font-bold text-[#FFD54A] hover:underline cursor-pointer"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>&larr; Back to Master Colleges Directory (All 19 Streams)</span>
+            </button>
+            <span className="text-[11px] font-mono text-slate-400">
+              Stream Selected: Aviation Colleges & Flying Training Organizations Directory
+            </span>
+          </div>
+        </div>
+        <AviationCollegesDirectory currentLanguage={currentLanguage} />
+        {renderCollegeModal()}
+      </div>
+    );
+  }
+
+  // If user clicked Hotel Management, render full HotelCollegesDirectory
+  if (activeStreamView === 'hotel') {
+    return (
+      <div>
+        {renderTopToolbar()}
+        <div className="bg-[#0B132B] text-white py-3 px-4 sm:px-6 border-b border-[#004B23]">
+          <div className="max-w-7xl mx-auto flex items-center justify-between">
+            <button
+              onClick={() => setActiveStreamView('overview')}
+              className="flex items-center gap-2 text-xs font-bold text-[#FFD54A] hover:underline cursor-pointer"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>&larr; Back to Master Colleges Directory (All 19 Streams)</span>
+            </button>
+            <span className="text-[11px] font-mono text-slate-400">
+              Stream Selected: Hotel Management, Hospitality & Tourism Colleges Directory
+            </span>
+          </div>
+        </div>
+        <HotelCollegesDirectory currentLanguage={currentLanguage} />
+        {renderCollegeModal()}
+      </div>
+    );
+  }
+
+  // If user clicked Fashion, Design & Fine Arts, render full FashionCollegesDirectory
+  if (activeStreamView === 'fashion') {
+    return (
+      <div>
+        {renderTopToolbar()}
+        <div className="bg-[#0B132B] text-white py-3 px-4 sm:px-6 border-b border-[#004B23]">
+          <div className="max-w-7xl mx-auto flex items-center justify-between">
+            <button
+              onClick={() => setActiveStreamView('overview')}
+              className="flex items-center gap-2 text-xs font-bold text-[#FFD54A] hover:underline cursor-pointer"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>&larr; Back to Master Colleges Directory (All 19 Streams)</span>
+            </button>
+            <span className="text-[11px] font-mono text-slate-400">
+              Stream Selected: Fashion, Design & Fine Arts Colleges Directory
+            </span>
+          </div>
+        </div>
+        <FashionCollegesDirectory currentLanguage={currentLanguage} />
+        {renderCollegeModal()}
+      </div>
+    );
+  }
+
+  // If user clicked Performing Arts, render full PerformingArtsCollegesDirectory
+  if (activeStreamView === 'performing') {
+    return (
+      <div>
+        {renderTopToolbar()}
+        <div className="bg-[#0B132B] text-white py-3 px-4 sm:px-6 border-b border-[#004B23]">
+          <div className="max-w-7xl mx-auto flex items-center justify-between">
+            <button
+              onClick={() => setActiveStreamView('overview')}
+              className="flex items-center gap-2 text-xs font-bold text-[#FFD54A] hover:underline cursor-pointer"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>&larr; Back to Master Colleges Directory (All 19 Streams)</span>
+            </button>
+            <span className="text-[11px] font-mono text-slate-400">
+              Stream Selected: Performing Arts, Music & Film Colleges Directory
+            </span>
+          </div>
+        </div>
+        <PerformingArtsCollegesDirectory currentLanguage={currentLanguage} />
+        {renderCollegeModal()}
+      </div>
+    );
+  }
+
+  // If user clicked Minority Educational Institutions, render full MinorityCollegesDirectory
+  if (activeStreamView === 'minority') {
+    return (
+      <div>
+        {renderTopToolbar()}
+        <div className="bg-[#0B132B] text-white py-3 px-4 sm:px-6 border-b border-[#004B23]">
+          <div className="max-w-7xl mx-auto flex items-center justify-between">
+            <button
+              onClick={() => setActiveStreamView('overview')}
+              className="flex items-center gap-2 text-xs font-bold text-[#FFD54A] hover:underline cursor-pointer"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>&larr; Back to Master Colleges Directory (All 19 Streams)</span>
+            </button>
+            <span className="text-[11px] font-mono text-slate-400">
+              Stream Selected: Minority Universities & Educational Institutions Directory
+            </span>
+          </div>
+        </div>
+        <MinorityCollegesDirectory currentLanguage={currentLanguage} />
         {renderCollegeModal()}
       </div>
     );

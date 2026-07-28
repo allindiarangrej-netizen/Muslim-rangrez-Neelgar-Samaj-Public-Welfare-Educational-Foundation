@@ -32,6 +32,49 @@ export default function Header({
   const [isScrolled, setIsScrolled] = useState(false);
   const dropdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  const getInitialLogoSrc = (): string => {
+    try {
+      const driveUrl = (import.meta as any).env.VITE_LOGO_GOOGLE_DRIVE_URL || 'https://drive.google.com/file/d/1OfD-ZUcnv0sRZyjNDCD8QMZlGI7T4vRP/view?usp=drivesdk';
+      const idRegex = /(?:\/file\/d\/|id=)([\w-]+)/;
+      const match = driveUrl.match(idRegex);
+      if (match && match[1]) {
+        return `https://lh3.googleusercontent.com/d/${match[1]}`;
+      }
+    } catch (e) {
+      // fallback
+    }
+    return '/images/logo/logo.svg';
+  };
+
+  const [logoSrc, setLogoSrc] = useState<string>(getInitialLogoSrc);
+  const [logoErrorCount, setLogoErrorCount] = useState<number>(0);
+
+  const handleLogoError = () => {
+    const driveUrl = (import.meta as any).env.VITE_LOGO_GOOGLE_DRIVE_URL || 'https://drive.google.com/file/d/1OfD-ZUcnv0sRZyjNDCD8QMZlGI7T4vRP/view?usp=drivesdk';
+    const idRegex = /(?:\/file\/d\/|id=)([\w-]+)/;
+    const match = driveUrl.match(idRegex);
+    
+    if (match && match[1]) {
+      const fileId = match[1];
+      if (logoErrorCount === 0) {
+        setLogoSrc(`https://docs.google.com/uc?export=view&id=${fileId}`);
+        setLogoErrorCount(1);
+      } else {
+        setLogoSrc('/images/logo/logo.svg');
+        setLogoErrorCount(2);
+      }
+    } else {
+      setLogoSrc('/images/logo/logo.svg');
+    }
+  };
+
+  const handleLogoKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleTabClick('home');
+    }
+  };
+
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
@@ -58,20 +101,12 @@ export default function Header({
         { id: 'about-history', labelEn: 'Community History', labelHi: 'बिरादरी की तारीख़', labelUr: 'برادری کی تاریخ' },
         { id: 'about-constitution', labelEn: 'Trust Constitution & By-Laws', labelHi: 'महासभा संविधान एवं नियमावली', labelUr: 'ٹرسٹ کا آئین اور ضوابط' },
         { id: 'about-vision', labelEn: 'Mission & Vision', labelHi: 'मक़सद और नज़रिया', labelUr: 'مشن اور مقصد' },
-        { id: 'about-leadership', labelEn: 'Founders & Leadership', labelHi: 'बानी और क़ियादत', labelUr: 'قائدین اور قیادت' },
-        { id: 'about-certificate', labelEn: 'Society Registration', labelHi: 'सोसाइटी रजिस्ट्रेशन', labelUr: 'سوسائٹی رجسٹریشن' },
-        { id: 'about-faq', labelEn: 'FAQ', labelHi: 'अक्सर पूछे जाने वाले सवाल', labelUr: 'عام سوالات (FAQ)' },
-        { id: 'about-transparency-section', labelEn: 'Transparency & Governance', labelHi: 'पारदर्शिता और शासन', labelUr: 'شفافیت और حکمرانی', isHeader: true },
-        { id: 'about-transparency', labelEn: 'Transparency Charter & Pledge', labelHi: 'पारदर्शिता चार्टर एवं प्रतिज्ञा', labelUr: 'شفافیت کا چارٹر اور عہد', indent: true },
-        { id: 'about-legal-governance', labelEn: 'Governance Overview', labelHi: 'शासन अवलोकन', labelUr: 'انتظامی جائزہ', indent: true },
-        { id: 'executive-charter', labelEn: 'Executive Charter (Premium)', labelHi: 'संक्षिप्त संविधान', labelUr: 'مختصر آئین', indent: true },
-        { id: 'legal-constitution', labelEn: 'Constitution Rights', labelHi: 'संवैधानिक अधिकार', labelUr: 'آئینی حقوق', indent: true },
-        { id: 'legal-awareness', labelEn: 'Legal Awareness', labelHi: 'कानूनी जागरूकता', labelUr: 'قانونی بیداری', indent: true },
-        { id: 'legal-rti', labelEn: 'RTI (Right to Information)', labelHi: 'सूचना का अधिकार (RTI)', labelUr: 'حق معلومات (RTI)', indent: true },
-        { id: 'legal-citizen-rights', labelEn: 'Citizen Rights', labelHi: 'नागरिक अधिकार', labelUr: 'شہری حقوق', indent: true },
-        { id: 'about-reports', labelEn: 'Annual Reports', labelHi: 'वार्षिक रिपोर्ट', labelUr: 'سالانہ رپورٹس' },
-        { id: 'about-excellence', labelEn: '🏆 Hall of Excellence (Achievers)', labelHi: '🏆 गौरवशाली विभूतियाँ', labelUr: '🏆 ہال آف ایکسیلنس' },
-      ],
+        { id: 'about-message', labelEn: "President's Message", labelHi: 'अध्यक्ष का संदेश', labelUr: 'صدر کا پیغام' },
+        { id: 'trustees', labelEn: 'Founders & Board of Trustees', labelHi: 'संस्थापक और ट्रस्टी बोर्ड', labelUr: 'بانی اور بورڈ آف ٹرسٹیز' },
+        { id: 'patrons', labelEn: 'Advisory Council & Patrons', labelHi: 'सलाहकार परिषद और संरक्षक', labelUr: 'مشاورتی کونسل اور سرپرست' },
+        { id: 'executives', labelEn: 'National Executive Committee', labelHi: 'राष्ट्रीय कार्यकारी समिति', labelUr: 'قومی مجلس عاملہ' },
+        { id: 'about-gallery', labelEn: '📸 Trust Office HD Image Gallery (14 Photos)', labelHi: '📸 ट्रस्ट कार्यालय एचडी फोटो गैलरी (14 चित्र)', labelUr: '📸 ٹرسٹ آفس ایچ ڈی گیلری (14 تصاویر)' },
+      ]
     },
     {
       id: 'membership-matrimonial',
@@ -82,7 +117,7 @@ export default function Header({
       subItems: [
         { id: 'areas', labelEn: 'Areas & Regional Directory', labelHi: 'इलाक़े और क्षेत्रीय निर्देशिका', labelUr: 'علاقے اور علاقائی ڈائریکٹری' },
         { id: 'portal', labelEn: 'Membership Dashboard & Portal', labelHi: 'सदस्यता डैशबोर्ड और पोर्टल', labelUr: 'رکنیت ڈیش بورڈ اور پورٹل' },
-        { id: 'membership-register', labelEn: 'Member Registration', labelHi: 'सदस्य पंजीकरण', labelUr: 'رکن کا اندراج' },
+        { id: 'membership-register', labelEn: 'Member Registration', labelHi: 'सदस्य पंजीकरण', labelUr: 'رکن का اندراج' },
         { id: 'membership-census', labelEn: 'Family Census & Registration', labelHi: 'खानदानी मर्दुमशुमारी और पंजीकरण', labelUr: 'خاندانی مردم شماری اور اندراج' },
         { id: 'membership-tree', labelEn: 'Family Tree Mapping', labelHi: 'पारिवारिक वंश वृक्ष (फैमिली ट्री)', labelUr: 'خاندانی شجرہ نسب' },
         { id: 'membership-id', labelEn: 'Digital ID Card & Verification', labelHi: 'डिजिटल पहचान पत्र (ID Card)', labelUr: 'ڈیجیٹل شناختی کارڈ' },
@@ -91,15 +126,37 @@ export default function Header({
       ]
     },
     {
+      id: 'mahapanchayat',
+      labelEn: 'Mahapanchayat',
+      labelHi: 'महापंचायत',
+      labelUr: 'مہاپنچایت',
+      icon: Landmark,
+      subItems: [
+        { id: 'mahapanchayat-intro-header', labelEn: '🏛 Introduction', labelHi: '🏛 परिचय', labelUr: '🏛 تعارف', isHeader: true },
+        { id: 'mahapanchayat-about', labelEn: 'About Mahapanchayat', labelHi: 'महापंचायत के बारे में', labelUr: 'مہاپنچایت کے بارے میں' },
+        { id: 'mahapanchayat-mission', labelEn: 'Society Reform Mission', labelHi: 'समाज सुधार मिशन', labelUr: 'سماجی اصلاح کا مشن' },
+        { id: 'mahapanchayat-history', labelEn: 'Mahapanchayat History', labelHi: 'महापंचायत का इतिहास', labelUr: 'مہاپنچایت کی تاریخ' },
+        { id: 'mahapanchayat-participation-header', labelEn: '🗳 Participation', labelHi: '🗳 भागीदारी', labelUr: '🗳 شرکت', isHeader: true },
+        { id: 'mahapanchayat-surveys', labelEn: 'Digital Surveys', labelHi: 'डिजिटल सर्वेक्षण', labelUr: 'ڈیجیٹل سروے' },
+        { id: 'mahapanchayat-polls', labelEn: 'Community Opinion Polls', labelHi: 'सामुदायिक जनमत संग्रह', labelUr: 'کمیونٹی رائے عامہ' },
+        { id: 'mahapanchayat-agenda', labelEn: 'Current Agenda', labelHi: 'वर्तमान एजेंडा', labelUr: 'موجودہ ایجنڈا' },
+        { id: 'mahapanchayat-resolutions', labelEn: 'Historic Resolutions', labelHi: 'ऐतिहासिक प्रस्ताव', labelUr: 'تاریخی قراردادیں' },
+        { id: 'mahapanchayat-reports', labelEn: 'Official Reports', labelHi: 'आधिकारिक रिपोर्ट', labelUr: 'سرکاری رپورٹیں' },
+        { id: 'mahapanchayat-committees', labelEn: 'Committees & Members', labelHi: 'समितियां और सदस्य', labelUr: 'کمیٹیاں اور اراکین' },
+        { id: 'mahapanchayat-archive', labelEn: 'Historical Archives', labelHi: 'ऐतिहासिक अभिलेखागार', labelUr: 'تاریخی دستاویزات' },
+        { id: 'mahapanchayat-implementation', labelEn: 'Ground Implementation', labelHi: 'धरातल कार्यान्वयन', labelUr: 'زمینی عملدرآمد' },
+      ],
+    },
+    {
       id: 'volunteer-service',
-      labelEn: 'Community Service',
-      labelHi: 'सामुदायिक सेवा',
-      labelUr: 'کمیونٹی سروس',
+      labelEn: 'Services',
+      labelHi: 'सेवाएं',
+      labelUr: 'خدمات',
       icon: HeartHandshake,
       subItems: [
         { id: 'volunteer-service', labelEn: 'Overview', labelHi: 'अवलोकन', labelUr: 'جائزہ' },
         { id: 'volunteer-community', labelEn: 'Volunteer & Service Hub', labelHi: 'स्वयंसेवा एवं सेवा हब', labelUr: 'رضاکاری اور خدمت ہب' },
-        { id: 'volunteer-registration', labelEn: 'Volunteer Registration', labelHi: 'स्वयंसेवक पंजीकरण', labelUr: 'رضاکار کا اندراج' },
+        { id: 'volunteer-registration', labelEn: 'Volunteer Registration', labelHi: 'स्वयंसेवक पंजीकरण', labelUr: 'رضاکار का اندراج' },
         { id: 'volunteer-opportunities', labelEn: 'Opportunities', labelHi: 'सेवा अवसर', labelUr: 'خدمت کے مواقع' },
         { id: 'volunteer-awards', labelEn: 'Awards & Recognition', labelHi: 'पुरस्कार एवं सम्मान', labelUr: 'ایوارڈز اور اعتراف' },
         { id: 'volunteer-projects', labelEn: 'Social Projects', labelHi: 'सामाजिक परियोजनाएं', labelUr: 'سماجی منصوبے' },
@@ -111,31 +168,31 @@ export default function Header({
     },
     {
       id: 'education',
-      labelEn: 'Education & Careers',
-      labelHi: 'तालीम और करियर',
-      labelUr: 'تعلیم اور روزگار',
+      labelEn: 'Careers',
+      labelHi: 'करियर',
+      labelUr: 'کیریئر',
       icon: GraduationCap,
       subItems: [
-        { id: 'education', labelEn: '1. Education & Careers Overview', labelHi: '1. तालीम और करियर अवलोकन', labelUr: '1. تعلیم اور روزگار کا جائزہ' },
+        { id: 'education', labelEn: '1. Education & Careers Overview', labelHi: '1. तालीम और करियर अवलोकन', labelUr: '1. تعلیم اور روزگار का جائزہ' },
         { id: 'education-hub', labelEn: '2. Education & Mentorship Hub', labelHi: '2. शिक्षा और मेंटरशिप हब', labelUr: '2. تعلیم اور رہنمائی ہب' },
         { id: 'competitive-exams', labelEn: '3. Competitive Exams', labelHi: '3. प्रतियोगी परीक्षाएं', labelUr: '3. مسابقتی امتحانات' },
         { id: 'jobs-careers', labelEn: '4. Jobs & Careers', labelHi: '4. नौकरियां और करियर', labelUr: '4. ملازمتیں اور کیریئر' },
         { id: 'colleges-directory', labelEn: '5. Colleges Directory', labelHi: '5. कॉलेज निर्देशिका', labelUr: '5. کالجز ڈائریکٹری' },
         { id: 'scholarships', labelEn: '6. Scholarships', labelHi: '6. छात्रवृत्ति (स्कॉलरशिप)', labelUr: '6. اسکالرشپس' },
         { id: 'career-counselling', labelEn: '7. Career Counselling', labelHi: '7. करियर काउंसलिंग', labelUr: '7. کیریئر کونسلنگ' },
-        { id: 'education-gallery', labelEn: '8. 📸 Education HD Image Gallery (508 Photos)', labelHi: '8. 📸 शिक्षा एचडी फोटो गैलरी (508 चित्र)', labelUr: '8. 📸 تعلیمی ایچ ڈی گیلری (508 تصاویر)' },
+        { id: 'education-gallery', labelEn: '8. 📸 Education HD Image Gallery (508 Photos)', labelHi: '8. 📸 शिक्षा एचडी फोटो गैलरी (508 चित्र)', labelUr: '8. 📸 تعلیमी ایچ ڈی گیلری (508 تصاویر)' },
       ]
     },
     {
       id: 'welfare-support',
-      labelEn: 'Welfare & Support',
-      labelHi: 'कल्याण एवं सहायता',
-      labelUr: 'فلاح و بہبود اور مدد',
+      labelEn: 'Support',
+      labelHi: 'सहायता',
+      labelUr: 'مدد',
       icon: Gift,
       subItems: [
         { id: 'welfare-support', labelEn: 'Welfare & Support Overview', labelHi: 'कल्याण एवं सहायता अवलोकन', labelUr: 'فلاح و بہبود اور مدد کا جائزہ' },
         { id: 'schemes', labelEn: 'Government Schemes', labelHi: 'सरकारी योजनाएं', labelUr: 'حکومتی اسکیمیں' },
-        { id: 'welfare-minority', labelEn: 'Minority Welfare', labelHi: 'अल्पसंख्यक कल्याण', labelUr: 'اقلیتی فلاح و بہبود' },
+        { id: 'welfare-minority', labelEn: 'Minority Welfare', labelHi: 'अल्पसंख्यक कल्याण', labelUr: 'اقلیती فلاح و بہبود' },
         { id: 'welfare-scholarships', labelEn: 'Scholarships', labelHi: 'छात्रवृत्ति (स्कॉलरशिप)', labelUr: 'وظائف (اسکالرشپ)' },
         { id: 'welfare-hospital', labelEn: 'Hospital Network', labelHi: 'अस्पताल नेटवर्क', labelUr: 'ہسپتال نیٹ ورک' },
         { id: 'welfare-blood-bank', labelEn: 'Blood Bank', labelHi: 'ब्लड बैंक', labelUr: 'بلڈ بینک' },
@@ -146,32 +203,10 @@ export default function Header({
       ]
     },
     {
-      id: 'mahapanchayat',
-      labelEn: 'Mahapanchayat',
-      labelHi: 'महापंचायत',
-      labelUr: 'مہاپنچایت',
-      icon: Landmark,
-      subItems: [
-        { id: 'mahapanchayat-intro-header', labelEn: '🏛 Introduction', labelHi: '🏛 परिचय', labelUr: '🏛 تعارف', isHeader: true },
-        { id: 'mahapanchayat-about', labelEn: 'About Mahapanchayat', labelHi: 'महापंचायत के बारे में', labelUr: 'مہاپنچایت के बारे में' },
-        { id: 'mahapanchayat-mission', labelEn: 'Society Reform Mission', labelHi: 'समाज सुधार मिशन', labelUr: 'سماجی اصلاح کا مشن' },
-        { id: 'mahapanchayat-history', labelEn: 'Mahapanchayat History', labelHi: 'महापंचायत का इतिहास', labelUr: 'مہاپنچایت की तारीख' },
-        { id: 'mahapanchayat-participation-header', labelEn: '🗳 Participation', labelHi: '🗳 भागीदारी', labelUr: '🗳 شرکت', isHeader: true },
-        { id: 'mahapanchayat-surveys', labelEn: 'Digital Surveys', labelHi: 'डिजिटल सर्वेक्षण', labelUr: 'ڈیجیٹل سروے' },
-        { id: 'mahapanchayat-polls', labelEn: 'Community Opinion Polls', labelHi: 'सामुदायिक जनमत संग्रह', labelUr: 'کمیونٹی رائے عامہ' },
-        { id: 'mahapanchayat-agenda', labelEn: 'Current Agenda', labelHi: 'वर्तमान एजेंडा', labelUr: 'موجودہ एजेंडा' },
-        { id: 'mahapanchayat-resolutions', labelEn: 'Historic Resolutions', labelHi: 'ऐतिहासिक प्रस्ताव', labelUr: 'تاریخی قراردادیں' },
-        { id: 'mahapanchayat-reports', labelEn: 'Official Reports', labelHi: 'आधिकारिक रिपोर्ट', labelUr: 'سرکاری رپورٹیں' },
-        { id: 'mahapanchayat-committees', labelEn: 'Committees & Members', labelHi: 'समितियां और सदस्य', labelUr: 'کمیٹیاں اور اراکین' },
-        { id: 'mahapanchayat-archive', labelEn: 'Historical Archives', labelHi: 'ऐतिहासिक अभिलेखागार', labelUr: 'تاریخی دستاویزات' },
-        { id: 'mahapanchayat-implementation', labelEn: 'Ground Implementation', labelHi: 'धरातल कार्यान्वयन', labelUr: 'زمینی عملدرآمد' },
-      ],
-    },
-    {
       id: 'media',
-      labelEn: 'Media & Resources',
-      labelHi: 'मीडिया और संसाधन',
-      labelUr: 'میڈیا और وسائل',
+      labelEn: 'Media',
+      labelHi: 'मीडिया',
+      labelUr: 'میڈیا',
       icon: Newspaper,
       subItems: [
         { id: 'community-media-center', labelEn: 'Community Media Center', labelHi: 'सामुदायिक मीडिया केंद्र', labelUr: 'کمیونٹی میڈیا سینٹر' },
@@ -188,9 +223,7 @@ export default function Header({
         { id: 'media-faqs', labelEn: 'Help & FAQs', labelHi: 'सहायता और अक्सर पूछे जाने वाले प्रश्न', labelUr: 'مدد اور عام سوالات' },
       ],
     },
-  ];
-
-  const handleTabClick = (tabId: string) => {
+  ];const handleTabClick = (tabId: string) => {
     setActiveTab(tabId);
     setMobileMenuOpen(false);
     setDropdownOpen(null);
@@ -320,17 +353,30 @@ export default function Header({
         <div className="w-full max-w-[1600px] mx-auto pl-2 pr-2 md:pl-3 md:pr-3 lg:pl-3 lg:pr-3 xl:pl-4 xl:pr-4 2xl:pl-6 2xl:pr-6 h-[64px] flex justify-between items-center gap-0.5 xl:gap-1" id="middle_bar">
           {/* Logo and Branding */}
           <div 
-            className="flex items-center cursor-pointer shrink-0 max-w-[165px] lg:max-w-[170px] xl:max-w-[195px] 2xl:max-w-[215px] group py-1 mr-1 lg:mr-1 xl:mr-1.5 2xl:mr-2 relative" 
+            className="flex items-center cursor-pointer shrink-0 group py-1 mr-1 lg:mr-2 xl:mr-3 2xl:mr-4 relative select-none rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#004B23] focus-visible:ring-offset-2 transition-shadow" 
             onClick={() => handleTabClick('home')}
+            onKeyDown={handleLogoKeyDown}
+            role="button"
+            tabIndex={0}
+            aria-label="Rangrez Community Bharat Portal - Home"
+            title="Go to Home"
             id="branding_logo"
           >
             {/* Logo */}
-            <img src="/images/logo/logo.svg" alt="Logo" className="w-9 h-9 lg:w-9 lg:h-9 xl:w-9 xl:h-9 2xl:w-10 2xl:h-10 object-contain shrink-0 transition transform group-hover:scale-105" />
-            <div className="flex flex-col ml-1 lg:ml-1.5 justify-center overflow-hidden min-w-0">
-              <h1 className="text-[13px] lg:text-[12.5px] xl:text-[14.5px] 2xl:text-[16px] font-serif font-extrabold text-[#004B23] tracking-tight leading-[1.15] whitespace-nowrap truncate">
+            <img 
+              src={logoSrc} 
+              onError={handleLogoError}
+              alt="Rangrez Community Bharat Portal - Home" 
+              className="w-8 h-8 sm:w-9 sm:h-9 lg:w-10 lg:h-10 xl:w-11 xl:h-11 2xl:w-12 2xl:h-12 object-contain shrink-0 transition-all duration-300 ease-out group-hover:scale-[1.12] group-hover:drop-shadow-[0_0_8px_rgba(212,175,55,0.4)] will-change-transform transform-gpu cursor-pointer"
+              loading="eager"
+              decoding="async"
+              style={{ imageRendering: 'auto' }}
+            />
+            <div className="flex flex-col ml-1.5 sm:ml-2 justify-center overflow-hidden min-w-0">
+              <h1 className="text-[12px] sm:text-[13px] lg:text-[13.5px] xl:text-[15px] 2xl:text-[16px] font-serif font-extrabold text-[#004B23] tracking-tight leading-[1.15] whitespace-nowrap truncate group-hover:text-[#b8972a] transition-colors duration-300">
                 Rangrez Community
               </h1>
-              <span className="text-[9px] lg:text-[8.5px] xl:text-[10px] 2xl:text-[11.5px] font-serif font-bold text-[#004B23]/90 tracking-tight leading-none mt-0.5 whitespace-nowrap truncate">
+              <span className="text-[8px] sm:text-[9px] lg:text-[9px] xl:text-[10px] 2xl:text-[11px] font-serif font-bold text-[#004B23]/80 tracking-tight leading-none mt-0.5 whitespace-nowrap truncate group-hover:text-[#004B23] transition-colors duration-300">
                 Bharat Portal
               </span>
             </div>
@@ -349,7 +395,7 @@ export default function Header({
           </div>
 
           {/* Navigation - Desktop (Occupies all remaining horizontal space) */}
-          <nav className="hidden lg:flex items-center justify-between flex-1 min-w-0 gap-0 lg:gap-0.5 xl:gap-1 2xl:gap-2 flex-nowrap mx-0.5 lg:mx-1 xl:mx-1.5 2xl:mx-2 px-0.5" id="desktop_nav_links">
+          <nav className="hidden lg:flex items-center justify-between flex-1 min-w-0 gap-0 lg:gap-0.5 xl:gap-1 2xl:gap-2 flex-nowrap mx-0.5 lg:mx-1 xl:mx-1.5 2xl:mx-2 px-0.5" id="desktop_nav_links" aria-label="Main Desktop Navigation Menu">
             {navigationItems.map((item) => {
               const isActive = activeTab === item.id || activeTab.startsWith(item.id + '-') || 
                 (item.id === 'about' && (activeTab === 'about' || activeTab.startsWith('about-') || activeTab === 'hall-of-excellence' || activeTab === 'excellence' || activeTab === 'legal-governance' || activeTab === 'governance-overview' || activeTab === 'executive-charter' || activeTab === 'legal-constitution' || activeTab === 'legal-awareness' || activeTab === 'legal-rti' || activeTab === 'legal-citizen-rights')) || 
@@ -374,9 +420,10 @@ export default function Header({
                 >
                   <button
                     onClick={() => handleTabClick(item.id)}
-                    className={`text-[11.5px] lg:text-[10.5px] xl:text-[11.5px] 2xl:text-[13.5px] tracking-tight xl:tracking-normal flex items-center justify-center gap-1 2xl:gap-1.5 whitespace-nowrap px-1 lg:px-1 xl:px-1.5 2xl:px-2.5 py-1.5 transition-all duration-300 relative group/nav cursor-pointer min-w-0 ${
+                    aria-label={`${getLabel(item)}${item.subItems ? ' - Has dropdown menu' : ''}`}
+                    className={`text-[11.5px] lg:text-[10.5px] xl:text-[11.5px] 2xl:text-[13.5px] tracking-tight xl:tracking-normal flex items-center justify-center gap-1 2xl:gap-1.5 whitespace-nowrap px-1 lg:px-1 xl:px-1.5 2xl:px-2.5 py-1.5 transition-all duration-300 relative group/nav cursor-pointer min-w-0 rounded-lg focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#004B23] focus-visible:ring-offset-2 ${
                       isActive
-                        ? 'text-[#b8972a] font-bold'
+                        ? 'text-[#b8972a] font-bold bg-[#004B23]/5 lg:bg-transparent'
                         : 'text-gray-700 hover:text-[#004B23] font-semibold'
                     }`}
                   >
@@ -406,7 +453,8 @@ export default function Header({
                           <button
                             key={sub.id}
                             onClick={() => handleTabClick(sub.id)}
-                            className={`block w-full text-left px-4 py-2 text-xs text-gray-600 hover:bg-emerald-50/50 hover:text-[#004B23] hover:pl-5 transition-all duration-200 rounded-xl font-medium cursor-pointer ${sub.indent ? 'pl-6 hover:pl-7 border-l-2 border-emerald-500/30 ml-2' : ''}`}
+                            aria-label={getLabel(sub)}
+                            className={`block w-full text-left px-4 py-2 text-xs text-gray-600 hover:bg-emerald-50/50 hover:text-[#004B23] hover:pl-5 transition-all duration-200 rounded-xl font-medium cursor-pointer focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#004B23] focus-visible:ring-offset-1 ${sub.indent ? 'pl-6 hover:pl-7 border-l-2 border-emerald-500/30 ml-2' : ''}`}
                           >
                             {getLabel(sub)}
                           </button>
@@ -628,14 +676,15 @@ export default function Header({
             <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-gray-400" />
           </div>
 
-          <div className="space-y-1">
+          <div className="space-y-1" aria-label="Mobile Navigation Menu" role="navigation">
             {navigationItems.map((item) => (
               <div key={item.id} className="border-b border-gray-50 pb-1">
                 {item.subItems ? (
                   <div>
                     <button
                       onClick={() => handleTabClick(item.id)}
-                      className="w-full px-3 py-2 text-xs font-bold text-[#004B23] uppercase tracking-wider text-left hover:bg-emerald-50 rounded flex items-center space-x-2"
+                      aria-label={`${getLabel(item)} - Expandable menu`}
+                      className="w-full px-3 py-2 text-xs font-bold text-[#004B23] uppercase tracking-wider text-left hover:bg-emerald-50 rounded flex items-center space-x-2 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#004B23] focus-visible:ring-offset-1"
                     >
                       {item.icon && <item.icon className="w-4 h-4 shrink-0 stroke-[1.75] text-[#004B23]" />}
                       <span>{getLabel(item)}</span>
@@ -653,7 +702,8 @@ export default function Header({
                           <button
                             key={sub.id}
                             onClick={() => handleTabClick(sub.id)}
-                            className={`w-full text-left px-3 py-1.5 text-xs text-gray-700 hover:text-[#004B23] hover:bg-emerald-50 rounded ${sub.indent ? 'pl-6 font-medium text-[#004B23]/90' : ''}`}
+                            aria-label={getLabel(sub)}
+                            className={`w-full text-left px-3 py-1.5 text-xs text-gray-700 hover:text-[#004B23] hover:bg-emerald-50 rounded focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#004B23] focus-visible:ring-offset-1 ${sub.indent ? 'pl-6 font-medium text-[#004B23]/90' : ''}`}
                           >
                             • {getLabel(sub)}
                           </button>
@@ -664,7 +714,8 @@ export default function Header({
                 ) : (
                   <button
                     onClick={() => handleTabClick(item.id)}
-                    className="w-full text-left px-3 py-2.5 text-xs font-semibold text-gray-700 hover:text-[#004B23] hover:bg-emerald-50 rounded flex items-center space-x-2"
+                    aria-label={getLabel(item)}
+                    className="w-full text-left px-3 py-2.5 text-xs font-semibold text-gray-700 hover:text-[#004B23] hover:bg-emerald-50 rounded flex items-center space-x-2 focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#004B23] focus-visible:ring-offset-1"
                   >
                     {item.icon && <item.icon className="w-4 h-4 shrink-0 stroke-[1.75] opacity-80" />}
                     <span>{getLabel(item)}</span>

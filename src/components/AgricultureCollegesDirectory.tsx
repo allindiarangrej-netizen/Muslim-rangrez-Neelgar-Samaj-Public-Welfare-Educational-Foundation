@@ -1,0 +1,1191 @@
+import React, { useState, useMemo } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { 
+  Search, 
+  Filter, 
+  MapPin, 
+  ExternalLink, 
+  ChevronRight, 
+  CheckCircle2, 
+  ShieldCheck, 
+  Award, 
+  GraduationCap, 
+  Home, 
+  Phone, 
+  Compass, 
+  Users, 
+  DollarSign, 
+  Calendar, 
+  BookOpen, 
+  Sparkles, 
+  AlertCircle, 
+  ArrowUpRight, 
+  Star, 
+  Info,
+  Mail,
+  User,
+  Layers,
+  Map,
+  X,
+  FileText,
+  Briefcase,
+  Layers2,
+  Building,
+  Activity,
+  Share2,
+  Globe,
+  Sliders,
+  Check,
+  Building2,
+  FileSpreadsheet,
+  Download,
+  CheckSquare,
+  Sprout,
+  Leaf,
+  Droplets,
+  Tractor,
+  Microscope,
+  HardHat,
+  ThermometerSun
+} from 'lucide-react';
+import { AGRICULTURE_COLLEGES, AgricultureCollegeProfile } from '../data/agricultureCollegesData';
+
+interface AgricultureCollegesDirectoryProps {
+  currentLanguage: 'en' | 'ur' | 'hi';
+}
+
+const REGULATORY_BODIES = [
+  {
+    id: 'icar',
+    name: 'ICAR',
+    fullName: 'Indian Council of Agricultural Research',
+    website: 'https://icar.org.in/',
+    description: {
+      en: 'The apex body for coordinating, guiding and managing research and education in agriculture including horticulture, fisheries and animal sciences in the entire country.',
+      ur: 'پورے ملک میں باغبانی، ماہی گیری اور حیوانی علوم سمیت زراعت میں تحقیق اور تعلیم کی رہنمائی اور انتظام کرنے والا اعلیٰ ادارہ۔',
+      hi: 'पूरे देश में बागवानी, मत्स्य पालन और पशु विज्ञान सहित कृषि में अनुसंधान और शिक्षा के समन्वय, मार्गदर्शन और प्रबंधन के लिए सर्वोच्च निकाय।'
+    },
+    roles: [
+      'Accreditation of Agricultural Universities and Colleges',
+      'Administration of AIEEA (UG/PG) for admissions',
+      'Management of Krishi Vigyan Kendras (KVKs) network'
+    ]
+  },
+  {
+    id: 'cau',
+    name: 'Central Agricultural Universities',
+    fullName: 'Ministry of Agriculture & Farmers Welfare',
+    website: 'https://agricoop.nic.in/',
+    description: {
+      en: 'Specialized central institutions established by Act of Parliament to promote advanced studies and research in various branches of agriculture and allied sciences.',
+      ur: 'پارلیمنٹ کے ایکٹ کے ذریعے قائم کردہ خصوصی مرکزی ادارے جو زراعت کی مختلف شاخوں میں اعلیٰ تعلیم کو فروغ دیتے ہیں۔',
+      hi: 'कृषि और संबद्ध विज्ञान की विभिन्न शाखाओं में उन्नत अध्ययन और अनुसंधान को बढ़ावा देने के लिए संसद के अधिनियम द्वारा स्थापित विशेष केंद्रीय संस्थान।'
+    },
+    roles: [
+      'Strategic development of agricultural human resources',
+      'Standardization of agricultural curricula at national level',
+      'Direct central funding and administrative oversight'
+    ]
+  }
+];
+
+const COUNSELLING_BOARDS = [
+  { name: 'ICAR AIEEA Centralized Counselling', url: 'https://icar.org.in/counselling', desc: 'National level admission coordination for B.Sc, M.Sc and PhD seats in ICAR accredited universities.' },
+  { name: 'CUET UG/PG Admissions', url: 'https://cuet.samarth.ac.in/', desc: 'Integrated entrance for various Central Agricultural Universities and general universities.' },
+  { name: 'UPCATET (Uttar Pradesh)', url: 'https://upcatet.org/', desc: 'Combined agriculture entrance for four state agricultural universities in UP.' },
+  { name: 'MCAER (Maharashtra)', url: 'https://www.mcaer.org/', desc: 'Maharashtra Council of Agricultural Education and Research - Centralized Admissions.' },
+  { name: 'KEAM (Kerala)', url: 'https://cee.kerala.gov.in/', desc: 'Handles admissions for agriculture and allied courses in Kerala state.' }
+];
+
+export default function AgricultureCollegesDirectory({ currentLanguage = 'en' }: AgricultureCollegesDirectoryProps) {
+  const [activeTab, setActiveTab] = useState<'directory' | 'icar' | 'regulatory' | 'counselling'>('directory');
+  const [searchQuery, setSearchQuery] = useState('');
+  
+  // Advanced Filter States
+  const [selectedState, setSelectedState] = useState('All');
+  const [selectedDistrict, setSelectedDistrict] = useState('All');
+  const [selectedCity, setSelectedCity] = useState('All');
+  const [selectedUniversity, setSelectedUniversity] = useState('All');
+  const [selectedCourse, setSelectedCourse] = useState('All');
+  const [selectedSpecialization, setSelectedSpecialization] = useState('All');
+  const [selectedFeeRange, setSelectedFeeRange] = useState('All');
+  const [selectedOwnership, setSelectedOwnership] = useState('All');
+  const [selectedNaacGrade, setSelectedNaacGrade] = useState('All');
+  const [icarOnly, setIcarOnly] = useState(false);
+  const [hostelOnly, setHostelOnly] = useState(false);
+  const [placementOnly, setPlacementOnly] = useState(false);
+
+  // Sorting
+  const [sortBy, setSortBy] = useState<'alphabetical' | 'state' | 'fee-asc' | 'fee-desc' | 'placement-desc' | 'nirf-asc' | 'naac' | 'established-asc' | 'established-desc'>('alphabetical');
+
+  // Modal Detail State
+  const [selectedCollege, setSelectedCollege] = useState<AgricultureCollegeProfile | null>(null);
+  const [modalTab, setModalTab] = useState<'academics' | 'admissions' | 'infrastructure' | 'research' | 'placements' | 'fees' | 'contact'>('academics');
+
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12;
+
+  // SEO Inspector Drawer
+  const [showSeoInspector, setShowSeoInspector] = useState(false);
+
+  // Extract lists for filters
+  const statesList = useMemo(() => {
+    const states = new Set(AGRICULTURE_COLLEGES.map(c => c.state));
+    return ['All', ...Array.from(states).sort()];
+  }, []);
+
+  const districtsList = useMemo(() => {
+    const filtered = AGRICULTURE_COLLEGES.filter(c => selectedState === 'All' || c.state === selectedState);
+    const districts = new Set(filtered.map(c => c.district));
+    return ['All', ...Array.from(districts).sort()];
+  }, [selectedState]);
+
+  const citiesList = useMemo(() => {
+    const filtered = AGRICULTURE_COLLEGES.filter(c => 
+      (selectedState === 'All' || c.state === selectedState) &&
+      (selectedDistrict === 'All' || c.district === selectedDistrict)
+    );
+    const cities = new Set(filtered.map(c => c.city).filter(Boolean) as string[]);
+    return ['All', ...Array.from(cities).sort()];
+  }, [selectedState, selectedDistrict]);
+
+  const universitiesList = useMemo(() => {
+    const univs = new Set(AGRICULTURE_COLLEGES.map(c => c.affiliatedUniversity));
+    return ['All', ...Array.from(univs).sort()];
+  }, []);
+
+  const coursesList = [
+    'All', 'B.Sc Agriculture', 'B.Sc Horticulture', 'B.Sc Forestry', 'B.Sc Sericulture', 
+    'B.Sc Agricultural Biotechnology', 'B.Sc Food Technology', 'B.Tech Agricultural Engineering', 
+    'M.Sc Agriculture', 'M.Tech Agriculture', 'MBA Agribusiness', 'Ph.D Programmes'
+  ];
+  
+  const specializationsList = [
+    'All', 'Agronomy', 'Soil Science', 'Agricultural Economics', 'Plant Pathology', 
+    'Entomology', 'Genetics', 'Plant Breeding', 'Agricultural Biotechnology', 
+    'Horticulture', 'Forestry', 'Agricultural Engineering', 'Agribusiness Management'
+  ];
+
+  const feeRanges = ['All', 'Under ₹30,000/yr', '₹30,000 - ₹60,000/yr', '₹60,000 - ₹1,00,000/yr', 'Above ₹1,00,000/yr'];
+  const ownershipTypes = ['All', 'Government', 'Private', 'Autonomous', 'Deemed', 'Minority'];
+  const naacGradesList = ['All', 'A++', 'A+', 'A', 'B++', 'B+', 'B'];
+
+  // Filter Logic
+  const filteredColleges = useMemo(() => {
+    let result = [...AGRICULTURE_COLLEGES];
+
+    // Segment Tab filter
+    if (activeTab === 'icar') {
+      result = result.filter(c => c.icarAccredited);
+    }
+
+    // Search Query
+    if (searchQuery.trim() !== '') {
+      const q = searchQuery.toLowerCase().trim();
+      result = result.filter(c => 
+        c.name.toLowerCase().includes(q) ||
+        c.district.toLowerCase().includes(q) ||
+        c.state.toLowerCase().includes(q) ||
+        (c.city && c.city.toLowerCase().includes(q)) ||
+        c.affiliatedUniversity.toLowerCase().includes(q) ||
+        c.specializations.some(s => s.toLowerCase().includes(q)) ||
+        c.deanPrincipal.toLowerCase().includes(q)
+      );
+    }
+
+    if (selectedState !== 'All') result = result.filter(c => c.state === selectedState);
+    if (selectedDistrict !== 'All') result = result.filter(c => c.district === selectedDistrict);
+    if (selectedCity !== 'All') result = result.filter(c => c.city === selectedCity);
+    if (selectedUniversity !== 'All') result = result.filter(c => c.affiliatedUniversity === selectedUniversity);
+    if (selectedCourse !== 'All') result = result.filter(c => c.programmes.includes(selectedCourse));
+    if (selectedSpecialization !== 'All') result = result.filter(c => c.specializations.includes(selectedSpecialization));
+    if (selectedOwnership !== 'All') result = result.filter(c => c.ownership === selectedOwnership);
+    if (selectedNaacGrade !== 'All') result = result.filter(c => c.naacGrade && c.naacGrade.includes(selectedNaacGrade));
+    if (icarOnly) result = result.filter(c => c.icarAccredited);
+    if (hostelOnly) result = result.filter(c => c.infrastructure.includes('Hostel'));
+    if (placementOnly) result = result.filter(c => c.hasPlacementCell);
+
+    if (selectedFeeRange !== 'All') {
+      result = result.filter(c => {
+        const feeNum = parseInt(c.tuitionFees.replace(/[^0-9]/g, '')) || 0;
+        if (selectedFeeRange === 'Under ₹30,000/yr') return feeNum < 30000;
+        if (selectedFeeRange === '₹30,000 - ₹60,000/yr') return feeNum >= 30000 && feeNum <= 60000;
+        if (selectedFeeRange === '₹60,000 - ₹1,00,000/yr') return feeNum > 60000 && feeNum <= 100000;
+        if (selectedFeeRange === 'Above ₹1,00,000/yr') return feeNum > 100000;
+        return true;
+      });
+    }
+
+    result.sort((a, b) => {
+      switch (sortBy) {
+        case 'alphabetical': return a.name.localeCompare(b.name);
+        case 'state': return a.state.localeCompare(b.state);
+        case 'fee-asc': {
+          const feeA = parseInt(a.tuitionFees.replace(/[^0-9]/g, '')) || 0;
+          const feeB = parseInt(b.tuitionFees.replace(/[^0-9]/g, '')) || 0;
+          return feeA - feeB;
+        }
+        case 'fee-desc': {
+          const feeA = parseInt(a.tuitionFees.replace(/[^0-9]/g, '')) || 0;
+          const feeB = parseInt(b.tuitionFees.replace(/[^0-9]/g, '')) || 0;
+          return feeB - feeA;
+        }
+        case 'placement-desc': {
+          const packA = parseFloat(a.highestPackage.replace(/[^0-9.]/g, '')) || 0;
+          const packB = parseFloat(b.highestPackage.replace(/[^0-9.]/g, '')) || 0;
+          return packB - packA;
+        }
+        case 'nirf-asc': {
+          const rA = parseInt(a.nirfRanking || '999') || 999;
+          const rB = parseInt(b.nirfRanking || '999') || 999;
+          return rA - rB;
+        }
+        case 'naac': {
+          const rankMap: Record<string, number> = { 'A++ Grade': 6, 'A+ Grade': 5, 'A Grade': 4, 'B++ Grade': 3, 'B+ Grade': 2, 'B Grade': 1 };
+          const gradeA = rankMap[a.naacGrade || ''] || 0;
+          const gradeB = rankMap[b.naacGrade || ''] || 0;
+          return gradeB - gradeA;
+        }
+        case 'established-asc': return a.yearEstablished - b.yearEstablished;
+        case 'established-desc': return b.yearEstablished - a.yearEstablished;
+        default: return 0;
+      }
+    });
+
+    return result;
+  }, [activeTab, searchQuery, selectedState, selectedDistrict, selectedCity, selectedUniversity, selectedCourse, selectedSpecialization, selectedFeeRange, selectedOwnership, selectedNaacGrade, icarOnly, hostelOnly, placementOnly, sortBy]);
+
+  const paginatedColleges = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredColleges.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredColleges, currentPage]);
+
+  const totalPages = Math.ceil(filteredColleges.length / itemsPerPage);
+
+  const resetFilters = () => {
+    setSearchQuery('');
+    setSelectedState('All');
+    setSelectedDistrict('All');
+    setSelectedCity('All');
+    setSelectedUniversity('All');
+    setSelectedCourse('All');
+    setSelectedSpecialization('All');
+    setSelectedFeeRange('All');
+    setSelectedOwnership('All');
+    setSelectedNaacGrade('All');
+    setIcarOnly(false);
+    setHostelOnly(false);
+    setPlacementOnly(false);
+    setSortBy('alphabetical');
+    setCurrentPage(1);
+  };
+
+  const seoDetails = useMemo(() => {
+    const baseTitle = "National Agriculture Colleges Directory • Rangrez Community Bharat Portal";
+    const baseDesc = "Discover 100+ verified Central & State Agricultural Universities, Horticulture, Forestry, and allied institutes in India. Access official ICAR accreditation status, fees, and counselling nodes.";
+    const slug = "agriculture-colleges-directory";
+    const ogUrl = `https://rangrezportal.org/education/directories/${slug}`;
+
+    return {
+      title: baseTitle,
+      description: baseDesc,
+      url: ogUrl,
+      structuredData: {
+        "@context": "https://schema.org",
+        "@type": "EducationalOrganization",
+        "name": "Agriculture Colleges Directory India",
+        "description": baseDesc,
+        "url": ogUrl,
+        "provider": { "@type": "Organization", "name": "Rangrez Community Bharat Portal" },
+        "numberOfItems": AGRICULTURE_COLLEGES.length
+      }
+    };
+  }, []);
+
+  return (
+    <div className="w-full bg-[#faf9f6] min-h-screen text-stone-800 font-sans pb-16">
+      
+      {/* 1. HERO BANNER */}
+      <div className="bg-gradient-to-r from-[#03071E] via-[#0D1B2A] to-[#1B4332] text-white pt-8 pb-10 px-4 sm:px-8 border-b-4 border-[#FFD54A] relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20"></div>
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-950/80 border border-[#FFD54A]/50 text-[#FFD54A] text-xs font-extrabold uppercase tracking-wider shadow-md">
+              <Sprout className="w-3.5 h-3.5 text-[#FFD54A] animate-pulse" />
+              <span>
+                {currentLanguage === 'en'
+                  ? 'Agriculture Education Portal • ICAR Standards'
+                  : currentLanguage === 'ur'
+                  ? 'زرعی ایجوکیشن پورٹل • آئی سی اے آر'
+                  : 'कृषि शिक्षा पोर्टल • ICAR मानक निर्देशिका'}
+              </span>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => setShowSeoInspector(!showSeoInspector)}
+                className="flex items-center gap-1.5 text-xs font-bold text-sky-300 bg-sky-950/80 border border-sky-500/40 px-3 py-1.5 rounded-xl hover:bg-sky-900/60 transition cursor-pointer"
+              >
+                <Globe className="w-3.5 h-3.5 text-sky-400 shrink-0" />
+                <span>SEO & Metadata Inspector</span>
+              </button>
+
+              <div className="flex items-center gap-2 text-xs font-bold text-emerald-300 bg-emerald-950/80 border border-emerald-500/40 px-3 py-1.5 rounded-xl">
+                <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span>
+                  {currentLanguage === 'en'
+                    ? '100+ Verified Agriculture Institutes'
+                    : currentLanguage === 'ur'
+                    ? 'تصدیق شدہ زرعی کالجز'
+                    : '100+ सत्यापित कृषि संस्थान'}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-serif font-black text-white tracking-tight leading-tight mb-3">
+            {currentLanguage === 'en'
+              ? 'National Agriculture Colleges Directory'
+              : currentLanguage === 'ur'
+              ? 'قومی زرعی کالجز ڈائریکٹری'
+              : 'राष्ट्रीय कृषि महाविद्यालय निर्देशिका'}
+          </h1>
+
+          <p className="text-sm sm:text-base text-gray-300 max-w-3xl leading-relaxed mb-6">
+            {currentLanguage === 'en'
+              ? 'A complete verified index of Central & State Agricultural Universities, Horticulture, Forestry and allied institutes across India. Access official ICAR accreditation, fees, eligibility and state-level counselling nodes.'
+              : currentLanguage === 'ur'
+              ? 'ہندوستان کی تمام مرکزی اور ریاستی زرعی یونیورسٹیوں، باغبانی، جنگلات اور اس سے متعلقہ اداروں کا مکمل تصدیق شدہ انڈیکس۔ آئی سی اے آر ایکریڈیشن، فیس اور داخلے کی معلومات حاصل کریں۔'
+              : 'भारत भर के केंद्रीय और राज्य कृषि विश्वविद्यालयों, बागवानी, वानिकी और संबद्ध संस्थानों का पूर्ण सत्यापित सूचकांक। आधिकारिक ICAR मान्यता, शिक्षण शुल्क, पात्रता और राज्य-स्तरीय काउंसलिंग विवरण तक सीधी पहुंच।'}
+          </p>
+
+          {/* MAIN NAVIGATION TABS */}
+          <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-white/10">
+            <button
+              onClick={() => {
+                setActiveTab('directory');
+                setCurrentPage(1);
+              }}
+              className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold transition flex items-center gap-2 cursor-pointer shadow-md ${
+                activeTab === 'directory'
+                  ? 'bg-[#FFD54A] text-[#03071E] scale-105 border-2 border-white'
+                  : 'bg-white/10 text-gray-200 hover:bg-white/20 border border-white/20'
+              }`}
+            >
+              <Layers className="w-4 h-4" />
+              <span>
+                {currentLanguage === 'en' ? 'All Institutions' : currentLanguage === 'ur' ? 'تمام ادارے' : 'सभी संस्थान'}
+              </span>
+            </button>
+
+            <button
+              onClick={() => {
+                setActiveTab('icar');
+                setCurrentPage(1);
+              }}
+              className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold transition flex items-center gap-2 cursor-pointer shadow-md ${
+                activeTab === 'icar'
+                  ? 'bg-emerald-600 text-white scale-105 border-2 border-white'
+                  : 'bg-white/10 text-gray-200 hover:bg-white/20 border border-white/20'
+              }`}
+            >
+              <CheckCircle2 className="w-4 h-4 text-[#FFD54A]" />
+              <span>
+                {currentLanguage === 'en' ? 'ICAR Accredited' : currentLanguage === 'ur' ? 'آئی سی اے آر منظور شدہ' : 'ICAR मान्यता प्राप्त'}
+              </span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('regulatory')}
+              className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold transition flex items-center gap-2 cursor-pointer shadow-md ${
+                activeTab === 'regulatory'
+                  ? 'bg-[#FFD54A] text-[#03071E] scale-105 border-2 border-white'
+                  : 'bg-white/10 text-gray-200 hover:bg-white/20 border border-white/20'
+              }`}
+            >
+              <Building2 className="w-4 h-4" />
+              <span>
+                {currentLanguage === 'en' ? 'Regulatory Bodies' : currentLanguage === 'ur' ? 'ریگولیٹری باڈیز' : 'नियामक संस्थाएं'}
+              </span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('counselling')}
+              className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-extrabold transition flex items-center gap-2 cursor-pointer shadow-md ${
+                activeTab === 'counselling'
+                  ? 'bg-[#FFD54A] text-[#03071E] scale-105 border-2 border-white'
+                  : 'bg-white/10 text-gray-200 hover:bg-white/20 border border-white/20'
+              }`}
+            >
+              <Compass className="w-4 h-4" />
+              <span>
+                {currentLanguage === 'en' ? 'Admissions & Counselling' : currentLanguage === 'ur' ? 'کونسلنگ اور داخلے' : 'प्रवेश एवं काउंसलिंग'}
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* 2. REGULATORY GUARANTEE BANNER */}
+      <div className="bg-emerald-50 border-b border-emerald-200 py-3 px-4 sm:px-8">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs text-emerald-900 font-medium">
+          <div className="flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 text-emerald-600 shrink-0" />
+            <span>
+              <strong>ICAR Accreditation Warning:</strong> Candidates are strongly advised to verify the ICAR accreditation status of private agriculture colleges before admission. Degree from non-accredited colleges may impact eligibility for ICAR JRF/SRF and various government jobs. Every profile here specifies its current ICAR status.
+            </span>
+          </div>
+          <button 
+            onClick={() => setActiveTab('regulatory')}
+            className="px-3 py-1 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg font-bold text-xs flex items-center gap-1 shrink-0 cursor-pointer"
+          >
+            <span>Regulatory Updates</span>
+            <ArrowUpRight className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      </div>
+
+      {/* 3. SEO METADATA INSPECTOR */}
+      <AnimatePresence>
+        {showSeoInspector && (
+          <motion.div 
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="bg-sky-50 border-b border-sky-200 overflow-hidden"
+          >
+            <div className="max-w-7xl mx-auto px-4 sm:px-8 py-5">
+              <div className="bg-white rounded-2xl p-5 border border-sky-200 shadow-inner space-y-4">
+                <div className="flex items-center justify-between border-b pb-2">
+                  <div className="flex items-center gap-2">
+                    <Globe className="w-5 h-5 text-sky-700" />
+                    <h3 className="text-sm font-black text-sky-900 uppercase tracking-tight">Active Agriculture SEO JSON-LD Specifications</h3>
+                  </div>
+                  <button onClick={() => setShowSeoInspector(false)} className="text-stone-400 hover:text-stone-600">
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-semibold">
+                  <div className="space-y-2.5">
+                    <div>
+                      <span className="text-slate-400 text-[10px] uppercase font-black">Meta Title Tag</span>
+                      <p className="text-slate-800 font-bold p-2 bg-slate-50 border rounded-lg mt-1">{seoDetails.title}</p>
+                    </div>
+                    <div>
+                      <span className="text-slate-400 text-[10px] uppercase font-black">Meta Description</span>
+                      <p className="text-slate-700 p-2 bg-slate-50 border rounded-lg mt-1 leading-relaxed">{seoDetails.description}</p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <span className="text-slate-400 text-[10px] uppercase font-black">JSON-LD Agriculture Schema</span>
+                    <pre className="block p-3 bg-stone-900 text-amber-400 rounded-xl mt-1 overflow-x-auto text-[10px] font-mono leading-tight max-h-44">
+                      {JSON.stringify(seoDetails.structuredData, null, 2)}
+                    </pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 4. MAIN CONTENT INTERFACES */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 mt-8">
+        {(activeTab === 'directory' || activeTab === 'icar') && (
+          <div className="space-y-6">
+            
+            {/* SEARCH & FILTERS */}
+            <div className="bg-white p-6 rounded-3xl shadow-sm border border-stone-200/90 space-y-5">
+              <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
+                <div className="relative flex-1 w-full">
+                  <Search className="absolute left-4 top-3.5 text-stone-400 w-5 h-5" />
+                  <input
+                    type="text"
+                    placeholder="Search 100+ agriculture colleges by name, city, course, research area, ICAR status..."
+                    value={searchQuery}
+                    onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
+                    className="w-full pl-12 pr-4 py-3 rounded-2xl border border-stone-300 focus:outline-none focus:ring-2 focus:ring-emerald-600 text-sm font-medium transition-all"
+                  />
+                </div>
+
+                <div className="flex items-center gap-3 w-full lg:w-auto">
+                  <select
+                    value={sortBy}
+                    onChange={(e) => { setSortBy(e.target.value as any); setCurrentPage(1); }}
+                    className="bg-stone-50 border border-stone-300 rounded-xl px-4 py-3 text-xs font-bold text-[#03071E] focus:outline-none cursor-pointer"
+                  >
+                    <option value="alphabetical">Sort: Alphabetical</option>
+                    <option value="state">Sort: State</option>
+                    <option value="fee-asc">Sort: Fee (Low to High)</option>
+                    <option value="fee-desc">Sort: Fee (High to Low)</option>
+                    <option value="placement-desc">Sort: Placement Pkg</option>
+                    <option value="nirf-asc">Sort: NIRF Ranking</option>
+                    <option value="naac">Sort: NAAC Grade</option>
+                    <option value="established-asc">Sort: Estd (Oldest)</option>
+                    <option value="established-desc">Sort: Estd (Newest)</option>
+                  </select>
+
+                  <button onClick={resetFilters} className="bg-stone-100 hover:bg-stone-200 text-stone-600 px-4 py-3 rounded-xl text-xs font-bold border border-stone-200 cursor-pointer transition">
+                    <span>Reset</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Filter Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3.5 pt-4 border-t border-stone-100">
+                <div>
+                  <label className="text-[10px] font-black uppercase text-stone-400 block mb-1">State</label>
+                  <select value={selectedState} onChange={(e) => { setSelectedState(e.target.value); setSelectedDistrict('All'); setCurrentPage(1); }} className="w-full bg-stone-50 border border-stone-300 rounded-xl px-2 py-2 text-xs font-bold text-stone-700 cursor-pointer">
+                    {statesList.map(st => <option key={st} value={st}>{st === 'All' ? 'All States' : st}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-[10px] font-black uppercase text-stone-400 block mb-1">District</label>
+                  <select value={selectedDistrict} onChange={(e) => { setSelectedDistrict(e.target.value); setCurrentPage(1); }} className="w-full bg-stone-50 border border-stone-300 rounded-xl px-2 py-2 text-xs font-bold text-stone-700 cursor-pointer" disabled={selectedState === 'All'}>
+                    {districtsList.map(dt => <option key={dt} value={dt}>{dt === 'All' ? 'All Districts' : dt}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-[10px] font-black uppercase text-stone-400 block mb-1">Programme</label>
+                  <select value={selectedCourse} onChange={(e) => { setSelectedCourse(e.target.value); setCurrentPage(1); }} className="w-full bg-stone-50 border border-stone-300 rounded-xl px-2 py-2 text-xs font-bold text-stone-700 cursor-pointer">
+                    {coursesList.map(cs => <option key={cs} value={cs}>{cs === 'All' ? 'All Programs' : cs}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-[10px] font-black uppercase text-stone-400 block mb-1">Specialization</label>
+                  <select value={selectedSpecialization} onChange={(e) => { setSelectedSpecialization(e.target.value); setCurrentPage(1); }} className="w-full bg-stone-50 border border-stone-300 rounded-xl px-2 py-2 text-xs font-bold text-stone-700 cursor-pointer">
+                    {specializationsList.map(sp => <option key={sp} value={sp}>{sp === 'All' ? 'All Branches' : sp}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-[10px] font-black uppercase text-stone-400 block mb-1">Ownership</label>
+                  <select value={selectedOwnership} onChange={(e) => { setSelectedOwnership(e.target.value); setCurrentPage(1); }} className="w-full bg-stone-50 border border-stone-300 rounded-xl px-2 py-2 text-xs font-bold text-stone-700 cursor-pointer">
+                    {ownershipTypes.map(ow => <option key={ow} value={ow}>{ow === 'All' ? 'All Ownerships' : ow}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-[10px] font-black uppercase text-stone-400 block mb-1">Tuition Fees</label>
+                  <select value={selectedFeeRange} onChange={(e) => { setSelectedFeeRange(e.target.value); setCurrentPage(1); }} className="w-full bg-stone-50 border border-stone-300 rounded-xl px-2 py-2 text-xs font-bold text-stone-700 cursor-pointer">
+                    {feeRanges.map(fr => <option key={fr} value={fr}>{fr === 'All' ? 'All Tuition Fees' : fr}</option>)}
+                  </select>
+                </div>
+              </div>
+
+              {/* Checkboxes */}
+              <div className="flex flex-wrap gap-4 pt-4 text-xs font-bold text-stone-700 items-center justify-start border-t border-stone-100">
+                <label className="flex items-center gap-2 cursor-pointer bg-slate-50 border rounded-lg px-3 py-1.5 hover:bg-slate-100 transition">
+                  <input type="checkbox" checked={icarOnly} onChange={(e) => { setIcarOnly(e.target.checked); setCurrentPage(1); }} className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500" />
+                  <span className="text-[11px]">ICAR Accredited Only</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer bg-slate-50 border rounded-lg px-3 py-1.5 hover:bg-slate-100 transition">
+                  <input type="checkbox" checked={hostelOnly} onChange={(e) => { setHostelOnly(e.target.checked); setCurrentPage(1); }} className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500" />
+                  <span className="text-[11px]">Hostel Available</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer bg-slate-50 border rounded-lg px-3 py-1.5 hover:bg-slate-100 transition">
+                  <input type="checkbox" checked={placementOnly} onChange={(e) => { setPlacementOnly(e.target.checked); setCurrentPage(1); }} className="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500" />
+                  <span className="text-[11px]">Active Placement Cell</span>
+                </label>
+              </div>
+            </div>
+
+            {/* RESULTS COUNTER */}
+            <div className="flex flex-wrap items-center justify-between gap-3 px-2">
+              <div className="text-sm font-black text-stone-800">
+                Showing <span className="text-stone-900 border-b-2 border-emerald-500 pb-0.5">{filteredColleges.length}</span> Verified Agriculture Institutions
+              </div>
+            </div>
+
+            {/* COLLEGES GRID */}
+            {filteredColleges.length === 0 ? (
+              <div className="bg-white rounded-3xl p-12 text-center border border-stone-200 shadow-sm">
+                <Filter className="w-16 h-16 text-stone-300 mx-auto mb-4" />
+                <h3 className="text-xl font-bold text-stone-900 mb-2">No matching agriculture colleges found</h3>
+                <p className="text-sm text-stone-600 max-w-md mx-auto mb-6">Try adjusting your filters or search terms.</p>
+                <button onClick={resetFilters} className="px-6 py-2.5 bg-emerald-700 text-white rounded-xl font-bold text-sm hover:bg-emerald-800 cursor-pointer transition">Reset All Filters</button>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <AnimatePresence>
+                    {paginatedColleges.map((college) => (
+                      <motion.div
+                        key={college.id}
+                        layout
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        className="bg-white rounded-3xl p-6 border border-stone-200/90 shadow-sm hover:shadow-xl hover:border-emerald-600/40 transition-all flex flex-col justify-between group relative overflow-hidden"
+                      >
+                        <div className={`absolute top-0 left-0 right-0 h-1.5 ${college.icarAccredited ? 'bg-emerald-600' : 'bg-amber-500'}`} />
+                        
+                        <div>
+                          <div className="flex items-center justify-between gap-2 mb-3 pt-1">
+                            {college.icarAccredited ? (
+                              <span className="inline-flex items-center gap-1 bg-emerald-950 text-emerald-400 text-[10px] font-black uppercase px-2 py-0.5 rounded-lg border border-emerald-500/30">
+                                <ShieldCheck className="w-3.5 h-3.5" />
+                                <span>ICAR Accredited</span>
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 bg-amber-50 text-amber-700 text-[10px] font-black uppercase px-2 py-0.5 rounded-lg border border-amber-300">
+                                <AlertCircle className="w-3.5 h-3.5" />
+                                <span>UGC Approved Only</span>
+                              </span>
+                            )}
+                            <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-md border ${
+                              college.ownership === 'Government' ? 'bg-blue-50 text-blue-700 border-blue-300' : 'bg-purple-50 text-purple-700 border-purple-300'
+                            }`}>
+                              {college.ownership}
+                            </span>
+                          </div>
+
+                          <h3 className="text-base font-black text-stone-900 group-hover:text-emerald-700 transition line-clamp-2 mb-1">
+                            {college.name}
+                          </h3>
+                          <p className="text-[11px] text-stone-500 font-medium line-clamp-1 mb-3 italic">
+                            🎓 {college.affiliatedUniversity}
+                          </p>
+
+                          <div className="flex items-center gap-1.5 text-xs font-bold text-stone-600 bg-stone-50 p-2 rounded-xl border border-stone-200/80 mb-3">
+                            <MapPin className="w-3.5 h-3.5 text-stone-500 shrink-0" />
+                            <span className="truncate">{college.district}, {college.state}</span>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-2 mb-4 text-[11px] font-bold">
+                            <div className="bg-emerald-50/50 p-2 rounded-xl border border-emerald-100 flex items-center gap-2">
+                              <Tractor className="w-3.5 h-3.5 text-emerald-600" />
+                              <div className="flex flex-col">
+                                <span className="text-[9px] text-emerald-700/60 leading-none">Established</span>
+                                <span className="text-emerald-950 leading-tight">{college.yearEstablished}</span>
+                              </div>
+                            </div>
+                            <div className="bg-amber-50/50 p-2 rounded-xl border border-amber-100 flex items-center gap-2">
+                              <ThermometerSun className="w-3.5 h-3.5 text-amber-600" />
+                              <div className="flex flex-col">
+                                <span className="text-[9px] text-amber-700/60 leading-none">NIRF Rank</span>
+                                <span className="text-amber-950 leading-tight">#{college.nirfRanking || 'N/A'}</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="mb-4">
+                            <span className="text-[10px] uppercase font-black text-stone-400 block mb-1.5">Specialized Research & Labs</span>
+                            <div className="flex flex-wrap gap-1">
+                              {college.infrastructure.slice(0, 4).map((infra, idx) => (
+                                <span key={idx} className="bg-stone-100 text-stone-600 text-[9px] font-bold px-1.5 py-0.5 rounded border border-stone-200 flex items-center gap-1">
+                                  <Check className="w-2.5 h-2.5 text-emerald-500" />
+                                  {infra}
+                                </span>
+                              ))}
+                              {college.infrastructure.length > 4 && (
+                                <span className="text-[9px] text-stone-400 font-black pl-1">+{college.infrastructure.length - 4} more</span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 pt-4 border-t border-stone-100 mt-auto">
+                          <button
+                            onClick={() => { setSelectedCollege(college); setModalTab('academics'); }}
+                            className="flex-1 bg-stone-900 text-white text-xs font-black py-2.5 rounded-xl hover:bg-emerald-900 transition flex items-center justify-center gap-2 cursor-pointer shadow-sm"
+                          >
+                            <span>View Full Profile</span>
+                            <ArrowUpRight className="w-3.5 h-3.5" />
+                          </button>
+                          <a
+                            href={college.website}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-10 h-10 flex items-center justify-center bg-stone-100 text-stone-600 rounded-xl hover:bg-stone-200 border border-stone-200 transition"
+                          >
+                            <Globe className="w-4 h-4" />
+                          </a>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </AnimatePresence>
+                </div>
+
+                {/* PAGINATION */}
+                {totalPages > 1 && (
+                  <div className="flex items-center justify-center gap-2 pt-6">
+                    <button
+                      onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                      disabled={currentPage === 1}
+                      className="p-2 rounded-xl bg-white border border-stone-200 text-stone-600 disabled:opacity-40 cursor-pointer"
+                    >
+                      <X className="w-4 h-4 rotate-180" />
+                    </button>
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(num => (
+                      <button
+                        key={num}
+                        onClick={() => setCurrentPage(num)}
+                        className={`w-10 h-10 rounded-xl text-xs font-black transition ${
+                          currentPage === num ? 'bg-emerald-700 text-white shadow-md' : 'bg-white border border-stone-200 text-stone-600 hover:bg-stone-50'
+                        } cursor-pointer`}
+                      >
+                        {num}
+                      </button>
+                    ))}
+                    <button
+                      onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                      disabled={currentPage === totalPages}
+                      className="p-2 rounded-xl bg-white border border-stone-200 text-stone-600 disabled:opacity-40 cursor-pointer"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* REGULATORY INFO TAB */}
+        {activeTab === 'regulatory' && (
+          <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {REGULATORY_BODIES.map((body) => (
+                <div key={body.id} className="bg-white rounded-3xl p-8 border border-stone-200 shadow-sm">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600">
+                      <Building2 className="w-8 h-8" />
+                    </div>
+                    <a href={body.website} target="_blank" rel="noopener noreferrer" className="text-emerald-700 font-bold text-xs flex items-center gap-1 hover:underline">
+                      Official Portal <ExternalLink className="w-3 h-3" />
+                    </a>
+                  </div>
+                  <h3 className="text-xl font-black text-stone-900 mb-1">{body.fullName} ({body.name})</h3>
+                  <p className="text-xs font-medium text-stone-500 mb-6 leading-relaxed">
+                    {body.description[currentLanguage] || body.description.en}
+                  </p>
+                  
+                  <div className="space-y-3">
+                    <h4 className="text-[10px] font-black uppercase text-stone-400 tracking-wider">Primary Statutory Roles</h4>
+                    {body.roles.map((role, rIdx) => (
+                      <div key={rIdx} className="flex items-start gap-3 text-xs font-bold text-stone-700">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                        <span>{role}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="bg-amber-900 text-white rounded-3xl p-8 shadow-xl relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-10 opacity-10">
+                <AlertCircle className="w-32 h-32" />
+              </div>
+              <div className="relative z-10">
+                <h3 className="text-2xl font-black mb-4">AIEEA (UG) Eligibility Notice</h3>
+                <p className="text-amber-100 text-sm leading-relaxed max-w-3xl mb-6 font-medium">
+                  According to ICAR guidelines, only candidates who pass 10+2 from a board recognized by COBSE/AIU with prescribed science subjects are eligible. Furthermore, admission to certain accredited programmes requires specific domain subject combinations in the entrance test. Always cross-verify the specific college's accreditation expiry date on the official ICAR-Education portal.
+                </p>
+                <div className="flex flex-wrap gap-4">
+                  <a href="https://icar.org.in/" target="_blank" rel="noopener noreferrer" className="bg-[#FFD54A] text-[#03071E] px-6 py-3 rounded-xl font-black text-xs hover:scale-105 transition flex items-center gap-2">
+                    Verify Accreditation Status <ExternalLink className="w-4 h-4" />
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* COUNSELLING TAB */}
+        {activeTab === 'counselling' && (
+          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="bg-white rounded-3xl border border-stone-200 overflow-hidden shadow-sm">
+              <div className="bg-stone-900 text-white p-6">
+                <h3 className="text-xl font-black flex items-center gap-2">
+                  <Compass className="w-6 h-6 text-[#FFD54A]" />
+                  Official Agriculture Counselling Nodes
+                </h3>
+                <p className="text-stone-400 text-xs mt-1">Centralized portal for AIEEA scores and state-wise allotment boards.</p>
+              </div>
+              <div className="divide-y divide-stone-100">
+                {COUNSELLING_BOARDS.map((board, bIdx) => (
+                  <div key={bIdx} className="p-6 hover:bg-stone-50 transition group flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div className="max-w-xl">
+                      <h4 className="text-base font-black text-stone-900 group-hover:text-emerald-700 transition">{board.name}</h4>
+                      <p className="text-xs font-bold text-stone-500 mt-1">{board.desc}</p>
+                    </div>
+                    <a
+                      href={board.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-5 py-2.5 bg-stone-100 text-stone-700 rounded-xl text-xs font-black border border-stone-200 hover:bg-emerald-700 hover:text-white transition flex items-center gap-2 shrink-0"
+                    >
+                      Visit Counselling Portal <ExternalLink className="w-3.5 h-3.5" />
+                    </a>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="bg-blue-50 p-6 rounded-3xl border border-blue-100">
+                <div className="w-10 h-10 bg-blue-600 text-white rounded-xl flex items-center justify-center mb-4">
+                  <FileText className="w-5 h-5" />
+                </div>
+                <h4 className="font-black text-blue-900 text-sm mb-2">Required Documents</h4>
+                <ul className="text-[11px] font-bold text-blue-800/80 space-y-1.5 list-disc pl-4">
+                  <li>ICAR AIEEA Rank Card</li>
+                  <li>10th & 12th Marks Sheets</li>
+                  <li>Transfer & Migration Certificates</li>
+                  <li>Category Certificate (if applicable)</li>
+                  <li>Domicile Proof</li>
+                  <li>Admit Card for Verification</li>
+                </ul>
+              </div>
+              <div className="bg-purple-50 p-6 rounded-3xl border border-purple-100">
+                <div className="w-10 h-10 bg-purple-600 text-white rounded-xl flex items-center justify-center mb-4">
+                  <Users className="w-5 h-5" />
+                </div>
+                <h4 className="font-black text-purple-900 text-sm mb-2">Reservation Quotas</h4>
+                <ul className="text-[11px] font-bold text-purple-800/80 space-y-1.5 list-disc pl-4">
+                  <li>15% All India Quota (ICAR)</li>
+                  <li>85% State Quota (DTE/SAU)</li>
+                  <li>SC/ST/OBC-NCL/EWS Central Quota</li>
+                  <li>Physically Challenged (PH)</li>
+                  <li>Farmer/Rural Background Quota (State specific)</li>
+                </ul>
+              </div>
+              <div className="bg-emerald-50 p-6 rounded-3xl border border-emerald-100">
+                <div className="w-10 h-10 bg-emerald-600 text-white rounded-xl flex items-center justify-center mb-4">
+                  <Calendar className="w-5 h-5" />
+                </div>
+                <h4 className="font-black text-emerald-900 text-sm mb-2">Cycle Timeline</h4>
+                <ul className="text-[11px] font-bold text-emerald-800/80 space-y-1.5 list-disc pl-4">
+                  <li>April: Entrance Application Opens</li>
+                  <li>June: Examinations Conducted</li>
+                  <li>July: Merit Rank Publication</li>
+                  <li>Aug-Sept: Online Seat Allocation (Multiple Rounds)</li>
+                  <li>Oct: Commencement of Session</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 5. COLLEGE DETAIL MODAL */}
+      <AnimatePresence>
+        {selectedCollege && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center px-4 sm:px-6">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedCollege(null)}
+              className="absolute inset-0 bg-stone-950/80 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-5xl bg-white rounded-[2.5rem] shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
+            >
+              {/* Modal Header/Cover */}
+              <div className="relative h-48 sm:h-64 shrink-0">
+                <img src={selectedCollege.coverImageUrl} className="w-full h-full object-cover" alt="College Cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                <button
+                  onClick={() => setSelectedCollege(null)}
+                  className="absolute top-6 right-6 p-2 bg-white/10 hover:bg-white/20 backdrop-blur-md rounded-full text-white transition cursor-pointer"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+                
+                <div className="absolute bottom-6 left-8 right-8 flex items-end gap-6">
+                  <div className="hidden sm:block w-24 h-24 rounded-2xl bg-white p-2 shadow-xl border-4 border-white shrink-0 overflow-hidden">
+                    <img src={selectedCollege.logoUrl} className="w-full h-full object-contain" alt="Logo" />
+                  </div>
+                  <div className="flex-1 pb-1">
+                    <div className="flex flex-wrap items-center gap-3 mb-2">
+                      <span className={`px-2.5 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-wider ${selectedCollege.icarAccredited ? 'bg-emerald-500 text-white' : 'bg-amber-500 text-white'}`}>
+                        {selectedCollege.icarAccredited ? 'ICAR Accredited' : 'UGC Recognized'}
+                      </span>
+                      <span className="bg-white/20 backdrop-blur-md text-white text-[10px] font-black uppercase px-2.5 py-0.5 rounded-lg border border-white/30">
+                        {selectedCollege.ownership} Institute
+                      </span>
+                    </div>
+                    <h2 className="text-2xl sm:text-3xl font-serif font-black text-white leading-tight drop-shadow-lg">{selectedCollege.name}</h2>
+                    <div className="flex items-center gap-4 mt-2 text-white/80 text-xs font-bold">
+                      <span className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5" /> {selectedCollege.city}, {selectedCollege.state}</span>
+                      <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" /> Estd. {selectedCollege.yearEstablished}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Modal Navigation */}
+              <div className="bg-stone-50 border-b border-stone-200 px-8 py-1 overflow-x-auto no-scrollbar shrink-0">
+                <div className="flex items-center gap-6 min-w-max">
+                  {['academics', 'admissions', 'infrastructure', 'research', 'placements', 'fees', 'contact'].map((tab) => (
+                    <button
+                      key={tab}
+                      onClick={() => setModalTab(tab as any)}
+                      className={`py-4 text-xs font-black uppercase tracking-wider border-b-2 transition-all cursor-pointer ${
+                        modalTab === tab ? 'border-emerald-600 text-emerald-700 scale-105' : 'border-transparent text-stone-400 hover:text-stone-600'
+                      }`}
+                    >
+                      {tab}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Modal Body */}
+              <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
+                <AnimatePresence mode="wait">
+                  {modalTab === 'academics' && (
+                    <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} className="space-y-8">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div className="space-y-4">
+                          <h4 className="text-sm font-black text-stone-900 flex items-center gap-2 border-b pb-2">
+                            <BookOpen className="w-4 h-4 text-emerald-600" /> Offered Programmes
+                          </h4>
+                          <div className="flex flex-wrap gap-2">
+                            {selectedCollege.programmes.map((prog, idx) => (
+                              <span key={idx} className="bg-emerald-50 text-emerald-800 text-xs font-bold px-3 py-1.5 rounded-xl border border-emerald-100">
+                                {prog}
+                              </span>
+                            ))}
+                          </div>
+                          <div className="mt-4 p-4 bg-stone-50 rounded-2xl border border-stone-200">
+                            <span className="text-[10px] font-black text-stone-400 uppercase block mb-1">Affiliation</span>
+                            <p className="text-xs font-black text-stone-800">{selectedCollege.affiliatedUniversity}</p>
+                          </div>
+                        </div>
+                        <div className="space-y-4">
+                          <h4 className="text-sm font-black text-stone-900 flex items-center gap-2 border-b pb-2">
+                            <Star className="w-4 h-4 text-amber-500" /> Major Specializations
+                          </h4>
+                          <div className="grid grid-cols-2 gap-2">
+                            {selectedCollege.specializations.map((spec, idx) => (
+                              <div key={idx} className="flex items-center gap-2 text-xs font-bold text-stone-600">
+                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                                <span>{spec}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {modalTab === 'admissions' && (
+                    <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} className="space-y-8">
+                      <div className="bg-amber-50 rounded-2xl p-6 border border-amber-200">
+                        <h4 className="text-sm font-black text-amber-900 mb-4 flex items-center gap-2">
+                          <Compass className="w-5 h-5" /> Admission Matrix
+                        </h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div>
+                            <span className="text-[10px] font-black text-amber-700 uppercase block mb-1">Eligibility Criteria</span>
+                            <p className="text-xs font-bold text-amber-900 leading-relaxed">{selectedCollege.eligibility}</p>
+                          </div>
+                          <div>
+                            <span className="text-[10px] font-black text-amber-700 uppercase block mb-1">Accepted Entrance Exams</span>
+                            <div className="flex flex-wrap gap-2 mt-1">
+                              {selectedCollege.entranceExams.map((exam, idx) => (
+                                <span key={idx} className="bg-white px-2.5 py-1 rounded-lg border border-amber-300 text-[11px] font-black text-amber-800 shadow-sm">
+                                  {exam}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="space-y-4">
+                        <h4 className="text-sm font-black text-stone-900 flex items-center gap-2 border-b pb-2">
+                          <Award className="w-4 h-4 text-emerald-600" /> Selection Process
+                        </h4>
+                        <p className="text-xs font-bold text-stone-600 leading-relaxed bg-stone-50 p-4 rounded-2xl border border-stone-200">
+                          {selectedCollege.admissionProcess}
+                        </p>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {modalTab === 'infrastructure' && (
+                    <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} className="space-y-8">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                        {selectedCollege.infrastructure.map((item, idx) => (
+                          <div key={idx} className="p-4 bg-stone-50 rounded-2xl border border-stone-100 flex flex-col items-center text-center gap-2 hover:bg-emerald-50 hover:border-emerald-200 transition group">
+                            <div className="w-10 h-10 rounded-xl bg-white border border-stone-200 flex items-center justify-center text-stone-400 group-hover:text-emerald-600 shadow-sm">
+                              {item.includes('Farm') ? <Tractor className="w-5 h-5" /> : 
+                               item.includes('Lab') ? <Microscope className="w-5 h-5" /> :
+                               item.includes('Hostel') ? <Home className="w-5 h-5" /> :
+                               <Building className="w-5 h-5" />}
+                            </div>
+                            <span className="text-[11px] font-black text-stone-700">{item}</span>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="space-y-4">
+                        <h4 className="text-sm font-black text-stone-900 border-b pb-2">Campus Gallery</h4>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                          {selectedCollege.campusGallery?.map((img, idx) => (
+                            <img key={idx} src={img} className="w-full h-32 object-cover rounded-2xl shadow-md border-2 border-white hover:scale-105 transition" alt="Campus" />
+                          ))}
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {modalTab === 'research' && (
+                    <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} className="space-y-6">
+                      <div className="bg-emerald-950 text-white p-8 rounded-[2rem] shadow-xl relative overflow-hidden">
+                        <div className="absolute top-0 right-0 p-8 opacity-10"><Microscope className="w-32 h-32" /></div>
+                        <h3 className="text-xl font-black mb-4 flex items-center gap-2 text-emerald-400">
+                          <Activity className="w-6 h-6" /> Research and Innovation Hub
+                        </h3>
+                        <p className="text-sm font-medium leading-relaxed mb-6 text-stone-300">
+                          {selectedCollege.researchProjects}
+                        </p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="bg-white/5 backdrop-blur-md p-4 rounded-2xl border border-white/10">
+                            <span className="text-[10px] font-black text-emerald-400 uppercase tracking-wider mb-1 block">Scientist Faculty</span>
+                            <p className="text-lg font-black">{selectedCollege.facultyStrength}+ Doctoral Researchers</p>
+                          </div>
+                          <div className="bg-white/5 backdrop-blur-md p-4 rounded-2xl border border-white/10">
+                            <span className="text-[10px] font-black text-emerald-400 uppercase tracking-wider mb-1 block">Extension Services</span>
+                            <p className="text-lg font-black italic">Krishi Vigyan Kendra Integrated</p>
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {modalTab === 'placements' && (
+                    <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} className="space-y-8">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="bg-stone-50 p-6 rounded-3xl border border-stone-200 text-center">
+                          <span className="text-[10px] font-black text-stone-400 uppercase block mb-1">Highest Package</span>
+                          <p className="text-2xl font-black text-stone-900">{selectedCollege.highestPackage}</p>
+                        </div>
+                        <div className="bg-stone-50 p-6 rounded-3xl border border-stone-200 text-center">
+                          <span className="text-[10px] font-black text-stone-400 uppercase block mb-1">Average Package</span>
+                          <p className="text-2xl font-black text-stone-900">{selectedCollege.averagePackage}</p>
+                        </div>
+                        <div className="bg-emerald-50 p-6 rounded-3xl border border-emerald-100 text-center">
+                          <span className="text-[10px] font-black text-emerald-700 uppercase block mb-1">Placement Cell</span>
+                          <p className="text-xl font-black text-emerald-900">{selectedCollege.hasPlacementCell ? 'Active & Dedicated' : 'Available'}</p>
+                        </div>
+                      </div>
+                      <div className="space-y-4">
+                        <h4 className="text-sm font-black text-stone-900 flex items-center gap-2 border-b pb-2">
+                          <Building className="w-4 h-4 text-emerald-600" /> Top Agribusiness Recruiters
+                        </h4>
+                        <div className="flex flex-wrap gap-3">
+                          {selectedCollege.topRecruiters.map((rec, idx) => (
+                            <span key={idx} className="px-4 py-2 bg-stone-50 rounded-xl border border-stone-200 text-xs font-black text-stone-700 shadow-sm">
+                              {rec}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {modalTab === 'fees' && (
+                    <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} className="space-y-8">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="bg-white p-6 rounded-3xl border border-stone-200 shadow-sm relative overflow-hidden">
+                          <div className="absolute top-0 right-0 p-4 opacity-5"><DollarSign className="w-20 h-20" /></div>
+                          <h4 className="text-sm font-black text-stone-900 mb-4">Financial Structure</h4>
+                          <div className="space-y-4">
+                            <div className="flex justify-between items-center border-b pb-2">
+                              <span className="text-xs font-bold text-stone-500">Tuition Fees</span>
+                              <span className="text-sm font-black text-stone-900">{selectedCollege.tuitionFees}</span>
+                            </div>
+                            <div className="flex justify-between items-center border-b pb-2">
+                              <span className="text-xs font-bold text-stone-500">Hostel & Mess</span>
+                              <span className="text-sm font-black text-stone-900">{selectedCollege.hostelFees}</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="bg-emerald-50 p-6 rounded-3xl border border-emerald-100">
+                          <h4 className="text-sm font-black text-emerald-900 mb-4">Scholarships & Aid</h4>
+                          <p className="text-xs font-bold text-emerald-800 leading-relaxed italic mb-4">
+                            {selectedCollege.scholarships}
+                          </p>
+                          <div className="flex items-center gap-2 text-xs font-black text-emerald-900">
+                            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                            <span>Post-Matric Aid Assistance</span>
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {modalTab === 'contact' && (
+                    <motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -10 }} className="space-y-8">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div className="space-y-6">
+                          <div className="flex items-start gap-4">
+                            <div className="w-10 h-10 rounded-xl bg-stone-100 flex items-center justify-center shrink-0"><MapPin className="w-5 h-5 text-stone-600" /></div>
+                            <div>
+                              <h5 className="text-[10px] font-black text-stone-400 uppercase">Registered Address</h5>
+                              <p className="text-sm font-bold text-stone-800 mt-1">{selectedCollege.address}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-start gap-4">
+                            <div className="w-10 h-10 rounded-xl bg-stone-100 flex items-center justify-center shrink-0"><Phone className="w-5 h-5 text-stone-600" /></div>
+                            <div>
+                              <h5 className="text-[10px] font-black text-stone-400 uppercase">Admission Office</h5>
+                              <p className="text-sm font-black text-stone-900 mt-1">{selectedCollege.phone}</p>
+                            </div>
+                          </div>
+                          <div className="flex items-start gap-4">
+                            <div className="w-10 h-10 rounded-xl bg-stone-100 flex items-center justify-center shrink-0"><Mail className="w-5 h-5 text-stone-600" /></div>
+                            <div>
+                              <h5 className="text-[10px] font-black text-stone-400 uppercase">Email Support</h5>
+                              <p className="text-sm font-black text-emerald-700 mt-1 underline underline-offset-4">{selectedCollege.email}</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="h-64 rounded-3xl overflow-hidden shadow-inner border border-stone-200">
+                           <div className="w-full h-full bg-stone-100 flex items-center justify-center text-stone-400 flex-col gap-2">
+                             <Map className="w-10 h-10 opacity-20" />
+                             <span className="text-[10px] font-black uppercase">Interactive Map Module Loaded</span>
+                             <a href={selectedCollege.googleMapsUrl} target="_blank" rel="noopener noreferrer" className="mt-2 px-4 py-1.5 bg-white border border-stone-200 rounded-lg text-[10px] font-black text-stone-800 shadow-sm hover:bg-stone-50 transition">Open in Google Maps</a>
+                           </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Modal Footer */}
+              <div className="p-6 bg-stone-50 border-t border-stone-200 flex flex-wrap items-center justify-between gap-4 shrink-0">
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="text-[10px] font-black text-stone-500 uppercase">Live Verification: {selectedCollege.lastVerifiedDate}</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <a
+                    href={selectedCollege.admissionPortalUrl || selectedCollege.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-8 py-3 bg-emerald-700 text-white rounded-xl text-sm font-black shadow-lg hover:bg-emerald-800 hover:-translate-y-0.5 transition flex items-center gap-2"
+                  >
+                    Apply on Official Portal <ExternalLink className="w-4 h-4" />
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+    </div>
+  );
+}

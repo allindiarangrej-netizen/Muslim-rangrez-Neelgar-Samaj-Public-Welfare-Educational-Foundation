@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import { useCountUp as useReactCountUp } from 'react-countup';
 import 'intersection-observer';
 
 /**
- * Custom hook leveraging react-countup and intersection-observer to count up to a target number
+ * Custom hook using IntersectionObserver and requestAnimationFrame to count up to a target number
  * using easeOutExpo timing when the element scrolls into view.
  * 
  * @param target The target number to count up to.
@@ -14,22 +13,6 @@ export function useCountUp(target: number, duration: number = 2.5) {
   const countUpRef = useRef<HTMLSpanElement | null>(null);
   const [hasStarted, setHasStarted] = useState(false);
 
-  // easeOutExpo easing function for react-countup:
-  // t: current time, b: beginning value, c: change in value, d: duration
-  const easeOutExpo = (t: number, b: number, c: number, d: number): number => {
-    return t === d ? b + c : c * (-Math.pow(2, -10 * t / d) + 1) + b;
-  };
-
-  const { start } = useReactCountUp({
-    ref: countUpRef,
-    start: 0,
-    end: target,
-    duration: duration,
-    useEasing: true,
-    easingFn: easeOutExpo,
-    startOnMount: false, // Ensures counting only starts when we trigger it in viewport
-  });
-
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
@@ -37,7 +20,6 @@ export function useCountUp(target: number, duration: number = 2.5) {
       ([entry]) => {
         if (entry.isIntersecting && !hasStarted) {
           setHasStarted(true);
-          start();
           observer.disconnect();
         }
       },
@@ -54,7 +36,44 @@ export function useCountUp(target: number, duration: number = 2.5) {
     return () => {
       observer.disconnect();
     };
-  }, [start, hasStarted]);
+  }, [hasStarted]);
+
+  useEffect(() => {
+    if (!hasStarted) return;
+    const element = countUpRef.current;
+    if (!element) return;
+
+    let startTimestamp: number | null = null;
+    let animationFrameId: number;
+
+    const step = (timestamp: number) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const elapsed = timestamp - startTimestamp;
+      const progress = Math.min(elapsed / (duration * 1000), 1);
+      
+      // easeOutExpo easing function
+      const easeProgress = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+      const currentValue = Math.floor(easeProgress * target);
+      
+      if (element) {
+        element.textContent = currentValue.toLocaleString('en-IN');
+      }
+      
+      if (progress < 1) {
+        animationFrameId = window.requestAnimationFrame(step);
+      } else {
+        if (element) {
+          element.textContent = target.toLocaleString('en-IN');
+        }
+      }
+    };
+
+    animationFrameId = window.requestAnimationFrame(step);
+
+    return () => {
+      window.cancelAnimationFrame(animationFrameId);
+    };
+  }, [hasStarted, target, duration]);
 
   return { ref: countUpRef };
 }

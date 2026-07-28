@@ -92,6 +92,18 @@ export default function EducationOverview({ currentLanguage, onNavigate }: Educa
       badge: 'Live Openings'
     },
     {
+      id: 'schools-directory',
+      titleEn: 'Verified School Directory',
+      titleHi: 'सत्यापित स्कूल निर्देशिका',
+      titleUr: 'تصدیق شدہ اسکول ڈائریکٹری',
+      descEn: 'Pre-Nursery to Class XII: Govt, KV, JNV, PM SHRI, Minority, Boarding & International Schools.',
+      descHi: 'प्री-नर्सरी से 12वीं तक: सरकारी, केवी, जेएनवी, पीएम श्री, अल्पसंख्यक, बोर्डिंग व इंटरनेशनल स्कूल।',
+      descUr: 'پری نرسری سے بارہویں تک: سرکاری، کے وی، جے این وی، اقلیتی، بورڈنگ اور انٹرنیشنل اسکول۔',
+      icon: GraduationCap,
+      color: 'bg-emerald-50 border-emerald-200 text-emerald-800 hover:border-emerald-500',
+      badge: '300+ Schools'
+    },
+    {
       id: 'colleges-directory',
       titleEn: 'Master Colleges Directory',
       titleHi: 'मास्टर कॉलेज निर्देशिका',
@@ -242,6 +254,153 @@ export default function EducationOverview({ currentLanguage, onNavigate }: Educa
               <span className="flex items-center gap-1 bg-white/10 px-3 py-1.5 rounded-lg border border-white/15">
                 <Globe className="w-4 h-4 text-emerald-400" /> All India Coverage
               </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 1.1 THREE-LEVEL EDUCATION ECOSYSTEM GATEWAY */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
+        {/* LEARNING RESOURCES HUB PROMINENT BANNER */}
+        <div 
+          onClick={() => handleCardClick('learning-resources')}
+          className="mb-8 p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-[#0B132B] via-[#004B23] to-[#0B132B] text-white shadow-xl hover:shadow-2xl transition cursor-pointer relative overflow-hidden group border border-[#FFD54A]/30"
+        >
+          <div className="absolute right-0 top-0 translate-x-12 -translate-y-12 w-64 h-64 bg-[#FFD54A]/10 rounded-full blur-3xl pointer-events-none"></div>
+          <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div className="space-y-2 max-w-2xl">
+              <span className="bg-[#FFD54A] text-[#004B23] text-[10px] font-black uppercase tracking-wider px-3 py-1 rounded-full inline-block">
+                NEW MODULE
+              </span>
+              <h3 className="text-xl sm:text-3xl font-serif font-black text-white group-hover:text-[#FFD54A] transition-colors flex items-center gap-3">
+                <span>📚 Learning Resources Hub</span>
+                <Sparkles className="w-6 h-6 text-[#FFD54A] animate-pulse" />
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-200 leading-relaxed">
+                Pre-Nursery to PhD Digital Library • NCERT Books • Solved Previous Papers • NEET/UPSC Practice MCQs • Timed Mock Tests • IQRA AI Study Assistant • Teacher & Parent Corners.
+              </p>
+            </div>
+            <button className="px-5 py-3 bg-[#FFD54A] text-[#004B23] font-black text-xs sm:text-sm rounded-xl shadow-lg group-hover:scale-105 transition flex items-center gap-2 shrink-0">
+              <span>Open Learning Hub</span>
+              <ArrowUpRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+
+        <div className="text-center max-w-2xl mx-auto mb-6">
+          <span className="text-[#004B23] font-extrabold text-xs uppercase tracking-widest block mb-1">
+            {currentLanguage === 'en' ? 'SCALABLE THREE-LEVEL ARCHITECTURE' : 'त्रि-स्तरीय शिक्षा वास्तुकला'}
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-serif font-black text-[#0B132B]">
+            {currentLanguage === 'en' ? 'Three-Level Education Ecosystem' : 'तीन-स्तरीय शिक्षा इकोसिस्टम'}
+          </h2>
+          <p className="text-slate-600 text-xs sm:text-sm mt-1">
+            {currentLanguage === 'en'
+              ? 'Select an education level below to access dedicated directories, exam preparation, digital libraries, and career advancement tools.'
+              : 'समर्पित निर्देशिकाओं, परीक्षा तैयारी और करियर उपकरणों तक पहुँचने के लिए नीचे एक स्तर चुनें।'}
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* LEVEL 1 CARD */}
+          <div 
+            onClick={() => handleCardClick('school-level-1')}
+            className="bg-white rounded-3xl p-6 border-2 border-emerald-300 hover:border-[#004B23] shadow-md hover:shadow-2xl transition-all duration-300 cursor-pointer flex flex-col justify-between group relative overflow-hidden"
+          >
+            <div className="absolute top-0 right-0 bg-[#004B23] text-[#FFD54A] font-black text-[10px] uppercase tracking-wider px-3 py-1 rounded-bl-2xl">
+              LEVEL 1
+            </div>
+
+            <div>
+              <div className="p-3.5 rounded-2xl bg-emerald-100 text-[#004B23] w-fit mb-4 group-hover:scale-110 transition-transform">
+                <GraduationCap className="w-7 h-7" />
+              </div>
+
+              <h3 className="text-xl font-extrabold text-[#0B132B] group-hover:text-[#004B23] transition-colors">
+                {currentLanguage === 'en' ? '1. School Education' : '1. स्कूली शिक्षा'}
+              </h3>
+              <p className="text-xs font-bold text-emerald-800 mt-1">Pre-Nursery to Class XII</p>
+
+              <ul className="mt-4 space-y-2 text-xs text-slate-600 font-medium border-t border-slate-100 pt-3">
+                <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> 300+ Verified Schools Directory</li>
+                <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> CBSE, ICSE, IB & State Board Hub</li>
+                <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> NCERT Free Digital Books & Notes</li>
+                <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> Olympiads & National Scholarships</li>
+                <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" /> Stream Selection (Class 8, 10, 12)</li>
+              </ul>
+            </div>
+
+            <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between font-extrabold text-xs text-[#004B23]">
+              <span>Explore School Level</span>
+              <ArrowUpRight className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+            </div>
+          </div>
+
+          {/* LEVEL 2 CARD */}
+          <div 
+            onClick={() => handleCardClick('colleges-directory')}
+            className="bg-white rounded-3xl p-6 border-2 border-amber-300 hover:border-amber-600 shadow-md hover:shadow-2xl transition-all duration-300 cursor-pointer flex flex-col justify-between group relative overflow-hidden"
+          >
+            <div className="absolute top-0 right-0 bg-amber-600 text-white font-black text-[10px] uppercase tracking-wider px-3 py-1 rounded-bl-2xl">
+              LEVEL 2
+            </div>
+
+            <div>
+              <div className="p-3.5 rounded-2xl bg-amber-100 text-amber-900 w-fit mb-4 group-hover:scale-110 transition-transform">
+                <Building2 className="w-7 h-7" />
+              </div>
+
+              <h3 className="text-xl font-extrabold text-[#0B132B] group-hover:text-amber-800 transition-colors">
+                {currentLanguage === 'en' ? '2. Higher Education' : '2. उच्च शिक्षा'}
+              </h3>
+              <p className="text-xs font-bold text-amber-800 mt-1">Colleges, Universities & UG/PG</p>
+
+              <ul className="mt-4 space-y-2 text-xs text-slate-600 font-medium border-t border-slate-100 pt-3">
+                <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-amber-600 shrink-0" /> 19 Specialized College Directories</li>
+                <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-amber-600 shrink-0" /> Medical, Engineering, Law, Pharmacy</li>
+                <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-amber-600 shrink-0" /> Entrance Exams (NEET, JEE, CUET)</li>
+                <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-amber-600 shrink-0" /> Admissions Calendar & Counselling</li>
+                <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-amber-600 shrink-0" /> International Study Abroad Hub</li>
+              </ul>
+            </div>
+
+            <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between font-extrabold text-xs text-amber-800">
+              <span>Explore Higher Education</span>
+              <ArrowUpRight className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+            </div>
+          </div>
+
+          {/* LEVEL 3 CARD */}
+          <div 
+            onClick={() => handleCardClick('skills-level-3')}
+            className="bg-white rounded-3xl p-6 border-2 border-purple-300 hover:border-purple-600 shadow-md hover:shadow-2xl transition-all duration-300 cursor-pointer flex flex-col justify-between group relative overflow-hidden"
+          >
+            <div className="absolute top-0 right-0 bg-purple-800 text-[#FFD54A] font-black text-[10px] uppercase tracking-wider px-3 py-1 rounded-bl-2xl">
+              LEVEL 3
+            </div>
+
+            <div>
+              <div className="p-3.5 rounded-2xl bg-purple-100 text-purple-900 w-fit mb-4 group-hover:scale-110 transition-transform">
+                <Briefcase className="w-7 h-7" />
+              </div>
+
+              <h3 className="text-xl font-extrabold text-[#0B132B] group-hover:text-purple-800 transition-colors">
+                {currentLanguage === 'en' ? '3. Skills & Careers' : '3. कौशल एवं नौकरियां'}
+              </h3>
+              <p className="text-xs font-bold text-purple-800 mt-1">Employment, Upskilling & Business</p>
+
+              <ul className="mt-4 space-y-2 text-xs text-slate-600 font-medium border-t border-slate-100 pt-3">
+                <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-purple-600 shrink-0" /> Govt Jobs (UPSC, SSC, Railways)</li>
+                <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-purple-600 shrink-0" /> Corporate Openings & Gulf Recruitment</li>
+                <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-purple-600 shrink-0" /> NSDC & PMKVY Skill Certifications</li>
+                <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-purple-600 shrink-0" /> Freelancing & Startup India MSME</li>
+                <li className="flex items-center gap-1.5"><Check className="w-3.5 h-3.5 text-purple-600 shrink-0" /> Instant ATS Resume Generator</li>
+              </ul>
+            </div>
+
+            <div className="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between font-extrabold text-xs text-purple-800">
+              <span>Explore Skills & Careers</span>
+              <ArrowUpRight className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
             </div>
           </div>
         </div>

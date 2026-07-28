@@ -35,6 +35,10 @@ import ProfessionalCollegesDirectory from './components/ProfessionalCollegesDire
 import EducationOverview from './components/EducationOverview';
 import JobsCareersMaster from './components/JobsCareersMaster';
 import CollegesMasterDirectory from './components/CollegesMasterDirectory';
+import SchoolsDirectory from './components/SchoolsDirectory';
+import SchoolEducationModule from './components/SchoolEducationModule';
+import SkillsCareersModule from './components/SkillsCareersModule';
+import LearningResourcesHub from './components/LearningResourcesHub';
 import ScholarshipsMasterPortal from './components/ScholarshipsMasterPortal';
 import IqraAIAssistant from './components/IqraAIAssistant';
 import IqraAIPage from './components/IqraAIPage';
@@ -582,11 +586,11 @@ export default function App() {
             )}
 
             {/* G. EDUCATION, EXAMS & CAREERS */}
-            {(activeTab === 'education' || activeTab === 'education-overview' || activeTab === 'education-hub' || activeTab === 'education-gallery' || activeTab === 'competitive-exams' || activeTab === 'jobs-careers' || activeTab === 'colleges-directory' || activeTab === 'scholarships' || activeTab === 'career-counselling' || activeTab === 'professional-colleges' || activeTab === 'medical-colleges' || activeTab === 'career-portal' || activeTab === 'career-opportunities' || activeTab === 'international-careers' || activeTab === 'legal-awareness') && (
+            {(activeTab === 'education' || activeTab === 'education-overview' || activeTab === 'education-hub' || activeTab === 'education-gallery' || activeTab === 'learning-resources' || activeTab === 'learning-hub' || activeTab === 'competitive-exams' || activeTab === 'jobs-careers' || activeTab === 'colleges-directory' || activeTab === 'schools-directory' || activeTab === 'schools' || activeTab === 'school-level-1' || activeTab === 'skills-level-3' || activeTab === 'scholarships' || activeTab === 'career-counselling' || activeTab === 'professional-colleges' || activeTab === 'medical-colleges' || activeTab === 'career-portal' || activeTab === 'career-opportunities' || activeTab === 'international-careers' || activeTab === 'legal-awareness') && (
               <div id="education_view_wrapper" className="bg-white">
                 <PremiumHero
-                  title={currentLanguage === 'en' ? 'Education & Career Hub' : currentLanguage === 'ur' ? 'تعلیم اور روزگار ہب' : 'शिक्षा और करियर हब'}
-                  subtitle={currentLanguage === 'en' ? 'India’s unified educational ecosystem. Explore school education, entrance exams, 19 college streams, and scholarships.' : currentLanguage === 'ur' ? 'تعلیم، امتحانات، کالج اور وظائف کا متحدہ پورٹل۔' : 'स्कूली शिक्षा, प्रतियोगी परीक्षा, कॉलेज और छात्रवृत्ति का एकीकृत मंच।'}
+                  title={currentLanguage === 'en' ? 'Three-Level Education Ecosystem' : currentLanguage === 'ur' ? 'تین سطحی تعلیمی ایکوسسٹم' : 'तीन स्तरीय शिक्षा इकोसिस्टम'}
+                  subtitle={currentLanguage === 'en' ? 'Level 1: School Education (Pre-Nursery to XII) • Level 2: Higher Education & Colleges • Level 3: Skills, Jobs & Entrepreneurship.' : currentLanguage === 'ur' ? 'لیول 1: اسکول • لیول 2: اعلیٰ تعلیم • لیول 3: ہنر اور ملازمتیں۔' : 'स्तर 1: स्कूली शिक्षा • स्तर 2: उच्च शिक्षा • स्तर 3: कौशल व नौकरियां।'}
                   image="https://images.unsplash.com/photo-1523050335191-51ff1895aa97?q=80&w=2070&auto=format&fit=crop"
                   overlayColor="#0B132B"
                   overlayOpacity={0.8}
@@ -608,26 +612,59 @@ export default function App() {
                       <span>{currentLanguage === 'en' ? 'Overview' : 'अवलोकन'}</span>
                     </button>
                     <button
-                      onClick={() => setActiveTab('education-hub')}
+                      onClick={() => setActiveTab('learning-resources')}
                       className={`px-3 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
-                        activeTab === 'education-hub'
+                        activeTab === 'learning-resources' || activeTab === 'learning-hub'
+                          ? 'bg-[#F4C430] text-[#004B23] border-2 border-[#FFD54A] scale-105 shadow-md'
+                          : 'bg-white/10 text-white hover:bg-white/20 border border-white/20'
+                      }`}
+                    >
+                      <span>📚</span>
+                      <span>{currentLanguage === 'en' ? 'Learning Hub' : 'लर्निंग हब'}</span>
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('school-level-1')}
+                      className={`px-3 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
+                        activeTab === 'school-level-1'
                           ? 'bg-[#F4C430] text-[#004B23] border-2 border-[#FFD54A] scale-105 shadow-md'
                           : 'bg-white/10 text-white hover:bg-white/20 border border-white/20'
                       }`}
                     >
                       <span>🏫</span>
-                      <span>{currentLanguage === 'en' ? 'Hub' : 'हब'}</span>
+                      <span>{currentLanguage === 'en' ? 'L1: School Ed' : 'स्तर 1: स्कूल'}</span>
                     </button>
                     <button
-                      onClick={() => setActiveTab('education-gallery')}
+                      onClick={() => setActiveTab('colleges-directory')}
                       className={`px-3 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
-                        activeTab === 'education-gallery'
+                        activeTab === 'colleges-directory' || activeTab === 'professional-colleges' || activeTab === 'medical-colleges'
                           ? 'bg-[#F4C430] text-[#004B23] border-2 border-[#FFD54A] scale-105 shadow-md'
-                          : 'bg-amber-400/30 text-amber-200 hover:bg-white/20 border border-amber-400/40'
+                          : 'bg-white/10 text-white hover:bg-white/20 border border-white/20'
                       }`}
                     >
-                      <span>📸</span>
-                      <span>{currentLanguage === 'en' ? 'HD Gallery (508)' : 'एचडी गैलरी (508)'}</span>
+                      <span>🎓</span>
+                      <span>{currentLanguage === 'en' ? 'L2: Higher Ed' : 'स्तर 2: उच्च शिक्षा'}</span>
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('skills-level-3')}
+                      className={`px-3 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
+                        activeTab === 'skills-level-3' || activeTab === 'jobs-careers'
+                          ? 'bg-[#F4C430] text-[#004B23] border-2 border-[#FFD54A] scale-105 shadow-md'
+                          : 'bg-white/10 text-white hover:bg-white/20 border border-white/20'
+                      }`}
+                    >
+                      <span>💼</span>
+                      <span>{currentLanguage === 'en' ? 'L3: Skills & Jobs' : 'स्तर 3: कौशल व नौकरियां'}</span>
+                    </button>
+                    <button
+                      onClick={() => setActiveTab('schools-directory')}
+                      className={`px-3 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
+                        activeTab === 'schools-directory' || activeTab === 'schools'
+                          ? 'bg-[#F4C430] text-[#004B23] border-2 border-[#FFD54A] scale-105 shadow-md'
+                          : 'bg-white/10 text-white hover:bg-white/20 border border-white/20'
+                      }`}
+                    >
+                      <span>🏛️</span>
+                      <span>{currentLanguage === 'en' ? 'Schools Dir' : 'स्कूल डायरेक्टरी'}</span>
                     </button>
                     <button
                       onClick={() => setActiveTab('competitive-exams')}
@@ -641,15 +678,15 @@ export default function App() {
                       <span>{currentLanguage === 'en' ? 'Exams' : 'परीक्षाएं'}</span>
                     </button>
                     <button
-                      onClick={() => setActiveTab('jobs-careers')}
+                      onClick={() => setActiveTab('scholarships')}
                       className={`px-3 py-2 rounded-xl text-xs font-extrabold transition flex items-center gap-1.5 shadow cursor-pointer ${
-                        activeTab === 'jobs-careers' || activeTab === 'career-opportunities' || activeTab === 'international-careers'
+                        activeTab === 'scholarships'
                           ? 'bg-[#F4C430] text-[#004B23] border-2 border-[#FFD54A] scale-105 shadow-md'
                           : 'bg-white/10 text-white hover:bg-white/20 border border-white/20'
                       }`}
                     >
-                      <span>💼</span>
-                      <span>{currentLanguage === 'en' ? 'Jobs' : 'नौकरियां'}</span>
+                      <span>🏅</span>
+                      <span>{currentLanguage === 'en' ? 'Scholarships' : 'छात्रवृत्ति'}</span>
                     </button>
                   </div>
                 </PremiumHero>
@@ -657,6 +694,18 @@ export default function App() {
                 {/* Module Rendering - Zero Data Loss */}
                 {(activeTab === 'education' || activeTab === 'education-overview') && (
                   <EducationOverview currentLanguage={currentLanguage} onNavigate={(tab) => setActiveTab(tab)} />
+                )}
+                {(activeTab === 'learning-resources' || activeTab === 'learning-hub') && (
+                  <LearningResourcesHub currentLanguage={currentLanguage} onNavigate={(tab) => setActiveTab(tab)} />
+                )}
+                {activeTab === 'school-level-1' && (
+                  <SchoolEducationModule currentLanguage={currentLanguage} onNavigate={(tab) => setActiveTab(tab)} />
+                )}
+                {activeTab === 'skills-level-3' && (
+                  <SkillsCareersModule currentLanguage={currentLanguage} onNavigate={(tab) => setActiveTab(tab)} />
+                )}
+                {(activeTab === 'schools-directory' || activeTab === 'schools') && (
+                  <SchoolsDirectory currentLanguage={currentLanguage} onNavigate={(tab) => setActiveTab(tab)} />
                 )}
                 {activeTab === 'education-hub' && (
                   <EducationHub currentLanguage={currentLanguage} />
@@ -688,7 +737,7 @@ export default function App() {
             )}
 
             {/* H. UNIFIED WELFARE, SCHEMES & SUPPORT MEGA PORTAL */}
-            {(activeTab === 'welfare-support' || activeTab === 'schemes' || activeTab === 'welfare-minority' || activeTab === 'welfare-scholarships' || activeTab === 'welfare-hospital' || activeTab === 'welfare-blood-bank' || activeTab === 'welfare-blood-donors' || activeTab === 'helplines' || activeTab === 'welfare-charity' || activeTab === 'donate' || activeTab === 'volunteer-service') && (
+            {(activeTab === 'welfare-support' || activeTab === 'schemes' || activeTab === 'welfare-minority' || activeTab === 'welfare-scholarships' || activeTab === 'welfare-hospital' || activeTab === 'healthcare-hub' || activeTab === 'hospital-directory' || activeTab === 'welfare-blood-bank' || activeTab === 'welfare-blood-donors' || activeTab === 'helplines' || activeTab === 'welfare-charity' || activeTab === 'donate' || activeTab === 'volunteer-service') && (
               <div id="welfare_support_mega_portal" className="bg-white">
                 <PremiumHero
                   title={currentLanguage === 'en' ? 'Welfare & Medical Portal' : currentLanguage === 'ur' ? 'فلاح و بہبود اور میڈیکل پورٹل' : 'कल्याण एवं चिकित्सा पोर्टल'}
@@ -764,7 +813,7 @@ export default function App() {
                     <HelpSupport currentLanguage={currentLanguage} />
                   </div>
                 )}
-                {activeTab === 'welfare-hospital' && (
+                {(activeTab === 'welfare-hospital' || activeTab === 'healthcare-hub' || activeTab === 'hospital-directory') && (
                   <HospitalNetworkPortal currentLanguage={currentLanguage} onNavigate={setActiveTab} />
                 )}
                 {activeTab === 'welfare-blood-bank' && (
@@ -832,6 +881,14 @@ export default function App() {
                 serviceId={activeTab.replace('service-detail-', '')}
                 currentLanguage={currentLanguage}
                 onNavigate={setActiveTab}
+              />
+            )}
+
+            {/* R. IQRA AI ASSISTANT FULL PAGE */}
+            {(activeTab === 'iqra-ai' || activeTab === 'iqra-assistant') && (
+              <IqraAIPage 
+                currentLanguage={currentLanguage} 
+                onNavigate={setActiveTab} 
               />
             )}
 

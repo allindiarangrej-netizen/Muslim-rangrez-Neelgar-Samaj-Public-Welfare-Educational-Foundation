@@ -1,6 +1,8 @@
 export type MedicalCourse = 
   | 'MBBS'
   | 'BDS'
+  | 'MD/MS'
+  | 'MDS'
   | 'BAMS'
   | 'BHMS'
   | 'BUMS'
@@ -9,6 +11,7 @@ export type MedicalCourse =
   | 'BVSc & AH'
   | 'BPT'
   | 'B.Sc Nursing'
+  | 'B.Sc Medical Technology'
   | 'Pharmacy'
   | 'Allied Health Sciences'
   | 'Paramedical Courses';
@@ -792,30 +795,30 @@ export const CURATED_MEDICAL_COLLEGES: CollegeProfile[] = [
     "regulatoryApproval": "NMC Recognized",
     "regulatoryAuthority": "NMC",
     "accreditation": "Premier Eastern India INI",
-    "nirfRanking": 2019,
-    "yearEstablished": 125,
-    "annualIntake": "Central Govt Subsidized",
+    "nirfRanking": "Top INI Center",
+    "yearEstablished": 2019,
+    "annualIntake": 125,
     "feeStructure": {
-      "category": "\u20b91,628 / Year",
-      "annualFeeRange": "Nominal fees.",
-      "notes": "Eco-friendly campus hostels with dining hall."
+      "category": "Central Govt Subsidized",
+      "annualFeeRange": "₹1,628 / Year",
+      "notes": "Nominal fees."
     },
     "hostelAvailability": {
       "available": true,
-      "details": "West Bengal Aikyashree & NSP Scholarships."
+      "details": "Eco-friendly campus hostels with dining hall."
     },
-    "scholarshipInfo": "100% paid internship.",
-    "placementInformation": "NEET-UG",
-    "entranceExam": true,
-    "neetRequired": "NEET-UG -> MCC All India Quota.",
-    "admissionProcess": "https://mcc.nic.in/",
+    "scholarshipInfo": "West Bengal Aikyashree & NSP Scholarships.",
+    "placementInformation": "100% paid internship.",
+    "entranceExam": "NEET-UG",
+    "neetRequired": true,
+    "admissionProcess": "NEET-UG -> MCC All India Quota.",
     "admissionPortalUrl": "https://mcc.nic.in/",
-    "counsellingLink": "MCC (DGHS)",
-    "counsellingAuthority": "https://maps.google.com/?q=AIIMS+Kalyani",
-    "googleMapsUrl": "+91-33-25820011",
-    "contactNumber": "office@aiimskalyani.edu.in",
-    "email": "https://aiimskalyani.edu.in/",
-    "website": "https://www.nmc.org.in/information-desk/college-and-course-search/",
+    "counsellingLink": "https://mcc.nic.in/",
+    "counsellingAuthority": "MCC (DGHS)",
+    "googleMapsUrl": "https://maps.google.com/?q=AIIMS+Kalyani",
+    "contactNumber": "+91-33-25820011",
+    "email": "office@aiimskalyani.edu.in",
+    "website": "https://aiimskalyani.edu.in/",
     "officialRegistrySearchUrl": "https://www.nmc.org.in/",
     "campusGallery": [
       "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=800&auto=format&fit=crop&q=80",
