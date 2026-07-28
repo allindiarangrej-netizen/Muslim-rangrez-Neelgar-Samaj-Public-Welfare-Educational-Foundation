@@ -177,6 +177,8 @@ export function SocialButton({
     );
   }
 
+  const renderIcon = () => getIcon();
+
   return (
     <a
       href={targetUrl}
@@ -186,9 +188,22 @@ export function SocialButton({
       aria-label={title || defaultTitle}
       className={`inline-flex items-center justify-center p-2 text-gray-300 hover:scale-110 transition-all duration-300 cursor-pointer ${getHoverStyles()} ${className}`}
     >
-      {getIcon()}
+      {renderIcon()}
     </a>
   );
+}
+
+export function SocialIcon({ platform, className = "w-5 h-5" }: { platform: string; className?: string }) {
+  switch (platform) {
+    case 'facebook': return <FacebookIcon className={className} />;
+    case 'youtube': return <YouTubeIcon className={className} />;
+    case 'whatsapp': return <WhatsAppIcon className={className} />;
+    case 'telegram': return <TelegramIcon className={className} />;
+    case 'instagram': return <InstagramIcon className={className} />;
+    case 'twitter': return <TwitterIcon className={className} />;
+    case 'linkedin': return <LinkedInIcon className={className} />;
+    default: return <FacebookIcon className={className} />;
+  }
 }
 
 export function OfficialSocialChannelsList({ className = "" }: { className?: string }) {
@@ -211,7 +226,7 @@ export function OfficialSocialChannelsList({ className = "" }: { className?: str
           className="flex items-center space-x-3 p-3 rounded-2xl bg-white border border-gray-200 hover:border-[#004B23] hover:shadow-md transition group cursor-pointer"
         >
           <div className="p-2.5 rounded-xl bg-gray-50 group-hover:bg-[#004B23] text-gray-700 group-hover:text-white transition shrink-0">
-            <SocialButton platform={ch.platform} variant="ghost" size="md" className="p-0 text-current" />
+            <SocialIcon platform={ch.platform} className="w-5 h-5" />
           </div>
           <div className="min-w-0">
             <h5 className="text-xs font-bold text-gray-900 group-hover:text-[#004B23] truncate transition">{ch.name}</h5>

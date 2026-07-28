@@ -1,13 +1,11 @@
 import React, { useState, useMemo } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion } from 'motion/react';
 import { 
-  Folder, Search, Filter, ChevronRight, Home, 
-  Grid, List, Clock, MapPin, Play,
-  Calendar, Sparkles, X
+  Search, Grid, MapPin, Play,
+  Sparkles, X, ZoomIn, Image as ImageIcon,
+  LayoutGrid, ArrowUpRight
 } from 'lucide-react';
 import { HeritageAlbum, HeritageVideo } from '../../data/heritageMedia';
-import ExplorerFolder from './ExplorerFolder';
-import MediaCard from './MediaCard';
 import PremiumLightbox from '../common/PremiumLightbox';
 import { Language } from '../../types';
 import SmartImage from '../common/SmartImage';
@@ -19,363 +17,377 @@ interface PremiumGalleryViewerProps {
   initialCategory?: string;
 }
 
-type ViewMode = 'folders' | 'items';
-
 export default function PremiumGalleryViewer({ 
-  albums, videos, currentLanguage, initialCategory 
+  albums, 
+  videos, 
+  currentLanguage, 
+  initialCategory 
 }: PremiumGalleryViewerProps) {
-  const [viewMode, setViewMode] = useState<ViewMode>(initialCategory ? 'items' : 'folders');
-  const [currentFolder, setCurrentFolder] = useState<string | null>(initialCategory || null);
+  // Category selection tab
+  const [activeTab, setActiveTab] = useState<string>(initialCategory || 'All');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedYear, setSelectedYear] = useState('All');
   const [selectedLocation, setSelectedLocation] = useState('All');
+  const [gridDensity, setGridDensity] = useState<'compact' | 'standard'>('standard');
   
   // Lightbox State
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
-  const [activeItems, setActiveItems] = useState<{ src: string; type: 'image' | 'video'; title?: string; description?: string; metadata?: string; }[]>([]);
 
-  // 1. Logic to filter data globally
-  const filteredAlbums = useMemo(() => {
-    return albums.filter(alb => {
-      const matchSearch = alb.titleEn.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          alb.titleHi.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchYear = selectedYear === 'All' || alb.year === Number(selectedYear);
-      const matchLoc = selectedLocation === 'All' || alb.location.district === selectedLocation;
-      return matchSearch && matchYear && matchLoc;
+  // Extract all unique districts/tehsils for filter
+  const locationOptions = useMemo(() => {
+    const locs = new Set<string>();
+    albums.forEach(a => {
+      if (a.location.district) locs.add(a.location.district);
+      if (a.location.tehsil) locs.add(a.location.tehsil);
     });
-  }, [albums, searchQuery, selectedYear, selectedLocation]);
-
-  const filteredVideos = useMemo(() => {
-    return videos.filter(vid => {
-      const matchSearch = vid.titleEn.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          vid.titleHi.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchYear = selectedYear === 'All' || vid.year === Number(selectedYear);
-      return matchSearch && matchYear;
-    });
-  }, [videos, searchQuery, selectedYear]);
-
-  // 2. Group items into curated "Root" folders (Area-wise & Category-wise)
-  const rootFolders = useMemo(() => {
-    const folders: { id: string; title: string; count: number; cover?: string; type: 'category' | 'regional' | 'album'; albumId?: string }[] = [];
-    
-    // Add Main Event Albums
-    folders.push({
-      id: 'Event Albums',
-      title: 'National & Society Events',
-      count: albums.reduce((sum, a) => sum + a.images.length, 0),
-      cover: albums[0]?.images[0],
-      type: 'category'
-    });
-
-    // Add Special Albums (e.g. Mahapanchayat)
-    const mahapanchayat = albums.find(a => a.titleEn.includes('Mahapanchayat'));
-    if (mahapanchayat) {
-      folders.push({
-        id: mahapanchayat.id,
-        title: 'Mahapanchayat 2025',
-        count: mahapanchayat.images.length,
-        cover: mahapanchayat.images[0],
-        type: 'album',
-        albumId: mahapanchayat.id
-      });
-    }
-
-    // Add Regional Folders by Tehsil and District
-    const tehsils = Array.from(new Set(
-      albums.map(a => a.location.tehsil || a.location.district).filter(Boolean)
-    ));
-
-    tehsils.forEach(tehsil => {
-      const tehsilAlbums = albums.filter(a => a.location.tehsil === tehsil || a.location.district === tehsil);
-      if (tehsilAlbums.length > 0) {
-        folders.push({
-          id: `reg_${tehsil}`,
-          title: `${tehsil} Regional Gallery`,
-          count: tehsilAlbums.reduce((sum, a) => sum + a.images.length, 0),
-          cover: tehsilAlbums[0].images[0],
-          type: 'regional'
-        });
-      }
-    });
-
-    return folders;
+    return ['All', ...Array.from(locs).sort()];
   }, [albums]);
 
-  // Handlers
-  const handleBack = () => {
-    setCurrentFolder(null);
-    setViewMode('folders');
-  };
+  // Extract all unique years for filter
+  const yearOptions = useMemo(() => {
+    const years = new Set<number>();
+    albums.forEach(a => { if (a.year) years.add(a.year); });
+    videos.forEach(v => { if (v.year) years.add(v.year); });
+    return ['All', ...Array.from(years).sort((a, b) => b - a).map(String)];
+  }, [albums, videos]);
 
-  const openAlbum = (album: HeritageAlbum, initialImgIndex: number = 0) => {
-    const items = album.images.map(img => ({
-      src: img,
-      type: 'image' as const,
-      title: currentLanguage === 'en' ? album.titleEn : album.titleHi,
-      description: currentLanguage === 'en' ? album.descriptionEn : album.descriptionHi,
-      metadata: `${album.location.district}${album.location.tehsil ? ', ' + album.location.tehsil : ''} • ${album.year}`
-    }));
-    setActiveItems(items);
-    setLightboxIndex(initialImgIndex);
-    setLightboxOpen(true);
-  };
+  // Main flat list of all items (images + videos) with full metadata
+  const allMediaItems = useMemo(() => {
+    const items: Array<{
+      id: string;
+      src: string;
+      type: 'image' | 'video';
+      title: string;
+      description: string;
+      category: string;
+      district: string;
+      tehsil?: string;
+      date?: string;
+      year?: number;
+      albumTitle: string;
+      videoUrl?: string;
+    }> = [];
 
-  const openVideo = (video: HeritageVideo) => {
-    setActiveItems([{
-      src: video.videoUrl,
-      type: 'video' as const,
-      title: currentLanguage === 'en' ? video.titleEn : video.titleHi,
-      description: currentLanguage === 'en' ? video.titleEn : video.titleHi,
-      metadata: `${video.location.district}, ${video.year}`
-    }]);
-    setLightboxIndex(0);
-    setLightboxOpen(true);
-  };
+    // Add images from albums
+    albums.forEach(alb => {
+      const albTitle = currentLanguage === 'en' ? alb.titleEn : alb.titleHi;
+      const albDesc = currentLanguage === 'en' ? alb.descriptionEn : alb.descriptionHi;
 
-  const handleRootFolderClick = (folder: { id: string; title: string; count: number; cover?: string; type: 'category' | 'regional' | 'album'; albumId?: string }) => {
-    if (folder.type === 'album' && folder.albumId) {
-      const album = albums.find(a => a.id === folder.albumId);
-      if (album) openAlbum(album);
-    } else {
-      setCurrentFolder(folder.title);
-      setViewMode('items');
-    }
-  };
-
-  // Logic to filter data for the "items" view
-  const itemsInView = useMemo(() => {
-    if (!currentFolder) return { albums: filteredAlbums, videos: filteredVideos };
-
-    // If it's a regional or area folder
-    if (currentFolder.includes('Regional Gallery') || currentFolder.includes('Gallery')) {
-      const tehsil = currentFolder.replace(' Regional Gallery', '').replace(' Gallery', '');
-      return {
-        albums: filteredAlbums.filter(a => a.location.tehsil?.toLowerCase().includes(tehsil.toLowerCase()) || a.location.district.toLowerCase().includes(tehsil.toLowerCase()) || a.titleEn.toLowerCase().includes(tehsil.toLowerCase())),
-        videos: []
-      };
-    }
-
-    // If it's Photo Gallery, Regional Galleries, Event Albums, or National Events, show all filtered albums
-    if (['Photo Gallery', 'Regional Galleries', 'Event Albums', 'National Events', 'Press & News Gallery'].includes(currentFolder)) {
-      return {
-        albums: filteredAlbums,
-        videos: filteredVideos
-      };
-    }
-
-    // Default category/folder match
-    return {
-      albums: filteredAlbums.filter(a => a.category === currentFolder || a.eventType.toLowerCase().includes(currentFolder.toLowerCase()) || a.titleEn.toLowerCase().includes(currentFolder.toLowerCase())),
-      videos: filteredVideos.filter(v => v.category === currentFolder)
-    };
-  }, [currentFolder, filteredAlbums, filteredVideos]);
-
-  // Flatten all images in view into a single continuous masonry/grid gallery
-  const flatImagesInView = useMemo(() => {
-    const list: { src: string; title: string; description?: string; date?: string; district?: string; albumTitle: string }[] = [];
-    itemsInView.albums.forEach(alb => {
-      alb.images.forEach(img => {
-        list.push({
+      alb.images.forEach((img, idx) => {
+        items.push({
+          id: `${alb.id}-img-${idx}`,
           src: img,
-          title: currentLanguage === 'en' ? alb.titleEn : alb.titleHi,
-          description: currentLanguage === 'en' ? alb.descriptionEn : alb.descriptionHi,
+          type: 'image',
+          title: albTitle,
+          description: albDesc,
+          category: alb.category || 'Photo Gallery',
+          district: alb.location.district || 'Morena',
+          tehsil: alb.location.tehsil,
           date: alb.date,
-          district: alb.location.district,
-          albumTitle: currentLanguage === 'en' ? alb.titleEn : alb.titleHi
+          year: alb.year,
+          albumTitle: albTitle
         });
       });
     });
-    return list;
-  }, [itemsInView.albums, currentLanguage]);
 
-  const openFlatLightbox = (index: number) => {
-    const items = flatImagesInView.map(item => ({
-      src: item.src,
-      type: 'image' as const,
+    // Add videos
+    videos.forEach(vid => {
+      const vidTitle = currentLanguage === 'en' ? vid.titleEn : vid.titleHi;
+      items.push({
+        id: vid.id,
+        src: vid.thumbnailUrl || vid.videoUrl,
+        type: 'video',
+        title: vidTitle,
+        description: vidTitle,
+        category: 'Video Gallery',
+        district: vid.location.district || 'Morena',
+        date: vid.uploadDate,
+        year: vid.year,
+        albumTitle: vidTitle,
+        videoUrl: vid.videoUrl
+      });
+    });
+
+    return items;
+  }, [albums, videos, currentLanguage]);
+
+  // Filter items based on tab, search, year, and location
+  const filteredItems = useMemo(() => {
+    return allMediaItems.filter(item => {
+      // 1. Tab matching
+      if (activeTab === 'Regional Galleries') {
+        const isRegional = item.category === 'Regional Galleries' || 
+                           item.district.toLowerCase().includes('morena') ||
+                           item.district.toLowerCase().includes('dholpur') ||
+                           item.district.toLowerCase().includes('gwalior') ||
+                           (item.tehsil && item.tehsil.length > 0);
+        if (!isRegional) return false;
+      } else if (activeTab === 'Video Gallery') {
+        if (item.type !== 'video') return false;
+      } else if (activeTab === 'Photo Gallery') {
+        if (item.type !== 'image') return false;
+      } else if (activeTab === 'Event Albums') {
+        if (item.category !== 'Event Albums' && !item.albumTitle.toLowerCase().includes('mahapanchayat') && !item.albumTitle.toLowerCase().includes('sammelan')) return false;
+      } else if (activeTab !== 'All') {
+        const matchesCategory = item.category === activeTab || item.albumTitle.toLowerCase().includes(activeTab.toLowerCase());
+        if (!matchesCategory) return false;
+      }
+
+      // 2. Search query matching
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase();
+        const matchTitle = item.title.toLowerCase().includes(q);
+        const matchDesc = item.description.toLowerCase().includes(q);
+        const matchDistrict = item.district.toLowerCase().includes(q);
+        const matchTehsil = item.tehsil ? item.tehsil.toLowerCase().includes(q) : false;
+        if (!matchTitle && !matchDesc && !matchDistrict && !matchTehsil) return false;
+      }
+
+      // 3. Year matching
+      if (selectedYear !== 'All') {
+        if (String(item.year) !== selectedYear) return false;
+      }
+
+      // 4. Location matching
+      if (selectedLocation !== 'All') {
+        const matchDist = item.district.toLowerCase() === selectedLocation.toLowerCase();
+        const matchTehsil = item.tehsil ? item.tehsil.toLowerCase() === selectedLocation.toLowerCase() : false;
+        if (!matchDist && !matchTehsil) return false;
+      }
+
+      return true;
+    });
+  }, [allMediaItems, activeTab, searchQuery, selectedYear, selectedLocation]);
+
+  // Lightbox Items List
+  const lightboxItems = useMemo(() => {
+    return filteredItems.map(item => ({
+      src: item.videoUrl || item.src,
+      type: item.type,
       title: item.title,
       description: item.description,
-      metadata: `${item.district || 'Morena'} • ${item.date || '2026'}`
+      metadata: `${item.district}${item.tehsil ? ', ' + item.tehsil : ''} • ${item.year || '2026'}`
     }));
-    setActiveItems(items);
+  }, [filteredItems]);
+
+  const handleOpenLightbox = (index: number) => {
     setLightboxIndex(index);
     setLightboxOpen(true);
   };
 
+  const categoryTabs = [
+    { id: 'All', labelEn: '✨ All Photos', labelHi: '✨ सभी तस्वीरें' },
+    { id: 'Regional Galleries', labelEn: '📍 Regional Photos', labelHi: '📍 क्षेत्रीय तस्वीरें' },
+    { id: 'Event Albums', labelEn: '🏛️ Event Albums', labelHi: '🏛️ कार्यक्रम एल्बम' },
+    { id: 'Photo Gallery', labelEn: '🖼️ General Gallery', labelHi: '🖼️ मुख्य गैलरी' },
+    { id: 'Video Gallery', labelEn: '🎥 Video Documentaries', labelHi: '🎥 वीडियो दस्तावेजी' },
+  ];
+
   return (
-    <div className="space-y-8 min-h-[600px]">
-      {/* 1. Header & Breadcrumbs */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-100 pb-6">
-        <div className="space-y-1">
-          <div className="flex items-center space-x-2 text-xs font-bold text-gray-400 uppercase tracking-widest">
-            <button onClick={handleBack} className="hover:text-[#004B23] transition-colors flex items-center">
-              <Home className="h-3 w-3 mr-1" />
-              Gallery
-            </button>
-            {currentFolder && (
-              <>
-                <ChevronRight className="h-3 w-3" />
-                <span className="text-[#004B23]">{currentFolder}</span>
-              </>
+    <div className="space-y-6">
+      {/* 1. TOP HEADER & MAIN CONTROLS */}
+      <div className="bg-[#004B23] text-white p-6 sm:p-8 rounded-3xl border border-[#F4C430]/30 shadow-xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-80 h-80 bg-[#F4C430]/10 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="space-y-2">
+            <div className="inline-flex items-center space-x-2 bg-white/10 px-3 py-1 rounded-full text-xs font-bold text-[#F4C430] uppercase tracking-wider">
+              <Sparkles className="h-3.5 w-3.5" />
+              <span>{filteredItems.length} High-Res Verified Assets</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-serif font-extrabold text-white">
+              {currentLanguage === 'en' ? 'Community Digital Photo Gallery' : 'सामुदायिक डिजिटल फोटो गैलरी'}
+            </h2>
+            <p className="text-xs sm:text-sm text-emerald-100/80 max-w-2xl leading-relaxed">
+              {currentLanguage === 'en'
+                ? 'Click any photo to open full-screen HD viewer with instant zoom, slideshow, and direct download.'
+                : 'किसी भी फोटो पर क्लिक करके फुल-स्क्रीन एचडी व्यूअर खोलें, ज़ूम करें और डाउनलोड करें।'}
+            </p>
+          </div>
+
+          {/* Quick Search */}
+          <div className="relative w-full md:w-80">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-emerald-300" />
+            <input 
+              type="text"
+              placeholder={currentLanguage === 'en' ? "Search photos, region, events..." : "तस्वीरें, क्षेत्र या कार्यक्रम खोजें..."}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-9 py-2.5 bg-black/30 border border-emerald-400/30 rounded-2xl text-xs text-white placeholder-emerald-200/60 focus:outline-none focus:ring-2 focus:ring-[#F4C430] backdrop-blur-md"
+            />
+            {searchQuery && (
+              <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-emerald-300 hover:text-white">
+                <X className="h-4 w-4" />
+              </button>
             )}
           </div>
-          <h2 className="text-2xl md:text-3xl font-serif font-extrabold text-[#004B23]">
-            {currentFolder || 'Digital Archive Hub'}
-          </h2>
         </div>
 
-        {/* Search Bar */}
-        <div className="relative w-full md:w-96">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <input 
-            type="text"
-            placeholder="Search albums, events, locations..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#004B23] focus:border-transparent shadow-sm"
-          />
-          {searchQuery && (
-            <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
-              <X className="h-4 w-4" />
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* 2. Global Filters */}
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="flex items-center space-x-2 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-100 text-[#004B23] text-[10px] font-bold uppercase tracking-wider">
-          <Filter className="h-3 w-3" />
-          <span>Quick Filters:</span>
-        </div>
-        <select 
-          value={selectedYear}
-          onChange={(e) => setSelectedYear(e.target.value)}
-          className="bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-xs text-gray-600 focus:outline-none focus:ring-1 focus:ring-[#004B23]"
-        >
-          <option value="All">All Years</option>
-          <option value="2026">2026</option>
-          <option value="2025">2025</option>
-          <option value="2024">2024</option>
-        </select>
-        <select 
-          value={selectedLocation}
-          onChange={(e) => setSelectedLocation(e.target.value)}
-          className="bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-xs text-gray-600 focus:outline-none focus:ring-1 focus:ring-[#004B23]"
-        >
-          <option value="All">All Districts</option>
-          <option value="Morena">Morena</option>
-          <option value="Dholpur">Dholpur</option>
-          <option value="Gwalior">Gwalior</option>
-        </select>
-      </div>
-
-      {/* 3. Grid Content */}
-      <AnimatePresence mode="wait">
-        {viewMode === 'folders' ? (
-          <motion.div 
-            key="folders"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
-          >
-            {rootFolders.map((folder) => (
-              <ExplorerFolder
-                key={folder.id}
-                title={folder.title}
-                itemCount={folder.count}
-                coverImage={folder.cover}
-                onClick={() => handleRootFolderClick(folder)}
-              />
+        {/* 2. CATEGORY TABS STRIP */}
+        <div className="relative z-10 mt-6 pt-6 border-t border-emerald-800/60 flex items-center justify-between flex-wrap gap-3">
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none w-full md:w-auto">
+            {categoryTabs.map(tab => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-200 cursor-pointer flex items-center gap-1.5 ${
+                  activeTab === tab.id
+                    ? 'bg-[#F4C430] text-[#004B23] shadow-lg font-black scale-105'
+                    : 'bg-emerald-900/60 hover:bg-emerald-800/80 text-emerald-100 border border-emerald-700/50'
+                }`}
+              >
+                <span>{currentLanguage === 'en' ? tab.labelEn : tab.labelHi}</span>
+              </button>
             ))}
-          </motion.div>
-        ) : (
-          <motion.div 
-            key="items"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="space-y-8"
-          >
-            {flatImagesInView.length > 0 ? (
-              <div className="space-y-4">
-                <div className="flex items-center justify-between text-[#004B23] pb-4 border-b border-gray-100">
-                  <div className="flex items-center space-x-2">
-                    <Grid className="h-5 w-5" />
-                    <h3 className="font-serif font-bold text-xl uppercase tracking-wide">
-                      {currentFolder || 'Gallery'} Photos ({flatImagesInView.length})
-                    </h3>
+          </div>
+
+          {/* Grid Layout Switcher & Quick Filters */}
+          <div className="flex items-center gap-2 text-xs font-medium">
+            {/* Location Selector */}
+            <select
+              value={selectedLocation}
+              onChange={(e) => setSelectedLocation(e.target.value)}
+              className="bg-emerald-950/80 border border-emerald-700 text-emerald-100 rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:border-[#F4C430]"
+            >
+              <option value="All">All Regions</option>
+              {locationOptions.filter(l => l !== 'All').map(loc => (
+                <option key={loc} value={loc}>{loc}</option>
+              ))}
+            </select>
+
+            {/* Year Selector */}
+            <select
+              value={selectedYear}
+              onChange={(e) => setSelectedYear(e.target.value)}
+              className="bg-emerald-950/80 border border-emerald-700 text-emerald-100 rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:border-[#F4C430]"
+            >
+              <option value="All">All Years</option>
+              {yearOptions.filter(y => y !== 'All').map(yr => (
+                <option key={yr} value={yr}>{yr}</option>
+              ))}
+            </select>
+
+            {/* Density Toggle */}
+            <div className="hidden sm:flex items-center bg-emerald-950/80 p-1 rounded-xl border border-emerald-700">
+              <button
+                onClick={() => setGridDensity('standard')}
+                className={`p-1.5 rounded-lg transition ${gridDensity === 'standard' ? 'bg-[#F4C430] text-[#004B23]' : 'text-emerald-300 hover:text-white'}`}
+                title="Standard Grid"
+              >
+                <Grid className="h-4 w-4" />
+              </button>
+              <button
+                onClick={() => setGridDensity('compact')}
+                className={`p-1.5 rounded-lg transition ${gridDensity === 'compact' ? 'bg-[#F4C430] text-[#004B23]' : 'text-emerald-300 hover:text-white'}`}
+                title="Compact Grid"
+              >
+                <LayoutGrid className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 3. DIRECT PHOTO GRID VIEW */}
+      {filteredItems.length > 0 ? (
+        <div className={`grid gap-4 sm:gap-5 ${
+          gridDensity === 'compact' 
+            ? 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6'
+            : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'
+        }`}>
+          {filteredItems.map((item, idx) => (
+            <motion.div
+              key={`${item.id}-${idx}`}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.2, delay: Math.min((idx % 12) * 0.03, 0.3) }}
+              onClick={() => handleOpenLightbox(idx)}
+              className="group bg-white rounded-2xl overflow-hidden border border-gray-200/80 shadow-sm hover:shadow-2xl hover:border-[#004B23]/40 transition-all duration-300 flex flex-col cursor-pointer relative"
+            >
+              {/* Image Canvas */}
+              <div className="relative aspect-[4/3] overflow-hidden bg-stone-900">
+                <SmartImage 
+                  src={item.src} 
+                  alt={item.title}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-108"
+                />
+
+                {/* Subtle Hover Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-3 flex flex-col justify-between">
+                  <div className="flex justify-between items-start">
+                    <span className="px-2 py-0.5 rounded-md bg-[#004B23] text-white text-[9px] font-bold uppercase tracking-wider shadow">
+                      {item.district}
+                    </span>
+                    <span className="p-2 rounded-full bg-white/20 text-[#F4C430] backdrop-blur-md transform group-hover:scale-110 transition-transform">
+                      <ZoomIn className="h-4 w-4" />
+                    </span>
                   </div>
-                  <p className="text-xs text-gray-400 font-mono">Natural vertical scrolling • Click image for Fullscreen Lightbox</p>
+
+                  <div className="text-white space-y-0.5">
+                    <p className="text-xs font-bold line-clamp-1 text-emerald-300">
+                      {item.title}
+                    </p>
+                    <p className="text-[10px] text-stone-300 font-mono flex items-center gap-1">
+                      <MapPin className="h-3 w-3 text-[#F4C430]" /> {item.district}{item.tehsil ? `, ${item.tehsil}` : ''} • {item.year || '2026'}
+                    </p>
+                  </div>
                 </div>
 
-                {/* Responsive Masonry / Grid Gallery with medium-sized HD thumbnails (~300-400px wide) */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6">
-                  {flatImagesInView.map((item, idx) => (
-                    <motion.div 
-                      key={`${item.src}-${idx}`}
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.3, delay: (idx % 10) * 0.02 }}
-                      className="group bg-white rounded-2xl overflow-hidden border border-gray-150 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col cursor-pointer"
-                      onClick={() => openFlatLightbox(idx)}
-                    >
-                      <div className="relative w-full aspect-[4/3] overflow-hidden bg-gray-100">
-                        <SmartImage 
-                          src={item.src} 
-                          alt={item.title}
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                        />
-                        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
-                          <div className="bg-white/25 backdrop-blur-md p-3 rounded-full text-white transform group-hover:scale-110 transition-transform">
-                            <Sparkles className="h-5 w-5 text-[#F4C430]" />
-                          </div>
-                        </div>
-                        {item.date && (
-                          <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm text-white px-2 py-0.5 rounded text-[10px] font-mono">
-                            {item.date}
-                          </div>
-                        )}
-                      </div>
-                      <div className="p-3.5 flex flex-col justify-between flex-1 space-y-2">
-                        <h4 className="text-xs font-bold text-[#004B23] leading-snug line-clamp-2 group-hover:text-emerald-700 transition-colors">
-                          {item.albumTitle}
-                        </h4>
-                        <div className="flex items-center justify-between text-[10px] text-gray-400 font-mono pt-2 border-t border-gray-50">
-                          <span className="flex items-center"><MapPin className="h-3 w-3 mr-0.5 text-emerald-600" /> {item.district || 'Morena'}</span>
-                          <span className="text-[#004B23] font-semibold">HD Preview →</span>
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
+                {/* Media Type Badge */}
+                {item.type === 'video' && (
+                  <div className="absolute top-2.5 right-2.5 bg-[#F4C430] text-[#004B23] p-1.5 rounded-lg shadow-md flex items-center gap-1 text-[10px] font-bold">
+                    <Play className="h-3 w-3 fill-current" />
+                    <span>Video</span>
+                  </div>
+                )}
               </div>
-            ) : (
-              <div className="py-24 text-center space-y-4">
-                <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto text-gray-300">
-                  <X className="h-10 w-10" />
-                </div>
-                <h4 className="text-xl font-bold text-gray-400 font-serif">No images found in this gallery</h4>
-                <p className="text-sm text-gray-400">Try adjusting your search or filters.</p>
-                <button 
-                  onClick={() => { setSearchQuery(''); setSelectedYear('All'); setSelectedLocation('All'); }}
-                  className="px-6 py-2 bg-[#004B23] text-white rounded-full text-xs font-bold uppercase tracking-widest hover:bg-[#00381a] transition-colors"
-                >
-                  Clear all filters
-                </button>
-              </div>
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
 
-      {/* Lightbox Component */}
-      <PremiumLightbox 
+              {/* Card Footer Info */}
+              <div className="p-3 bg-white flex flex-col justify-between flex-1 border-t border-gray-100 space-y-1.5">
+                <h4 className="text-xs font-bold text-[#004B23] line-clamp-1 group-hover:text-emerald-700 transition-colors">
+                  {item.title}
+                </h4>
+                <div className="flex items-center justify-between text-[10px] text-gray-400 font-mono">
+                  <span className="flex items-center gap-1">
+                    <MapPin className="h-3 w-3 text-emerald-600" />
+                    {item.district}
+                  </span>
+                  <span className="text-[#004B23] font-bold group-hover:underline flex items-center">
+                    Open HD <ArrowUpRight className="h-3 w-3 ml-0.5" />
+                  </span>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      ) : (
+        <div className="py-20 text-center bg-white rounded-3xl border border-gray-200 p-8 space-y-4">
+          <div className="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center mx-auto text-[#004B23]">
+            <ImageIcon className="h-8 w-8" />
+          </div>
+          <h3 className="text-lg font-bold text-gray-700 font-serif">
+            {currentLanguage === 'en' ? 'No photos match your current filters' : 'कोई तस्वीर आपके फिल्टर से मेल नहीं खाती'}
+          </h3>
+          <p className="text-xs text-gray-500 max-w-md mx-auto">
+            Try resetting your search query or choosing "All Regions" and "All Years".
+          </p>
+          <button
+            onClick={() => { setSearchQuery(''); setSelectedYear('All'); setSelectedLocation('All'); setActiveTab('All'); }}
+            className="px-5 py-2.5 bg-[#004B23] text-white rounded-full text-xs font-bold uppercase tracking-wider hover:bg-emerald-900 transition"
+          >
+            Reset Filters
+          </button>
+        </div>
+      )}
+
+      {/* 4. FULL HD UNIVERSAL LIGHTBOX */}
+      <PremiumLightbox
         isOpen={lightboxOpen}
         onClose={() => setLightboxOpen(false)}
-        items={activeItems}
+        items={lightboxItems}
         initialIndex={lightboxIndex}
+        albumTitle={activeTab === 'All' ? 'All Community Photos' : activeTab}
       />
     </div>
   );
