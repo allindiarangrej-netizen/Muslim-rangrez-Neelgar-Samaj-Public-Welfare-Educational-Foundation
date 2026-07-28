@@ -414,40 +414,34 @@ export default function HistoryDetails({ currentLanguage }: HistoryDetailsProps)
       </div>
 
       {/* Sub-Navigation Tabs inside History */}
-      <div 
-        style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: '12px',
-          overflowX: 'hidden',
-          justifyContent: 'flex-start',
-        }}
-        className="bg-white p-4 sm:p-6 rounded-2xl border border-gray-200 shadow-sm"
-      >
+      <div className="bg-white p-3 sm:p-4 rounded-2xl border border-gray-200 shadow-sm grid grid-cols-1 md:grid-cols-6 lg:grid-cols-5 gap-2.5 sm:gap-3 items-stretch w-full">
         {[
           { id: 'chapters', labelEn: 'Complete History (15 Chapters)', labelHi: 'संपूर्ण इतिहास (15 अध्याय)', labelUr: 'مکمل تاریخ (15 باب)', icon: BookOpen },
-          { id: 'timeline', labelEn: 'Historical Timeline & Milestones', labelHi: 'ऐतिहासिक समयरेखा एवं पड़ाव', labelUr: 'تاریخی ٹائم لائن', icon: Clock },
           { id: 'maps', labelEn: 'Heritage Maps & Dyeing Hubs', labelHi: 'विरासत मानचित्र एवं रंगाई केंद्र', labelUr: 'ورثہ کے نقشے اور مراکز', icon: MapPin },
+          { id: 'timeline', labelEn: 'Historical Timeline & Milestones', labelHi: 'ऐतिहासिक समयरेखा एवं पड़ाव', labelUr: 'تاریخی ٹائم لائن', icon: Clock },
           { id: 'archive', labelEn: 'Historic Photo & Tool Archive', labelHi: 'ऐतिहासिक फोटो एवं उपकरण संग्रह', labelUr: 'تاریخی تصاویر اور اوزار', icon: ImageIcon },
           { id: 'videos', labelEn: 'Documentary Videos', labelHi: 'वृत्तचित्र वीडियो (Documentaries)', labelUr: 'ڈاکومنٹری ویڈیوز', icon: Film },
-        ].map((tab) => {
+        ].map((tab, index) => {
           const IconComponent = tab.icon;
           const isActive = activeSubTab === tab.id;
+          const colSpanClass = index < 3 
+            ? 'col-span-1 md:col-span-2 lg:col-span-1' 
+            : 'col-span-1 md:col-span-3 lg:col-span-1';
+
           return (
             <button
               key={tab.id}
               onClick={() => setActiveSubTab(tab.id as any)}
-              style={{
-                width: 'calc(50% - 6px)',
-              }}
-              className={`sm:w-[calc(33.333%-8px)] lg:w-[calc(20%-10px)] px-4 py-3 rounded-xl font-bold text-xs sm:text-sm transition flex items-center justify-center gap-2 cursor-pointer ${
+              className={`${colSpanClass} w-full h-full min-h-[48px] sm:min-h-[52px] px-3 py-2.5 sm:px-3.5 sm:py-3 rounded-xl font-bold text-xs sm:text-xs xl:text-sm transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer text-center ${
                 isActive
-                  ? 'bg-[#004B23] text-[#FFD54A] shadow-lg border border-[#FFD54A]/40'
+                  ? 'bg-[#004B23] text-[#FFD54A] shadow-md border border-[#FFD54A]/40'
                   : 'bg-gray-50 text-gray-700 hover:bg-emerald-50 hover:text-[#004B23] border border-gray-200'
               }`}
             >
               <IconComponent className={`w-4 h-4 shrink-0 ${isActive ? 'text-[#FFD54A]' : 'text-gray-500'}`} />
-              <span className="truncate">{currentLanguage === 'en' ? tab.labelEn : currentLanguage === 'ur' ? tab.labelUr : tab.labelHi}</span>
+              <span className="leading-tight line-clamp-2">
+                {currentLanguage === 'en' ? tab.labelEn : currentLanguage === 'ur' ? tab.labelUr : tab.labelHi}
+              </span>
             </button>
           );
         })}

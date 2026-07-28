@@ -777,7 +777,7 @@ export default function CareerOpportunities({ currentLanguage }: CareerOpportuni
                   </span>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 gap-6">
                   {groupedPortals.Private.map((portal) => (
                     <PortalCard key={portal.id} portal={portal} currentLanguage={currentLanguage} getText={getText} cardVariants={cardVariants} />
                   ))}
@@ -817,7 +817,7 @@ export default function CareerOpportunities({ currentLanguage }: CareerOpportuni
                   </span>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 gap-6">
                   {groupedPortals.Freshers.map((portal) => (
                     <PortalCard key={portal.id} portal={portal} currentLanguage={currentLanguage} getText={getText} cardVariants={cardVariants} />
                   ))}
@@ -862,7 +862,7 @@ export default function CareerOpportunities({ currentLanguage }: CareerOpportuni
                   </span>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 gap-6">
                   {groupedPortals.Gulf.map((portal) => (
                     <PortalCard key={portal.id} portal={portal} currentLanguage={currentLanguage} getText={getText} cardVariants={cardVariants} isGulf={true} />
                   ))}

@@ -41,6 +41,7 @@ import {
   Sliders,
   Scale
 } from 'lucide-react';
+import UniversalBackButton from './common/UniversalBackButton';
 import { Language } from '../types';
 import { 
   SchoolProfile, 
@@ -53,22 +54,52 @@ import {
 interface SchoolsDirectoryProps {
   currentLanguage: Language;
   onNavigate?: (tab: string) => void;
+  initialSchoolType?: string;
+  initialBoard?: string;
+  initialOwnership?: string;
+  initialTab?: 'all' | 'govt_kv_jnv' | 'minority' | 'residential' | 'boards' | 'compare' | 'saved';
+  initialSearch?: string;
+  initialClassLevel?: string;
+  initialMedium?: string;
+  initialHostelOnly?: boolean;
 }
 
-export default function SchoolsDirectory({ currentLanguage, onNavigate }: SchoolsDirectoryProps) {
+export default function SchoolsDirectory({ 
+  currentLanguage, 
+  onNavigate,
+  initialSchoolType,
+  initialBoard,
+  initialOwnership,
+  initialTab,
+  initialSearch,
+  initialClassLevel,
+  initialMedium,
+  initialHostelOnly
+}: SchoolsDirectoryProps) {
   // Navigation tabs within directory
-  const [activeTab, setActiveTab] = useState<'all' | 'govt_kv_jnv' | 'minority' | 'residential' | 'boards' | 'compare' | 'saved'>('all');
+  const [activeTab, setActiveTab] = useState<'all' | 'govt_kv_jnv' | 'minority' | 'residential' | 'boards' | 'compare' | 'saved'>(initialTab || 'all');
   
   // Search & Filters
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState(initialSearch || '');
   const [selectedState, setSelectedState] = useState<string>('All States & UTs');
   const [selectedDistrict, setSelectedDistrict] = useState<string>('All Districts');
-  const [selectedBoard, setSelectedBoard] = useState<string>('All Boards');
-  const [selectedSchoolType, setSelectedSchoolType] = useState<string>('All Types');
-  const [selectedOwnership, setSelectedOwnership] = useState<string>('All Ownerships');
-  const [selectedClassLevel, setSelectedClassLevel] = useState<string>('All Classes');
-  const [selectedMedium, setSelectedMedium] = useState<string>('All Mediums');
-  const [hostelOnly, setHostelOnly] = useState<boolean>(false);
+  const [selectedBoard, setSelectedBoard] = useState<string>(initialBoard || 'All Boards');
+  const [selectedSchoolType, setSelectedSchoolType] = useState<string>(initialSchoolType || 'All Types');
+  const [selectedOwnership, setSelectedOwnership] = useState<string>(initialOwnership || 'All Ownerships');
+  const [selectedClassLevel, setSelectedClassLevel] = useState<string>(initialClassLevel || 'All Classes');
+  const [selectedMedium, setSelectedMedium] = useState<string>(initialMedium || 'All Mediums');
+  const [hostelOnly, setHostelOnly] = useState<boolean>(initialHostelOnly || false);
+
+  useEffect(() => {
+    if (initialSchoolType !== undefined) setSelectedSchoolType(initialSchoolType);
+    if (initialBoard !== undefined) setSelectedBoard(initialBoard);
+    if (initialOwnership !== undefined) setSelectedOwnership(initialOwnership);
+    if (initialTab !== undefined) setActiveTab(initialTab);
+    if (initialSearch !== undefined) setSearchQuery(initialSearch);
+    if (initialClassLevel !== undefined) setSelectedClassLevel(initialClassLevel);
+    if (initialMedium !== undefined) setSelectedMedium(initialMedium);
+    if (initialHostelOnly !== undefined) setHostelOnly(initialHostelOnly);
+  }, [initialSchoolType, initialBoard, initialOwnership, initialTab, initialSearch, initialClassLevel, initialMedium, initialHostelOnly]);
   const [transportOnly, setTransportOnly] = useState<boolean>(false);
   const [scholarshipOnly, setScholarshipOnly] = useState<boolean>(false);
   const [minorityOnly, setMinorityOnly] = useState<boolean>(false);
@@ -321,6 +352,9 @@ export default function SchoolsDirectory({ currentLanguage, onNavigate }: School
         <div className="absolute inset-0 bg-[radial-gradient(#FFD54A_1px,transparent_1px)] [background-size:24px_24px] opacity-10"></div>
         
         <div className="max-w-7xl mx-auto relative z-10">
+          <div className="mb-4">
+            <UniversalBackButton onBack={() => onNavigate?.('home')} currentLanguage={currentLanguage} />
+          </div>
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
               <div className="inline-flex items-center gap-2 bg-[#FFD54A]/20 border border-[#FFD54A]/40 text-[#FFD54A] px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-3">
@@ -634,7 +668,7 @@ export default function SchoolsDirectory({ currentLanguage, onNavigate }: School
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 gap-6">
             {paginatedSchools.map(school => {
               const isSaved = savedSchoolIds.includes(school.id);
               const isCompared = compareSchoolIds.includes(school.id);

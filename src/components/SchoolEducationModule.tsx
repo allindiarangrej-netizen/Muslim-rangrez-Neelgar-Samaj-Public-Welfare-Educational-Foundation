@@ -29,17 +29,68 @@ import {
   Filter, 
   Check, 
   X,
-  Scale
+  Scale,
+  Bell,
+  Newspaper,
+  FileCheck,
+  ChevronDown
 } from 'lucide-react';
 import { Language } from '../types';
+import SchoolsDirectory from './SchoolsDirectory';
 
 interface SchoolEducationModuleProps {
   currentLanguage: Language;
   onNavigate?: (tab: string) => void;
+  initialSection?: string;
 }
 
-export default function SchoolEducationModule({ currentLanguage, onNavigate }: SchoolEducationModuleProps) {
-  const [activeSection, setActiveSection] = useState<'directory' | 'olympiads' | 'board_hub' | 'ncert' | 'scholarships' | 'career_guidance'>('directory');
+export interface Level1ModuleItem {
+  id: string;
+  nameEn: string;
+  nameHi: string;
+  icon: any;
+  isPrimary?: boolean;
+  directoryFilter?: {
+    schoolType?: string;
+    board?: string;
+    ownership?: string;
+    classLevel?: string;
+    medium?: string;
+    tab?: 'all' | 'govt_kv_jnv' | 'minority' | 'residential' | 'boards' | 'compare' | 'saved';
+  };
+}
+
+export const LEVEL_1_MODULES: Level1ModuleItem[] = [
+  { id: 'directory', nameEn: '1. School Directory ⭐', nameHi: '1. स्कूल डायरेक्टरी ⭐', icon: Building2, isPrimary: true },
+  { id: 'admission_guide', nameEn: '2. School Admission Guide', nameHi: '2. स्कूल प्रवेश मार्गदर्शिका', icon: FileCheck },
+  { id: 'play_schools', nameEn: '3. Play Schools', nameHi: '3. प्ले स्कूल', icon: Sparkles, directoryFilter: { classLevel: 'Pre-Nursery / Play' } },
+  { id: 'primary_schools', nameEn: '4. Primary Schools', nameHi: '4. प्राथमिक स्कूल', icon: BookOpen, directoryFilter: { classLevel: 'Class 1 to 5' } },
+  { id: 'middle_schools', nameEn: '5. Middle Schools', nameHi: '5. उच्च प्राथमिक स्कूल', icon: Layers, directoryFilter: { classLevel: 'Class 6 to 8' } },
+  { id: 'high_schools', nameEn: '6. High Schools', nameHi: '6. माध्यमिक स्कूल', icon: GraduationCap, directoryFilter: { classLevel: 'Class 9 & 10' } },
+  { id: 'sr_secondary', nameEn: '7. Senior Secondary Schools', nameHi: '7. उच्च माध्यमिक स्कूल', icon: Award, directoryFilter: { classLevel: 'Class 11 & 12' } },
+  { id: 'govt_schools', nameEn: '8. Government Schools', nameHi: '8. सरकारी स्कूल', icon: ShieldCheck, directoryFilter: { ownership: 'Government' } },
+  { id: 'cbse_schools', nameEn: '9. CBSE Schools', nameHi: '9. सीबीएसई स्कूल', icon: CheckCircle2, directoryFilter: { board: 'CBSE' } },
+  { id: 'icse_schools', nameEn: '10. ICSE Schools', nameHi: '10. आईसीएसई स्कूल', icon: CheckCircle2, directoryFilter: { board: 'ICSE' } },
+  { id: 'state_board_schools', nameEn: '11. State Board Schools', nameHi: '11. स्टेट बोर्ड स्कूल', icon: Globe, directoryFilter: { board: 'State Boards' } },
+  { id: 'kv_schools', nameEn: '12. Kendriya Vidyalaya', nameHi: '12. केंद्रीय विद्यालय', icon: Building2, directoryFilter: { schoolType: 'Kendriya Vidyalaya' } },
+  { id: 'jnv_schools', nameEn: '13. Jawahar Navodaya Vidyalaya', nameHi: '13. जवाहर नवोदय विद्यालय', icon: Star, directoryFilter: { schoolType: 'Jawahar Navodaya Vidyalaya (JNV)' } },
+  { id: 'pm_shri_schools', nameEn: '14. PM SHRI Schools', nameHi: '14. पीएम श्री स्कूल', icon: Zap, directoryFilter: { schoolType: 'PM SHRI Schools' } },
+  { id: 'sainik_schools', nameEn: '15. Sainik Schools', nameHi: '15. सैनिक स्कूल', icon: ShieldCheck, directoryFilter: { schoolType: 'Sainik Schools' } },
+  { id: 'minority_schools', nameEn: '16. Minority Schools', nameHi: '16. अल्पसंख्यक स्कूल', icon: Users, directoryFilter: { tab: 'minority' } },
+  { id: 'residential_schools', nameEn: '17. Residential Schools', nameHi: '17. आवासीय स्कूल', icon: Compass, directoryFilter: { tab: 'residential' } },
+  { id: 'international_schools', nameEn: '18. International Schools', nameHi: '18. इंटरनेशनल स्कूल', icon: Globe, directoryFilter: { board: 'IB' } },
+  { id: 'olympiads', nameEn: '19. Olympiads', nameHi: '19. ओलंपियाड', icon: Award },
+  { id: 'board_hub', nameEn: '20. Board Examination Hub', nameHi: '20. बोर्ड परीक्षा हब', icon: FileText },
+  { id: 'ncert', nameEn: '21. NCERT Digital Library', nameHi: '21. एनसीईआरटी डिजिटल लाइब्रेरी', icon: BookOpen },
+  { id: 'scholarships', nameEn: '22. Scholarships', nameHi: '22. छात्रवृत्तियां', icon: GraduationCap },
+  { id: 'career_guidance', nameEn: '23. Career Guidance', nameHi: '23. करियर मार्गदर्शन', icon: Compass },
+  { id: 'learning_resources', nameEn: '24. Learning Resources', nameHi: '24. अधिगम संसाधन', icon: Sparkles },
+  { id: 'educational_news', nameEn: '25. Educational News', nameHi: '25. शैक्षणिक समाचार', icon: Bell }
+];
+
+export default function SchoolEducationModule({ currentLanguage, onNavigate, initialSection }: SchoolEducationModuleProps) {
+  const [activeSection, setActiveSection] = useState<string>(initialSection || 'directory');
+  const [showAllModulesGrid, setShowAllModulesGrid] = useState<boolean>(false);
   
   // Board Hub State
   const [selectedBoard, setSelectedBoard] = useState<'CBSE' | 'ICSE' | 'State Boards' | 'IB' | 'NIOS'>('CBSE');
@@ -48,38 +99,18 @@ export default function SchoolEducationModule({ currentLanguage, onNavigate }: S
   // NCERT State
   const [ncertClass, setNcertClass] = useState<string>('Class 10');
   const [ncertSubject, setNcertSubject] = useState<string>('Mathematics');
-  
-  // Olympiad State
-  const [selectedOlympiad, setSelectedOlympiad] = useState<string>('Science');
-  
-  // Saved / Bookmarked items
-  const [savedItems, setSavedItems] = useState<string[]>(() => {
-    try {
-      const saved = localStorage.getItem('rcb_school_saved');
-      return saved ? JSON.parse(saved) : [];
-    } catch {
-      return [];
-    }
-  });
-
-  const toggleSave = (id: string) => {
-    let updated: string[];
-    if (savedItems.includes(id)) {
-      updated = savedItems.filter(i => i !== id);
-    } else {
-      updated = [...savedItems, id];
-    }
-    setSavedItems(updated);
-    localStorage.setItem('rcb_school_saved', JSON.stringify(updated));
-  };
 
   const handlePrint = () => {
     window.print();
   };
 
   const handleExportPDF = () => {
-    alert('Generating School Education PDF Guide... File will download shortly.');
+    alert('Generating Level 1 – School Education PDF Guide... File download will commence shortly.');
   };
+
+  // Find active module config
+  const activeModuleItem = LEVEL_1_MODULES.find(m => m.id === activeSection) || LEVEL_1_MODULES[0];
+  const isDirectoryView = activeSection === 'directory' || Boolean(activeModuleItem.directoryFilter);
 
   // Olympiads Data
   const olympiadsList = [
@@ -225,6 +256,34 @@ export default function SchoolEducationModule({ currentLanguage, onNavigate }: S
     }
   ];
 
+  // Educational News Data
+  const educationalNewsItems = [
+    {
+      title: 'CBSE Class 10 & 12 Board Exam 2026 Date Sheet & Marking Pattern Released',
+      category: 'CBSE Official Circular',
+      date: '28 July 2026',
+      summary: 'Central Board of Secondary Education announces two-tier board exam guidelines with increased competency-based question weightage.'
+    },
+    {
+      title: 'NCERT Introduces Revised Class 6 - 12 Textbooks Aligned with NEP 2020',
+      category: 'Curriculum Update',
+      date: '25 July 2026',
+      summary: 'National Council of Educational Research and Training uploads new digital eBooks featuring interactive QR codes and multi-lingual audio summaries.'
+    },
+    {
+      title: 'RTE 25% Free Seat Admission Lottery Schedule Announced for 2026-27 Session',
+      category: 'Admission Updates',
+      date: '22 July 2026',
+      summary: 'State Education Departments open online portal for economically weaker section (EWS) free admissions in private accredited schools.'
+    },
+    {
+      title: 'PM SHRI Schools Expansion: 2,500 Additional Govt Schools Upgraded to Smart Campuses',
+      category: 'Govt Policy',
+      date: '18 July 2026',
+      summary: 'Ministry of Education allocates funds for green energy, digital labs, and modern sports infrastructure across rural districts.'
+    }
+  ];
+
   return (
     <div className="bg-[#F8FAFC] min-h-screen py-8 font-sans">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -240,10 +299,10 @@ export default function SchoolEducationModule({ currentLanguage, onNavigate }: S
                 <span>LEVEL 1 • SCHOOL EDUCATION ECOSYSTEM (PRE-NURSERY TO CLASS XII)</span>
               </div>
               <h1 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
-                School Education Hub
+                {currentLanguage === 'en' ? 'Level 1 – School Education' : 'स्तर 1 - स्कूली शिक्षा'}
               </h1>
               <p className="mt-2 text-sm text-slate-200 max-w-2xl leading-relaxed">
-                Comprehensive national resources for students, parents, and teachers: 300+ Verified School Directories, Board Examination Hub (CBSE, ICSE, State Boards), NCERT Digital Library, Olympiads, Scholarships, and Career Stream Assessments.
+                National education portal featuring 25 core modules: 200+ Verified School Directories, Admission Guides, Board Examination Hubs, NCERT Libraries, Olympiads, Scholarships & Career Guidance.
               </p>
             </div>
 
@@ -265,124 +324,234 @@ export default function SchoolEducationModule({ currentLanguage, onNavigate }: S
             </div>
           </div>
 
-          {/* Nav Tabs */}
-          <div className="flex flex-wrap items-center gap-2 mt-6 pt-4 border-t border-white/10 text-xs font-bold">
+          {/* Quick Primary Level 1 Modules Switcher */}
+          <div className="mt-6 pt-4 border-t border-white/10 flex flex-wrap items-center gap-2 text-xs font-bold">
+            {LEVEL_1_MODULES.slice(0, 6).map((m) => {
+              const Icon = m.icon;
+              const isActive = activeSection === m.id;
+              return (
+                <button
+                  key={m.id}
+                  onClick={() => setActiveSection(m.id)}
+                  className={`px-3.5 py-2 rounded-xl transition flex items-center gap-1.5 cursor-pointer ${
+                    isActive
+                      ? 'bg-[#FFD54A] text-[#004B23] shadow-md font-black scale-105'
+                      : 'bg-white/10 text-white hover:bg-white/20'
+                  }`}
+                >
+                  <Icon className="w-3.5 h-3.5 shrink-0" />
+                  <span>{currentLanguage === 'hi' ? m.nameHi : m.nameEn}</span>
+                </button>
+              );
+            })}
+
             <button
-              onClick={() => {
-                if (onNavigate) onNavigate('schools-directory');
-                else setActiveSection('directory');
-              }}
-              className={`px-4 py-2 rounded-xl transition flex items-center gap-1.5 cursor-pointer ${
-                activeSection === 'directory'
-                  ? 'bg-[#FFD54A] text-[#004B23] shadow font-black'
-                  : 'bg-white/10 text-white hover:bg-white/20'
-              }`}
+              onClick={() => setShowAllModulesGrid(!showAllModulesGrid)}
+              className="px-3.5 py-2 rounded-xl bg-[#004B23] hover:bg-[#00381a] text-[#FFD54A] border border-[#FFD54A]/40 transition flex items-center gap-1.5 cursor-pointer ml-auto font-black"
             >
-              <span>🏫 Verified Schools Directory (300+)</span>
-            </button>
-            <button
-              onClick={() => setActiveSection('board_hub')}
-              className={`px-4 py-2 rounded-xl transition flex items-center gap-1.5 cursor-pointer ${
-                activeSection === 'board_hub'
-                  ? 'bg-[#FFD54A] text-[#004B23] shadow font-black'
-                  : 'bg-white/10 text-white hover:bg-white/20'
-              }`}
-            >
-              <span>📋 Board Exam Hub (CBSE/ICSE/State)</span>
-            </button>
-            <button
-              onClick={() => setActiveSection('ncert')}
-              className={`px-4 py-2 rounded-xl transition flex items-center gap-1.5 cursor-pointer ${
-                activeSection === 'ncert'
-                  ? 'bg-[#FFD54A] text-[#004B23] shadow font-black'
-                  : 'bg-white/10 text-white hover:bg-white/20'
-              }`}
-            >
-              <span>📚 NCERT Digital Library</span>
-            </button>
-            <button
-              onClick={() => setActiveSection('olympiads')}
-              className={`px-4 py-2 rounded-xl transition flex items-center gap-1.5 cursor-pointer ${
-                activeSection === 'olympiads'
-                  ? 'bg-[#FFD54A] text-[#004B23] shadow font-black'
-                  : 'bg-white/10 text-white hover:bg-white/20'
-              }`}
-            >
-              <span>🏅 National & Int’l Olympiads</span>
-            </button>
-            <button
-              onClick={() => setActiveSection('scholarships')}
-              className={`px-4 py-2 rounded-xl transition flex items-center gap-1.5 cursor-pointer ${
-                activeSection === 'scholarships'
-                  ? 'bg-[#FFD54A] text-[#004B23] shadow font-black'
-                  : 'bg-white/10 text-white hover:bg-white/20'
-              }`}
-            >
-              <span>🎓 Student Scholarships</span>
-            </button>
-            <button
-              onClick={() => setActiveSection('career_guidance')}
-              className={`px-4 py-2 rounded-xl transition flex items-center gap-1.5 cursor-pointer ${
-                activeSection === 'career_guidance'
-                  ? 'bg-[#FFD54A] text-[#004B23] shadow font-black'
-                  : 'bg-white/10 text-white hover:bg-white/20'
-              }`}
-            >
-              <span>🧭 Career Stream Guidance</span>
+              <span>{showAllModulesGrid ? 'Hide All 25 Modules' : 'View All 25 Level 1 Modules'}</span>
+              <ChevronDown className={`w-4 h-4 transition-transform ${showAllModulesGrid ? 'rotate-180' : ''}`} />
             </button>
           </div>
         </div>
 
-        {/* SECTION 1: DIRECTORY LAUNCHER BANNER */}
-        {activeSection === 'directory' && (
-          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-md mb-8">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-              <div className="space-y-2">
-                <span className="bg-emerald-100 text-[#004B23] text-xs font-bold px-3 py-1 rounded-full uppercase">
-                  Accredited School Search Engine
-                </span>
-                <h3 className="text-xl sm:text-2xl font-black text-slate-900">
-                  Search & Filter Verified Schools across India
+        {/* EXPANDABLE 25 LEVEL 1 MODULES GRID */}
+        {showAllModulesGrid && (
+          <div className="bg-white rounded-3xl p-6 border-2 border-[#004B23]/20 shadow-xl mb-8 animate-fadeIn">
+            <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+              <div className="flex items-center gap-2">
+                <span className="w-3 h-3 rounded-full bg-[#004B23]"></span>
+                <h3 className="text-base font-extrabold text-[#0B132B]">
+                  Level 1 – School Education Structure (All 25 Modules)
                 </h3>
-                <p className="text-xs text-slate-600 max-w-2xl leading-relaxed">
-                  Browse over 300+ verified school profiles including Government Schools, Kendriya Vidyalaya (KV), Jawahar Navodaya Vidyalaya (JNV), PM SHRI Schools, Sainik Schools, Minority Educational Institutions, Boarding Schools, and International IB/CBSE Schools across 28+ States & UTs.
+              </div>
+              <span className="text-xs text-slate-500 font-bold">Select any module to view details</span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2.5">
+              {LEVEL_1_MODULES.map((m) => {
+                const Icon = m.icon;
+                const isActive = activeSection === m.id;
+                return (
+                  <button
+                    key={m.id}
+                    onClick={() => {
+                      setActiveSection(m.id);
+                      setShowAllModulesGrid(false);
+                    }}
+                    className={`p-3 rounded-2xl border text-left transition flex items-center gap-2.5 cursor-pointer ${
+                      isActive
+                        ? 'bg-[#004B23] text-[#FFD54A] border-[#004B23] shadow-md font-extrabold'
+                        : 'bg-slate-50 hover:bg-emerald-50 text-slate-800 border-slate-200 hover:border-emerald-300'
+                    }`}
+                  >
+                    <div className={`p-2 rounded-xl shrink-0 ${isActive ? 'bg-[#FFD54A] text-[#004B23]' : 'bg-emerald-100 text-[#004B23]'}`}>
+                      <Icon className="w-4 h-4" />
+                    </div>
+                    <span className="text-xs leading-tight line-clamp-2">
+                      {currentLanguage === 'hi' ? m.nameHi : m.nameEn}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* PRIMARY MODULE #1: SCHOOL DIRECTORY (AND DIRECTORY SUB-FILTERS) */}
+        {isDirectoryView && (
+          <div className="mb-8">
+            {/* Active Sub-Filter Title Bar if a specific directory sub-module is selected */}
+            {activeSection !== 'directory' && (
+              <div className="bg-emerald-50 border border-emerald-300 rounded-2xl p-4 mb-4 flex items-center justify-between">
+                <div className="flex items-center gap-2 text-xs text-[#004B23] font-bold">
+                  <Filter className="w-4 h-4" />
+                  <span>Filtered View: <strong>{activeModuleItem.nameEn}</strong> (Module #{activeSection})</span>
+                </div>
+                <button 
+                  onClick={() => setActiveSection('directory')}
+                  className="text-xs text-emerald-800 hover:underline font-bold"
+                >
+                  Clear Sub-Filter (Show All Schools)
+                </button>
+              </div>
+            )}
+
+            <SchoolsDirectory 
+              currentLanguage={currentLanguage} 
+              onNavigate={onNavigate}
+              initialSchoolType={activeModuleItem.directoryFilter?.schoolType}
+              initialBoard={activeModuleItem.directoryFilter?.board}
+              initialOwnership={activeModuleItem.directoryFilter?.ownership}
+              initialClassLevel={activeModuleItem.directoryFilter?.classLevel}
+              initialTab={activeModuleItem.directoryFilter?.tab}
+            />
+          </div>
+        )}
+
+        {/* MODULE 2: SCHOOL ADMISSION GUIDE */}
+        {activeSection === 'admission_guide' && (
+          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-md mb-8">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-100">
+              <div>
+                <h3 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2">
+                  <FileCheck className="w-6 h-6 text-[#004B23]" />
+                  <span>School Admission Guide & RTE 25% Free Seat Quota</span>
+                </h3>
+                <p className="text-xs text-slate-500 mt-1">
+                  Step-by-step admission procedures, entry-level age criteria (NEP 2020), document checklists, and Right to Education (RTE) free seats application portal.
                 </p>
               </div>
 
               <button
-                onClick={() => onNavigate && onNavigate('schools-directory')}
-                className="px-6 py-3.5 bg-[#004B23] hover:bg-[#00381a] text-[#FFD54A] font-extrabold text-xs sm:text-sm rounded-2xl shadow-lg transition flex items-center gap-2 shrink-0 cursor-pointer"
+                onClick={() => setActiveSection('directory')}
+                className="px-4 py-2 bg-[#004B23] text-[#FFD54A] font-extrabold text-xs rounded-xl hover:bg-[#00381a] transition cursor-pointer"
               >
-                <span>Open Full School Directory</span>
-                <ChevronRight className="w-4 h-4" />
+                Find Admissions Open Schools
               </button>
             </div>
 
-            {/* Category Cards Quick Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-3 mt-6 pt-6 border-t border-slate-100 text-center">
-              {[
-                { title: 'Kendriya Vidyalaya', count: '1,250+ KVs', icon: '🏛️' },
-                { title: 'Jawahar Navodaya', count: '661 JNVs', icon: '🏫' },
-                { title: 'PM SHRI Schools', count: '14,500+ PM SHRI', icon: '⭐' },
-                { title: 'Minority Schools', count: 'Accredited', icon: '🕌' },
-                { title: 'Sainik & Military', count: '33 Sainik', icon: '🎖️' },
-                { title: 'Boarding & Hostel', count: 'Residential', icon: '🏠' }
-              ].map((item, idx) => (
-                <div 
-                  key={idx}
-                  onClick={() => onNavigate && onNavigate('schools-directory')}
-                  className="bg-slate-50 hover:bg-emerald-50/80 p-3 rounded-2xl border border-slate-200 hover:border-emerald-400 transition cursor-pointer"
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                <span className="bg-emerald-100 text-[#004B23] text-[10px] font-extrabold px-2.5 py-0.5 rounded uppercase">
+                  NEP 2020 Age Limits
+                </span>
+                <h4 className="font-extrabold text-slate-900 text-sm">Age Criteria for Entry Classes</h4>
+                <ul className="text-xs text-slate-600 space-y-1.5 border-t border-slate-200 pt-2 font-medium">
+                  <li>• <strong>Nursery / Pre-K:</strong> 3 Years+ as of April 1st</li>
+                  <li>• <strong>LKG / KG-1:</strong> 4 Years+ as of April 1st</li>
+                  <li>• <strong>UKG / KG-2:</strong> 5 Years+ as of April 1st</li>
+                  <li>• <strong>Class 1:</strong> Mandatory 6 Years+ as per National Education Policy</li>
+                </ul>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                <span className="bg-blue-100 text-blue-900 text-[10px] font-extrabold px-2.5 py-0.5 rounded uppercase">
+                  Mandatory Documents
+                </span>
+                <h4 className="font-extrabold text-slate-900 text-sm">Admission Document Checklist</h4>
+                <ul className="text-xs text-slate-600 space-y-1.5 border-t border-slate-200 pt-2 font-medium">
+                  <li>• Official Birth Certificate (Municipal Authority)</li>
+                  <li>• Aadhaar Card of Student & Parents</li>
+                  <li>• Residence Proof (Electricity Bill / Passport / Rent Agreement)</li>
+                  <li>• Transfer Certificate (TC) & Previous Progress Report</li>
+                  <li>• Immunization & Medical Fitness Certificate</li>
+                </ul>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                <span className="bg-amber-100 text-amber-900 text-[10px] font-extrabold px-2.5 py-0.5 rounded uppercase">
+                  RTE Act Section 12(1)(c)
+                </span>
+                <h4 className="font-extrabold text-slate-900 text-sm">25% Free Seat Admission Quota</h4>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  All privateunaided schools must reserve 25% of entry-level seats for children from Economically Weaker Sections (EWS) and Disadvantaged Groups with 100% fee waiver.
+                </p>
+                <a
+                  href="https://rte.gov.in"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-xs font-bold text-[#004B23] hover:underline"
                 >
-                  <span className="text-2xl block mb-1">{item.icon}</span>
-                  <span className="font-bold text-xs text-slate-800 block line-clamp-1">{item.title}</span>
-                  <span className="text-[10px] text-slate-500">{item.count}</span>
+                  <span>Apply via National RTE Portal</span>
+                  <ArrowUpRight className="w-3.5 h-3.5" />
+                </a>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* MODULE 19: OLYMPIADS */}
+        {activeSection === 'olympiads' && (
+          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-md mb-8">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-100">
+              <div>
+                <h3 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2">
+                  <Award className="w-6 h-6 text-[#004B23]" />
+                  <span>National & International School Olympiads</span>
+                </h3>
+                <p className="text-xs text-slate-500 mt-1">
+                  Empowering school students through competitive Olympiads in Science, Mathematics, English, Cyber, General Knowledge, and International Olympiad delegations.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {olympiadsList.map(ol => (
+                <div key={ol.id} className="p-5 rounded-2xl bg-slate-50 border border-slate-200 hover:border-amber-400 transition flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-[10px] font-extrabold uppercase bg-[#FFD54A] text-[#004B23] px-2.5 py-0.5 rounded">
+                        {ol.category}
+                      </span>
+                      <span className="text-[10px] font-bold text-slate-500">{ol.classes}</span>
+                    </div>
+
+                    <h4 className="font-extrabold text-slate-900 text-sm mb-1">{ol.name}</h4>
+                    <p className="text-[11px] text-slate-500 font-medium mb-3">Organizer: {ol.organizer}</p>
+
+                    <div className="space-y-1.5 text-xs text-slate-600 bg-white p-3 rounded-xl border border-slate-200/80 mb-3">
+                      <div><strong className="text-slate-800">Exam Window:</strong> {ol.date}</div>
+                      <div><strong className="text-slate-800">Awards:</strong> {ol.awards}</div>
+                      <div><strong className="text-slate-800">Syllabus Focus:</strong> {ol.syllabus}</div>
+                    </div>
+                  </div>
+
+                  <div className="pt-3 border-t border-slate-200 flex items-center justify-between text-xs font-bold">
+                    <button className="text-[#004B23] hover:underline flex items-center gap-1 cursor-pointer">
+                      <Download className="w-3.5 h-3.5" /> Download Mock Paper
+                    </button>
+                    <button className="bg-[#004B23] text-white px-3 py-1.5 rounded-lg hover:bg-[#00381a] transition cursor-pointer text-[11px]">
+                      Registration Info
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
         )}
 
-        {/* SECTION 2: BOARD EXAMINATION HUB */}
+        {/* MODULE 20: BOARD EXAMINATION HUB */}
         {activeSection === 'board_hub' && (
           <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-md mb-8">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-100">
@@ -482,7 +651,7 @@ export default function SchoolEducationModule({ currentLanguage, onNavigate }: S
           </div>
         )}
 
-        {/* SECTION 3: NCERT DIGITAL LIBRARY */}
+        {/* MODULE 21: NCERT DIGITAL LIBRARY */}
         {activeSection === 'ncert' && (
           <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-md mb-8">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-100">
@@ -548,57 +717,7 @@ export default function SchoolEducationModule({ currentLanguage, onNavigate }: S
           </div>
         )}
 
-        {/* SECTION 4: OLYMPIADS */}
-        {activeSection === 'olympiads' && (
-          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-md mb-8">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-100">
-              <div>
-                <h3 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2">
-                  <Award className="w-6 h-6 text-[#004B23]" />
-                  <span>National & International School Olympiads</span>
-                </h3>
-                <p className="text-xs text-slate-500 mt-1">
-                  Empowering school students through competitive Olympiads in Science, Mathematics, English, Cyber, General Knowledge, and International Olympiad delegations.
-                </p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {olympiadsList.map(ol => (
-                <div key={ol.id} className="p-5 rounded-2xl bg-slate-50 border border-slate-200 hover:border-amber-400 transition flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-[10px] font-extrabold uppercase bg-[#FFD54A] text-[#004B23] px-2.5 py-0.5 rounded">
-                        {ol.category}
-                      </span>
-                      <span className="text-[10px] font-bold text-slate-500">{ol.classes}</span>
-                    </div>
-
-                    <h4 className="font-extrabold text-slate-900 text-sm mb-1">{ol.name}</h4>
-                    <p className="text-[11px] text-slate-500 font-medium mb-3">Organizer: {ol.organizer}</p>
-
-                    <div className="space-y-1.5 text-xs text-slate-600 bg-white p-3 rounded-xl border border-slate-200/80 mb-3">
-                      <div><strong className="text-slate-800">Exam Window:</strong> {ol.date}</div>
-                      <div><strong className="text-slate-800">Awards:</strong> {ol.awards}</div>
-                      <div><strong className="text-slate-800">Syllabus Focus:</strong> {ol.syllabus}</div>
-                    </div>
-                  </div>
-
-                  <div className="pt-3 border-t border-slate-200 flex items-center justify-between text-xs font-bold">
-                    <button className="text-[#004B23] hover:underline flex items-center gap-1 cursor-pointer">
-                      <Download className="w-3.5 h-3.5" /> Download Mock Paper
-                    </button>
-                    <button className="bg-[#004B23] text-white px-3 py-1.5 rounded-lg hover:bg-[#00381a] transition cursor-pointer text-[11px]">
-                      Registration Info
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* SECTION 5: SCHOOL SCHOLARSHIPS */}
+        {/* MODULE 22: STUDENT SCHOLARSHIPS */}
         {activeSection === 'scholarships' && (
           <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-md mb-8">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-100">
@@ -657,7 +776,7 @@ export default function SchoolEducationModule({ currentLanguage, onNavigate }: S
           </div>
         )}
 
-        {/* SECTION 6: CAREER GUIDANCE & STREAM SELECTION */}
+        {/* MODULE 23: CAREER GUIDANCE & STREAM SELECTION */}
         {activeSection === 'career_guidance' && (
           <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-md mb-8">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-100">
@@ -704,6 +823,88 @@ export default function SchoolEducationModule({ currentLanguage, onNavigate }: S
                       <span className="text-emerald-800 font-bold">{st.entrances}</span>
                     </div>
                   </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* MODULE 24: LEARNING RESOURCES */}
+        {activeSection === 'learning_resources' && (
+          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-md mb-8">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-100">
+              <div>
+                <h3 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2">
+                  <Sparkles className="w-6 h-6 text-[#004B23]" />
+                  <span>Learning Resources & Digital Study Materials</span>
+                </h3>
+                <p className="text-xs text-slate-500 mt-1">
+                  Comprehensive repository of video lectures, interactive lab simulations, mindmaps, solved exemplars, and study toolkits for school students.
+                </p>
+              </div>
+
+              <button
+                onClick={() => onNavigate && onNavigate('learning-resources')}
+                className="px-4 py-2 bg-[#004B23] text-[#FFD54A] font-extrabold text-xs rounded-xl hover:bg-[#00381a] transition cursor-pointer"
+              >
+                Open Full Learning Resources Hub
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                <span className="text-xs font-bold text-emerald-800 bg-emerald-100 px-2.5 py-0.5 rounded">Digital Mind Maps</span>
+                <h4 className="font-extrabold text-slate-900 text-sm">Visual Chapter Summaries</h4>
+                <p className="text-xs text-slate-600">Revision mind maps for Physics, Chemistry, Biology, Math and Social Sciences.</p>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                <span className="text-xs font-bold text-blue-800 bg-blue-100 px-2.5 py-0.5 rounded">Virtual Science Labs</span>
+                <h4 className="font-extrabold text-slate-900 text-sm">Interactive STEM Simulations</h4>
+                <p className="text-xs text-slate-600">Conduct virtual chemistry experiments, physics optics, and biology microscope dissections.</p>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                <span className="text-xs font-bold text-purple-800 bg-purple-100 px-2.5 py-0.5 rounded">Language Labs</span>
+                <h4 className="font-extrabold text-slate-900 text-sm">Grammar & Vocabulary Kits</h4>
+                <p className="text-xs text-slate-600">Interactive English, Hindi, Urdu and regional language learning audio modules.</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* MODULE 25: EDUCATIONAL NEWS */}
+        {activeSection === 'educational_news' && (
+          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-md mb-8">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-100">
+              <div>
+                <h3 className="text-xl sm:text-2xl font-black text-slate-900 flex items-center gap-2">
+                  <Bell className="w-6 h-6 text-[#004B23]" />
+                  <span>Educational News, Circulars & Exam Notifications</span>
+                </h3>
+                <p className="text-xs text-slate-500 mt-1">
+                  Live updates from Ministry of Education, CBSE, CISCE, State Boards, NCERT, NTA, and National Policy announcements.
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              {educationalNewsItems.map((news, idx) => (
+                <div key={idx} className="p-5 rounded-2xl bg-slate-50 border border-slate-200 hover:border-emerald-500 transition flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className="bg-[#004B23] text-white text-[10px] font-bold px-2.5 py-0.5 rounded">
+                        {news.category}
+                      </span>
+                      <span className="text-xs text-slate-500 font-semibold">{news.date}</span>
+                    </div>
+                    <h4 className="font-extrabold text-slate-900 text-sm sm:text-base">{news.title}</h4>
+                    <p className="text-xs text-slate-600">{news.summary}</p>
+                  </div>
+
+                  <button className="px-4 py-2 bg-slate-200 hover:bg-[#004B23] text-slate-800 hover:text-white text-xs font-bold rounded-xl transition cursor-pointer shrink-0 self-start md:self-center">
+                    Read Official Circular
+                  </button>
                 </div>
               ))}
             </div>

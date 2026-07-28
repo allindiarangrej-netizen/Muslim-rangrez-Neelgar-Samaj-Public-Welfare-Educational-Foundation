@@ -9,6 +9,7 @@ import {
   Users, DollarSign, Share2, AlertCircle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import UniversalBackButton from './common/UniversalBackButton';
 import { Language } from '../types';
 import {
   HospitalFacility,
@@ -260,6 +261,7 @@ export default function HospitalNetworkPortal({ currentLanguage, onNavigate }: H
           <div className="absolute right-0 top-0 translate-x-12 -translate-y-12 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
           <div className="space-y-3 relative z-10 max-w-3xl">
+            <UniversalBackButton onBack={() => onNavigate?.('home')} currentLanguage={currentLanguage} className="mb-2" />
             <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-emerald-900/80 border border-emerald-400/40 text-emerald-300 text-xs font-bold uppercase tracking-wider">
               <HeartPulse className="h-4 w-4 text-[#FFD54A]" />
               <span>
@@ -858,7 +860,7 @@ export default function HospitalNetworkPortal({ currentLanguage, onNavigate }: H
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {AYUSH_DIRECTORY.map(ay => (
                 <div key={ay.id} className="bg-slate-50 rounded-2xl border border-slate-200 p-5 space-y-3">
                   <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-700 text-white uppercase">
@@ -908,7 +910,7 @@ export default function HospitalNetworkPortal({ currentLanguage, onNavigate }: H
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {FREE_MEDICINE_CENTERS.map(med => (
                 <div key={med.id} className="bg-slate-50 rounded-2xl border border-slate-200 p-5 space-y-3">
                   <div className="flex items-center justify-between">

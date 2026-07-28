@@ -3,6 +3,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { getSupabase } from '../lib/supabaseClient';
 import { COMMUNITY_MODULES, Module as CommunityModule, Activity } from '../data/communityData';
+import UniversalBackButton from './common/UniversalBackButton';
 import { 
   Search, Filter, HeartHandshake, UserCheck, Award, Building2, 
   Stethoscope, Droplet, Trees, AlertTriangle, Download, Printer, 
@@ -170,6 +171,7 @@ export default function CommunityPortal({
         
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
           <div>
+            <UniversalBackButton onBack={() => window.history.back()} currentLanguage={currentLanguage} className="mb-2" />
             <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold border border-white/20 text-[#F4C430] mb-3">
               <Sparkles className="h-3.5 w-3.5" />
               <span>{currentLanguage === 'en' ? 'Unified Khidmat & Social Welfare Ecosystem' : 'एकीकृत खिदमत एवं समाज कल्याण इकोसिस्टम'}</span>

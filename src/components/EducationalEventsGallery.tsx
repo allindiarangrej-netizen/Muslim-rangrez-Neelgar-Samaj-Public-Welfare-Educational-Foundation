@@ -8,6 +8,7 @@ import {
 import { educationGalleryImages, EducationImageItem } from '../data/educationGalleryImages';
 import { Language } from '../types';
 import OptimizedEduImage from './common/OptimizedEduImage';
+import PremiumLightbox from './common/PremiumLightbox';
 
 interface EducationalEventsGalleryProps {
   currentLanguage: Language;
@@ -153,6 +154,16 @@ export default function EducationalEventsGallery({ currentLanguage }: Educationa
   }, [activeFolder, selectedCategory, selectedYear, searchQuery]);
 
   const currentLightboxImage = lightboxIndex !== null ? filteredImages[lightboxIndex] : null;
+
+  const lightboxItems = useMemo(() => {
+    return filteredImages.map(img => ({
+      src: img.url,
+      title: currentLanguage === 'en' ? img.titleEn : img.titleHi,
+      description: `Category: ${img.category} • Drive ID: ${img.driveId}`,
+      category: img.category,
+      album: 'Educational Gallery'
+    }));
+  }, [filteredImages, currentLanguage]);
 
   return (
     <div className="space-y-8 py-4 sm:py-6" id="educational_events_gallery_root">
@@ -389,88 +400,13 @@ export default function EducationalEventsGallery({ currentLanguage }: Educationa
       </div>
 
       {/* 6. FULL HD LIGHTBOX & IMAGE VIEWER */}
-      <AnimatePresence>
-        {lightboxIndex !== null && currentLightboxImage && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex flex-col justify-between p-4 sm:p-6"
-          >
-            {/* Lightbox Header */}
-            <div className="flex items-center justify-between text-white z-10 bg-black/80 p-3 rounded-2xl border border-gray-800">
-              <div className="flex items-center gap-2">
-                <GraduationCap className="w-5 h-5 text-[#F4C430]" />
-                <span className="text-xs sm:text-sm font-bold text-[#FFD54A]">
-                  Full HD Event Photo #{lightboxIndex + 1} / {filteredImages.length}
-                </span>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setZoomScale((z) => Math.min(z + 0.5, 3.5))}
-                  className="p-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition"
-                >
-                  <ZoomIn className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => setZoomScale((z) => Math.max(z - 0.5, 1))}
-                  className="p-2 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition"
-                >
-                  <ZoomOut className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => setLightboxIndex(null)}
-                  className="p-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition ml-2 cursor-pointer"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
-
-            {/* Lightbox Image Viewport */}
-            <div className="relative flex-1 flex items-center justify-center overflow-hidden my-4">
-              <motion.img
-                key={currentLightboxImage.id}
-                src={currentLightboxImage.url}
-                alt={currentLightboxImage.titleEn}
-                style={{ transform: `scale(${zoomScale})` }}
-                className="max-h-[75vh] max-w-full object-contain rounded-xl shadow-2xl transition-transform duration-300"
-              />
-
-              <button
-                onClick={() => {
-                  setLightboxIndex((prev) => (prev! === 0 ? filteredImages.length - 1 : prev! - 1));
-                  setZoomScale(1);
-                }}
-                className="absolute left-2 sm:left-6 p-3 rounded-full bg-black/70 hover:bg-[#F4C430] text-white hover:text-[#004B23] transition border border-gray-700 cursor-pointer"
-              >
-                <ChevronLeft className="w-6 h-6" />
-              </button>
-
-              <button
-                onClick={() => {
-                  setLightboxIndex((prev) => (prev! === filteredImages.length - 1 ? 0 : prev! + 1));
-                  setZoomScale(1);
-                }}
-                className="absolute right-2 sm:left-auto sm:right-6 p-3 rounded-full bg-black/70 hover:bg-[#F4C430] text-white hover:text-[#004B23] transition border border-gray-700 cursor-pointer"
-              >
-                <ChevronRight className="w-6 h-6" />
-              </button>
-            </div>
-
-            {/* Lightbox Footer Caption */}
-            <div className="bg-black/90 border border-gray-800 p-4 rounded-2xl text-center max-w-2xl mx-auto w-full">
-              <span className="text-[10px] font-black uppercase text-[#004B23] bg-[#F4C430] px-3 py-0.5 rounded-full inline-block mb-1">
-                {currentLightboxImage.category}
-              </span>
-              <h3 className="text-xs sm:text-sm font-bold text-white">
-                {currentLanguage === 'en' ? currentLightboxImage.titleEn : currentLightboxImage.titleHi}
-              </h3>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <PremiumLightbox
+        isOpen={lightboxIndex !== null}
+        onClose={() => setLightboxIndex(null)}
+        items={lightboxItems}
+        initialIndex={lightboxIndex ?? 0}
+        albumTitle="Educational Events Gallery"
+      />
     </div>
   );
 }

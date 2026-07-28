@@ -238,7 +238,8 @@ export default function Header({
   return (
     <header className="w-full relative z-[9999] overflow-visible" id="site_header">
       {/* Top Bar Container */}
-      <div className="bg-[#0B132B] text-white text-[11px] sm:text-xs py-1.5 px-3 sm:px-4 flex justify-between items-center select-none border-b border-[#D4AF37]/20" id="top_bar">
+      <div className="bg-[#0B132B] text-white text-[11px] sm:text-xs py-1.5 border-b border-[#D4AF37]/20" id="top_bar">
+        <div className="w-[95%] max-w-[1780px] mx-auto px-3 sm:px-4 flex justify-between items-center select-none">
         {/* Left Side: Domain & Verified Status Badge */}
         <div className="flex items-center space-x-2 sm:space-x-3 truncate">
           <span className="text-[#D4AF37] font-black">★</span>
@@ -346,14 +347,15 @@ export default function Header({
             {currentLanguage === 'en' ? 'Helpline: +91 78799 40869' : currentLanguage === 'ur' ? 'ہیلپ لائن: 40869 78799 91+' : 'हेल्पलाइन: +91 78799 40869'}
           </span>
         </div>
+        </div>
       </div>
 
       {/* Main Bar Container */}
       <div className="bg-white w-full sticky top-0 z-[9998] overflow-visible shadow-xs transition-shadow duration-300">
-        <div className="w-full max-w-[1600px] mx-auto pl-2 pr-2 md:pl-3 md:pr-3 lg:pl-3 lg:pr-3 xl:pl-4 xl:pr-4 2xl:pl-6 2xl:pr-6 h-[64px] flex justify-between items-center gap-0.5 xl:gap-1" id="middle_bar">
+        <div className="w-[95%] max-w-[1780px] mx-auto px-2 md:px-3 lg:px-4 xl:px-6 2xl:px-8 h-[70px] lg:h-[76px] flex justify-between items-center gap-2 xl:gap-4 2xl:gap-6" id="middle_bar">
           {/* Logo and Branding */}
           <div 
-            className="flex items-center cursor-pointer shrink-0 group py-1 mr-1 lg:mr-2 xl:mr-3 2xl:mr-4 relative select-none rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#004B23] focus-visible:ring-offset-2 transition-shadow" 
+            className="flex items-center cursor-pointer shrink-0 group py-1 mr-1 lg:mr-2 xl:mr-3 2xl:mr-4 relative select-none rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#004B23] focus-visible:ring-offset-2 transition-shadow" 
             onClick={() => handleTabClick('home')}
             onKeyDown={handleLogoKeyDown}
             role="button"
@@ -362,21 +364,21 @@ export default function Header({
             title="Go to Home"
             id="branding_logo"
           >
-            {/* Logo */}
+            {/* Logo - Increased by ~25% with crisp rendering */}
             <img 
               src={logoSrc} 
               onError={handleLogoError}
               alt="Rangrez Community Bharat Portal - Home" 
-              className="w-8 h-8 sm:w-9 sm:h-9 lg:w-10 lg:h-10 xl:w-11 xl:h-11 2xl:w-12 2xl:h-12 object-contain shrink-0 transition-all duration-300 ease-out group-hover:scale-[1.12] group-hover:drop-shadow-[0_0_8px_rgba(212,175,55,0.4)] will-change-transform transform-gpu cursor-pointer"
+              className="w-10 h-10 sm:w-11 sm:h-11 lg:w-12 lg:h-12 xl:w-[50px] xl:h-[50px] 2xl:w-[56px] 2xl:h-[56px] object-contain shrink-0 transition-all duration-300 ease-out group-hover:scale-[1.10] group-hover:drop-shadow-[0_0_12px_rgba(212,175,55,0.45)] will-change-transform transform-gpu cursor-pointer"
               loading="eager"
               decoding="async"
               style={{ imageRendering: 'auto' }}
             />
-            <div className="flex flex-col ml-1.5 sm:ml-2 justify-center overflow-hidden min-w-0">
-              <h1 className="text-[12px] sm:text-[13px] lg:text-[13.5px] xl:text-[15px] 2xl:text-[16px] font-serif font-extrabold text-[#004B23] tracking-tight leading-[1.15] whitespace-nowrap truncate group-hover:text-[#b8972a] transition-colors duration-300">
+            <div className="flex flex-col ml-2 sm:ml-2.5 lg:ml-3 justify-center overflow-hidden min-w-0">
+              <h1 className="text-[13.5px] sm:text-[14.5px] lg:text-[15.5px] xl:text-[17.5px] 2xl:text-[19.5px] font-serif font-black text-[#004B23] tracking-tight leading-[1.1] whitespace-nowrap truncate group-hover:text-[#b8972a] transition-colors duration-300">
                 Rangrez Community
               </h1>
-              <span className="text-[8px] sm:text-[9px] lg:text-[9px] xl:text-[10px] 2xl:text-[11px] font-serif font-bold text-[#004B23]/80 tracking-tight leading-none mt-0.5 whitespace-nowrap truncate group-hover:text-[#004B23] transition-colors duration-300">
+              <span className="text-[9.5px] sm:text-[10px] lg:text-[10.5px] xl:text-[11.5px] 2xl:text-[12.5px] font-serif font-extrabold text-[#004B23]/90 tracking-wider uppercase leading-none mt-0.5 whitespace-nowrap truncate group-hover:text-[#004B23] transition-colors duration-300">
                 Bharat Portal
               </span>
             </div>
@@ -394,8 +396,8 @@ export default function Header({
             <Search className="absolute left-2.5 top-2.5 sm:top-3 h-3.5 w-3.5 text-gray-400" />
           </div>
 
-          {/* Navigation - Desktop (Occupies all remaining horizontal space) */}
-          <nav className="hidden lg:flex items-center justify-between flex-1 min-w-0 gap-0 lg:gap-0.5 xl:gap-1 2xl:gap-2 flex-nowrap mx-0.5 lg:mx-1 xl:mx-1.5 2xl:mx-2 px-0.5" id="desktop_nav_links" aria-label="Main Desktop Navigation Menu">
+          {/* Navigation - Desktop (Evenly distributed across available header width) */}
+          <nav className="hidden lg:flex items-center justify-evenly flex-1 min-w-0 gap-1 lg:gap-1.5 xl:gap-2 2xl:gap-3 flex-nowrap mx-1 lg:mx-1.5 xl:mx-2 2xl:mx-3 px-1" id="desktop_nav_links" aria-label="Main Desktop Navigation Menu">
             {navigationItems.map((item) => {
               const isActive = activeTab === item.id || activeTab.startsWith(item.id + '-') || 
                 (item.id === 'about' && (activeTab === 'about' || activeTab.startsWith('about-') || activeTab === 'hall-of-excellence' || activeTab === 'excellence' || activeTab === 'legal-governance' || activeTab === 'governance-overview' || activeTab === 'executive-charter' || activeTab === 'legal-constitution' || activeTab === 'legal-awareness' || activeTab === 'legal-rti' || activeTab === 'legal-citizen-rights')) || 
@@ -421,19 +423,19 @@ export default function Header({
                   <button
                     onClick={() => handleTabClick(item.id)}
                     aria-label={`${getLabel(item)}${item.subItems ? ' - Has dropdown menu' : ''}`}
-                    className={`text-[11.5px] lg:text-[10.5px] xl:text-[11.5px] 2xl:text-[13.5px] tracking-tight xl:tracking-normal flex items-center justify-center gap-1 2xl:gap-1.5 whitespace-nowrap px-1 lg:px-1 xl:px-1.5 2xl:px-2.5 py-1.5 transition-all duration-300 relative group/nav cursor-pointer min-w-0 rounded-lg focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#004B23] focus-visible:ring-offset-2 ${
+                    className={`text-[12px] lg:text-[12px] xl:text-[13px] 2xl:text-[14.5px] tracking-tight xl:tracking-normal flex items-center justify-center gap-1.5 xl:gap-2 whitespace-nowrap px-1.5 lg:px-2 xl:px-2.5 2xl:px-3 py-2 transition-all duration-300 relative group/nav cursor-pointer min-w-0 rounded-xl focus:outline-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#004B23] focus-visible:ring-offset-2 ${
                       isActive
-                        ? 'text-[#b8972a] font-bold bg-[#004B23]/5 lg:bg-transparent'
-                        : 'text-gray-700 hover:text-[#004B23] font-semibold'
+                        ? 'text-[#b8972a] font-extrabold bg-[#004B23]/5 lg:bg-transparent'
+                        : 'text-gray-800 hover:text-[#004B23] font-bold'
                     }`}
                   >
-                    {item.icon && <item.icon className={`w-3.5 h-3.5 lg:hidden 2xl:block 2xl:w-4 2xl:h-4 shrink-0 stroke-[1.75] transition-colors duration-300 ${isActive ? 'text-[#b8972a]' : 'opacity-80 group-hover/nav:text-[#004B23]'}`} />}
-                    <span className="truncate">{getLabel(item)}</span>
+                    {item.icon && <item.icon className={`w-3.5 h-3.5 lg:w-4 lg:h-4 xl:w-4.5 xl:h-4.5 2xl:w-[18px] 2xl:h-[18px] shrink-0 stroke-[2] transition-colors duration-300 ${isActive ? 'text-[#b8972a]' : 'text-gray-500 group-hover/nav:text-[#004B23]'}`} />}
+                    <span className="truncate uppercase font-sans tracking-wide">{getLabel(item)}</span>
                     {item.subItems && (
-                      <span className="text-[8px] xl:text-[8.5px] text-gray-400 group-hover/nav:text-[#004B23] shrink-0 ml-0.5">▼</span>
+                      <span className="text-[9px] xl:text-[10px] text-gray-400 group-hover/nav:text-[#004B23] shrink-0 ml-0.5">▼</span>
                     )}
                     {/* Thin animated gold underline */}
-                    <span className={`absolute bottom-0 left-1 right-1 h-[2px] bg-[#D4AF37] transition-all duration-300 origin-left ${
+                    <span className={`absolute bottom-0 left-1 right-1 h-[2.5px] rounded-full bg-[#D4AF37] transition-all duration-300 origin-left ${
                       isActive ? 'scale-x-100 opacity-100' : 'scale-x-0 opacity-0 group-hover/nav:scale-x-100 group-hover/nav:opacity-100'
                     }`} />
                   </button>

@@ -7,6 +7,7 @@ import {
   MapPin, User, ChevronRight, ChevronLeft, ExternalLink, SlidersHorizontal, Settings,
   Lock, RefreshCw, Layers, Bell, Check, Copy, ArrowRight
 } from 'lucide-react';
+import UniversalBackButton from './common/UniversalBackButton';
 import { Language } from '../types';
 import MediaCenter from './MediaCenter';
 import ResourcesCenter from './ResourcesCenter';
@@ -365,6 +366,9 @@ export default function MediaResourcesHub({
       <div className="bg-[#0B132B] text-white py-10 px-4 sm:px-6 lg:px-8 border-b border-[#FFD54A]/30 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-[#004B23]/20 rounded-full blur-3xl pointer-events-none"></div>
         <div className="max-w-7xl mx-auto relative z-10">
+          <div className="mb-3">
+            <UniversalBackButton onBack={() => onNavigate('home')} currentLanguage={currentLanguage} />
+          </div>
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             <div>
               <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-[#004B23] text-[#FFD54A] border border-[#FFD54A]/30 mb-3">

@@ -7,6 +7,7 @@ import {
 import { educationGalleryImages, EducationImageItem } from '../data/educationGalleryImages';
 import { Language } from '../types';
 import OptimizedEduImage from './common/OptimizedEduImage';
+import PremiumLightbox from './common/PremiumLightbox';
 
 interface FounderTimelineGalleryProps {
   currentLanguage: Language;
@@ -217,43 +218,18 @@ export default function FounderTimelineGallery({ currentLanguage }: FounderTimel
         })}
       </div>
 
-      {/* Lightbox Modal */}
-      <AnimatePresence>
-        {selectedImage && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4"
-          >
-            <div className="relative bg-stone-950 border-2 border-[#F4C430] rounded-3xl p-4 max-w-2xl w-full text-center space-y-3">
-              <button
-                onClick={() => setSelectedImage(null)}
-                className="absolute top-3 right-3 p-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-
-              <div className="max-h-[65vh] rounded-2xl overflow-hidden bg-black flex items-center justify-center">
-                <img
-                  src={selectedImage.url}
-                  alt={selectedImage.titleEn}
-                  className="max-h-[60vh] w-auto object-contain rounded-xl"
-                />
-              </div>
-
-              <div className="space-y-1">
-                <span className="text-[10px] font-bold text-[#004B23] bg-[#F4C430] px-3 py-0.5 rounded-full uppercase">
-                  {selectedImage.category}
-                </span>
-                <h4 className="text-sm font-bold text-white">
-                  {currentLanguage === 'en' ? selectedImage.titleEn : selectedImage.titleHi}
-                </h4>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Universal Premium Lightbox */}
+      <PremiumLightbox
+        isOpen={!!selectedImage}
+        onClose={() => setSelectedImage(null)}
+        initialIndex={0}
+        items={selectedImage ? [{
+          src: selectedImage.url,
+          title: currentLanguage === 'en' ? selectedImage.titleEn : selectedImage.titleHi,
+          category: selectedImage.category,
+          description: `Educational Mission Timeline Asset • Category: ${selectedImage.category}`
+        }] : []}
+      />
     </div>
   );
 }

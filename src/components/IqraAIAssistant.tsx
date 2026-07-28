@@ -489,8 +489,7 @@ export default function IqraAIAssistant({ currentLanguage, onNavigate, activeTab
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
               </span>
-              <span className="text-[#FFD54A]">Iqra AI ✨</span>
-              <span className="text-gray-200">{pageContext.badge}</span>
+              <span className="text-[#FFD54A]">IQRA AI ✨</span>
             </div>
           )}
 
@@ -502,7 +501,7 @@ export default function IqraAIAssistant({ currentLanguage, onNavigate, activeTab
             className={`group relative h-16 w-16 rounded-full shadow-[0_0_40px_rgba(0,75,35,0.7)] border-2 border-[#F4C430] flex items-center justify-center transition-all duration-300 cursor-pointer ${
               isOpen ? 'bg-[#0B132B] scale-95 rotate-90' : 'bg-gradient-to-br from-[#004B23] via-[#0D2418] to-[#070D18] hover:scale-110 hover:shadow-[0_0_50px_rgba(244,196,48,0.9)]'
             }`}
-            title="Open IQRA AI Portal Guide"
+            title="Open IQRA AI Guide"
           >
             {!isOpen && <span className="absolute inset-0 rounded-full bg-[#F4C430] opacity-20 animate-ping"></span>}
 
