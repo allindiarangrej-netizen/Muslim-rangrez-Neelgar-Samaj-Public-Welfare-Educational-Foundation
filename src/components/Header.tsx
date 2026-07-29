@@ -351,7 +351,7 @@ export default function Header({
       </div>
 
       {/* Main Bar Container */}
-      <div className="bg-white w-full sticky top-0 z-[9998] overflow-visible shadow-xs transition-shadow duration-300">
+      <div id="sticky_header" className="bg-white w-full sticky top-0 z-[9998] overflow-visible shadow-xs transition-shadow duration-300">
         <div className="w-[95%] max-w-[1780px] mx-auto px-2 md:px-3 lg:px-4 xl:px-6 2xl:px-8 h-[70px] lg:h-[76px] flex justify-between items-center gap-2 xl:gap-4 2xl:gap-6" id="middle_bar">
           {/* Logo and Branding */}
           <div 

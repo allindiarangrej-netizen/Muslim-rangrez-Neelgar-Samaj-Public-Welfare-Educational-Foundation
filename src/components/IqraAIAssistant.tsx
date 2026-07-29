@@ -102,6 +102,108 @@ export default function IqraAIAssistant({ currentLanguage, onNavigate, activeTab
   const [newFaqQ, setNewFaqQ] = useState('');
   const [newFaqA, setNewFaqA] = useState('');
 
+  // Focus input and Keyboard Escape close support
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isOpen && !isMinimized && activeMode === 'chat') {
+      const timer = setTimeout(() => {
+        inputRef.current?.focus();
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen, isMinimized, activeMode]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen && !isMinimized) {
+        setIsOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, isMinimized]);
+
+  // Track sticky header height and viewport size for perfect positioning below the header
+  const [headerHeight, setHeaderHeight] = useState(76);
+  const [viewportHeight, setViewportHeight] = useState(typeof window !== 'undefined' ? window.innerHeight : 800);
+
+  useEffect(() => {
+    const handleResizeAndScroll = () => {
+      if (typeof window !== 'undefined') {
+        const height = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+        setViewportHeight(height);
+      }
+      
+      const stickyHeader = document.getElementById('sticky_header');
+      const siteHeader = document.getElementById('site_header');
+      
+      let calculatedHeaderHeight = 76;
+      if (stickyHeader) {
+        const rect = stickyHeader.getBoundingClientRect();
+        // Since the sticky header stays at top: 0, rect.bottom measures
+        // the exact bottom boundary of the header in the viewport.
+        if (rect.bottom > 0) {
+          calculatedHeaderHeight = rect.bottom;
+        } else {
+          calculatedHeaderHeight = rect.height || 76;
+        }
+      } else if (siteHeader) {
+        const rect = siteHeader.getBoundingClientRect();
+        calculatedHeaderHeight = Math.max(0, rect.bottom);
+      } else {
+        // Fallbacks if elements are not rendered yet
+        if (window.innerWidth < 1024) {
+          calculatedHeaderHeight = 70;
+        } else {
+          calculatedHeaderHeight = 76;
+        }
+      }
+      setHeaderHeight(calculatedHeaderHeight);
+    };
+
+    // Run layout calculation initially
+    handleResizeAndScroll();
+
+    // Listen to changes
+    window.addEventListener('scroll', handleResizeAndScroll, { passive: true });
+    window.addEventListener('resize', handleResizeAndScroll, { passive: true });
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', handleResizeAndScroll, { passive: true });
+      window.visualViewport.addEventListener('scroll', handleResizeAndScroll, { passive: true });
+    }
+
+    // Set up ResizeObserver to recalculate whenever the header changes layout/sizes
+    let resizeObserver: ResizeObserver | null = null;
+    const stickyHeader = document.getElementById('sticky_header');
+    const siteHeader = document.getElementById('site_header');
+    
+    if (typeof ResizeObserver !== 'undefined') {
+      resizeObserver = new ResizeObserver(() => {
+        handleResizeAndScroll();
+      });
+      if (stickyHeader) resizeObserver.observe(stickyHeader);
+      if (siteHeader) resizeObserver.observe(siteHeader);
+    }
+
+    // Interval fallback to handle dynamic height adjustments from animations
+    const interval = setInterval(handleResizeAndScroll, 200);
+
+    return () => {
+      window.removeEventListener('scroll', handleResizeAndScroll);
+      window.removeEventListener('resize', handleResizeAndScroll);
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', handleResizeAndScroll);
+        window.visualViewport.removeEventListener('scroll', handleResizeAndScroll);
+      }
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
+      clearInterval(interval);
+    };
+  }, []);
+
   // Page Context Detection
   const getPageContextDetails = (tab: string) => {
     if (tab.includes('school')) {
@@ -479,7 +581,7 @@ export default function IqraAIAssistant({ currentLanguage, onNavigate, activeTab
     <>
       {/* 1. FLOATING WIDGET LAUNCH BUTTON */}
       {!isMinimized && (
-        <div className="fixed bottom-24 right-6 z-50 flex flex-col items-end">
+        <div className="fixed bottom-24 right-6 z-[10002] flex flex-col items-end">
           {!isOpen && (
             <div 
               onClick={() => setIsOpen(true)}
@@ -498,6 +600,10 @@ export default function IqraAIAssistant({ currentLanguage, onNavigate, activeTab
               setIsOpen(!isOpen);
               setIsMinimized(false);
             }}
+            role="button"
+            aria-label={isOpen ? "Close IQRA AI Assistant" : "Open IQRA AI Assistant"}
+            aria-expanded={isOpen}
+            aria-controls="iqra_ai_chat_window"
             className={`group relative h-16 w-16 rounded-full shadow-[0_0_40px_rgba(0,75,35,0.7)] border-2 border-[#F4C430] flex items-center justify-center transition-all duration-300 cursor-pointer ${
               isOpen ? 'bg-[#0B132B] scale-95 rotate-90' : 'bg-gradient-to-br from-[#004B23] via-[#0D2418] to-[#070D18] hover:scale-110 hover:shadow-[0_0_50px_rgba(244,196,48,0.9)]'
             }`}
@@ -522,11 +628,27 @@ export default function IqraAIAssistant({ currentLanguage, onNavigate, activeTab
       {/* 2. MAIN IQRA AI WINDOW */}
       {isOpen && !isMinimized && (
         <div 
-          className={`fixed z-40 transition-all duration-300 flex flex-col overflow-hidden bg-gradient-to-br from-[#070D18] via-[#0B1729] to-[#0D2218] border-2 border-[#D4AF37]/70 shadow-[0_25px_90px_-15px_rgba(0,0,0,0.85)] text-white backdrop-blur-2xl ${
+          id="iqra_ai_chat_window"
+          role="dialog"
+          aria-label="IQRA AI Assistant Conversation Panel"
+          className={`fixed z-[10001] transition-all duration-300 flex flex-col overflow-hidden bg-gradient-to-br from-[#070D18] via-[#0B1729] to-[#0D2218] border-2 border-[#D4AF37]/70 shadow-[0_25px_90px_-15px_rgba(0,0,0,0.85)] text-white backdrop-blur-2xl ${
             isFullScreen 
-              ? 'inset-0 w-full h-full rounded-none' 
-              : 'bottom-28 right-4 sm:right-6 w-[94vw] sm:w-[480px] md:w-[520px] h-[720px] max-h-[88vh] rounded-3xl'
+              ? 'inset-x-0 bottom-0 w-full rounded-none' 
+              : 'right-4 sm:right-6 w-[94vw] sm:w-[480px] md:w-[520px] rounded-3xl'
           }`}
+          style={
+            isFullScreen 
+              ? {
+                  top: `${headerHeight}px`,
+                  height: `calc(100vh - ${headerHeight}px - env(safe-area-inset-bottom, 0px))`,
+                  maxHeight: 'none',
+                }
+              : {
+                  bottom: 'calc(176px + env(safe-area-inset-bottom, 0px))',
+                  maxHeight: `calc(${viewportHeight}px - ${headerHeight}px - 16px - 176px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px))`,
+                  height: '720px',
+                }
+          }
         >
           {/* A. HEADER BAR */}
           <div className="bg-gradient-to-r from-[#004B23] via-[#0E2C1F] to-[#070D18] p-4 border-b border-[#D4AF37]/40 flex items-center justify-between shrink-0 shadow-md">
@@ -558,6 +680,7 @@ export default function IqraAIAssistant({ currentLanguage, onNavigate, activeTab
                 value={chatLang}
                 onChange={(e) => handleLanguageSwitch(e.target.value as Language)}
                 className="bg-[#070D18]/90 text-[#FFD54A] text-[11px] font-bold px-2 py-1 rounded-lg border border-[#D4AF37]/50 focus:outline-none cursor-pointer"
+                aria-label="Select AI Language"
               >
                 <option value="en">ENG 🇬🇧</option>
                 <option value="hi">हिंदी 🇮🇳</option>
@@ -568,6 +691,7 @@ export default function IqraAIAssistant({ currentLanguage, onNavigate, activeTab
                 onClick={() => setIsMinimized(true)}
                 className="p-1.5 rounded-lg bg-white/10 text-gray-300 hover:text-white transition"
                 title="Minimize"
+                aria-label="Minimize Panel"
               >
                 <Minimize2 className="h-4 w-4" />
               </button>
@@ -576,6 +700,7 @@ export default function IqraAIAssistant({ currentLanguage, onNavigate, activeTab
                 onClick={() => setIsFullScreen(!isFullScreen)}
                 className="p-1.5 rounded-lg bg-white/10 text-gray-300 hover:text-white transition hidden sm:block"
                 title="Maximize"
+                aria-label="Toggle Fullscreen Mode"
               >
                 <Maximize2 className="h-4 w-4" />
               </button>
@@ -584,6 +709,7 @@ export default function IqraAIAssistant({ currentLanguage, onNavigate, activeTab
                 onClick={() => setIsOpen(false)}
                 className="p-1.5 rounded-lg bg-red-500/20 text-red-300 hover:bg-red-500 transition"
                 title="Close"
+                aria-label="Close Conversation Panel"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -1126,6 +1252,7 @@ export default function IqraAIAssistant({ currentLanguage, onNavigate, activeTab
 
               <div className="flex-1 relative">
                 <input
+                  ref={inputRef}
                   type="text"
                   value={inputQuery}
                   onChange={(e) => setInputQuery(e.target.value)}
@@ -1156,7 +1283,9 @@ export default function IqraAIAssistant({ currentLanguage, onNavigate, activeTab
       {isOpen && isMinimized && (
         <div 
           onClick={() => setIsMinimized(false)}
-          className="fixed bottom-6 right-6 z-50 bg-gradient-to-r from-[#004B23] via-[#0A2E1C] to-[#070D18] text-white px-5 py-3 rounded-full shadow-2xl border-2 border-[#F4C430] flex items-center space-x-3 cursor-pointer hover:scale-105 transition"
+          role="button"
+          aria-label="Restore IQRA AI Assistant"
+          className="fixed bottom-6 right-6 z-[10002] bg-gradient-to-r from-[#004B23] via-[#0A2E1C] to-[#070D18] text-white px-5 py-3 rounded-full shadow-2xl border-2 border-[#F4C430] flex items-center space-x-3 cursor-pointer hover:scale-105 transition"
         >
           <Sparkles className="h-5 w-5 text-[#FFD54A] animate-spin" />
           <span className="font-extrabold text-xs sm:text-sm text-[#FFD54A]">IQRA AI Assistant</span>
