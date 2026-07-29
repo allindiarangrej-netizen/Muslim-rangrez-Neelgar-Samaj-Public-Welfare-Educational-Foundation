@@ -1223,7 +1223,7 @@ export const initialHeritageAlbums: HeritageAlbum[] = [
     likes: 0
   },
   {
-    id: 'alb_dholpur_district_archive',
+    id: 'alb_dholpur_gallery',
     titleEn: 'Dholpur Regional Gallery',
     titleHi: 'धौलपुर क्षेत्रीय गैलरी',
     eventType: 'Regional Archive',

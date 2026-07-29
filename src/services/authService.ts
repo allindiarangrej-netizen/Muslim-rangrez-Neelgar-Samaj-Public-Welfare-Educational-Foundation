@@ -256,138 +256,35 @@ export class AuthService {
   }
 
   /**
-   * Log in with email and password
+   * Log in with email/password or Google Sign-In (Temporarily set to Information Portal Mode)
    */
   static async login(email: string, password?: string): Promise<{ success: boolean; session?: UserSession; error?: string }> {
-    const supabase = getSupabase();
-    if (!supabase) {
-      return { success: false, error: 'Supabase client not initialized.' };
-    }
-
-    if (!password) {
-      return { success: false, error: 'Password is required for standard login.' };
-    }
-
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
-
-      if (error) {
-        return { success: false, error: error.message };
-      }
-
-      if (data.user) {
-        if (!data.user.email_confirmed_at) {
-          await supabase.auth.signOut();
-          return { success: false, error: 'Please verify your email address before logging in.' };
-        }
-
-        // Retrieve custom role and permissions
-        const { data: profile } = await supabase
-          .from('member_profiles')
-          .select('role, permissions, status')
-          .eq('user_id', data.user.id)
-          .maybeSingle();
-
-        const castProfile = profile as any;
-
-        if (castProfile?.status === 'Suspended' || castProfile?.status === 'Disabled') {
-          await supabase.auth.signOut();
-          return { success: false, error: 'Your account is suspended or disabled.' };
-        }
-
-        const role = (castProfile?.role || data.user.user_metadata?.role || 'Member') as UserRole;
-        const permissions = (castProfile?.permissions || ROLE_PERMISSIONS[role] || ROLE_PERMISSIONS['Member']) as string[];
-
-        const userSession: UserSession = {
-          id: data.user.id,
-          name: castProfile?.full_name || data.user.user_metadata?.full_name || data.user.email?.split('@')[0] || 'Member',
-          email: data.user.email || '',
-          phone: castProfile?.phone || data.user.user_metadata?.phone || '',
-          role,
-          isEmailVerified: !!data.user.email_confirmed_at,
-          isOtpVerified: !!data.user.email_confirmed_at,
-          district: castProfile?.district || data.user.user_metadata?.district || 'Morena',
-          state: castProfile?.state || data.user.user_metadata?.state || 'Madhya Pradesh',
-          createdAt: data.user.created_at,
-          lastLoginAt: new Date().toISOString(),
-          token: data.session?.access_token || '',
-          permissions
-        };
-
-        this.setSession(userSession);
-        return { success: true, session: userSession };
-      }
-
-      return { success: false, error: 'Authentication failed.' };
-    } catch (err: any) {
-      return { success: false, error: err.message || 'An unexpected error occurred.' };
-    }
+    return {
+      success: false,
+      error: 'Portal Authentication is currently in Public Information Mode. User registration and login will open following the official enterprise launch.'
+    };
   }
 
   /**
-   * Register a new user (strictly as Member)
+   * Register a new user (Temporarily set to Information Portal Mode)
    */
   static async register(payload: RegisterPayload): Promise<{ success: boolean; session?: UserSession; error?: string }> {
-    // Enforce Public users can ONLY register as Members
-    const role: UserRole = 'Member';
-
-    const supabase = getSupabase();
-    if (!supabase) {
-      return { success: false, error: 'Supabase is not configured or initialized.' };
-    }
-
-    try {
-      // 1. Sign up user in Supabase Auth
-      const { data, error } = await supabase.auth.signUp({
-        email: payload.email,
-        password: payload.password || 'demo123',
-        options: {
-          data: {
-            full_name: payload.name,
-            phone: payload.phone,
-            role,
-            state: payload.state || 'Madhya Pradesh',
-            district: payload.district || 'Morena'
-          }
-        }
-      });
-
-      if (error) {
-        return { success: false, error: error.message };
-      }
-
-      if (data.user) {
-        // 2. Profile creation will be handled either via triggers or automatically during AuthContext sync upon login/verification.
-        // We can also eagerly pre-create it if their session is active (e.g. if auto-login occurs).
-        return { 
-          success: true, 
-          message: 'Registration successful! A real email verification has been dispatched via Supabase. Please verify your email before logging in.' 
-        } as any;
-      }
-
-      return { success: false, error: 'Registration succeeded but no user record was returned.' };
-    } catch (err: any) {
-      return { success: false, error: err.message || 'An unexpected error occurred during Supabase signup.' };
-    }
+    return {
+      success: false,
+      error: 'User Registration is temporarily paused for system upgrade. Registration will re-open with Google Sign-In and Mobile OTP verification.'
+    };
   }
 
   /**
    * Log out and revert to Visitor session
    */
   static async logout(): Promise<void> {
-    const supabase = getSupabase();
-    if (supabase) {
-      try {
-        await supabase.auth.signOut({ scope: 'global' });
-      } catch (err) {
-        console.error("Error signing out from Supabase Auth:", err);
-      }
+    try {
+      localStorage.removeItem(SESSION_STORAGE_KEY);
+    } catch (e) {
+      // Ignore local storage clear error
     }
-    localStorage.removeItem(SESSION_STORAGE_KEY);
-    window.dispatchEvent(new CustomEvent('rcb_auth_changed', { detail: null }));
+    window.dispatchEvent(new CustomEvent('rcb_auth_changed', { detail: DEFAULT_VISITOR_SESSION }));
   }
 
   /**

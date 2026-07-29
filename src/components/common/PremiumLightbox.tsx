@@ -4,10 +4,9 @@ import {
   X, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, 
   Play, Pause, Maximize, Minimize, Download, 
   Info, RotateCw, Share2, Image as ImageIcon,
-  Heart, Printer, ArrowLeft, RefreshCw, Check, Tag, Calendar, MapPin, Camera, Folder,
-  Shuffle, Repeat
+  Heart, Printer, ArrowLeft, RefreshCw, Check, Tag, Calendar, MapPin, Camera, Folder
 } from 'lucide-react';
-import { resolveDriveUrl, preloadDriveImage } from '../../lib/driveUtils';
+import { resolveDriveUrl } from '../../lib/driveUtils';
 import SmartImage from './SmartImage';
 
 export interface LightboxItem {
@@ -48,8 +47,6 @@ export default function PremiumLightbox({
   const [zoom, setZoom] = useState(1);
   const [rotation, setRotation] = useState(0);
   const [slideshow, setSlideshow] = useState(false);
-  const [isHoverPaused, setIsHoverPaused] = useState(false);
-  const [isRandomMode, setIsRandomMode] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
@@ -85,18 +82,11 @@ export default function PremiumLightbox({
     }
   }, [initialIndex, isOpen, items.length]);
 
-  // Reset img state when index changes and preload adjacent images
+  // Reset img state when index changes
   useEffect(() => {
     setImgError(false);
     setImgLoading(true);
-
-    if (isOpen && items.length > 1) {
-      const nextIdx = (index + 1) % items.length;
-      const prevIdx = (index - 1 + items.length) % items.length;
-      if (items[nextIdx]?.src) preloadDriveImage(items[nextIdx].src).catch(() => {});
-      if (items[prevIdx]?.src) preloadDriveImage(items[prevIdx].src).catch(() => {});
-    }
-  }, [index, isOpen, items]);
+  }, [index]);
 
   // Toast auto-hide
   useEffect(() => {
@@ -120,33 +110,27 @@ export default function PremiumLightbox({
     }
   }, [index]);
 
+  // Slideshow timer
+  useEffect(() => {
+    if (slideshow && isOpen && items[index] && items[index].type !== 'video') {
+      const timer = setInterval(() => {
+        handleNext();
+      }, 4000);
+      return () => clearInterval(timer);
+    }
+  }, [slideshow, isOpen, items.length, index]);
+
   const handleNext = useCallback(() => {
     setZoom(1);
     setRotation(0);
-    if (isRandomMode && items.length > 1) {
-      let nextRand = Math.floor(Math.random() * items.length);
-      if (nextRand === index) nextRand = (nextRand + 1) % items.length;
-      setIndex(nextRand);
-    } else {
-      setIndex((prev) => (prev + 1) % items.length);
-    }
-  }, [items.length, isRandomMode, index]);
+    setIndex((prev) => (prev + 1) % items.length);
+  }, [items.length]);
 
   const handlePrev = useCallback(() => {
     setZoom(1);
     setRotation(0);
     setIndex((prev) => (prev - 1 + items.length) % items.length);
   }, [items.length]);
-
-  // Slideshow timer with hover pause support
-  useEffect(() => {
-    if (slideshow && isOpen && !isHoverPaused && items[index] && items[index].type !== 'video') {
-      const timer = setInterval(() => {
-        handleNext();
-      }, 4000);
-      return () => clearInterval(timer);
-    }
-  }, [slideshow, isOpen, isHoverPaused, items.length, index, handleNext]);
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
@@ -157,7 +141,6 @@ export default function PremiumLightbox({
       setIsFullscreen(false);
     }
   };
-
 
   const handleRotate = () => {
     setRotation(prev => (prev + 90) % 360);
@@ -351,39 +334,6 @@ export default function PremiumLightbox({
 
           {/* Right Side: Tool Actions */}
           <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-            {/* Slideshow Play / Pause Button */}
-            <button
-              onClick={() => {
-                setSlideshow(!slideshow);
-                setToastMsg(!slideshow ? 'Slideshow started (4s)' : 'Slideshow paused');
-              }}
-              className={`px-2.5 py-1.5 rounded-xl border transition flex items-center gap-1.5 text-xs font-bold ${
-                slideshow 
-                  ? 'bg-[#F4C430] text-[#004B23] border-[#F4C430] shadow-[0_0_12px_rgba(244,196,48,0.4)]' 
-                  : 'bg-white/10 hover:bg-white/20 text-stone-200 border-white/10'
-              }`}
-              title="Toggle Auto Slideshow"
-            >
-              {slideshow ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-              <span className="hidden lg:inline">{slideshow ? 'Pause' : 'Play'}</span>
-            </button>
-
-            {/* Shuffle / Random Mode Toggle */}
-            <button
-              onClick={() => {
-                setIsRandomMode(!isRandomMode);
-                setToastMsg(!isRandomMode ? 'Random Shuffle Mode ON 🔀' : 'Sequential Order Mode 🔁');
-              }}
-              className={`p-2 rounded-xl border transition ${
-                isRandomMode
-                  ? 'bg-amber-500/20 text-[#F4C430] border-amber-500/40'
-                  : 'text-stone-300 hover:text-white hover:bg-white/15 border-transparent'
-              }`}
-              title="Shuffle / Random Order"
-            >
-              <Shuffle className="h-4.5 w-4.5" />
-            </button>
-
             {/* Zoom Controls (Desktop) */}
             <div className="hidden md:flex items-center bg-white/10 rounded-xl p-0.5 border border-white/10 mr-1">
               <button onClick={() => setZoom(z => Math.max(1, z - 0.5))} className="p-1.5 hover:bg-white/20 rounded-lg transition" title="Zoom Out (-)"><ZoomOut className="h-4 w-4" /></button>
@@ -444,11 +394,7 @@ export default function PremiumLightbox({
         </div>
 
         {/* MAIN STAGE - Intelligent Viewport Fit (85-90% Viewport) */}
-        <div 
-          onMouseEnter={() => setIsHoverPaused(true)}
-          onMouseLeave={() => setIsHoverPaused(false)}
-          className="relative flex-1 flex items-center justify-center overflow-hidden p-2 sm:p-4 md:p-6 bg-black/40"
-        >
+        <div className="relative flex-1 flex items-center justify-center overflow-hidden p-2 sm:p-4 md:p-6 bg-black/40">
           
           {/* Previous Arrow */}
           <button 

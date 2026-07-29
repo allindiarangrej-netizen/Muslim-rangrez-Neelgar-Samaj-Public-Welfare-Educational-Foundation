@@ -335,59 +335,10 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
     }
   }, [user]);
 
-  // Automatically detect the verified session (Strictly confirming email_confirmed_at)
+  // Information Portal Mode - Active polling disabled to ensure zero background network errors
   useEffect(() => {
-    if (!supabase) return;
-
-    const checkSession = async () => {
-      try {
-        const { data: { session: activeSession }, error: sessionError } = await supabase.auth.getSession();
-        if (sessionError) {
-          console.error('Error fetching session in poll:', sessionError);
-          return;
-        }
-
-        if (activeSession?.user && activeSession.user.email === formData.email) {
-          const isVerified = !!activeSession.user.email_confirmed_at;
-          if (isVerified) {
-            setFormData(prev => ({ ...prev, emailVerified: true }));
-          } else {
-            // Fetch fresh user object from server to bypass stale cache
-            const { data: { user: freshUser }, error: userError } = await supabase.auth.getUser();
-            if (!userError && freshUser && freshUser.email === formData.email && freshUser.email_confirmed_at) {
-              setFormData(prev => ({ ...prev, emailVerified: true }));
-            } else {
-              setFormData(prev => ({ ...prev, emailVerified: false }));
-            }
-          }
-        } else if (!user) {
-          setFormData(prev => ({ ...prev, emailVerified: false }));
-        }
-      } catch (err) {
-        console.error("Session check error:", err);
-      }
-    };
-    checkSession();
-
-    // Poll session every 3 seconds to auto-detect cross-tab verification
-    const intervalId = setInterval(checkSession, 3000);
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, activeSession) => {
-      if (activeSession?.user && activeSession.user.email === formData.email) {
-        const isVerified = !!activeSession.user.email_confirmed_at;
-        if (isVerified) {
-          setFormData(prev => ({ ...prev, emailVerified: true }));
-        } else {
-          setFormData(prev => ({ ...prev, emailVerified: false }));
-        }
-      }
-    });
-
-    return () => {
-      clearInterval(intervalId);
-      subscription.unsubscribe();
-    };
-  }, [supabase, formData.email, user]);
+    // Session polling disabled during public information portal phase
+  }, []);
 
   const handleSendEmailVerification = async () => {
     if (!formData.name?.trim()) {
@@ -1157,866 +1108,101 @@ export default function MembershipSystem({ currentLanguage, defaultSubTab = 'das
         )}
 
         {/* 1. MEMBER LOGIN */}
-        {activeSubTab === 'login' && !isLoggedIn && (
-          <div className="max-w-md mx-auto bg-gray-50 p-8 rounded-xl border border-gray-100 shadow-sm animate-fadeIn" id="login_sub_module">
-            <div className="text-center space-y-2 mb-6">
-              <div className="inline-flex p-3 bg-emerald-100 text-[#004B23] rounded-full">
-                <LogIn className="h-6 w-6" />
-              </div>
-              <h3 className="text-xl font-serif font-extrabold text-[#0B132B]">
-                {currentLanguage === 'en' ? 'Secure Member Login' : 'महासभा सदस्य लॉगिन'}
+        {activeSubTab === 'login' && (
+          <div className="max-w-xl mx-auto bg-white p-8 md:p-10 rounded-2xl border border-gray-200 shadow-xl text-center space-y-6 animate-fadeIn" id="login_sub_module">
+            <div className="inline-flex p-4 bg-amber-50 text-amber-700 rounded-2xl border border-amber-200 shadow-sm">
+              <Shield className="h-8 w-8" />
+            </div>
+            
+            <div className="space-y-2">
+              <span className="inline-block px-3 py-1 bg-amber-100 text-amber-900 text-[10px] font-black uppercase tracking-widest rounded-full border border-amber-200">
+                ⚡ PORTAL IN PUBLIC INFORMATION MODE
+              </span>
+              <h3 className="text-2xl font-serif font-black text-gray-900">
+                {currentLanguage === 'en' ? 'User Login Launching Soon' : currentLanguage === 'ur' ? 'لاگ ان جلد ہی فعال ہو جائے گا' : 'उपयोगकर्ता लॉगिन शीघ्र ही उपलब्ध होगा'}
               </h3>
-              <p className="text-xs text-gray-500">
-                {currentLanguage === 'en' ? 'Enter your registered email or phone to access portal' : 'अपने पंजीकृत ईमेल या फोन नंबर से लॉगिन करें'}
+              <p className="text-gray-600 text-xs sm:text-sm leading-relaxed max-w-md mx-auto">
+                {currentLanguage === 'en' 
+                  ? 'User accounts and login features are currently paused for an upgrade to our Enterprise Google Sign-In and Mobile OTP Authentication System. The portal is currently running in public information mode.' 
+                  : currentLanguage === 'ur'
+                  ? 'صارفین کی سہولت کے لیے سنگل سائن ان اور لاگ ان کا نظام جلد ہی فعال کیا جائے گا۔'
+                  : 'उपयोगकर्ता सुविधा के लिए सिंगल साइन-ऑन और लॉगिन प्रणाली शीघ्र ही नई सुरक्षा व्यवस्था के साथ शुरू की जाएगी।'}
               </p>
             </div>
 
-              <form onSubmit={handleLogin} className="space-y-4">
-              <div>
-                <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">
-                  {currentLanguage === 'en' ? 'Email or Mobile Number' : 'ईमेल या मोबाइल नंबर'}
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  placeholder="shakeel.rangrez@gmail.com"
-                  className="w-full bg-white border border-gray-200 text-xs p-3 rounded focus:outline-none focus:ring-1 focus:ring-[#004B23]"
-                />
-              </div>
+            <div className="p-4 bg-emerald-50 rounded-xl border border-emerald-100 text-left space-y-2">
+              <span className="text-[11px] font-bold text-[#004B23] uppercase tracking-wider block">
+                ✓ Public Features Currently Accessible:
+              </span>
+              <ul className="text-xs text-emerald-900 space-y-1 list-disc list-inside">
+                <li>National Member Directory & Area Census Statistics</li>
+                <li>Community Trust By-Laws & Welfare Schemes Index</li>
+                <li>11-Level Hierarchical Committee Structure & Leadership</li>
+                <li>Digital Genogram & Family Tree Visualization</li>
+              </ul>
+            </div>
 
-              <div>
-                <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">
-                  {currentLanguage === 'en' ? 'OTP or Password' : 'ओटीपी या पासवर्ड'}
-                </label>
-                <div className="relative">
-                  <input
-                    type={showLoginPassword ? "text" : "password"}
-                    required
-                    value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    placeholder="••••••••"
-                    className="w-full bg-white border border-gray-200 text-xs p-3 pr-10 rounded focus:outline-none focus:ring-1 focus:ring-[#004B23]"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowLoginPassword(!showLoginPassword)}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
-                    tabIndex={-1}
-                  >
-                    {showLoginPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
-                </div>
-                <div className="text-right mt-1">
-                  <button 
-                    type="button" 
-                    onClick={handleForgotPassword}
-                    className="text-[10px] text-gray-500 hover:text-[#004B23] hover:underline"
-                  >
-                    {currentLanguage === 'en' ? 'Forgot Password?' : 'पासवर्ड भूल गए?'}
-                  </button>
-                </div>
-              </div>
-
-              {loginError && (
-                <div className="p-3 bg-red-50 border border-red-200 text-red-800 text-xs font-bold rounded flex items-center gap-1.5">
-                  <AlertTriangle className="w-4 h-4 text-red-600" />
-                  <span>{loginError}</span>
-                </div>
-              )}
-
-              <button
-                type="submit"
-                className="w-full py-3 bg-[#004B23] text-white font-bold text-xs uppercase tracking-wider rounded hover:bg-[#00381a] transition flex items-center justify-center space-x-2"
-              >
-                <span>{currentLanguage === 'en' ? 'Secure Sign In' : 'लॉगिन करें'}</span>
-                <ArrowRight className="h-4 w-4" />
-              </button>
-            </form>
+            <button
+              onClick={() => setActiveSubTab('directory')}
+              className="w-full py-3.5 bg-[#004B23] text-white font-bold text-xs uppercase tracking-wider rounded-xl hover:bg-[#00381a] transition flex items-center justify-center space-x-2 shadow cursor-pointer"
+            >
+              <span>{currentLanguage === 'en' ? 'Explore Public Member Directory' : 'सार्वजनिक सदस्य निर्देशिका देखें'}</span>
+              <ArrowRight className="h-4 w-4" />
+            </button>
           </div>
         )}
 
         {/* 2. MEMBER REGISTRATION FORM */}
         {activeSubTab === 'register' && (
-          <div className="w-full max-w-7xl mx-auto bg-[#FAFAFA] p-6 md:p-10 rounded-2xl border border-gray-200 shadow-lg animate-fadeIn" id="register_sub_module">
-            <div className="text-center space-y-2 mb-8">
-              <span className="text-[#004B23] font-bold text-xs uppercase tracking-wider">
-                {currentLanguage === 'en' ? 'ALL INDIA MEMBERSHIP REGISTRATION' : 'अखिल भारतीय सदस्य पंजीकरण'}
+          <div className="max-w-xl mx-auto bg-white p-8 md:p-10 rounded-2xl border border-gray-200 shadow-xl text-center space-y-6 animate-fadeIn" id="register_sub_module">
+            <div className="inline-flex p-4 bg-emerald-50 text-[#004B23] rounded-2xl border border-emerald-200 shadow-sm">
+              <UserPlus className="h-8 w-8" />
+            </div>
+
+            <div className="space-y-2">
+              <span className="inline-block px-3 py-1 bg-emerald-100 text-[#004B23] text-[10px] font-black uppercase tracking-widest rounded-full border border-emerald-200">
+                ✍️ REGISTRATION OPENING SOON
               </span>
-              <h3 className="text-2xl font-serif font-extrabold text-[#0B132B]">
-                {currentLanguage === 'en' ? 'Create Your Verified Digital Profile' : 'अपना डिजिटल प्रोफ़ाइल बनाएं'}
+              <h3 className="text-2xl font-serif font-black text-gray-900">
+                {currentLanguage === 'en' ? 'Member Registration Launching Soon' : currentLanguage === 'ur' ? 'رکن کی رجسٹریشن جلد شروع ہوگی' : 'सदस्य पंजीकरण शीघ्र ही प्रारम्भ होगा'}
               </h3>
-              <div className="text-[10px] text-emerald-800 bg-emerald-50 border border-emerald-100 py-1.5 px-3 rounded-lg max-w-lg mx-auto font-serif">
-                {currentLanguage === 'en' ? 'Official Registering Authority:' : 'आधिकारिक पंजीकरण प्राधिकरण:'}{' '}
-                <strong className="font-serif">Muslim Rangrez Neelgar Samaj Public Welfare & Educational Foundation</strong>
-              </div>
-              <p className="text-xs text-gray-500">
-                {currentLanguage === 'en' ? 'After submission, local area committee will verify your entry to activate your digital card.' : 'पंजीकरण के बाद, डिजिटल कार्ड सक्रिय करने के लिए स्थानीय समिति आपकी प्रविष्टि की पुष्टि करेगी।'}
+              <p className="text-gray-600 text-xs sm:text-sm leading-relaxed max-w-md mx-auto">
+                {currentLanguage === 'en'
+                  ? 'All India Membership Registration will open following the launch of our new Google Enterprise & Mobile OTP Verification System. Existing data remains fully preserved.'
+                  : currentLanguage === 'ur'
+                  ? 'نئی آن لائن رجسٹریشن جلد ہی گوگل سائن ان اور موبائل او ٹی پی کے ساتھ کھول دی جائے گی۔'
+                  : 'अखिल भारतीय सदस्य पंजीकरण शीघ्र ही नए गूगल साइन-इन और मोबाइल ओटीपी के साथ प्रारंभ होगा।'}
               </p>
             </div>
 
-            {registeredSuccess ? (
-              <div className="bg-white border border-emerald-200 text-emerald-800 p-8 rounded-2xl text-center space-y-4 shadow-xl animate-scaleIn">
-                <div className="relative mx-auto w-20 h-20">
-                  <div className="absolute inset-0 bg-emerald-100 rounded-full animate-ping opacity-25"></div>
-                  <CheckCircle2 className="h-20 w-20 text-emerald-600 relative z-10" />
-                </div>
-                <div className="space-y-2">
-                  <h4 className="font-bold text-xl text-gray-900">{currentLanguage === 'en' ? 'Registration Submitted Successfully!' : 'पंजीकरण सफलतापूर्वक जमा किया गया!'}</h4>
-                  <div className="inline-flex items-center space-x-2 bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-xs font-bold">
-                    <Activity className="h-3 w-3" />
-                    <span>{currentLanguage === 'en' ? 'Status: Pending Committee Verification' : 'स्थिति: समिति सत्यापन लंबित'}</span>
-                  </div>
-                </div>
-                <p className="text-gray-600 text-sm max-w-xs mx-auto">
-                  {currentLanguage === 'en' 
-                    ? 'Your application is being processed. You will be notified once your membership is approved by the committee.' 
-                    : 'आपके आवेदन पर कार्रवाई की जा रही है। समिति द्वारा आपकी सदस्यता स्वीकृत होने पर आपको सूचित किया जाएगा।'}
-                </p>
-                <div className="pt-4 flex flex-col items-center space-y-2">
-                  <div className="flex items-center space-x-2 text-[#004B23] font-bold text-sm animate-pulse">
-                    <RefreshCw className="h-4 w-4 animate-spin" />
-                    <span>{currentLanguage === 'en' ? 'Redirecting to Dashboard...' : 'डैशबोर्ड पर पुनर्निर्देशित किया जा रहा है...'}</span>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <form onSubmit={handleRegister} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {/* Full Name */}
-                  <div>
-                    <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">
-                      {currentLanguage === 'en' ? 'Full Name' : 'पूरा नाम'} <span className="text-red-600">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="e.g. Mohammad Salim Rangrez"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full bg-white border border-gray-200 text-xs p-3 rounded focus:outline-none focus:ring-1 focus:ring-[#004B23]"
-                    />
-                  </div>
+            <div className="p-4 bg-amber-50 rounded-xl border border-amber-100 text-left space-y-2">
+              <span className="text-[11px] font-bold text-amber-900 uppercase tracking-wider block">
+                📌 Information Portal Notice:
+              </span>
+              <p className="text-xs text-amber-950 leading-relaxed">
+                {currentLanguage === 'en'
+                  ? 'No user registration or profile updates are accepted during this public maintenance window. All verified member records and family census entries remain securely saved in the database.'
+                  : 'सार्वजनिक रखरखाव अवधि के दौरान कोई नया पंजीकरण स्वीकार नहीं किया जा रहा है। पुराना सारा डेटा सुरक्षित है।'}
+              </p>
+            </div>
 
-                  {/* Father's Name */}
-                  <div>
-                    <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">
-                      ★ {currentLanguage === 'en' ? "Father's Name" : 'पिता का नाम'}
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="e.g. Al-Haaj Mohammad Yusuf"
-                      value={formData.fatherName}
-                      onChange={(e) => setFormData({ ...formData, fatherName: e.target.value })}
-                      className="w-full bg-white border border-gray-200 text-xs p-3 rounded focus:outline-none focus:ring-1 focus:ring-[#004B23]"
-                    />
-                  </div>
-
-                  {/* Gender */}
-                  <div>
-                    <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">
-                      ★ {currentLanguage === 'en' ? 'Gender' : 'लिंग'}
-                    </label>
-                    <select
-                      value={formData.gender}
-                      onChange={(e) => setFormData({ ...formData, gender: e.target.value as any })}
-                      className="w-full bg-white border border-gray-200 text-xs p-3 rounded focus:outline-none focus:ring-1 focus:ring-[#004B23]"
-                    >
-                      <option value="M">{currentLanguage === 'en' ? 'Male (पुरुष)' : 'पुरुष'}</option>
-                      <option value="F">{currentLanguage === 'en' ? 'Female (महिला)' : 'महिला'}</option>
-                    </select>
-                  </div>
-
-                  {/* DOB */}
-                  <div>
-                    <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">
-                      ★ {currentLanguage === 'en' ? 'Date of Birth' : 'जन्म तिथि'}
-                    </label>
-                    <input
-                      type="date"
-                      required
-                      value={formData.dob}
-                      onChange={(e) => setFormData({ ...formData, dob: e.target.value })}
-                      className="w-full bg-white border border-gray-200 text-xs p-3 rounded focus:outline-none focus:ring-1 focus:ring-[#004B23]"
-                    />
-                  </div>
-
-                  {/* Mobile */}
-                  <div>
-                    <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">
-                      ★ {currentLanguage === 'en' ? 'Mobile Number (Primary)' : 'मोबाइल नंबर (प्राथमिक)'}
-                    </label>
-                    <input
-                      type="tel"
-                      required
-                      placeholder="+91"
-                      value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value, whatsapp: formData.whatsapp || e.target.value })}
-                      className="w-full bg-white border border-gray-200 text-xs p-3 rounded focus:outline-none focus:ring-1 focus:ring-[#004B23]"
-                    />
-                  </div>
-
-                  {/* WhatsApp Number */}
-                  <div>
-                    <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">
-                      {currentLanguage === 'en' ? 'WhatsApp Number (Optional)' : 'व्हाट्सएप नंबर (वैकल्पिक)'}
-                    </label>
-                    <input
-                      type="tel"
-                      placeholder="+91"
-                      value={formData.whatsapp}
-                      onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
-                      className="w-full bg-white border border-gray-200 text-xs p-3 rounded focus:outline-none focus:ring-1 focus:ring-[#004B23]"
-                    />
-                  </div>
-
-                  {/* WhatsApp Available */}
-                  <div>
-                    <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">
-                      {currentLanguage === 'en' ? 'WhatsApp Available?' : 'व्हाट्सएप उपलब्ध है?'}
-                    </label>
-                    <select
-                      value={formData.whatsappAvailable ? 'yes' : 'no'}
-                      onChange={(e) => setFormData({ ...formData, whatsappAvailable: e.target.value === 'yes' })}
-                      className="w-full bg-white border border-gray-200 text-xs p-3 rounded focus:outline-none focus:ring-1 focus:ring-[#004B23]"
-                    >
-                      <option value="yes">{currentLanguage === 'en' ? 'Yes (हाँ)' : 'हाँ'}</option>
-                      <option value="no">{currentLanguage === 'en' ? 'No (नहीं)' : 'नहीं'}</option>
-                    </select>
-                  </div>
-
-                  {/* Show WhatsApp Publicly */}
-                  <div>
-                    <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">
-                      {currentLanguage === 'en' ? 'Show WhatsApp publicly?' : 'व्हाट्सएप सार्वजनिक रूप से दिखाएं?'}
-                    </label>
-                    <select
-                      value={formData.showWhatsAppPublicly ? 'yes' : 'no'}
-                      onChange={(e) => setFormData({ ...formData, showWhatsAppPublicly: e.target.value === 'yes' })}
-                      className="w-full bg-white border border-gray-200 text-xs p-3 rounded focus:outline-none focus:ring-1 focus:ring-[#004B23]"
-                    >
-                      <option value="no">{currentLanguage === 'en' ? 'No (नहीं) - Private' : 'नहीं - निजी'}</option>
-                      <option value="yes">{currentLanguage === 'en' ? 'Yes (हाँ) - Public' : 'हाँ - सार्वजनिक'}</option>
-                    </select>
-                  </div>
-
-                  {/* Blood Group */}
-                  <div>
-                    <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">
-                      {currentLanguage === 'en' ? 'Blood Group' : 'रक्त समूह'}
-                    </label>
-                    <select
-                      value={formData.bloodGroup}
-                      onChange={(e) => setFormData({ ...formData, bloodGroup: e.target.value as any })}
-                      className="w-full bg-white border border-gray-200 text-xs p-3 rounded focus:outline-none focus:ring-1 focus:ring-[#004B23]"
-                    >
-                      <option value="A+">A+</option>
-                      <option value="A-">A-</option>
-                      <option value="B+">B+</option>
-                      <option value="B-">B-</option>
-                      <option value="AB+">AB+</option>
-                      <option value="AB-">AB-</option>
-                      <option value="O+">O+</option>
-                      <option value="O-">O-</option>
-                    </select>
-                  </div>
-
-                  {/* Centralized Indian Geographic Master Location Selector */}
-                  <div className="sm:col-span-2">
-                    <LocationSelector
-                      currentLanguage={currentLanguage}
-                      required={true}
-                      initialValues={{
-                        stateId: formData.stateId,
-                        districtId: formData.districtId,
-                        tehsilId: formData.tehsilId,
-                        countryId: 'IND'
-                      }}
-                      onLocationChange={(loc) => {
-                        setFormData({
-                          ...formData,
-                          stateId: loc.stateId,
-                          districtId: loc.districtId,
-                          tehsilId: loc.tehsilId,
-                          city: loc.locationTextEn
-                        });
-                      }}
-                    />
-                  </div>
-
-                  {/* Email */}
-                  <div>
-                    <label className="flex items-center text-[10px] font-bold text-gray-700 uppercase mb-1 space-x-2">
-                      <span>{currentLanguage === 'en' ? "Email Address" : 'ईमेल'} <span className="text-red-600">*</span></span>
-                      {formData.emailVerified && (
-                        <span className="text-[9px] font-bold text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded flex items-center space-x-0.5">
-                          <CheckCircle className="h-3 w-3" />
-                          <span>VERIFIED</span>
-                        </span>
-                      )}
-                    </label>
-                    <input
-                      type="email"
-                      required
-                      placeholder="e.g. salim@example.com"
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full bg-white border border-gray-200 text-xs p-3 rounded focus:outline-none focus:ring-1 focus:ring-[#004B23]"
-                    />
-                  </div>
-
-                  {/* Password */}
-                  <div>
-                    <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">
-                      {currentLanguage === 'en' ? "Password" : 'पासवर्ड'} <span className="text-red-600">*</span>
-                    </label>
-                    <div className="relative">
-                      <input
-                        type={showPassword ? "text" : "password"}
-                        required
-                        placeholder="Create a strong password"
-                        value={formData.password}
-                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                        className="w-full bg-white border border-gray-200 text-xs p-3 pr-10 rounded focus:outline-none focus:ring-1 focus:ring-[#004B23]"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
-                        tabIndex={-1}
-                      >
-                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      </button>
-                    </div>
-
-                    {/* Password Strength Indicator */}
-                    {formData.password && (
-                      <div className="mt-2 space-y-1.5 p-2 bg-gray-50 rounded-lg border border-gray-100 text-[10px]">
-                        <div className="flex justify-between items-center mb-1 font-bold">
-                          <span className="text-gray-500 uppercase">
-                            {currentLanguage === 'en' ? 'Password Strength:' : 'पासवर्ड शक्ति:'}
-                          </span>
-                          <span className={
-                            passwordStrength <= 20 ? 'text-rose-500' :
-                            passwordStrength <= 60 ? 'text-amber-500' :
-                            passwordStrength <= 80 ? 'text-blue-500' : 'text-emerald-500'
-                          }>
-                            {passwordStrength === 20 ? (currentLanguage === 'en' ? 'Very Weak' : 'बहुत कमजोर') :
-                             passwordStrength === 40 ? (currentLanguage === 'en' ? 'Weak' : 'कमजोर') :
-                             passwordStrength === 60 ? (currentLanguage === 'en' ? 'Medium' : 'मध्यम') :
-                             passwordStrength === 80 ? (currentLanguage === 'en' ? 'Strong' : 'मजबूत') :
-                             (currentLanguage === 'en' ? 'Very Strong (Secure)' : 'बहुत मजबूत (सुरक्षित)')}
-                          </span>
-                        </div>
-                        <div className="w-full bg-gray-200 h-1 rounded-full overflow-hidden">
-                          <div 
-                            className={`h-full transition-all duration-300 ${
-                              passwordStrength <= 20 ? 'bg-rose-500' :
-                              passwordStrength <= 60 ? 'bg-amber-500' :
-                              passwordStrength <= 80 ? 'bg-blue-500' : 'bg-emerald-500'
-                            }`}
-                            style={{ width: `${passwordStrength}%` }}
-                          />
-                        </div>
-
-                        {/* Criteria Checklist */}
-                        <div className="grid grid-cols-2 gap-x-2 gap-y-1 mt-1 text-[9px] font-medium text-gray-500">
-                          <div className="flex items-center space-x-1">
-                            <span className={passwordCriteria.hasMinLength ? 'text-emerald-500 font-bold' : 'text-gray-400'}>
-                              {passwordCriteria.hasMinLength ? '✓' : '•'}
-                            </span>
-                            <span>{currentLanguage === 'en' ? '8+ Characters' : '8+ अक्षर'}</span>
-                          </div>
-                          <div className="flex items-center space-x-1">
-                            <span className={passwordCriteria.hasUppercase ? 'text-emerald-500 font-bold' : 'text-gray-400'}>
-                              {passwordCriteria.hasUppercase ? '✓' : '•'}
-                            </span>
-                            <span>{currentLanguage === 'en' ? 'Uppercase (A-Z)' : 'बड़ा अक्षर'}</span>
-                          </div>
-                          <div className="flex items-center space-x-1">
-                            <span className={passwordCriteria.hasLowercase ? 'text-emerald-500 font-bold' : 'text-gray-400'}>
-                              {passwordCriteria.hasLowercase ? '✓' : '•'}
-                            </span>
-                            <span>{currentLanguage === 'en' ? 'Lowercase (a-z)' : 'छोटा अक्षर'}</span>
-                          </div>
-                          <div className="flex items-center space-x-1">
-                            <span className={passwordCriteria.hasNumber ? 'text-emerald-500 font-bold' : 'text-gray-400'}>
-                              {passwordCriteria.hasNumber ? '✓' : '•'}
-                            </span>
-                            <span>{currentLanguage === 'en' ? 'Number (0-9)' : 'संख्या (0-9)'}</span>
-                          </div>
-                          <div className="flex items-center space-x-1 col-span-2">
-                            <span className={passwordCriteria.hasSpecial ? 'text-emerald-500 font-bold' : 'text-gray-400'}>
-                              {passwordCriteria.hasSpecial ? '✓' : '•'}
-                            </span>
-                            <span>{currentLanguage === 'en' ? 'Special Character (!@#$ etc.)' : 'विशेष वर्ण (!@#$ आदि)'}</span>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Confirm Password */}
-                  <div>
-                    <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">
-                      {currentLanguage === 'en' ? "Confirm Password" : 'पासवर्ड की पुष्टि'} <span className="text-red-600">*</span>
-                    </label>
-                    <div className="relative">
-                      <input
-                        type={showConfirmPassword ? "text" : "password"}
-                        required
-                        placeholder="Re-enter your password"
-                        value={formData.confirmPassword}
-                        onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                        className="w-full bg-white border border-gray-200 text-xs p-3 pr-10 rounded focus:outline-none focus:ring-1 focus:ring-[#004B23]"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
-                        tabIndex={-1}
-                      >
-                        {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      </button>
-                    </div>
-
-                    {formData.confirmPassword && (
-                      <div className="mt-1.5 flex items-center space-x-1 text-[10px] font-bold">
-                        {formData.password === formData.confirmPassword ? (
-                          <span className="text-emerald-600 flex items-center gap-1">
-                            <CheckCircle2 className="h-3 w-3" />
-                            {currentLanguage === 'en' ? 'Passwords match' : 'पासवर्ड मेल खाते हैं'}
-                          </span>
-                        ) : (
-                          <span className="text-rose-500 flex items-center gap-1 animate-pulse">
-                            <XCircle className="h-3 w-3 animate-bounce" />
-                            {currentLanguage === 'en' ? 'Passwords do not match' : 'पासवर्ड मेल नहीं खाते'}
-                          </span>
-                        )}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Education */}
-                  <div>
-                    <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">
-                      {currentLanguage === 'en' ? 'Highest Education' : 'उच्चतम शिक्षा'}
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Graduate, PG, ITI, etc."
-                      value={formData.education}
-                      onChange={(e) => setFormData({ ...formData, education: e.target.value })}
-                      className="w-full bg-white border border-gray-200 text-xs p-3 rounded focus:outline-none focus:ring-1 focus:ring-[#004B23]"
-                    />
-                  </div>
-
-                  {/* Occupation */}
-                  <div>
-                    <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">
-                      {currentLanguage === 'en' ? 'Occupation / Business' : 'व्यवसाय / नौकरी'}
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Shopkeeper, Teacher, Engineer"
-                      value={formData.occupation}
-                      onChange={(e) => setFormData({ ...formData, occupation: e.target.value })}
-                      className="w-full bg-white border border-gray-200 text-xs p-3 rounded focus:outline-none focus:ring-1 focus:ring-[#004B23]"
-                    />
-                  </div>
-
-                  {/* Aadhaar (Optional) */}
-                  <div>
-                    <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1 flex items-center space-x-1">
-                      <span>{currentLanguage === 'en' ? 'Aadhaar Number (Optional / Encrypted)' : 'आधार नंबर (वैकल्पिक)'}</span>
-                      <Shield className="h-3 w-3 text-emerald-600" />
-                    </label>
-                    <input
-                      type="text"
-                      maxLength={12}
-                      placeholder="XXXX XXXX XXXX"
-                      value={formData.aadhaar}
-                      onChange={(e) => setFormData({ ...formData, aadhaar: e.target.value })}
-                      className="w-full bg-white border border-gray-200 text-xs p-3 rounded focus:outline-none focus:ring-1 focus:ring-[#004B23] font-mono"
-                    />
-                  </div>
-
-                  {/* Address */}
-                  <div className="md:col-span-2">
-                    <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">
-                      {currentLanguage === 'en' ? 'Full Residential Address (Ward / Mohalla / Landmark)' : 'पूर्ण आवासीय पता (वार्ड / मोहल्ला)'}
-                    </label>
-                    <textarea
-                      rows={2}
-                      placeholder="Enter complete house number, street, ward, mohalla and pincode..."
-                      value={formData.address}
-                      onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                      className="w-full bg-white border border-gray-200 text-xs p-3 rounded focus:outline-none focus:ring-1 focus:ring-[#004B23]"
-                    />
-                  </div>
-
-                  {/* Emergency Contact Name */}
-                  <div>
-                    <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">
-                      {currentLanguage === 'en' ? 'Emergency Contact Name' : 'आपातकालीन संपर्क नाम'}
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="Relative or Family Member Name"
-                      value={formData.emergencyContactName}
-                      onChange={(e) => setFormData({ ...formData, emergencyContactName: e.target.value })}
-                      className="w-full bg-white border border-gray-200 text-xs p-3 rounded focus:outline-none focus:ring-1 focus:ring-[#004B23]"
-                    />
-                  </div>
-
-                  {/* Emergency Contact Phone */}
-                  <div>
-                    <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">
-                      {currentLanguage === 'en' ? 'Emergency Contact Phone' : 'आपातकालीन फोन नंबर'}
-                    </label>
-                    <input
-                      type="tel"
-                      placeholder="+91 XXXXX XXXXX"
-                      value={formData.emergencyContactPhone}
-                      onChange={(e) => setFormData({ ...formData, emergencyContactPhone: e.target.value })}
-                      className="w-full bg-white border border-gray-200 text-xs p-3 rounded focus:outline-none focus:ring-1 focus:ring-[#004B23]"
-                    />
-                  </div>
-
-                  {/* Document Upload */}
-                  <div>
-                    <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">
-                      {currentLanguage === 'en' ? 'Document Upload (ID / Address Proof)' : 'पहचान या पता प्रमाण पत्र अपलोड'}
-                    </label>
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="file"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) {
-                            setDocumentFile(file);
-                            setFormData({ ...formData, documentName: file.name });
-                          }
-                        }}
-                        className="w-full text-xs text-gray-500 file:mr-3 file:py-2 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-[#004B23] hover:file:bg-emerald-100 bg-white border border-gray-200 rounded p-1.5"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Photo Upload */}
-                  <div>
-                    <label className="block text-[10px] font-bold text-gray-700 uppercase mb-1">
-                      {currentLanguage === 'en' ? 'Profile Photo Upload (Passport Size)' : 'पासपोर्ट साइज फोटो अपलोड'}
-                    </label>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) {
-                          setPhotoFile(file);
-                          setFormData({ ...formData, photoUrl: file.name });
-                        }
-                      }}
-                      className="w-full text-xs text-gray-500 file:mr-3 file:py-2 file:px-3 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-amber-50 file:text-amber-800 hover:file:bg-amber-100 bg-white border border-gray-200 rounded p-1.5"
-                    />
-                  </div>
-                </div>
-
-                {/* 🔒 VERIFICATION GATEWAY (Email & Mobile) */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8" id="registration_verification_gateway">
-                  {/* Card 1: Email Verification */}
-                  <motion.div 
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                    className="bg-white p-6 rounded-2xl border border-gray-100 shadow-xl flex flex-col h-full ring-1 ring-gray-900/5 hover:shadow-2xl transition-shadow duration-300"
-                  >
-                    <div className="flex items-center justify-between mb-6">
-                      <div className="flex items-center space-x-3">
-                        <div className="p-2.5 bg-blue-50 rounded-xl">
-                          <Mail className="h-6 w-6 text-blue-600" />
-                        </div>
-                        <h4 className="font-bold text-slate-900 tracking-tight text-sm">
-                          {currentLanguage === 'en' ? 'Email Verification' : 'ईमेल सत्यापन'}
-                        </h4>
-                      </div>
-                      <div className="shrink-0">
-                        {formData.emailVerified ? (
-                          <motion.span 
-                            initial={{ scale: 0.8 }}
-                            animate={{ scale: 1 }}
-                            className="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 shadow-sm border border-emerald-200"
-                          >
-                            <CheckCircle2 className="h-3 w-3" />
-                            {currentLanguage === 'en' ? 'Verified' : 'सत्यापित'}
-                          </motion.span>
-                        ) : (
-                          <span className="px-3 py-1 bg-rose-100 text-rose-700 rounded-full text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 border border-rose-200">
-                            <XCircle className="h-3 w-3" />
-                            {currentLanguage === 'en' ? 'Not Verified' : 'सत्यापित नहीं'}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="flex-grow flex flex-col justify-between space-y-4">
-                      <div className="space-y-1.5">
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Registered Identity</p>
-                        <p className="text-xs font-semibold text-gray-800 break-all bg-gray-50/80 p-3 rounded-lg border border-gray-100/50">
-                          {formData.email || (currentLanguage === 'en' ? 'No email provided' : 'ईमेल प्रदान नहीं किया गया')}
-                        </p>
-                      </div>
-                      
-                      {!formData.emailVerified ? (
-                        <div className="pt-2">
-                          <p className="text-[11px] text-gray-500 mb-4 leading-relaxed italic">
-                            {currentLanguage === 'en' ? 'Required: Enter your Name, Email, Mobile and Choose a Password, then click below to verify your email.' : 'अनिवार्य: अपना नाम, ईमेल, मोबाइल दर्ज करें और एक पासवर्ड चुनें, फिर अपना ईमेल सत्यापित करने के लिए नीचे क्लिक करें।'}
-                          </p>
-                          {emailVerificationError && (
-                            <div className="mb-4 p-3.5 bg-rose-50 text-rose-700 rounded-xl border border-rose-200 text-xs font-bold flex flex-col gap-1.5 animate-fadeIn">
-                              <span className="flex items-center gap-1 text-rose-800">
-                                <XCircle className="h-4 w-4 shrink-0 text-rose-600" />
-                                {currentLanguage === 'en' ? 'Email sending failed' : 'ईमेल भेजने में विफल'}
-                              </span>
-                              <span className="font-mono text-[11px] bg-white p-2 rounded border border-rose-100 font-bold block select-all">
-                                {emailVerificationError}
-                              </span>
-                            </div>
-                          )}
-
-                           <button
-                            type="button"
-                            disabled={isSendingEmail || emailVerifyTimer > 0 || !formData.email || !formData.name || !formData.password}
-                            onClick={handleSendEmailVerification}
-                            className="w-full py-3 bg-[#004B23] text-white text-[11px] font-black uppercase tracking-widest rounded-xl hover:bg-[#00381a] transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-emerald-900/10 disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed flex items-center justify-center space-x-2"
-                          >
-                            {isSendingEmail ? (
-                              <>
-                                <RefreshCw className="h-3 w-3 animate-spin" />
-                                <span>{currentLanguage === 'en' ? 'Sending Verification...' : 'सत्यापन भेजा जा रहा है...'}</span>
-                              </>
-                            ) : emailVerifyTimer > 0 ? (
-                              <>
-                                <RefreshCw className="h-3 w-3 animate-spin" />
-                                <span>{currentLanguage === 'en' ? 'Resend in' : 'पुनः भेजें'} {emailVerifyTimer}s</span>
-                              </>
-                            ) : (
-                              <span>{currentLanguage === 'en' ? 'Send Verification Link' : 'सत्यापन लिंक भेजें'}</span>
-                            )}
-                          </button>
-
-                          <button
-                            type="button"
-                            onClick={async () => {
-                              if (!supabase) {
-                                alert(currentLanguage === 'en' ? 'Supabase is not configured.' : 'सुपारी कॉन्फ़िगर नहीं है।');
-                                return;
-                              }
-                              const { data: { session: activeSession }, error } = await supabase.auth.refreshSession();
-                              if (error) {
-                                alert(currentLanguage === 'en' ? 'Error checking status: ' + error.message : 'स्थिति की जांच करने में त्रुटि: ' + error.message);
-                                return;
-                              }
-                              if (activeSession?.user && activeSession.user.email === formData.email) {
-                                const isVerified = !!activeSession.user.email_confirmed_at;
-                                if (isVerified) {
-                                  setFormData(prev => ({ ...prev, emailVerified: true }));
-                                  alert(currentLanguage === 'en' ? 'Email verified successfully!' : 'ईमेल सफलतापूर्वक सत्यापित!');
-                                } else {
-                                  alert(currentLanguage === 'en' ? 'Email is not verified yet. Please click the link in your email.' : 'ईमेल अभी सत्यापित नहीं हुआ है। कृपया अपने ईमेल में दिए गए लिंक पर क्लिक करें।');
-                                }
-                              } else {
-                                alert(currentLanguage === 'en' ? 'No active session found for this email. Please make sure you clicked the link.' : 'इस ईमेल के लिए कोई सक्रिय सत्र नहीं मिला। कृपया सुनिश्चित करें कि आपने लिंक पर क्लिक किया है।');
-                              }
-                            }}
-                            className="w-full mt-2.5 py-2 bg-[#004B23]/10 hover:bg-[#004B23]/20 text-[#004B23] text-[10px] font-bold uppercase tracking-widest rounded-lg transition-all flex items-center justify-center space-x-1 border border-[#004B23]/20"
-                          >
-                            <span>🔍 {currentLanguage === 'en' ? "Check Verification Status" : 'सत्यापन स्थिति जांचें'}</span>
-                          </button>
-                        </div>
-                      ) : (
-                        <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-100 flex items-center space-x-3 mt-auto">
-                          <div className="p-2 bg-white rounded-full shadow-sm text-emerald-600">
-                            <Check className="h-5 w-5" />
-                          </div>
-                          <p className="text-[11px] font-bold text-emerald-800 leading-tight">
-                            {currentLanguage === 'en' ? 'Authentication successful! Identity confirmed.' : 'प्रमाणीकरण सफल! पहचान की पुष्टि हो गई।'}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  </motion.div>
-
-                  {/* Card 2: Mobile Verification */}
-                  <motion.div 
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.1 }}
-                    className="bg-white p-6 rounded-2xl border border-gray-100 shadow-xl flex flex-col h-full ring-1 ring-gray-900/5 hover:shadow-2xl transition-shadow duration-300"
-                  >
-                    <div className="flex items-center justify-between mb-6">
-                      <div className="flex items-center space-x-3">
-                        <div className="p-2.5 bg-emerald-50 rounded-xl">
-                          <Phone className="h-6 w-6 text-[#004B23]" />
-                        </div>
-                        <h4 className="font-bold text-slate-900 tracking-tight text-sm">
-                          {currentLanguage === 'en' ? 'Mobile Verification' : 'मोबाइल सत्यापन'}
-                        </h4>
-                      </div>
-                      <div className="shrink-0">
-                        {formData.otpVerified ? (
-                          <motion.span 
-                            initial={{ scale: 0.8 }}
-                            animate={{ scale: 1 }}
-                            className="px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 shadow-sm border border-emerald-200"
-                          >
-                            <CheckCircle2 className="h-3 w-3" />
-                            {currentLanguage === 'en' ? 'Verified' : 'सत्यापित'}
-                          </motion.span>
-                        ) : (
-                          <span className="px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 border border-amber-200">
-                            <AlertTriangle className="h-3 w-3" />
-                            {currentLanguage === 'en' ? 'Optional' : 'वैकल्पिक'}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="flex-grow flex flex-col justify-between space-y-4">
-                      <div className="space-y-1.5">
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Primary Contact</p>
-                        <p className="text-xs font-semibold text-gray-800 bg-gray-50/80 p-3 rounded-lg border border-gray-100/50">
-                          {formData.phone || (currentLanguage === 'en' ? 'No number provided' : 'नंबर प्रदान नहीं किया गया')}
-                        </p>
-                      </div>
-
-                      {!formData.otpVerified ? (
-                        <div className="space-y-4 pt-2">
-                          <AnimatePresence mode="wait">
-                            {!formData.otpSent ? (
-                              <motion.div
-                                key="send-otp"
-                                initial={{ opacity: 0, scale: 0.95 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 0.95 }}
-                                className="space-y-3"
-                              >
-                                <p className="text-[11px] text-gray-500 leading-relaxed italic">
-                                  {currentLanguage === 'en' ? 'Optional: Enhanced security with Mobile OTP verification.' : 'वैकल्पिक: मोबाइल ओटीपी सत्यापन के साथ बेहतर सुरक्षा।'}
-                                </p>
-                                <button
-                                  type="button"
-                                  disabled={otpTimer > 0 || !formData.phone}
-                                  onClick={handleSendOTP}
-                                  className="w-full py-3 bg-[#0B132B] text-white text-[11px] font-black uppercase tracking-widest rounded-xl hover:bg-slate-900 transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-slate-900/10 disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed flex items-center justify-center space-x-2"
-                                >
-                                  {otpTimer > 0 ? (
-                                    <>
-                                      <RefreshCw className="h-3 w-3 animate-spin" />
-                                      <span>{currentLanguage === 'en' ? 'Resend in' : 'पुनः भेजें'} {otpTimer}s</span>
-                                    </>
-                                  ) : (
-                                    <span>{currentLanguage === 'en' ? 'Generate OTP' : 'ओटीपी जनरेट करें'}</span>
-                                  )}
-                                </button>
-                              </motion.div>
-                            ) : (
-                              <motion.div
-                                key="verify-otp"
-                                initial={{ opacity: 0, scale: 0.95 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 0.95 }}
-                                className="space-y-4"
-                              >
-                                <div className="space-y-2">
-                                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest block text-center">Enter 6-Digit Code</label>
-                                  <div className="flex items-center space-x-2">
-                                    <input
-                                      type="text"
-                                      maxLength={6}
-                                      placeholder="••••••"
-                                      value={formData.otpInput}
-                                      onChange={(e) => setFormData({ ...formData, otpInput: e.target.value })}
-                                      className="flex-grow p-3 text-sm border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#004B23] font-mono tracking-[0.5em] text-center bg-gray-50 font-bold"
-                                    />
-                                    <button
-                                      type="button"
-                                      onClick={() => setFormData({ ...formData, otpSent: false })}
-                                      className="p-3 bg-gray-100 text-gray-500 rounded-xl hover:bg-gray-200 transition"
-                                    >
-                                      <RefreshCw className="h-4 w-4" />
-                                    </button>
-                                  </div>
-                                </div>
-                                <button
-                                  type="button"
-                                  onClick={handleVerifyOTP}
-                                  className="w-full py-3 bg-[#004B23] text-white text-[11px] font-black uppercase tracking-widest rounded-xl hover:bg-[#00381a] transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-emerald-900/10"
-                                >
-                                  {currentLanguage === 'en' ? 'Verify OTP' : 'ओटीपी सत्यापित करें'}
-                                </button>
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
-                        </div>
-                      ) : (
-                        <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-100 flex items-center space-x-3 mt-auto">
-                          <div className="p-2 bg-white rounded-full shadow-sm text-emerald-600">
-                            <Check className="h-5 w-5" />
-                          </div>
-                          <p className="text-[11px] font-bold text-emerald-800 leading-tight">
-                            {currentLanguage === 'en' ? 'Mobile bound successfully! Fingerprint secured.' : 'मोबाइल सफलतापूर्वक जुड़ गया! फ़िंगरप्रिंट सुरक्षित।'}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  </motion.div>
-                </div>
-
-                <div className="space-y-4 pt-6 border-t border-gray-100">
-                  <button
-                    type="submit"
-                    disabled={registering || !formData.emailVerified || !isMandatoryFieldsCompleted}
-                    className="w-full py-4 bg-[#004B23] text-white font-black text-xs uppercase tracking-widest rounded-2xl hover:bg-[#00381a] transition-all transform hover:scale-[1.01] active:scale-[0.99] shadow-xl shadow-emerald-900/20 disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed flex items-center justify-center space-x-3 group"
-                  >
-                    {registering ? (
-                      <>
-                        <RefreshCw className="h-4 w-4 animate-spin" />
-                        <span>{currentLanguage === 'en' ? 'Transmitting Data...' : 'डाटा भेजा जा रहा है...'}</span>
-                      </>
-                    ) : (
-                      <>
-                        <span>{currentLanguage === 'en' ? 'Submit Registration Details' : 'पंजीकरण विवरण जमा करें'}</span>
-                        <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                      </>
-                    )}
-                  </button>
-                  
-                  {!formData.emailVerified && (
-                    <p className="text-center text-[11px] text-rose-600 font-black uppercase tracking-wider bg-rose-50 py-3 px-4 rounded-xl border border-rose-100 animate-pulse">
-                      ⛔ {currentLanguage === 'en' 
-                        ? 'Please verify your email before continuing.' 
-                        : 'कृपया जारी रखने से पहले अपना ईमेल सत्यापित करें।'}
-                    </p>
-                  )}
-
-                  {formData.emailVerified && !isMandatoryFieldsCompleted && (
-                    <p className="text-center text-[11px] text-amber-600 font-bold uppercase tracking-wider bg-amber-50 py-3 px-4 rounded-xl border border-amber-100">
-                      ⚠️ {currentLanguage === 'en'
-                        ? 'Please complete all mandatory fields (*) and ensure passwords match to submit.'
-                        : 'कृपया सभी अनिवार्य फ़ील्ड (*) पूरे करें और पासवर्ड मिलान सुनिश्चित करें।'}
-                    </p>
-                  )}
-                </div>
-
-                {/* Removed Volunteer Assistance Card as per user request */}
-              </form>
-            )}
+            <button
+              onClick={() => setActiveSubTab('overview')}
+              className="w-full py-3.5 bg-[#004B23] text-white font-bold text-xs uppercase tracking-wider rounded-xl hover:bg-[#00381a] transition flex items-center justify-center space-x-2 shadow cursor-pointer"
+            >
+              <span>{currentLanguage === 'en' ? 'View Community Hub Overview' : 'सामुदायिक ईआरपी हब देखें'}</span>
+              <ArrowRight className="h-4 w-4" />
+            </button>
           </div>
         )}
+
+
+
+
+
+
+
+
 
         {/* 3. MEMBER PORTAL DASHBOARD (SIMULATED FOR LOGGED IN) */}
         {activeSubTab === 'dashboard' && isLoggedIn && (

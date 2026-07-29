@@ -14,7 +14,6 @@ import {
   RAW_EDUCATION_IMAGE_URLS 
 } from '../data/educationGalleryImages';
 import { Language } from '../types';
-import PremiumLightbox from './common/PremiumLightbox';
 
 interface EducationGalleryProps {
   currentLanguage: Language;
@@ -156,16 +155,6 @@ export default function EducationGallery({ currentLanguage, onClose }: Education
   }, [visibleCount, filteredImages.length]);
 
   // Lightbox Navigation Functions
-  const educationLightboxItems = useMemo(() => {
-    return filteredImages.map(img => ({
-      src: img.url,
-      title: currentLanguage === 'en' ? img.titleEn : img.titleHi,
-      description: `Category: ${img.category} • Drive ID: ${img.driveId}`,
-      category: img.category,
-      album: 'Education Gallery'
-    }));
-  }, [filteredImages, currentLanguage]);
-
   const openLightbox = useCallback((index: number) => {
     setActiveIndex(index);
     setZoomScale(1);
@@ -773,15 +762,250 @@ export default function EducationGallery({ currentLanguage, onClose }: Education
       </div>
 
       {/* ========================================================= */}
-      {/* 5. UNIVERSAL PREMIUM LIGHTBOX VIEWER                      */}
+      {/* 5. FULL SCREEN LIGHTBOX MODAL WITH ZOOM & SLIDESHOW      */}
       {/* ========================================================= */}
-      <PremiumLightbox
-        isOpen={lightboxOpen}
-        onClose={() => setLightboxOpen(false)}
-        items={educationLightboxItems}
-        initialIndex={activeIndex}
-        albumTitle="Education Gallery Archive"
-      />
+      <AnimatePresence>
+        {lightboxOpen && currentActiveImage && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/95 backdrop-blur-xl flex flex-col justify-between overflow-hidden select-none"
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+          >
+            {/* LIGHTBOX HEADER TOOLBAR */}
+            <div className="p-4 bg-gradient-to-b from-black/80 to-transparent flex items-center justify-between text-white z-10">
+              
+              {/* Asset Info & Index Counter */}
+              <div className="flex items-center space-x-3">
+                <span className="bg-[#F4C430] text-[#00381A] font-black text-xs px-2.5 py-1 rounded-lg">
+                  {activeIndex + 1} / {filteredImages.length}
+                </span>
+                <div>
+                  <h3 className="text-sm sm:text-base font-bold text-white truncate max-w-md">
+                    {currentLanguage === 'en' ? currentActiveImage.titleEn : currentActiveImage.titleHi}
+                  </h3>
+                  <div className="flex items-center space-x-2 text-[11px] text-gray-300 font-medium">
+                    <span className="bg-white/20 px-2 py-0.5 rounded">{currentActiveImage.category}</span>
+                    <span>• ID: {currentActiveImage.driveId}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Lightbox Controls */}
+              <div className="flex items-center space-x-1 sm:space-x-2">
+                {/* Zoom Controls */}
+                <button 
+                  onClick={() => setZoomScale(z => Math.max(z - 0.5, 1))}
+                  className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition"
+                  title="Zoom Out (-)"
+                >
+                  <ZoomOut className="h-4 w-4" />
+                </button>
+                <span className="text-xs font-mono font-bold text-emerald-400 min-w-10 text-center">
+                  {Math.round(zoomScale * 100)}%
+                </span>
+                <button 
+                  onClick={() => setZoomScale(z => Math.min(z + 0.5, 4))}
+                  className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition"
+                  title="Zoom In (+)"
+                >
+                  <ZoomIn className="h-4 w-4" />
+                </button>
+                {zoomScale > 1 && (
+                  <button 
+                    onClick={() => { setZoomScale(1); setPanOffset({ x: 0, y: 0 }); }}
+                    className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition text-xs font-bold"
+                    title="Reset Zoom (0)"
+                  >
+                    Reset
+                  </button>
+                )}
+
+                {/* Slideshow Button */}
+                <button 
+                  onClick={() => setIsPlayingSlideshow(p => !p)}
+                  className={`p-2 rounded-xl transition flex items-center gap-1 text-xs font-bold ${
+                    isPlayingSlideshow ? 'bg-[#F4C430] text-[#00381A]' : 'bg-white/10 hover:bg-white/20 text-white'
+                  }`}
+                  title="Slideshow (Space)"
+                >
+                  {isPlayingSlideshow ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                  <span className="hidden md:inline">{isPlayingSlideshow ? 'Pause' : 'Play'}</span>
+                </button>
+
+                {/* Copy Link */}
+                <button 
+                  onClick={() => handleCopyLink(currentActiveImage.url, currentActiveImage.driveId)}
+                  className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition"
+                  title="Copy HD Image Link"
+                >
+                  {copiedId === currentActiveImage.driveId ? <Check className="h-4 w-4 text-emerald-400" /> : <Copy className="h-4 w-4" />}
+                </button>
+
+                {/* Open Drive */}
+                <a 
+                  href={currentActiveImage.originalUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-white transition inline-block"
+                  title="Open Original in Google Drive"
+                >
+                  <ExternalLink className="h-4 w-4" />
+                </a>
+
+                {/* Toggle Inspector */}
+                <button 
+                  onClick={() => setShowInfoPanel(p => !p)}
+                  className={`p-2 rounded-xl transition ${showInfoPanel ? 'bg-emerald-600 text-white' : 'bg-white/10 hover:bg-white/20 text-white'}`}
+                  title="Info Panel (I)"
+                >
+                  <Info className="h-4 w-4" />
+                </button>
+
+                {/* Close Lightbox */}
+                <button 
+                  onClick={closeLightbox}
+                  className="p-2 rounded-xl bg-red-600/80 hover:bg-red-600 text-white transition ml-2"
+                  title="Close (Esc)"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+
+            </div>
+
+            {/* LIGHTBOX MAIN DISPLAY CANVAS */}
+            <div 
+              className="flex-grow relative flex items-center justify-center p-4 overflow-hidden cursor-grab active:cursor-grabbing"
+              onMouseDown={handleMouseDownPan}
+              onMouseMove={handleMouseMovePan}
+              onMouseUp={handleMouseUpPan}
+            >
+              {/* Previous Button */}
+              <button 
+                onClick={prevImage}
+                className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-3 sm:p-4 rounded-full bg-black/60 hover:bg-black/90 border border-white/20 text-white transition transform hover:scale-110 active:scale-95"
+                title="Previous Image (Left Arrow)"
+              >
+                <ChevronLeft className="h-6 w-6 sm:h-8 sm:w-8" />
+              </button>
+
+              {/* Next Button */}
+              <button 
+                onClick={nextImage}
+                className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-3 sm:p-4 rounded-full bg-black/60 hover:bg-black/90 border border-white/20 text-white transition transform hover:scale-110 active:scale-95"
+                title="Next Image (Right Arrow)"
+              >
+                <ChevronRight className="h-6 w-6 sm:h-8 sm:w-8" />
+              </button>
+
+              {/* Main Image View */}
+              <div className="relative max-w-full max-h-full flex items-center justify-center">
+                <motion.img 
+                  key={currentActiveImage.id}
+                  src={`https://lh3.googleusercontent.com/d/${currentActiveImage.driveId}=s2000`}
+                  alt={currentActiveImage.titleEn}
+                  className="max-h-[78vh] max-w-full object-contain rounded-lg shadow-2xl transition-transform duration-200 pointer-events-none"
+                  style={{
+                    transform: `scale(${zoomScale}) translate(${panOffset.x / zoomScale}px, ${panOffset.y / zoomScale}px)`
+                  }}
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).src = currentActiveImage.fallbackUrl;
+                  }}
+                />
+              </div>
+
+              {/* Inspector Details Modal Drawer Overlay */}
+              <AnimatePresence>
+                {showInfoPanel && (
+                  <motion.div 
+                    initial={{ x: 300, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    exit={{ x: 300, opacity: 0 }}
+                    className="absolute right-4 top-4 bottom-4 w-80 bg-gray-900/95 border border-gray-700 backdrop-blur-2xl rounded-2xl p-5 text-white shadow-2xl z-30 overflow-y-auto space-y-4"
+                  >
+                    <div className="flex items-center justify-between border-b border-gray-700 pb-3">
+                      <h4 className="font-bold text-sm text-[#F4C430] flex items-center gap-2">
+                        <Info className="h-4 w-4" /> Asset Metadata
+                      </h4>
+                      <button onClick={() => setShowInfoPanel(false)} className="text-gray-400 hover:text-white">
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+
+                    <div className="space-y-3 text-xs">
+                      <div>
+                        <span className="text-gray-400 block text-[10px] uppercase font-bold">English Title</span>
+                        <p className="font-semibold text-gray-200">{currentActiveImage.titleEn}</p>
+                      </div>
+
+                      <div>
+                        <span className="text-gray-400 block text-[10px] uppercase font-bold">Hindi Title</span>
+                        <p className="font-semibold text-gray-200">{currentActiveImage.titleHi}</p>
+                      </div>
+
+                      <div>
+                        <span className="text-gray-400 block text-[10px] uppercase font-bold">Category</span>
+                        <span className="bg-emerald-900 text-emerald-200 px-2 py-0.5 rounded text-[10px] font-bold">
+                          {currentActiveImage.category}
+                        </span>
+                      </div>
+
+                      <div>
+                        <span className="text-gray-400 block text-[10px] uppercase font-bold">Google Drive File ID</span>
+                        <p className="font-mono text-gray-300 break-all bg-black/50 p-2 rounded border border-gray-800">
+                          {currentActiveImage.driveId}
+                        </p>
+                      </div>
+
+                      <div>
+                        <span className="text-gray-400 block text-[10px] uppercase font-bold">Direct Edge URL</span>
+                        <p className="font-mono text-[10px] text-gray-400 break-all bg-black/50 p-2 rounded border border-gray-800">
+                          {currentActiveImage.url}
+                        </p>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+            </div>
+
+            {/* LIGHTBOX BOTTOM THUMBNAIL CAROUSEL STRIP */}
+            <div className="p-3 bg-black/90 border-t border-white/10 flex items-center space-x-2 overflow-x-auto scrollbar-thin">
+              {filteredImages.map((img, idx) => (
+                <button
+                  key={img.id}
+                  onClick={() => {
+                    setActiveIndex(idx);
+                    setZoomScale(1);
+                    setPanOffset({ x: 0, y: 0 });
+                  }}
+                  className={`relative shrink-0 h-14 w-20 rounded-lg overflow-hidden border-2 transition duration-200 ${
+                    activeIndex === idx ? 'border-[#F4C430] scale-105 shadow-lg' : 'border-transparent opacity-50 hover:opacity-100'
+                  }`}
+                >
+                  <img 
+                    src={img.url} 
+                    alt="" 
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = img.fallbackUrl;
+                    }}
+                  />
+                  {activeIndex === idx && (
+                    <div className="absolute inset-0 bg-[#F4C430]/20" />
+                  )}
+                </button>
+              ))}
+            </div>
+
+          </motion.div>
+        )}
+      </AnimatePresence>
 
     </div>
   );
