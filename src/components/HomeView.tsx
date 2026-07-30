@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { ProfileImage } from './common/ProfileImage';
 import { 
   ShieldCheck, ArrowRight, UserPlus, FileText, Landmark, BookOpen, 
   MapPin, Heart, Briefcase, Sparkles, Star, Video, Calendar, Hand, 
@@ -1517,14 +1518,18 @@ export default function HomeView({ currentLanguage, onNavigate }: HomeViewProps)
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <img
+                    <ProfileImage
                       src={ach.photoUrl}
                       alt={ach.name}
-                      className="w-16 h-16 rounded-xl object-cover border-2 border-[#FFD54A] shadow-md group-hover:scale-105 transition"
+                      name={ach.displayName ? `${ach.name} (${ach.displayName})` : ach.name}
+                      designation={ach.designation}
+                      badge={ach.categoryTier === 'hajj' || (ach.categoryTier as string) === 'hajj-pilgrims' || ach.hajjYear ? '🕋 Hajiyon Pilgrim' : '🏆 Top Achiever'}
+                      size="md"
+                      containerClassName="w-16 h-16 rounded-xl border-2 border-[#FFD54A] shadow-md group-hover:scale-105 transition"
                     />
                     <div>
                       <span className="text-[10px] font-black uppercase tracking-wider text-[#FFD54A] bg-[#FFD54A]/10 border border-[#FFD54A]/30 px-2 py-0.5 rounded-full inline-block">
-                        #{idx + 1} {ach.categoryTier === 'hajj-pilgrims' || ach.hajjYear ? '🕋 Hajiyon Pilgrim' : '🏆 Top Achiever'}
+                        #{idx + 1} {ach.categoryTier === 'hajj' || (ach.categoryTier as string) === 'hajj-pilgrims' || ach.hajjYear ? '🕋 Hajiyon Pilgrim' : '🏆 Top Achiever'}
                       </span>
                       <h3 className="text-base font-black text-white mt-1 group-hover:text-[#FFD54A] transition">
                         {ach.name}

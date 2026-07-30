@@ -19,7 +19,11 @@ import {
   FileText,
   Sparkles,
   HelpCircle,
-  Send
+  Send,
+  Phone,
+  MapPin,
+  GraduationCap,
+  Star
 } from 'lucide-react';
 
 interface ExcellenceAdminPanelProps {
@@ -407,7 +411,10 @@ const ExcellenceAdminPanel: React.FC<ExcellenceAdminPanelProps> = ({
                         <div className="flex items-center gap-4">
                           <ProfileImage 
                             src={ach.photoUrl} 
-                            alt="" 
+                            alt={ach.name} 
+                            name={ach.name}
+                            designation={ach.designation}
+                            badge={ach.organization || 'Hall of Excellence'}
                             size="md"
                             containerClassName="rounded-xl border border-gray-200"
                           />

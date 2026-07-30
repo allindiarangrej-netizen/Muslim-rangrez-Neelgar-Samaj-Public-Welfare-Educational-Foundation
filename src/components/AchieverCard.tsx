@@ -50,7 +50,7 @@ const AchieverCard: React.FC<AchieverCardProps> = ({
   const [copied, setCopied] = useState(false);
 
   // Dynamic Tier visual config
-  const isHajj = achiever.categoryTier === 'hajj' || achiever.categoryTier === 'hajj-pilgrims' || Boolean(achiever.hajjYear) || achiever.categoryId === 'hajj-pilgrims';
+  const isHajj = achiever.categoryTier === 'hajj' || (achiever.categoryTier as string) === 'hajj-pilgrims' || Boolean(achiever.hajjYear) || achiever.categoryId === 'hajj-pilgrims';
   const computedTier = achiever.categoryTier || detectCategoryTier(achiever.designation, achiever.occupation, achiever.categoryId);
   const professionTag = detectProfessionTag(achiever.designation, achiever.occupation, achiever.categoryId);
 
@@ -101,9 +101,9 @@ const AchieverCard: React.FC<AchieverCardProps> = ({
       className={`group relative rounded-3xl border shadow-md hover:shadow-2xl hover:scale-[1.03] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between overflow-hidden cursor-pointer select-none ${
         isHajj
           ? 'bg-gradient-to-b from-amber-50/40 via-white to-emerald-50/30 border-amber-300/80 hover:border-[#004B23] hover:shadow-emerald-900/20'
-          : tier === 'diamond-tier'
+          : computedTier === 'diamond'
           ? 'bg-gradient-to-b from-cyan-50/50 via-white to-blue-50/30 border-cyan-300/80 hover:border-cyan-600 hover:shadow-cyan-900/20'
-          : tier === 'lifetime-inspiration'
+          : computedTier === 'lifetime'
           ? 'bg-gradient-to-b from-purple-50/50 via-white to-amber-50/30 border-purple-300/80 hover:border-purple-600 hover:shadow-purple-900/20'
           : 'bg-white border-gray-200/90 hover:border-[#004B23]/80 hover:shadow-[#004B23]/20'
       }`}
@@ -141,9 +141,12 @@ const AchieverCard: React.FC<AchieverCardProps> = ({
           <ProfileImage
             src={achiever.photoUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80'}
             alt={achiever.name}
+            name={achiever.displayName ? `${achiever.name} (${achiever.displayName})` : achiever.name}
+            designation={achiever.designation}
+            badge={isHajj ? '🕋 Hajiyon Pilgrim' : achiever.badges?.[0] || 'Hall of Excellence'}
             size="xl"
             containerClassName={`sm:w-32 sm:h-32 rounded-2xl border-2 shadow-md group-hover:scale-105 transition-all duration-300 ${
-              isHajj ? 'border-amber-400 shadow-amber-200' : tier === 'diamond-tier' ? 'border-cyan-400' : 'border-[#F4C430]'
+              isHajj ? 'border-amber-400 shadow-amber-200' : computedTier === 'diamond' ? 'border-cyan-400' : 'border-[#F4C430]'
             }`}
             className="group-hover:scale-110 transition-transform duration-500 ease-out"
           />
@@ -168,42 +171,42 @@ const AchieverCard: React.FC<AchieverCardProps> = ({
                 <span>🕋 Haji {achiever.hajjYear ? `(${achiever.hajjYear})` : ''}</span>
               </span>
             )}
-            {(computedTier === 'diamond' || computedTier === 'diamond-tier') && !isHajj && (
+            {computedTier === 'diamond' && !isHajj && (
               <span className="inline-flex items-center gap-1 bg-cyan-950 text-cyan-200 font-extrabold text-[10px] px-2.5 py-0.5 rounded-full border border-cyan-400/60 shadow-xs">
                 <span>💎 Diamond Tier</span>
               </span>
             )}
-            {(computedTier === 'platinum' || computedTier === 'platinum-tier') && !isHajj && (
+            {computedTier === 'platinum' && !isHajj && (
               <span className="inline-flex items-center gap-1 bg-slate-900 text-slate-100 font-extrabold text-[10px] px-2.5 py-0.5 rounded-full border border-slate-300/60 shadow-xs">
                 <span>🏆 Platinum Tier</span>
               </span>
             )}
-            {(computedTier === 'gold' || computedTier === 'gold-tier') && !isHajj && (
+            {computedTier === 'gold' && !isHajj && (
               <span className="inline-flex items-center gap-1 bg-amber-950 text-amber-200 font-extrabold text-[10px] px-2.5 py-0.5 rounded-full border border-amber-400/60 shadow-xs">
                 <span>🥇 Gold Tier</span>
               </span>
             )}
-            {(computedTier === 'silver' || computedTier === 'silver-tier') && !isHajj && (
+            {computedTier === 'silver' && !isHajj && (
               <span className="inline-flex items-center gap-1 bg-zinc-800 text-zinc-100 font-extrabold text-[10px] px-2.5 py-0.5 rounded-full border border-zinc-300/60 shadow-xs">
                 <span>🥈 Silver Tier</span>
               </span>
             )}
-            {(computedTier === 'bronze' || computedTier === 'bronze-tier') && !isHajj && (
+            {computedTier === 'bronze' && !isHajj && (
               <span className="inline-flex items-center gap-1 bg-amber-900 text-amber-100 font-extrabold text-[10px] px-2.5 py-0.5 rounded-full border border-amber-500/60 shadow-xs">
                 <span>🥉 Bronze Tier</span>
               </span>
             )}
-            {(computedTier === 'rising' || computedTier === 'rising-star') && !isHajj && (
+            {computedTier === 'rising' && !isHajj && (
               <span className="inline-flex items-center gap-1 bg-purple-950 text-purple-200 font-extrabold text-[10px] px-2.5 py-0.5 rounded-full border border-purple-400/60 shadow-xs">
                 <span>⭐ Rising Star</span>
               </span>
             )}
-            {(computedTier === 'leadership' || computedTier === 'community-leadership') && !isHajj && (
+            {computedTier === 'leadership' && !isHajj && (
               <span className="inline-flex items-center gap-1 bg-emerald-950 text-emerald-200 font-extrabold text-[10px] px-2.5 py-0.5 rounded-full border border-emerald-400/60 shadow-xs">
                 <span>🌟 Community Leader</span>
               </span>
             )}
-            {(computedTier === 'lifetime' || computedTier === 'lifetime-inspiration') && (
+            {computedTier === 'lifetime' && (
               <span className="inline-flex items-center gap-1 bg-rose-950 text-rose-200 font-extrabold text-[10px] px-2.5 py-0.5 rounded-full border border-rose-400/60 shadow-xs">
                 <span>👑 Lifetime Legend</span>
               </span>

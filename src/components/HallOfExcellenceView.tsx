@@ -201,18 +201,19 @@ const HallOfExcellenceView: React.FC<HallOfExcellenceViewProps> = ({ currentLang
       else if (selectedCategory === 'success-stories-cat') matchesCat = ['success-stories-cat'].includes(a.categoryId) || a.isFeatured;
     }
 
+    const tierVal = a.categoryTier as string;
     const matchesTier =
       selectedTier === 'all' ||
       a.categoryTier === selectedTier ||
-      (selectedTier === 'hajj' && (a.categoryTier === 'hajj-pilgrims' || Boolean(a.hajjYear) || a.categoryId === 'hajj-pilgrims' || a.categoryTier === 'hajj')) ||
-      (selectedTier === 'diamond' && (a.categoryTier === 'diamond' || a.categoryTier === 'diamond-tier')) ||
-      (selectedTier === 'platinum' && (a.categoryTier === 'platinum' || a.categoryTier === 'platinum-tier')) ||
-      (selectedTier === 'gold' && (a.categoryTier === 'gold' || a.categoryTier === 'gold-tier')) ||
-      (selectedTier === 'silver' && (a.categoryTier === 'silver' || a.categoryTier === 'silver-tier')) ||
-      (selectedTier === 'bronze' && (a.categoryTier === 'bronze' || a.categoryTier === 'bronze-tier')) ||
-      (selectedTier === 'rising' && (a.categoryTier === 'rising' || a.categoryTier === 'rising-star')) ||
-      (selectedTier === 'leadership' && (a.categoryTier === 'leadership' || a.categoryTier === 'community-leadership')) ||
-      (selectedTier === 'lifetime' && (a.categoryTier === 'lifetime' || a.categoryTier === 'lifetime-inspiration'));
+      (selectedTier === 'hajj' && (tierVal === 'hajj-pilgrims' || Boolean(a.hajjYear) || a.categoryId === 'hajj-pilgrims' || a.categoryTier === 'hajj')) ||
+      (selectedTier === 'diamond' && (a.categoryTier === 'diamond' || tierVal === 'diamond-tier')) ||
+      (selectedTier === 'platinum' && (a.categoryTier === 'platinum' || tierVal === 'platinum-tier')) ||
+      (selectedTier === 'gold' && (a.categoryTier === 'gold' || tierVal === 'gold-tier')) ||
+      (selectedTier === 'silver' && (a.categoryTier === 'silver' || tierVal === 'silver-tier')) ||
+      (selectedTier === 'bronze' && (a.categoryTier === 'bronze' || tierVal === 'bronze-tier')) ||
+      (selectedTier === 'rising' && (a.categoryTier === 'rising' || tierVal === 'rising-star')) ||
+      (selectedTier === 'leadership' && (a.categoryTier === 'leadership' || tierVal === 'community-leadership')) ||
+      (selectedTier === 'lifetime' && (a.categoryTier === 'lifetime' || tierVal === 'lifetime-inspiration'));
 
     const matchesSector = filterSector === 'all' || (filterSector === 'govt' && a.isGovt) || (filterSector === 'private' && !a.isGovt);
     const matchesLoc = filterLocation === 'all' || (filterLocation === 'overseas' && a.isOverseas) || (filterLocation === 'india' && !a.isOverseas);
@@ -392,7 +393,7 @@ const HallOfExcellenceView: React.FC<HallOfExcellenceViewProps> = ({ currentLang
           <div className="flex items-center gap-4 shrink-0">
             <div className="bg-white/10 backdrop-blur-md px-5 py-3 rounded-2xl border border-white/20 text-center">
               <div className="text-2xl font-black text-[#FFD54A]">
-                {achievers.filter(a => a.categoryTier === 'hajj' || a.categoryTier === 'hajj-pilgrims' || Boolean(a.hajjYear) || a.categoryId === 'hajj-pilgrims').length}
+                {achievers.filter(a => a.categoryTier === 'hajj' || (a.categoryTier as string) === 'hajj-pilgrims' || Boolean(a.hajjYear) || a.categoryId === 'hajj-pilgrims').length}
               </div>
               <div className="text-[10px] uppercase font-bold text-emerald-200">Registered Hajiyon</div>
             </div>
@@ -764,11 +765,12 @@ const HallOfExcellenceView: React.FC<HallOfExcellenceViewProps> = ({ currentLang
                     { id: 'lifetime', label: '🎖 Lifetime Legend' },
                     { id: 'hajj', label: '🕋 Hajiyon' },
                   ].map((t) => {
-                    const count = achievers.filter(a =>
-                      t.id === 'hajj'
-                        ? (a.categoryTier === 'hajj-pilgrims' || Boolean(a.hajjYear) || a.categoryId === 'hajj-pilgrims' || a.categoryTier === 'hajj')
-                        : (a.categoryTier === t.id || (t.id === 'diamond' && a.categoryTier === 'diamond-tier') || (t.id === 'platinum' && a.categoryTier === 'platinum-tier') || (t.id === 'gold' && a.categoryTier === 'gold-tier') || (t.id === 'silver' && a.categoryTier === 'silver-tier') || (t.id === 'bronze' && a.categoryTier === 'bronze-tier') || (t.id === 'rising' && a.categoryTier === 'rising-star') || (t.id === 'leadership' && a.categoryTier === 'community-leadership') || (t.id === 'lifetime' && a.categoryTier === 'lifetime-inspiration'))
-                    ).length;
+                    const count = achievers.filter(a => {
+                      const tierStr = a.categoryTier as string;
+                      return t.id === 'hajj'
+                        ? (tierStr === 'hajj-pilgrims' || Boolean(a.hajjYear) || a.categoryId === 'hajj-pilgrims' || a.categoryTier === 'hajj')
+                        : (a.categoryTier === t.id || (t.id === 'diamond' && tierStr === 'diamond-tier') || (t.id === 'platinum' && tierStr === 'platinum-tier') || (t.id === 'gold' && tierStr === 'gold-tier') || (t.id === 'silver' && tierStr === 'silver-tier') || (t.id === 'bronze' && tierStr === 'bronze-tier') || (t.id === 'rising' && tierStr === 'rising-star') || (t.id === 'leadership' && tierStr === 'community-leadership') || (t.id === 'lifetime' && tierStr === 'lifetime-inspiration'));
+                    }).length;
 
                     const isSelected = selectedTier === t.id;
 

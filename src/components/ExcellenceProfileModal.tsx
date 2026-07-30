@@ -149,6 +149,9 @@ const ExcellenceProfileModal: React.FC<ExcellenceProfileModalProps> = ({
               <ProfileImage
                 src={achiever.photoUrl}
                 alt={achiever.name}
+                name={achiever.displayName ? `${achiever.name} (${achiever.displayName})` : achiever.name}
+                designation={achiever.designation}
+                badge={achiever.badges?.[0] || 'Hall of Excellence'}
                 size="custom"
                 containerClassName="w-32 h-32 sm:w-48 sm:h-48 rounded-2xl border-4 border-[#F4C430] shadow-2xl"
               />
