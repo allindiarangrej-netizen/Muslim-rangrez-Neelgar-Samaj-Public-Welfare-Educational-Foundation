@@ -159,7 +159,7 @@ export default function Header({
         { id: 'hall-of-excellence-lifetime', labelEn: '🎖 Lifetime Inspiration Legends', labelHi: '🎖 आजीवन प्रेरणा समाज रत्न', labelUr: '🎖 لائف ٹائم انسپیریشن' },
         { id: 'hall-of-excellence-nominate', labelEn: '📝 Nominate an Achiever / Haji', labelHi: '📝 नामांकित करें (अचीवर / हाजी)', labelUr: '📝 نامزدگی کیجئے' },
         { id: 'hall-of-excellence-stats', labelEn: '📊 Achievement Analytics & Stats', labelHi: '📊 उपलब्धि आंकड़े एवं विश्लेषण', labelUr: '📊 اعداد و شمار' },
-        { id: 'hall-of-excellence-admin', labelEn: '🛡 Achiever Management Dashboard', labelHi: '🛡 अचीवर प्रबंधन डैशबोर्ड', labelUr: '🛡 انتظامیہ ڈیش بورڈ' },
+
       ]
     },
     {

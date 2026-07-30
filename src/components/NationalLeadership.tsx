@@ -88,7 +88,7 @@ export default function NationalLeadership({ currentLanguage }: NationalLeadersh
       locationHi: 'केलारस, जिला मुरैना, मध्य प्रदेश',
       descriptionEn: "Son of Haji Anwar Khan. Founder of Care Point Classes Kailaras. Dedicated to the community's educational mission, NEET/IIT Foundation, science education, and social unity.",
       descriptionHi: 'हाजी अनवर खान के सुपुत्र। केयर पॉइंट क्लासेज के संस्थापक। समाज के शैक्षणिक मिशन, एनईईट/आईआईटी फाउंडेशन, विज्ञान शिक्षा और सामाजिक एकता के लिए समर्पित।',
-      image: 'https://lh3.googleusercontent.com/d/1dxB_iOkhicXmhdSnETybxKRQ6bMJ8C7y',
+      image: 'https://lh3.googleusercontent.com/d/1j8UeUet9QshDE3sNbGyreA-8lKOYf67S',
       phone: '+91 94251 23456',
       socials: { whatsapp: 'https://wa.me/919425123456', facebook: '#', instagram: '#', youtube: '#', gallery: '#gallery', website: '#' },
     },
@@ -508,6 +508,16 @@ function LeaderCard({ leader, currentLanguage, index }: LeaderCardProps) {
         <ProfileImage
           src={leader.image}
           alt={currentLanguage === 'en' ? leader.nameEn : leader.nameHi}
+          name={currentLanguage === 'en' ? leader.nameEn : leader.nameHi}
+          designation={currentLanguage === 'en' ? leader.designationEn : leader.designationHi}
+          badge={currentLanguage === 'en' ? leader.locationEn : leader.locationHi}
+          previewTitle={
+            currentLanguage === 'en'
+              ? 'Founder & Leadership'
+              : currentLanguage === 'hi'
+              ? 'संस्थापक और नेतृत्व'
+              : 'بانی اور قیادت'
+          }
           size="custom"
           containerClassName="w-full h-full border-4 group-hover:border-[#F4C430] group-hover:shadow-2xl transition-all duration-500"
           className="transition-transform duration-500 ease-out"

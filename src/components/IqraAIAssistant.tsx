@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { Language } from '../types';
 import { VERIFIED_RAG_DATABASE, searchRagKnowledge, RagKnowledgeItem } from '../data/iqraRagKnowledgeBase';
+import MarkdownRenderer from './MarkdownRenderer';
 
 interface IqraAIAssistantProps {
   currentLanguage: Language;
@@ -47,9 +48,10 @@ export default function IqraAIAssistant({ currentLanguage, onNavigate, activeTab
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [activeMode, setActiveMode] = useState<'chat' | 'search' | 'doc-ai' | 'admin'>('chat');
   const [chatLang, setChatLang] = useState<'en' | 'hi' | 'ur'>(currentLanguage);
+  const [iqraMode, setIqraMode] = useState<'verified' | 'general'>('verified');
   
   // Model & Vector DB settings
-  const [selectedModel, setSelectedModel] = useState<string>('gemini-2.5-flash');
+  const [selectedModel, setSelectedModel] = useState<string>('gemini-3.6-flash');
   const [vectorChunkCount, setVectorChunkCount] = useState<number>(12850);
   const [isReindexing, setIsReindexing] = useState<boolean>(false);
 
@@ -322,7 +324,7 @@ export default function IqraAIAssistant({ currentLanguage, onNavigate, activeTab
       return {
         id: 'welcome-hi',
         sender: 'ai',
-        text: `नमस्ते! मैं इकरा (Iqra AI Assistant) हूँ — पूरे रंगरेज़ समाज भारत पोर्टल की आपकी 24×7 बुद्धिमत्तापूर्ण RAG मार्गदर्शिका।\n\n📍 वर्तमान पृष्ठ संदर्भ: ${pageContext.label}\n\nमैं सत्यापन योग्य ज्ञानकोष से स्कूल, कॉलेज, छात्रवृत्ति, ब्लड डोनर, महापंचायत प्रस्ताव व जनगणना में आपकी सहायता कर सकती हूँ।`,
+        text: `अस्सलाम वालेकुम और स्वागत! मैं **IQRA AI** हूँ — रंगरेज समुदाय भारत पोर्टल की आधिकारिक डिजिटल मार्गदर्शिका।\n\nमैं दो शक्तिशाली बुद्धिमत्ता मोड (modes) में काम करती हूँ:\n\n*   🛡️ **IQRA AI (सत्यापित ज्ञान)**: यह पोर्टल के सत्यापित डेटाबेस (स्कूल, छात्रवृत्ति, महापंचायत प्रस्ताव, जनगणना) से बिल्कुल सही जवाब देती है।\n*   ✨ **IQRA AI+ (उन्नत सामान्य AI)**: सामान्य ज्ञान, शिक्षा मार्गदर्शन, करियर काउंसिलिंग या किसी भी बाहरी प्रश्न के लिए, **IQRA AI+** सीधे गूगल के एडवांस एआई मॉडल द्वारा संचालित है।\n\n📍 वर्तमान पृष्ठ संदर्भ: ${pageContext.label}\n\nआज मैं आपकी क्या सहायता कर सकती हूँ?`,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         isVerified: true,
         followUps: pageContext.prompts
@@ -331,7 +333,7 @@ export default function IqraAIAssistant({ currentLanguage, onNavigate, activeTab
       return {
         id: 'welcome-ur',
         sender: 'ai',
-        text: `السلام علیکم! میں اقراء (Iqra AI Assistant) ہوں — رنگریز سماج بھارت پورٹل کی 24×7 ڈیجیٹل رہنما۔\n\n📍 موجودہ صفحہ: ${pageContext.label}\n\nمیں اسکول، کالج، وظائف، بلڈ بینک، فیملی شجرہ اور حکومتی اسکیموں میں آپ کی مکمل رہنمائی کر سکتی ہوں۔`,
+        text: `السلام علیکم اور خوش آمدید! میں **IQRA AI** ہوں — رنگریز سماج بھارت پورٹل کی آفیشل ڈیجیٹل رہنما۔\n\nمیں دو منفرد اور طاقتور انٹیلیجنس طریقوں (modes) میں کام کرتی ہوں:\n\n*   🛡️ **IQRA AI (تصدیق شدہ علم)**: یہ پورٹل کے مصدقہ اور تصدیق شدہ ڈیٹا بیس (اسکول، وظائف، اسکیمیں، شجرہ) سے درست ترین جواب فراہم کرتی ہے۔\n*   ✨ **IQRA AI+ (جدید عمومی AI)**: عمومی معلومات، تعلیم، کیریئر کی رہنمائی، یا کیریئر پلاننگ کے لیے، **IQRA AI+** بلا واسطہ گوگل کے جدید ترین مصنوعی ذہانت ماڈل سے مربوط ہے۔\n\n📍 موجودہ صفحہ: ${pageContext.label}\n\nمیں آج آپ کی کیا رہنمائی کر سکتی ہوں؟`,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         isVerified: true,
         followUps: pageContext.prompts
@@ -340,7 +342,7 @@ export default function IqraAIAssistant({ currentLanguage, onNavigate, activeTab
       return {
         id: 'welcome-en',
         sender: 'ai',
-        text: `Assalamu Alaikum & Welcome! I am Iqra AI Assistant — the intelligent AI layer of the entire Rangrez Community Bharat Portal.\n\n📍 Page Context: ${pageContext.label}\n\nI possess verified RAG knowledge across every directory, scholarship, Mahapanchayat resolution, hospital, and census module. How may I guide you today?`,
+        text: `Assalamu Alaikum & Welcome! I am **IQRA AI** — the official intelligent assistant of the Rangrez Community Bharat Portal.\n\nI operate seamlessly in two advanced intelligence modes:\n\n*   🛡️ **IQRA AI (Verified Community Intelligence)**: Grounded strictly in verified portal directories, scholarships, census datasets, and Mahapanchayat resolutions.\n*   ✨ **IQRA AI+ (Advanced General AI)**: Powered by Gemini AI, ready to help you write professional resumes, research careers, understand complex topics, or ask general questions outside the portal's databases.\n\n📍 Page Context: ${pageContext.label}\n\nHow may I guide you today?`,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         isVerified: true,
         followUps: pageContext.prompts
@@ -486,9 +488,14 @@ export default function IqraAIAssistant({ currentLanguage, onNavigate, activeTab
     };
   };
 
-  const handleSendMessage = (textToSend?: string) => {
+  const handleSendMessage = (textToSend?: string, forceGeneralMode: boolean = false) => {
     const query = (textToSend || inputQuery).trim();
     if (!query) return;
+
+    const targetMode = forceGeneralMode ? 'general' : iqraMode;
+    if (forceGeneralMode) {
+      setIqraMode('general');
+    }
 
     const userMsg: Message = {
       id: 'user-' + Date.now(),
@@ -502,28 +509,53 @@ export default function IqraAIAssistant({ currentLanguage, onNavigate, activeTab
     setIsTyping(true);
 
     setTimeout(async () => {
-      const response = generateAIResponse(query);
-      if (response.isVerified) {
-        // Local RAG/FAQ match! Render instantly.
-        const aiMsg: Message = {
-          id: 'ai-' + Date.now(),
-          sender: 'ai',
-          text: response.text,
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          suggestedAction: response.action,
-          followUps: response.followUps,
-          isVerified: response.isVerified,
-          citation: response.citation
-        };
-        setMessages(prev => [...prev, aiMsg]);
-        setIsTyping(false);
+      if (targetMode === 'verified') {
+        // MODE 1: Verified RAG Mode
+        const response = generateAIResponse(query);
+        if (response.isVerified) {
+          const aiMsg: Message = {
+            id: 'ai-' + Date.now(),
+            sender: 'ai',
+            text: response.text,
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            suggestedAction: response.action,
+            followUps: response.followUps,
+            isVerified: true,
+            citation: response.citation
+          };
+          setMessages(prev => [...prev, aiMsg]);
+          setIsTyping(false);
+        } else {
+          // No match found in verified DB! Show the EXACT required message.
+          const aiMsg: Message = {
+            id: 'ai-unavail-' + Date.now(),
+            sender: 'ai',
+            text: "This information is not available in the Rangrez Community Bharat Portal. You can continue with IQRA AI+ for a complete AI-powered answer.",
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            isVerified: false,
+            citation: 'Portal Knowledge Base Check',
+            followUps: []
+          };
+          setMessages(prev => [...prev, aiMsg]);
+          setIsTyping(false);
+        }
       } else {
-        // Query is outside verified knowledge base. Query the general AI+ model!
+        // MODE 2: IQRA AI+ (General AI Mode)
         try {
+          // Construct chat history matching Gemini API schema
+          const chatHistory = messages
+            .filter(m => m.sender === 'user' || m.sender === 'ai')
+            .map(m => ({
+              role: m.sender === 'user' ? 'user' : 'model',
+              parts: [{ text: m.text }]
+            }))
+            .concat([{ role: 'user', parts: [{ text: query }] }])
+            .slice(-8); // send last 8 turns of context
+
           const res = await fetch('/api/chat', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ prompt: query })
+            body: JSON.stringify({ prompt: query, history: chatHistory })
           });
           
           if (!res.ok) {
@@ -534,29 +566,27 @@ export default function IqraAIAssistant({ currentLanguage, onNavigate, activeTab
           const aiMsg: Message = {
             id: 'ai-' + Date.now(),
             sender: 'ai',
-            text: `✨ **IQRA AI+** (General Assistant)\n\n${data.text}`,
+            text: data.text,
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
             suggestedAction: { label: 'Explore Portal Directory', tab: 'portal' },
             followUps: [
-              'How can I help the community?',
-              'Show me local career resources',
-              'Tell me more about All India Rangrez Mahasabha'
+              'Tell me more about community goals',
+              'Show other educational resources',
+              'What government schemes apply to dyers?'
             ],
             isVerified: false,
             citation: 'IQRA AI+ (Powered by Gemini)'
           };
           setMessages(prev => [...prev, aiMsg]);
         } catch (err) {
-          // Fall back gracefully to local unverified database response
+          // Connection or timeout fallback
           const aiMsg: Message = {
             id: 'ai-' + Date.now(),
             sender: 'ai',
-            text: response.text,
+            text: "⚠️ **System connection offline:** I failed to connect to the general intelligence server. Please verify your internet connection or try again shortly.",
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-            suggestedAction: response.action,
-            followUps: response.followUps,
-            isVerified: response.isVerified,
-            citation: response.citation
+            isVerified: false,
+            citation: 'Connection Error'
           };
           setMessages(prev => [...prev, aiMsg]);
         } finally {
@@ -679,7 +709,11 @@ export default function IqraAIAssistant({ currentLanguage, onNavigate, activeTab
           id="iqra_ai_chat_window"
           role="dialog"
           aria-label="IQRA AI Assistant Conversation Panel"
-          className={`fixed z-[10001] transition-all duration-300 flex flex-col overflow-hidden bg-gradient-to-br from-[#070D18] via-[#0B1729] to-[#0D2218] border-2 border-[#D4AF37]/70 shadow-[0_25px_90px_-15px_rgba(0,0,0,0.85)] text-white backdrop-blur-2xl ${
+          className={`fixed z-[10001] transition-all duration-300 flex flex-col overflow-hidden shadow-[0_25px_90px_-15px_rgba(0,0,0,0.85)] text-white backdrop-blur-2xl border-2 ${
+            iqraMode === 'verified'
+              ? 'bg-gradient-to-br from-[#070D18] via-[#0B1729] to-[#0D2218] border-[#D4AF37]/70'
+              : 'bg-gradient-to-br from-[#050A1C] via-[#0D152B] to-[#1D102A] border-indigo-500/50'
+          } ${
             isFullScreen 
               ? 'inset-x-0 bottom-0 w-full rounded-none' 
               : 'right-4 sm:right-6 w-[94vw] sm:w-[480px] md:w-[520px] rounded-3xl'
@@ -699,25 +733,45 @@ export default function IqraAIAssistant({ currentLanguage, onNavigate, activeTab
           }
         >
           {/* A. HEADER BAR */}
-          <div className="bg-gradient-to-r from-[#004B23] via-[#0E2C1F] to-[#070D18] p-4 border-b border-[#D4AF37]/40 flex items-center justify-between shrink-0 shadow-md">
+          <div className={`transition-all duration-300 p-4 border-b flex items-center justify-between shrink-0 shadow-md ${
+            iqraMode === 'verified'
+              ? 'bg-gradient-to-r from-[#004B23] via-[#0E2C1F] to-[#070D18] border-[#D4AF37]/40'
+              : 'bg-gradient-to-r from-[#1B1A55] via-[#0D152B] to-[#0B0C10] border-indigo-500/40'
+          }`}>
             <div className="flex items-center space-x-3">
-              <div className="relative h-11 w-11 rounded-2xl bg-gradient-to-br from-[#F4C430] to-[#B38728] p-0.5 shadow-lg flex items-center justify-center shrink-0">
+              <div className={`relative h-11 w-11 rounded-2xl p-0.5 shadow-lg flex items-center justify-center shrink-0 transition-all duration-300 ${
+                iqraMode === 'verified'
+                  ? 'bg-gradient-to-br from-[#F4C430] to-[#B38728]'
+                  : 'bg-gradient-to-br from-indigo-400 to-purple-600'
+              }`}>
                 <div className="h-full w-full bg-[#070D18] rounded-[14px] flex items-center justify-center">
-                  <Sparkles className="h-6 w-6 text-[#FFD54A] animate-spin" style={{ animationDuration: '8s' }} />
+                  <Sparkles className={`h-6 w-6 animate-spin transition-colors duration-300 ${
+                    iqraMode === 'verified' ? 'text-[#FFD54A]' : 'text-indigo-400'
+                  }`} style={{ animationDuration: '8s' }} />
                 </div>
-                <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-emerald-400 border-2 border-[#070D18]" title="RAG Engine Online"></span>
+                <span className={`absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-[#070D18] transition-colors duration-300 ${
+                  iqraMode === 'verified' ? 'bg-emerald-400' : 'bg-indigo-400'
+                }`} title={iqraMode === 'verified' ? 'RAG Engine Online' : 'General AI+ Engine Online'}></span>
               </div>
 
               <div>
                 <div className="flex items-center space-x-1.5">
                   <h3 className="font-extrabold text-base tracking-tight text-white flex items-center gap-1.5">
-                    <span>IQRA AI Brain</span>
-                    <span className="bg-[#D4AF37]/20 text-[#FFD54A] text-[9px] px-2 py-0.5 rounded uppercase font-mono border border-[#D4AF37]/40">RAG Engine v3.0</span>
+                    <span>{iqraMode === 'verified' ? 'IQRA AI' : 'IQRA AI+'}</span>
+                    <span className={`text-[9px] px-2 py-0.5 rounded uppercase font-mono border transition-colors duration-300 ${
+                      iqraMode === 'verified'
+                        ? 'bg-[#D4AF37]/20 text-[#FFD54A] border-[#D4AF37]/40'
+                        : 'bg-indigo-500/20 text-indigo-300 border-indigo-500/40'
+                    }`}>
+                      {iqraMode === 'verified' ? 'Verified Knowledge' : 'General AI+'}
+                    </span>
                   </h3>
                 </div>
                 <p className="text-[11px] text-amber-200/90 flex items-center gap-1 mt-0.5">
-                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                  <span className="font-semibold text-[#FFD54A] truncate max-w-[220px]">📍 Context: {pageContext.label}</span>
+                  <span className={`inline-block w-1.5 h-1.5 rounded-full animate-pulse transition-colors duration-300 ${
+                    iqraMode === 'verified' ? 'bg-emerald-400' : 'bg-indigo-400'
+                  }`}></span>
+                  <span className="font-semibold text-gray-200 truncate max-w-[220px]">📍 Context: {pageContext.label}</span>
                 </p>
               </div>
             </div>
@@ -819,6 +873,48 @@ export default function IqraAIAssistant({ currentLanguage, onNavigate, activeTab
             )}
           </div>
 
+          {/* B2. DUAL INTELLIGENCE ENGINE SWITCHER */}
+          {activeMode === 'chat' && (
+            <div className={`transition-all duration-300 px-4 py-2 flex items-center justify-between text-xs shrink-0 border-b ${
+              iqraMode === 'verified' ? 'bg-[#051109]/95 border-emerald-500/20' : 'bg-[#0A071E]/95 border-indigo-500/20'
+            }`}>
+              <div className="flex items-center space-x-2">
+                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Engine:</span>
+                <div className="relative flex p-0.5 bg-black/40 rounded-xl border border-white/5">
+                  <button
+                    onClick={() => setIqraMode('verified')}
+                    className={`relative px-3 py-1 rounded-lg text-[10px] font-extrabold transition-all duration-300 flex items-center gap-1 cursor-pointer ${
+                      iqraMode === 'verified' 
+                        ? 'bg-[#004B23] text-[#FFD54A] shadow-[0_0_12px_rgba(0,75,35,0.6)] border border-[#F4C430]/30' 
+                        : 'text-gray-400 hover:text-gray-200 border border-transparent'
+                    }`}
+                  >
+                    <Shield className="h-3 w-3 text-[#FFD54A]" />
+                    <span>IQRA AI</span>
+                  </button>
+                  <button
+                    onClick={() => setIqraMode('general')}
+                    className={`relative px-3 py-1 rounded-lg text-[10px] font-extrabold transition-all duration-300 flex items-center gap-1 cursor-pointer ${
+                      iqraMode === 'general' 
+                        ? 'bg-gradient-to-r from-indigo-700 to-purple-700 text-white shadow-[0_0_12px_rgba(99,102,241,0.6)] border border-indigo-400/30' 
+                        : 'text-gray-400 hover:text-gray-200 border border-transparent'
+                    }`}
+                  >
+                    <Zap className="h-3 w-3 text-indigo-400" />
+                    <span>IQRA AI+</span>
+                  </button>
+                </div>
+              </div>
+              <span className={`text-[9px] font-bold px-2 py-0.5 rounded uppercase tracking-wider border transition-colors duration-300 ${
+                iqraMode === 'verified' 
+                  ? 'bg-emerald-950/40 text-emerald-400 border-emerald-500/30' 
+                  : 'bg-indigo-950/40 text-indigo-400 border-indigo-500/30'
+              }`}>
+                {iqraMode === 'verified' ? 'Verified Portal DB (RAG)' : 'Advanced General AI'}
+              </span>
+            </div>
+          )}
+
           {/* C. BODY CONTENT AREA */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4 relative custom-scrollbar bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-emerald-950/20 via-transparent to-transparent">
             
@@ -861,13 +957,25 @@ export default function IqraAIAssistant({ currentLanguage, onNavigate, activeTab
                       <div className="max-w-[88%] sm:max-w-[85%]">
                         <div className={`flex items-center space-x-1.5 mb-1 text-[11px] ${msg.sender === 'user' ? 'justify-end text-amber-300' : 'text-emerald-300'}`}>
                           {msg.sender === 'ai' && (
-                            <span className="flex items-center gap-1 font-bold">
-                              <Sparkles className="h-3 w-3 text-[#FFD54A]" />
-                              <span>IQRA AI Brain</span>
-                              {msg.isVerified && (
-                                <span className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[9px] px-1.5 py-0.2 rounded flex items-center gap-0.5">
-                                  <Check className="h-2.5 w-2.5" /> Verified RAG
-                                </span>
+                            <span className={`flex items-center gap-1 font-bold ${msg.citation?.includes('IQRA AI+') ? 'text-indigo-300' : 'text-emerald-300'}`}>
+                              {msg.citation?.includes('IQRA AI+') ? (
+                                <>
+                                  <Zap className="h-3 w-3 text-indigo-400 animate-pulse" />
+                                  <span>IQRA AI+ Brain</span>
+                                  <span className="bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-[9px] px-1.5 py-0.2 rounded flex items-center gap-0.5">
+                                    <Sparkles className="h-2.5 w-2.5" /> General AI+
+                                  </span>
+                                </>
+                              ) : (
+                                <>
+                                  <Sparkles className="h-3 w-3 text-[#FFD54A]" />
+                                  <span>IQRA AI Brain</span>
+                                  {msg.isVerified && (
+                                    <span className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[9px] px-1.5 py-0.2 rounded flex items-center gap-0.5">
+                                      <Check className="h-2.5 w-2.5" /> Verified RAG
+                                    </span>
+                                  )}
+                                </>
                               )}
                             </span>
                           )}
@@ -878,11 +986,17 @@ export default function IqraAIAssistant({ currentLanguage, onNavigate, activeTab
                         <div
                           className={`p-3.5 rounded-2xl text-xs sm:text-sm leading-relaxed shadow-lg relative ${
                             msg.sender === 'user'
-                              ? 'bg-gradient-to-r from-[#004B23] to-[#0A3D20] text-white border border-[#F4C430]/40 rounded-br-none'
-                              : 'bg-gradient-to-br from-[#0D182E]/95 to-[#122340]/95 text-gray-100 border border-white/15 rounded-bl-none shadow-xl'
+                              ? iqraMode === 'verified'
+                                ? 'bg-gradient-to-r from-[#004B23] to-[#0A3D20] text-white border border-[#F4C430]/40 rounded-br-none'
+                                : 'bg-gradient-to-r from-indigo-900 to-[#12042C] text-white border border-indigo-400/40 rounded-br-none'
+                              : msg.id.startsWith('ai-unavail')
+                              ? 'bg-[#180A22] text-amber-200 border border-purple-500/30 rounded-bl-none shadow-xl'
+                              : msg.citation?.includes('IQRA AI+')
+                              ? 'bg-[#0E0D21] text-gray-100 border border-indigo-500/30 rounded-bl-none shadow-xl'
+                              : 'bg-[#0D182E]/95 text-gray-100 border border-white/15 rounded-bl-none shadow-xl'
                           }`}
                         >
-                          <p className="whitespace-pre-line">{msg.text}</p>
+                          <MarkdownRenderer content={msg.text} />
 
                           {msg.citation && (
                             <div className="mt-2.5 pt-2 border-t border-white/10 text-[10px] text-amber-300/80 font-mono flex items-center gap-1">
@@ -901,6 +1015,32 @@ export default function IqraAIAssistant({ currentLanguage, onNavigate, activeTab
                             </button>
                           )}
                         </div>
+
+                        {msg.id.startsWith('ai-unavail') && (
+                          <div className="mt-3 p-3 bg-indigo-950/40 border border-indigo-500/30 rounded-xl space-y-2 flex flex-col items-center text-center shadow-lg">
+                            <div className="flex items-center gap-1.5 text-[11px] font-extrabold text-indigo-300">
+                              <Zap className="h-3.5 w-3.5 text-[#FFD54A] animate-pulse" />
+                              <span>ASK IQRA AI+ GENERAL AI</span>
+                            </div>
+                            <p className="text-[10px] text-gray-300 max-w-[320px]">
+                              Seamlessly run this query on the advanced general knowledge engine to get an instant answer.
+                            </p>
+                            <button
+                              onClick={() => {
+                                const msgIdx = messages.findIndex(m => m.id === msg.id);
+                                const queryText = msgIdx > 0 ? messages[msgIdx - 1].text : inputQuery;
+                                if (queryText) {
+                                  handleSendMessage(queryText, true);
+                                }
+                              }}
+                              className="w-full px-4 py-2 text-xs font-bold bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white rounded-lg shadow-lg hover:shadow-indigo-500/30 transition cursor-pointer flex items-center justify-center gap-1.5"
+                            >
+                              <Bot className="h-3.5 w-3.5 text-indigo-200" />
+                              <span>Consult IQRA AI+ Now</span>
+                              <ChevronRight className="h-3.5 w-3.5" />
+                            </button>
+                          </div>
+                        )}
 
                         {msg.suggestedAction && (
                           <div className="mt-2 flex justify-start">

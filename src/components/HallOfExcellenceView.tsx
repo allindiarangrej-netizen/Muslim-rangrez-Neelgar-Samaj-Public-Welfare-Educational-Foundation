@@ -15,10 +15,9 @@ import {
 } from '../data/hallOfExcellenceData';
 import ExcellenceProfileModal from './ExcellenceProfileModal';
 import ExcellenceMentorshipModal from './ExcellenceMentorshipModal';
-import ExcellenceAdminPanel from './ExcellenceAdminPanel';
 import AchieverCard from './AchieverCard';
 import { ProfileImage } from './common/ProfileImage';
-import { PremiumCoverImage } from './common/PremiumCoverImage';
+import { PremiumCoverImage, PremiumCoverSlideshow } from './common/PremiumCoverImage';
 import {
   Trophy,
   Award,
@@ -312,12 +311,19 @@ const HallOfExcellenceView: React.FC<HallOfExcellenceViewProps> = ({ currentLang
     <div className="space-y-8 animate-fadeIn pb-12">
       {/* 1. SECTION HERO BANNER */}
       <div className="relative p-6 sm:p-10 rounded-3xl text-white shadow-xl overflow-hidden border border-[#D4AF37]/35 bg-slate-950">
-        <PremiumCoverImage 
-          src="https://images.unsplash.com/photo-1540575467063-178a50c2df87" 
-          alt="Hall of Excellence Banner" 
-          overlayOpacity={0.3} 
+        <PremiumCoverSlideshow 
+          srcs={[
+            "https://images.unsplash.com/photo-1541339907198-e08756dedf3f", // Graduation hats throwing / Excellence / Education
+            "https://images.unsplash.com/photo-1507679799987-c73779587ccf", // Professional leadership / Career / Success
+            "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4", // Mentoring / Collaboration / Discussion
+            "https://images.unsplash.com/photo-1576091160550-2173dba999ef", // Medicine / medical doctor / healthcare excellence
+            "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab"  // Civil Engineering / Corporate building / Structure
+          ]}
+          alt="Hall of Excellence Banners" 
+          overlayOpacity={0.25} 
           focalPoint="center 35%"
           enableVignette={true}
+          intervalMs={7000}
         />
         <div className="absolute top-0 right-0 w-80 h-80 bg-[#F4C430]/15 rounded-full blur-3xl transform translate-x-20 -translate-y-20 pointer-events-none"></div>
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-emerald-500/15 rounded-full blur-2xl transform -translate-x-16 translate-y-16 pointer-events-none"></div>
@@ -332,7 +338,7 @@ const HallOfExcellenceView: React.FC<HallOfExcellenceViewProps> = ({ currentLang
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white leading-tight drop-shadow-md">
               🏆 {currentLanguage === 'en' ? 'Hall of Excellence' : currentLanguage === 'ur' ? 'ہال آف ایکسیلنس' : 'गौरवशाली विभूतियाँ (हॉल ऑफ एक्सीलेंस)'}
               <span className="block text-xl sm:text-2xl font-bold text-[#FFD54A] mt-1">
-                {currentLanguage === 'en' ? '(Community Achievers & Role Models)' : currentLanguage === 'ur' ? '(برادری के نمایاں افراد और रول ماڈلز)' : '(समाज के सफल व्यक्तित्व एवं प्रेरणास्रोत)'}
+                {currentLanguage === 'en' ? '(Community Achievers & Role Models)' : currentLanguage === 'ur' ? '(برادری کے نمایاں افراد اور رول ماڈلز)' : '(समाज के सफल व्यक्तित्व एवं प्रेरणास्रोत)'}
               </span>
             </h1>
 
@@ -384,12 +390,32 @@ const HallOfExcellenceView: React.FC<HallOfExcellenceViewProps> = ({ currentLang
 
       {/* HAJIYON KI SPECIAL HALL OF EXCELLENCE BANNER */}
       <div className="relative p-6 sm:p-8 text-white rounded-3xl shadow-2xl border-2 border-[#FFD54A]/50 overflow-hidden bg-emerald-950">
-        <PremiumCoverImage 
-          src="https://images.unsplash.com/photo-1591604466107-ec97de577aff" 
-          alt="Sacred Pilgrimage Heritage Cover" 
-          overlayOpacity={0.35} 
+        <PremiumCoverSlideshow 
+          srcs={[
+            "https://lh3.googleusercontent.com/d/1-WZPO_q97ijAEVcSPnQmXatAV_0HQOsf",
+            "https://lh3.googleusercontent.com/d/17WPDOwd4ock3-2eZ5NHKla7fAQZ0PoqL",
+            "https://lh3.googleusercontent.com/d/18JjlcpCEMfY-nvAaxHF8hdDQg9zdqbpD",
+            "https://lh3.googleusercontent.com/d/18YxnzKBSMcdtHEo_98aNuaa5B992ir_W",
+            "https://lh3.googleusercontent.com/d/1CxFCGXj81IL-gd8TtM6qMzwc0In4Zq1s",
+            "https://lh3.googleusercontent.com/d/1GH_iNDQVFV1bCFsLmDIX-RwAZ0u5NIxy",
+            "https://lh3.googleusercontent.com/d/1KIhv7-mqjnbsmEyIib3HqMiZovkQgOZl",
+            "https://lh3.googleusercontent.com/d/1N6biiuMmdpmPv6Td921RFp3KxSdceM9o",
+            "https://lh3.googleusercontent.com/d/1W5U3L3vnebisXIgjtzou3PH9Nuo-aetp",
+            "https://lh3.googleusercontent.com/d/1_1uTg5R7-igAFSYCP7VO_gn2OAZ5kS39",
+            "https://lh3.googleusercontent.com/d/1dtmVE50CholAFvVOpxTYblvTrJRB5BQK",
+            "https://lh3.googleusercontent.com/d/1ecS0iHDDmOfpwZUpVA9DK8xJeJ0Gwt0N",
+            "https://lh3.googleusercontent.com/d/1gic9A5tIIpuglGNzDmMbUVK9n7B94IkZ",
+            "https://lh3.googleusercontent.com/d/1jzfwy4SJuPq9xnN1R2vNOxCv0CwEJ5As",
+            "https://lh3.googleusercontent.com/d/1mPdNY6udzfzYrkhQjPah_jPnXf5gJEOk",
+            "https://lh3.googleusercontent.com/d/1mSS2kpJ04KBh-s_-sb2Zs8s7tGY8Z911",
+            "https://lh3.googleusercontent.com/d/1rka5i2_jUA_YWJa5cd4nsBaGz_AfnCm_",
+            "https://lh3.googleusercontent.com/d/1xi510zF0VDsQ2yjwfM5YhAFh7-mglySP"
+          ]}
+          alt="Our Hajj Pilgrims Heritage Covers" 
+          overlayOpacity={0.22} 
           focalPoint="center 40%"
           enableVignette={true}
+          intervalMs={2500}
         />
         <div className="flex flex-col lg:flex-row items-center justify-between gap-6 relative z-10">
           <div className="space-y-2 text-center lg:text-left">
@@ -397,11 +423,13 @@ const HallOfExcellenceView: React.FC<HallOfExcellenceViewProps> = ({ currentLang
               <span>🕋 Sacred Pilgrimage Heritage</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-black text-white flex flex-wrap items-center justify-center lg:justify-start gap-2 drop-shadow-md">
-              <span>🕋 Hajiyon Ki Hall of Excellence</span>
+              <span>🕋 {currentLanguage === 'en' ? 'Our Hajj Pilgrims of the Rangrez Community' : currentLanguage === 'ur' ? 'رنگریز برادری کے حجاج کرام' : 'रंगरेज समुदाय के हमारे हज यात्री'}</span>
               <span className="text-[#FFD54A] font-extrabold text-lg sm:text-xl">(حجاج کرام ہال آف ایکسیلنس)</span>
             </h2>
             <p className="text-emerald-50 text-xs sm:text-sm font-extrabold italic max-w-2xl drop-shadow">
-              "مَبْرُورٌ وَسَعْيٌ مَشْكُورٌ وَذَنْبٌ مَغْفُورٌ" — Special recognition dedicated to all respected Hajj & Umrah pilgrims from the Rangrez community. May Allah accept their sacred pilgrimage and grant continuous barakah.
+              {currentLanguage === 'en'
+                ? 'Honouring the respected Hajj & Umrah pilgrims of the Rangrez Community and preserving their blessed journey for future generations.'
+                : '"مَبْرُورٌ وَسَعْيٌ مَشْكُورٌ وَذَنْبٌ مَغْفُورٌ" — Special recognition dedicated to all respected Hajj & Umrah pilgrims from the Rangrez community. May Allah accept their sacred pilgrimage and grant continuous barakah.'}
             </p>
           </div>
           <div className="flex items-center gap-4 shrink-0 relative z-10">
@@ -524,18 +552,6 @@ const HallOfExcellenceView: React.FC<HallOfExcellenceViewProps> = ({ currentLang
             <BarChart3 className="w-4 h-4 text-blue-500" />
             <span>{currentLanguage === 'en' ? 'Community Statistics' : 'सामुदायिक आंकड़े'}</span>
           </button>
-
-          <button
-            onClick={() => setActiveTab('admin')}
-            className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-black transition flex items-center gap-2 whitespace-nowrap shrink-0 cursor-pointer ml-auto ${
-              activeTab === 'admin'
-                ? 'bg-[#0B132B] text-[#FFD54A] shadow-md border border-[#FFD54A]'
-                : 'bg-slate-200 text-[#0B132B] hover:bg-slate-300'
-            }`}
-          >
-            <span>⚙️</span>
-            <span>{currentLanguage === 'en' ? 'Admin Panel' : 'एडमिन पैनल'}</span>
-          </button>
         </div>
       </div>
 
@@ -552,7 +568,7 @@ const HallOfExcellenceView: React.FC<HallOfExcellenceViewProps> = ({ currentLang
                   <span className="text-[10px] font-extrabold uppercase bg-amber-400/20 text-[#FFD54A] px-2 py-0.5 rounded-md">Total</span>
                 </div>
                 <div className="mt-3">
-                  <div className="text-2xl sm:text-3xl font-black text-[#FFD54A]">{achievers.length * 14}+</div>
+                  <div className="text-2xl sm:text-3xl font-black text-[#FFD54A]">{achievers.length}</div>
                   <div className="text-xs font-bold text-gray-300 mt-0.5">{currentLanguage === 'en' ? 'Total Achievers' : 'कुल विभूतियाँ'}</div>
                 </div>
               </div>
@@ -563,7 +579,7 @@ const HallOfExcellenceView: React.FC<HallOfExcellenceViewProps> = ({ currentLang
                   <span className="text-[10px] font-extrabold uppercase bg-emerald-100 text-[#004B23] px-2 py-0.5 rounded-md">Active</span>
                 </div>
                 <div className="mt-3">
-                  <div className="text-2xl sm:text-3xl font-black text-[#0B132B]">{categories.length}+</div>
+                  <div className="text-2xl sm:text-3xl font-black text-[#0B132B]">{categories.length}</div>
                   <div className="text-xs font-bold text-gray-600 mt-0.5">{currentLanguage === 'en' ? 'Total Professions' : 'कुल पेशे'}</div>
                 </div>
               </div>
@@ -574,7 +590,7 @@ const HallOfExcellenceView: React.FC<HallOfExcellenceViewProps> = ({ currentLang
                   <span className="text-[10px] font-extrabold uppercase bg-amber-100 text-amber-800 px-2 py-0.5 rounded-md">Free</span>
                 </div>
                 <div className="mt-3">
-                  <div className="text-2xl sm:text-3xl font-black text-[#0B132B]">{achievers.filter(a => a.isMentor).length * 9}+</div>
+                  <div className="text-2xl sm:text-3xl font-black text-[#0B132B]">{achievers.filter(a => a.isMentor).length}</div>
                   <div className="text-xs font-bold text-gray-600 mt-0.5">{currentLanguage === 'en' ? 'Total Mentors' : 'कुल मार्गदर्शक'}</div>
                 </div>
               </div>
@@ -585,7 +601,7 @@ const HallOfExcellenceView: React.FC<HallOfExcellenceViewProps> = ({ currentLang
                   <span className="text-[10px] font-extrabold uppercase bg-blue-100 text-blue-800 px-2 py-0.5 rounded-md">IAS / IPS</span>
                 </div>
                 <div className="mt-3">
-                  <div className="text-2xl sm:text-3xl font-black text-[#0B132B]">{achievers.filter(a => a.isGovt).length * 7}+</div>
+                  <div className="text-2xl sm:text-3xl font-black text-[#0B132B]">{achievers.filter(a => a.isGovt).length}</div>
                   <div className="text-xs font-bold text-gray-600 mt-0.5">{currentLanguage === 'en' ? 'Govt Officers' : 'सरकारी अधिकारी'}</div>
                 </div>
               </div>
@@ -596,7 +612,7 @@ const HallOfExcellenceView: React.FC<HallOfExcellenceViewProps> = ({ currentLang
                   <span className="text-[10px] font-extrabold uppercase bg-purple-100 text-purple-800 px-2 py-0.5 rounded-md">Global</span>
                 </div>
                 <div className="mt-3">
-                  <div className="text-2xl sm:text-3xl font-black text-[#0B132B]">{achievers.filter(a => a.isOverseas).length * 5}+</div>
+                  <div className="text-2xl sm:text-3xl font-black text-[#0B132B]">{achievers.filter(a => a.isOverseas).length}</div>
                   <div className="text-xs font-bold text-gray-600 mt-0.5">{currentLanguage === 'en' ? 'Overseas NRI' : 'प्रवासी भारतीय'}</div>
                 </div>
               </div>
@@ -607,7 +623,7 @@ const HallOfExcellenceView: React.FC<HallOfExcellenceViewProps> = ({ currentLang
                   <span className="text-[10px] font-extrabold uppercase bg-rose-100 text-rose-800 px-2 py-0.5 rounded-md">Honors</span>
                 </div>
                 <div className="mt-3">
-                  <div className="text-2xl sm:text-3xl font-black text-[#0B132B]">{awards.length * 4}+</div>
+                  <div className="text-2xl sm:text-3xl font-black text-[#0B132B]">{awards.length}</div>
                   <div className="text-xs font-bold text-gray-600 mt-0.5">{currentLanguage === 'en' ? 'Award Winners' : 'पुरस्कार विजेता'}</div>
                 </div>
               </div>
@@ -753,31 +769,32 @@ const HallOfExcellenceView: React.FC<HallOfExcellenceViewProps> = ({ currentLang
                 </div>
 
                 {/* Flex-Wrap Container Ensures All Chips Wrap Multi-Row on Desktop/Tablet/Mobile Without Clipping */}
-                <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 w-full">
                   <button
                     onClick={() => setSelectedTier('all')}
-                    className={`px-3 py-1.5 rounded-full text-xs font-extrabold transition-all duration-200 flex items-center gap-1.5 border cursor-pointer ${
+                    className={`h-[42px] sm:h-[46px] md:h-[48px] px-4 sm:px-5 md:px-6 rounded-full text-[14px] sm:text-[15px] md:text-[16px] font-black tracking-wide transition-all duration-300 ease-in-out flex items-center gap-2 select-none cursor-pointer ${
                       selectedTier === 'all'
-                        ? 'bg-[#004B23] text-[#FFD54A] border-[#FFD54A] shadow-md ring-2 ring-[#FFD54A]/30'
-                        : 'bg-white text-gray-800 border-gray-200 hover:border-[#D4AF37] hover:shadow-[0_2px_8px_rgba(212,175,55,0.2)] hover:-translate-y-0.5'
+                        ? 'bg-gradient-to-r from-[#004B23] to-[#056633] text-white border-2 border-[#FFD54A] shadow-[0_4px_20px_rgba(0,75,35,0.3)] ring-2 ring-[#FFD54A]/30 scale-[1.03]'
+                        : 'bg-white text-gray-800 border border-gray-200 hover:border-emerald-500 hover:text-emerald-800 hover:shadow-[0_0_15px_rgba(16,185,129,0.2)] hover:shadow-md hover:-translate-y-0.5 hover:scale-[1.03]'
                     }`}
                   >
-                    <span>🌟 All Tiers</span>
-                    <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${selectedTier === 'all' ? 'bg-[#FFD54A] text-[#004B23]' : 'bg-slate-100 text-gray-700'}`}>
+                    <span className="text-[18px] md:text-[22px] filter drop-shadow-sm leading-none flex items-center justify-center">🌟</span>
+                    <span>All Tiers</span>
+                    <span className={`px-2 py-0.5 rounded-full text-xs font-black min-w-[24px] text-center transition-colors duration-250 ${selectedTier === 'all' ? 'bg-[#FFD54A] text-[#004B23]' : 'bg-slate-100 text-gray-700'}`}>
                       {achievers.length}
                     </span>
                   </button>
 
                   {[
-                    { id: 'diamond', label: '💎 Diamond' },
-                    { id: 'platinum', label: '🏆 Platinum' },
-                    { id: 'gold', label: '🥇 Gold' },
-                    { id: 'silver', label: '🥈 Silver' },
-                    { id: 'bronze', label: '🥉 Bronze' },
-                    { id: 'rising', label: '⭐ Rising Stars' },
-                    { id: 'leadership', label: '🌟 Community Leaders' },
-                    { id: 'lifetime', label: '🎖 Lifetime Legend' },
-                    { id: 'hajj', label: '🕋 Hajiyon' },
+                    { id: 'diamond', label: 'Diamond', emoji: '💎' },
+                    { id: 'platinum', label: 'Platinum', emoji: '🏆' },
+                    { id: 'gold', label: 'Gold', emoji: '🥇' },
+                    { id: 'silver', label: 'Silver', emoji: '🥈' },
+                    { id: 'bronze', label: 'Bronze', emoji: '🥉' },
+                    { id: 'rising', label: 'Rising Stars', emoji: '⭐' },
+                    { id: 'leadership', label: 'Community Leaders', emoji: '🤝' },
+                    { id: 'lifetime', label: 'Lifetime Legend', emoji: '🎖' },
+                    { id: 'hajj', label: 'Hajiyon', emoji: '🕋' },
                   ].map((t) => {
                     const count = achievers.filter(a => {
                       const tierStr = a.categoryTier as string;
@@ -792,14 +809,15 @@ const HallOfExcellenceView: React.FC<HallOfExcellenceViewProps> = ({ currentLang
                       <button
                         key={t.id}
                         onClick={() => setSelectedTier(t.id)}
-                        className={`px-3 py-1.5 rounded-full text-xs font-extrabold transition-all duration-200 flex items-center gap-1.5 border cursor-pointer ${
+                        className={`h-[42px] sm:h-[46px] md:h-[48px] px-4 sm:px-5 md:px-6 rounded-full text-[14px] sm:text-[15px] md:text-[16px] font-black tracking-wide transition-all duration-300 ease-in-out flex items-center gap-2 select-none cursor-pointer ${
                           isSelected
-                            ? 'bg-[#004B23] text-[#FFD54A] border-[#FFD54A] shadow-md ring-2 ring-[#FFD54A]/30 scale-[1.02]'
-                            : 'bg-white text-gray-800 border-gray-200 hover:border-[#D4AF37] hover:shadow-[0_2px_8px_rgba(212,175,55,0.2)] hover:-translate-y-0.5'
+                            ? 'bg-gradient-to-r from-[#004B23] to-[#056633] text-white border-2 border-[#FFD54A] shadow-[0_4px_20px_rgba(0,75,35,0.3)] ring-2 ring-[#FFD54A]/30 scale-[1.03]'
+                            : 'bg-white text-gray-800 border border-gray-200 hover:border-emerald-500 hover:text-emerald-800 hover:shadow-[0_0_15px_rgba(16,185,129,0.2)] hover:shadow-md hover:-translate-y-0.5 hover:scale-[1.03]'
                         }`}
                       >
+                        <span className="text-[18px] md:text-[22px] filter drop-shadow-sm leading-none flex items-center justify-center">{t.emoji}</span>
                         <span>{t.label}</span>
-                        <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${isSelected ? 'bg-[#FFD54A] text-[#004B23]' : 'bg-emerald-50 text-[#004B23]'}`}>
+                        <span className={`px-2 py-0.5 rounded-full text-xs font-black min-w-[24px] text-center transition-colors duration-250 ${isSelected ? 'bg-[#FFD54A] text-[#004B23]' : 'bg-emerald-50 text-[#004B23]'}`}>
                           {count}
                         </span>
                       </button>
@@ -809,8 +827,8 @@ const HallOfExcellenceView: React.FC<HallOfExcellenceViewProps> = ({ currentLang
               </div>
 
               {/* 2. Profession Category Filter Section (Flex-Wrap Responsive) */}
-              <div className="pt-2 border-t border-gray-100">
-                <div className="flex items-center justify-between mb-2">
+              <div className="pt-4 border-t border-gray-100">
+                <div className="flex items-center justify-between mb-3">
                   <span className="text-xs font-black uppercase tracking-wider text-gray-700 flex items-center gap-1.5">
                     <Search className="w-3.5 h-3.5 text-emerald-600" />
                     <span>{currentLanguage === 'en' ? 'Filter by Profession' : 'पेशे के अनुसार फ़िल्टर करें'}</span>
@@ -825,32 +843,33 @@ const HallOfExcellenceView: React.FC<HallOfExcellenceViewProps> = ({ currentLang
                   )}
                 </div>
 
-                <div className="flex flex-wrap items-center gap-1.5">
+                <div className="flex flex-wrap items-center gap-2.5 sm:gap-3 w-full">
                   {[
-                    { id: 'all', label: '🌟 All Professions' },
-                    { id: 'govt-services', label: '🏛️ Government' },
-                    { id: 'law-judiciary', label: '⚖️ Judiciary' },
-                    { id: 'medical-excellence', label: '🏥 Medical' },
-                    { id: 'academic-excellence', label: '🎓 Academic' },
-                    { id: 'professional-excellence', label: '💼 Professional' },
-                    { id: 'public-rep', label: '🗳️ Public Reps' },
-                    { id: 'community-leaders', label: '🤝 Leaders' },
-                    { id: 'young-achievers', label: '✨ Youth' },
-                    { id: 'lifetime-contribution', label: '👑 Lifetime' },
-                    { id: 'success-stories-cat', label: '📈 Stories' },
+                    { id: 'all', label: 'All Professions', emoji: '🌟' },
+                    { id: 'govt-services', label: 'Government', emoji: '🏛️' },
+                    { id: 'law-judiciary', label: 'Judiciary', emoji: '⚖️' },
+                    { id: 'medical-excellence', label: 'Medical', emoji: '🏥' },
+                    { id: 'academic-excellence', label: 'Academic', emoji: '🎓' },
+                    { id: 'professional-excellence', label: 'Professional', emoji: '💼' },
+                    { id: 'public-rep', label: 'Public Reps', emoji: '🗳️' },
+                    { id: 'community-leaders', label: 'Leaders', emoji: '🤝' },
+                    { id: 'young-achievers', label: 'Youth', emoji: '✨' },
+                    { id: 'lifetime-contribution', label: 'Lifetime', emoji: '👑' },
+                    { id: 'success-stories-cat', label: 'Stories', emoji: '📈' },
                   ].map((cat) => {
                     const isSelected = selectedCategory === cat.id;
                     return (
                       <button
                         key={cat.id}
                         onClick={() => setSelectedCategory(cat.id)}
-                        className={`px-3 py-1 rounded-full text-xs font-extrabold transition-all duration-200 cursor-pointer border ${
+                        className={`h-[40px] sm:h-[44px] md:h-[46px] px-4 sm:px-5 md:px-6 rounded-full text-[14px] sm:text-[15px] md:text-[16px] font-black transition-all duration-300 ease-in-out cursor-pointer flex items-center gap-2 select-none border ${
                           isSelected
-                            ? 'bg-[#004B23] text-white border-[#FFD54A] shadow-sm'
-                            : 'bg-slate-100/90 text-gray-700 hover:bg-slate-200/90 hover:text-[#004B23] border-transparent'
+                            ? 'bg-gradient-to-r from-[#004B23] to-[#056633] text-white border-2 border-[#FFD54A] shadow-[0_4px_15px_rgba(0,75,35,0.25)] scale-[1.03]'
+                            : 'bg-slate-50 text-gray-700 border border-gray-200/80 hover:border-emerald-500 hover:bg-white hover:text-[#004B23] hover:shadow-[0_0_12px_rgba(16,185,129,0.12)] hover:scale-[1.03] hover:-translate-y-0.5'
                         }`}
                       >
-                        {cat.label}
+                        <span className="text-[18px] sm:text-[20px] leading-none flex items-center justify-center">{cat.emoji}</span>
+                        <span>{cat.label}</span>
                       </button>
                     );
                   })}
@@ -1335,22 +1354,6 @@ const HallOfExcellenceView: React.FC<HallOfExcellenceViewProps> = ({ currentLang
               </div>
             </div>
           </div>
-        )}
-
-        {/* TAB 8: ADMIN CONTROL PANEL */}
-        {activeTab === 'admin' && (
-          <ExcellenceAdminPanel
-            achievers={achievers}
-            categories={categories}
-            mentorshipRequests={mentorshipRequests}
-            currentLanguage={currentLanguage}
-            onAddAchiever={handleAddAchiever}
-            onDeleteAchiever={handleDeleteAchiever}
-            onToggleVerify={handleToggleVerify}
-            onToggleFeature={handleToggleFeature}
-            onAddCategory={handleAddCategory}
-            onUpdateRequestStatus={handleUpdateRequestStatus}
-          />
         )}
       </div>
 

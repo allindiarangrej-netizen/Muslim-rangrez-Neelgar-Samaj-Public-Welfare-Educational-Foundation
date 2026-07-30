@@ -18,6 +18,7 @@ interface ProfileImageProps {
   designation?: string;
   badge?: string;
   politicalParty?: string;
+  previewTitle?: string;
 }
 
 const sizeMap = {
@@ -48,7 +49,8 @@ export const ProfileImage: React.FC<ProfileImageProps> = ({
   name,
   designation,
   badge,
-  politicalParty
+  politicalParty,
+  previewTitle = 'Hall of Excellence'
 }) => {
   const defaultPlaceholder = '/images/committees/profile_avatar_placeholder.svg';
   const finalSrc = src || defaultPlaceholder;
@@ -90,17 +92,39 @@ export const ProfileImage: React.FC<ProfileImageProps> = ({
     if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
     hoverTimeoutRef.current = setTimeout(() => {
       setIsPreviewOpen(false);
-    }, 150);
+    }, 200);
   };
 
   const handleImageClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Always stop propagation to prevent opening parent card
     if (!enableHoverPreview) return;
-    // On touch devices or when user explicitly taps photo
-    if (isTouchDevice) {
-      e.stopPropagation();
-      setIsPreviewOpen((prev) => !prev);
-    }
+    setIsPreviewOpen((prev) => !prev);
   };
+
+  useEffect(() => {
+    if (isPreviewOpen) {
+      const handleGlobalClick = (e: MouseEvent) => {
+        const enlargedCard = document.getElementById('enlarged-profile-preview');
+        if (enlargedCard && enlargedCard.contains(e.target as Node)) {
+          return;
+        }
+        setIsPreviewOpen(false);
+        e.stopPropagation();
+        e.preventDefault();
+      };
+
+      document.addEventListener('click', handleGlobalClick, true);
+      return () => {
+        document.removeEventListener('click', handleGlobalClick, true);
+      };
+    }
+  }, [isPreviewOpen]);
+
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+    };
+  }, []);
 
   const displayName = name || alt;
 
@@ -140,29 +164,23 @@ export const ProfileImage: React.FC<ProfileImageProps> = ({
         <AnimatePresence>
           {isPreviewOpen && (
             <div 
-              className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-6 pointer-events-auto select-none"
-              onMouseEnter={() => {
-                if (!isTouchDevice && hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
-              }}
-              onMouseLeave={handleMouseLeave}
+              className="fixed inset-0 z-[9999] flex items-center justify-center p-3 sm:p-6 pointer-events-none select-none"
             >
-              {/* Dimmed Background Overlay with Soft Blur */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className="absolute inset-0 bg-black/70 backdrop-blur-md cursor-pointer"
-                onClick={() => setIsPreviewOpen(false)}
-              />
-
               {/* Floating Glassmorphic Golden Card Container */}
               <motion.div
-                initial={{ opacity: 0, scale: 0.82, y: 15 }}
+                id="enlarged-profile-preview"
+                onMouseEnter={() => {
+                  if (!isTouchDevice && hoverTimeoutRef.current) {
+                    clearTimeout(hoverTimeoutRef.current);
+                    hoverTimeoutRef.current = null;
+                  }
+                }}
+                onMouseLeave={handleMouseLeave}
+                initial={{ opacity: 0, scale: 0.85, y: 10 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.85, y: 10 }}
-                transition={{ type: "spring", damping: 26, stiffness: 380 }}
-                className="relative z-10 w-[92vw] sm:w-[440px] md:w-[480px] max-w-[500px] bg-gradient-to-b from-[#0B132B]/95 via-[#1C2541]/95 to-[#0B132B]/95 backdrop-blur-2xl border-2 sm:border-4 border-[#FFD54A] rounded-3xl p-4 sm:p-6 shadow-[0_25px_70px_rgba(0,0,0,0.95),0_0_40px_rgba(255,213,74,0.35)] flex flex-col items-center overflow-hidden"
+                transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                className="pointer-events-auto relative z-10 w-[92vw] sm:w-[440px] md:w-[480px] max-w-[500px] bg-gradient-to-b from-[#0B132B]/95 via-[#1C2541]/95 to-[#0B132B]/95 backdrop-blur-2xl border-2 sm:border-4 border-[#FFD54A] rounded-3xl p-4 sm:p-6 shadow-[0_25px_70px_rgba(0,0,0,0.95),0_0_40px_rgba(255,213,74,0.35)] flex flex-col items-center overflow-hidden"
               >
                 {/* Background Golden Glow Accents */}
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-48 bg-[#FFD54A]/15 rounded-full blur-3xl pointer-events-none" />
@@ -175,7 +193,7 @@ export const ProfileImage: React.FC<ProfileImageProps> = ({
                     </div>
                     <div>
                       <span className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-[#FFD54A] flex items-center gap-1">
-                        <span>Hall of Excellence</span>
+                        <span>{previewTitle}</span>
                         <ShieldCheck className="w-3 h-3 text-emerald-400" />
                       </span>
                       <p className="text-xs text-gray-300 font-semibold truncate max-w-[240px]">
@@ -186,7 +204,10 @@ export const ProfileImage: React.FC<ProfileImageProps> = ({
 
                   <button
                     type="button"
-                    onClick={() => setIsPreviewOpen(false)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsPreviewOpen(false);
+                    }}
                     className="bg-white/10 hover:bg-white/20 text-white p-2 rounded-full border border-white/20 transition-colors cursor-pointer"
                     title="Close Preview"
                   >

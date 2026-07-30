@@ -60,7 +60,7 @@ import PremiumHero from './components/common/PremiumHero';
 import AuthCallback from './components/AuthCallback';
 import AdminMediaDashboard from './components/AdminMediaDashboard';
 import EducationGallery from './components/EducationGallery';
-import { MapPin, Search, ExternalLink, Calendar, FileText, Info, HelpCircle } from 'lucide-react';
+import { MapPin, Search, ExternalLink, Calendar, FileText, Info, HelpCircle, ArrowUp, ArrowLeft, ArrowRight } from 'lucide-react';
 import { jobListings, governmentSchemes, communityEvents } from './data';
 import { EXAMS } from './data/careerData';
 import { initialDistricts } from './data/nationalDirectory';
@@ -95,17 +95,72 @@ export default function App() {
   });
   const [globalSearchQuery, setGlobalSearchQuery] = useState<string>('');
 
+  // Keep track of visited tabs to support our Premium Floating Back button
+  const [visitedTabs, setVisitedTabs] = useState<string[]>([]);
+  const [showBackToTop, setShowBackToTop] = useState(false);
+
+  // Monitor scrolling to show/hide the Back to Top button
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowBackToTop(window.scrollY > 300);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Helper to extract tabId from current URL pathname
+  const getTabFromPath = (path: string): string => {
+    const cleanPath = path.replace(/^\/|\/$/g, '');
+    if (!cleanPath) return 'home';
+
+    const parts = cleanPath.split('/');
+    if (parts[0] === 'en' || parts[0] === 'ur' || parts[0] === 'hi') {
+      parts.shift();
+    }
+
+    const remaining = parts.join('/');
+    if (!remaining) return 'home';
+
+    if (remaining === 'admin/login') return 'admin-login';
+    if (remaining === 'admin/dashboard') return 'admin-dashboard';
+    return remaining;
+  };
+
   // Enhanced navigation setter that ensures smooth scrolling to top for consistent UX
   const setActiveTab = (tabId: string) => {
     if (activeTab === tabId) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
+      // Record historical navigation to support the Back button
+      setVisitedTabs(prev => {
+        if (prev.length > 0 && prev[prev.length - 1] === activeTab) {
+          return prev;
+        }
+        return [...prev, activeTab];
+      });
       setActiveTabState(tabId);
       let newPath = '/';
       if (tabId === 'admin-login') newPath = '/admin/login';
       else if (tabId === 'admin-dashboard' || tabId === 'admin-media' || tabId === 'admin') newPath = '/admin/dashboard';
       else if (tabId !== 'home') newPath = `/${tabId}`;
       window.history.pushState(null, '', newPath);
+    }
+  };
+
+  // Handle manual back button action with automatic home page fallback
+  const handleBack = () => {
+    if (visitedTabs.length > 0) {
+      const prev = visitedTabs[visitedTabs.length - 1];
+      setVisitedTabs(prevList => prevList.slice(0, -1));
+      setActiveTabState(prev);
+
+      let newPath = '/';
+      if (prev === 'admin-login') newPath = '/admin/login';
+      else if (prev === 'admin-dashboard' || prev === 'admin-media' || prev === 'admin') newPath = '/admin/dashboard';
+      else if (prev !== 'home') newPath = `/${prev}`;
+      window.history.pushState(null, '', newPath);
+    } else {
+      setActiveTab('home');
     }
   };
 
@@ -177,6 +232,10 @@ export default function App() {
       else if (path.includes('/ur/') || path.endsWith('/ur')) lang = 'ur';
       else if (path.includes('/hi/') || path.endsWith('/hi')) lang = 'hi';
       setLanguageState(lang);
+
+      // Extract and update the active tab
+      const targetTab = getTabFromPath(path);
+      setActiveTabState(targetTab);
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
@@ -933,6 +992,54 @@ export default function App() {
         onNavigate={(tab) => setActiveTab(tab)}
         activeTab={activeTab}
       />
+
+      {/* 4. PREMIUM FLOATING NAVIGATION CONTROLS */}
+      <div 
+        className="fixed bottom-24 right-6 flex items-center gap-3.5 z-[9990] pointer-events-none animate-fadeIn select-none" 
+        id="floating_navigation_controls"
+      >
+        {/* Floating Back Button (Universal availability across every single page) */}
+        <button
+          onClick={handleBack}
+          tabIndex={0}
+          className="pointer-events-auto relative group flex items-center justify-center w-12 h-12 md:w-[52px] md:h-[52px] rounded-full bg-white/90 backdrop-blur-md border border-[#FFD54A]/40 text-[#004B23] shadow-lg hover:shadow-emerald-950/20 hover:border-[#FFD54A] transition-all duration-300 hover:scale-110 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#004B23] cursor-pointer"
+          aria-label={currentLanguage === 'en' ? 'Navigate Back' : currentLanguage === 'ur' ? 'پیچھے جائیں' : 'पीछे जाएँ'}
+        >
+          {currentLanguage === 'ur' ? (
+            <ArrowRight className="w-5.5 h-5.5 text-[#004B23] transition-transform duration-300 group-hover:translate-x-1" />
+          ) : (
+            <ArrowLeft className="w-5.5 h-5.5 text-[#004B23] transition-transform duration-300 group-hover:-translate-x-1" />
+          )}
+
+          {/* Premium Soft Glow Hover Effect */}
+          <span className="absolute inset-0 rounded-full bg-emerald-500/0 group-hover:bg-emerald-500/5 transition-all duration-300"></span>
+
+          {/* Elegant Tooltip */}
+          <span className="absolute bottom-full mb-2.5 hidden group-hover:flex items-center justify-center bg-[#004B23] text-[#FFD54A] border border-[#FFD54A]/30 text-[10px] font-bold px-3 py-1.5 rounded-lg shadow-xl whitespace-nowrap animate-fadeIn">
+            {currentLanguage === 'en' ? '⬅️ Back' : currentLanguage === 'ur' ? '⬅️ پیچھے' : '⬅️ पीछे जाएँ'}
+          </span>
+        </button>
+
+        {/* Floating Back to Top Button */}
+        {showBackToTop && (
+          <button
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            tabIndex={0}
+            className="pointer-events-auto relative group flex items-center justify-center w-12 h-12 md:w-[52px] md:h-[52px] rounded-full bg-gradient-to-br from-[#004B23] to-[#056633] border border-[#FFD54A]/50 text-[#FFD54A] shadow-xl hover:shadow-emerald-500/30 transition-all duration-300 hover:scale-110 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFD54A] cursor-pointer"
+            aria-label={currentLanguage === 'en' ? 'Back to Top' : currentLanguage === 'ur' ? 'اوپر جائیں' : 'ऊपर जाएँ'}
+          >
+            <ArrowUp className="w-5.5 h-5.5 text-[#FFD54A] transition-transform duration-300 group-hover:-translate-y-1" />
+
+            {/* Premium Soft Glow Hover Effect */}
+            <span className="absolute inset-0 rounded-full bg-white/0 group-hover:bg-white/10 transition-all duration-300"></span>
+
+            {/* Elegant Tooltip */}
+            <span className="absolute bottom-full mb-2.5 hidden group-hover:flex items-center justify-center bg-[#004B23] text-[#FFD54A] border border-[#FFD54A]/30 text-[10px] font-bold px-3 py-1.5 rounded-lg shadow-xl whitespace-nowrap animate-fadeIn">
+              {currentLanguage === 'en' ? '⬆️ Back to Top' : currentLanguage === 'ur' ? '⬆️ اوپر جائیں' : '⬆️ ऊपर जाएँ'}
+            </span>
+          </button>
+        )}
+      </div>
 
     </div>
   );

@@ -305,6 +305,7 @@ const POLITICAL_POSITION_KEYWORDS = [
  * Returns null if the person is non-political.
  */
 export function detectPoliticalParty(profile: {
+  id?: string;
   politicalParty?: string;
   designation?: string;
   occupation?: string;
@@ -312,57 +313,35 @@ export function detectPoliticalParty(profile: {
   categoryId?: string;
   biography?: { en?: string; hi?: string; ur?: string } | string;
   majorAchievements?: string[];
+  isPolitical?: boolean;
 }): PoliticalPartyInfo | null {
   if (!profile) return null;
 
-  const rawParty = (profile.politicalParty || '').toLowerCase().trim();
-  const designation = (profile.designation || '').toLowerCase();
-  const occupation = (profile.occupation || '').toLowerCase();
-  const organization = (profile.organization || '').toLowerCase();
-  const categoryId = (profile.categoryId || '').toLowerCase();
-  const bioText = typeof profile.biography === 'string' 
-    ? profile.biography.toLowerCase() 
-    : (profile.biography?.en || '' + ' ' + profile.biography?.hi || '').toLowerCase();
-  const achievements = (profile.majorAchievements || []).join(' ').toLowerCase();
+  // Explicitly exclude these individuals from having any political party symbol
+  const excludedIds = ['socialist-munshi-khan', 'socialist-rafiq-ahmad', 'socialist-nishar-khan', 'haji-asgar-sahab'];
+  if (profile.id && excludedIds.includes(profile.id)) {
+    return null;
+  }
 
-  const combinedText = `${rawParty} ${designation} ${occupation} ${organization} ${categoryId} ${bioText} ${achievements}`;
+  const rawParty = (profile.politicalParty || '').toLowerCase().trim();
+
+  // Do not automatically detect political party or position based on generic keywords in the future
+  if (!rawParty || rawParty === 'none' || rawParty === 'auto-detect') {
+    // Preserve political party only for Fakhruddin Khan explicitly
+    if (profile.id === 'politician-fakhruddin-khan') {
+      return POLITICAL_PARTIES.find(p => p.id === 'bjp') || null;
+    }
+    return null;
+  }
 
   // If explicit party ID or party name matches directly in rawParty
-  if (rawParty) {
-    const directMatch = POLITICAL_PARTIES.find(p => 
-      p.id === rawParty || 
-      p.abbr.toLowerCase() === rawParty || 
-      p.nameEn.toLowerCase() === rawParty || 
-      p.keywords.some(k => rawParty.includes(k.toLowerCase()))
-    );
-    if (directMatch) return directMatch;
-  }
+  const directMatch = POLITICAL_PARTIES.find(p => 
+    p.id === rawParty || 
+    p.abbr.toLowerCase() === rawParty || 
+    p.nameEn.toLowerCase() === rawParty || 
+    p.keywords.some(k => rawParty.includes(k.toLowerCase()))
+  );
+  if (directMatch) return directMatch;
 
-  // Check if political position is mentioned anywhere in combinedText
-  const isPoliticalFigure = 
-    categoryId === 'public-rep' ||
-    POLITICAL_POSITION_KEYWORDS.some(kw => {
-      // Word boundary or space regex match to avoid false positives (e.g. "lamp" matching "mp")
-      const regex = new RegExp(`\\b${kw}\\b`, 'i');
-      return regex.test(combinedText);
-    }) ||
-    POLITICAL_PARTIES.some(p => p.keywords.some(k => combinedText.includes(k)));
-
-  if (!isPoliticalFigure) {
-    return null; // Non-political person
-  }
-
-  // Match specific political party from combined text
-  for (const party of POLITICAL_PARTIES) {
-    if (party.id === 'ind') continue; // Skip independent until specific matches fail
-    for (const kw of party.keywords) {
-      const regex = new RegExp(`\\b${kw}\\b`, 'i');
-      if (regex.test(combinedText) || combinedText.includes(kw)) {
-        return party;
-      }
-    }
-  }
-
-  // If political figure but no specific party matched, return Independent
-  return POLITICAL_PARTIES.find(p => p.id === 'ind') || null;
+  return null;
 }

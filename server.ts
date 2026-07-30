@@ -939,15 +939,18 @@ async function startServer() {
   });
 
   app.post("/api/chat", async (req, res) => {
-    const { prompt } = req.body;
+    const { prompt, history } = req.body;
     const ai = getAIClient();
     if (!ai) {
       return res.status(503).json({ error: "AI service currently running in local offline semantic mode. GEMINI_API_KEY not configured." });
     }
     try {
+      // If history is provided and is an array, we use it directly for conversation continuity. Otherwise, default to prompt.
+      const contentsInput = Array.isArray(history) && history.length > 0 ? history : prompt;
+      
       const response = await ai.models.generateContent({
         model: "gemini-3.6-flash",
-        contents: prompt,
+        contents: contentsInput,
         config: {
           systemInstruction: "You are 'IQRA AI+', the advanced general-knowledge mode of the IQRA AI Assistant integrated into the All India Rangrez Community Bharat Portal. When users ask general-knowledge, scientific, career, educational, or general questions that are outside the portal's verified database, you must provide clear, polite, and helpful answers in the language of their query (English, Hindi, or Urdu). Be encouraging and supportive of community development, education, and welfare."
         }
