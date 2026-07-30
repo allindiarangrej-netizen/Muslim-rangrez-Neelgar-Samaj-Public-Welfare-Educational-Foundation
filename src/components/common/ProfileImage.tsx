@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import { Maximize2, X, Award, Sparkles, ShieldCheck } from 'lucide-react';
+import { PoliticalPartyBadge } from './PoliticalPartyBadge';
+import { detectPoliticalParty } from '../../data/politicalParties';
 
 interface ProfileImageProps {
   src?: string;
@@ -15,6 +17,7 @@ interface ProfileImageProps {
   name?: string;
   designation?: string;
   badge?: string;
+  politicalParty?: string;
 }
 
 const sizeMap = {
@@ -44,7 +47,8 @@ export const ProfileImage: React.FC<ProfileImageProps> = ({
   enableHoverPreview = true,
   name,
   designation,
-  badge
+  badge,
+  politicalParty
 }) => {
   const defaultPlaceholder = '/images/committees/profile_avatar_placeholder.svg';
   const finalSrc = src || defaultPlaceholder;
@@ -53,6 +57,12 @@ export const ProfileImage: React.FC<ProfileImageProps> = ({
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const detectedParty = detectPoliticalParty({
+    designation,
+    organization: badge,
+    politicalParty
+  });
 
   useEffect(() => {
     setImgSrc(src || defaultPlaceholder);
@@ -197,13 +207,24 @@ export const ProfileImage: React.FC<ProfileImageProps> = ({
 
                 {/* Person Info / Crest Label */}
                 <div className="w-full text-center mt-3 pt-2 border-t border-white/10 relative z-10">
-                  <h4 className="text-lg sm:text-xl font-black text-white tracking-tight flex items-center justify-center gap-2">
+                  <h4 className="text-lg sm:text-xl font-black text-white tracking-tight flex items-center justify-center gap-2 flex-wrap">
                     <span>{displayName}</span>
                     <Award className="w-4 h-4 text-[#FFD54A] shrink-0" />
+                    {detectedParty && (
+                      <span className="inline-block" title={detectedParty.nameEn}>
+                        {detectedParty.symbolEmoji}
+                      </span>
+                    )}
                   </h4>
                   {designation && (
                     <p className="text-xs sm:text-sm text-[#FFD54A] font-bold mt-0.5 line-clamp-1">
                       {designation}
+                    </p>
+                  )}
+                  {detectedParty && (
+                    <p className="text-[11px] sm:text-xs font-black text-amber-200 mt-1 flex items-center justify-center gap-1.5">
+                      <span>{detectedParty.symbolEmoji}</span>
+                      <span>{detectedParty.nameEn} ({detectedParty.abbr})</span>
                     </p>
                   )}
                   {badge && (

@@ -56,6 +56,7 @@ export interface AchieverProfile {
   coverImageUrl?: string;
   badges: string[];
   categoryTier?: 'hajj' | 'diamond' | 'platinum' | 'gold' | 'silver' | 'bronze' | 'rising' | 'leadership' | 'lifetime';
+  politicalParty?: string;
   hajjYear?: number;
   hajjType?: 'Hajj' | 'Umrah' | 'Both';
 }
@@ -505,7 +506,7 @@ export const INITIAL_CATEGORIES: AchieverCategory[] = [
   { id: 'fire-emergency', nameEn: 'Fire & Emergency', nameHi: 'अग्निशमन एवं आपातकालीन सेवा', nameUr: 'فائر اور ایمرجنسی سروسز', icon: 'Flame', count: 10, descriptionEn: 'Chief Fire Officers, Disaster Response Commandants', descriptionHi: 'मुख्य अग्निशमन अधिकारी, आपदा प्रतिक्रिया कमांडर', descriptionUr: 'فائر آفیسرز اور ایمرجنسی کمانڈر' },
   { id: 'sports', nameEn: 'Sports Persons', nameHi: 'खिलाड़ी एवं खेल रत्न', nameUr: 'کھلاڑی اور اسپورٹس مین', icon: 'Activity', count: 15, descriptionEn: 'National & international champions, Olympians & coaches', descriptionHi: 'राष्ट्रीय व अंतर्राष्ट्रीय चैंपियन, कोच व खिलाड़ी', descriptionUr: 'قومی اور بین الاقوامی کھلاڑی' },
   { id: 'media-writers', nameEn: 'Writers, Artists & Media', nameHi: 'लेखक, कलाकार एवं पत्रकार', nameUr: 'مصنفین، فنکار اور صحافی', icon: 'PenTool', count: 25, descriptionEn: 'Authors, senior journalists, poets & cultural icons', descriptionHi: 'साहित्यकार, वरिष्ठ पत्रकार, कवि व सांस्कृतिक धरोहर', descriptionUr: 'مصنفین، صحافی اور شعراء' },
-  { id: 'social-workers', nameEn: 'Social Workers & Reformers', nameHi: 'समाज सेवी एवं सुधारक', nameUr: 'سماجی کارکن اور مصلح', icon: 'HeartHandshake', count: 40, descriptionEn: 'Philanthropists, NGO leaders & community reformers', descriptionHi: 'दानवीर, एनजीओ संस्थापक व समाज सुधारक', descriptionUr: 'فلاحی اور سماجی رہنما' }
+  { id: 'social-workers', nameEn: 'Social Workers & Reformers', nameHi: 'समाज सेवी एवं सुधारक', nameUr: 'سماجی کارکن اور مصلح', icon: 'HeartHandshake', count: 41, descriptionEn: 'Philanthropists, NGO leaders & community reformers', descriptionHi: 'दानवीर, एनजीओ संस्थापक व समाज सुधारक', descriptionUr: 'فلاحی اور سماجی رہنما' }
 ];
 
 export const INITIAL_ACHIEVERS: AchieverProfile[] = [
@@ -652,6 +653,80 @@ export const INITIAL_ACHIEVERS: AchieverProfile[] = [
     photoUrl: 'https://lh3.googleusercontent.com/d/1kICR_JmDjP1f1IOXUfCJjVjePW5mZxwM',
     coverImageUrl: 'https://lh3.googleusercontent.com/d/1YjaXWcs0YLnAF-f3516GOh0IRf0DlMM7',
     badges: ['🤝 Senior Socialist', 'Marriage Relationship Expert', '⭐ Community Leader', '25+ Yrs Social Service', 'Morena MP Leader', '🤝 Family Arbitrator']
+  },
+  {
+    id: 'socialist-nishar-khan',
+    name: 'Nishar Khan',
+    displayName: 'Samajsevi',
+    fatherName: 'Haji Waldar Khan',
+    gender: 'Male',
+    dob: '01/01/1983',
+    nativePlace: 'Joura, Morena, Madhya Pradesh',
+    currentCity: 'Joura',
+    district: 'Morena',
+    state: 'Madhya Pradesh',
+    country: 'India',
+    occupation: 'Social Reformer & Community Leader',
+    categoryId: 'social-workers',
+    categoryTier: 'leadership',
+    designation: 'Samajsevi',
+    organization: 'Rangrez samaj Joura',
+    employmentType: 'Private',
+    yearsOfExperience: '20+ Years',
+    qualification: 'Intermediate',
+    university: 'MP State Board',
+    yearOfAchievement: 2025,
+    careerJourney: {
+      en: 'Shri Nishar Khan is a committed social reformer and community leader from Joura, Madhya Pradesh. He has spent more than two decades actively working for the welfare, unity, and development of the Muslim Rangrez Community. He previously served as the President of the Joura Mass Marriage Committee (Marriage Sammelan Committee), where he played a significant role in organizing community mass marriage ceremonies and promoting social harmony. His leadership, dedication, and courage to stand against injustice have made him a highly respected figure.',
+      hi: 'श्री निशार खान जौरा, मध्य प्रदेश के एक प्रतिबद्ध समाज सुधारक और समुदाय के नेता हैं। उन्होंने मुस्लिम रंगरेज समाज के कल्याण, एकता और विकास के लिए दो दशकों से अधिक का समय सक्रिय रूप से काम करते हुए बिताया है। उन्होंने पूर्व में जौरा सामूहिक विवाह समिति (सम्मेलन समिति) के अध्यक्ष के रूप में कार्य किया, जहाँ उन्होंने सामूहिक विवाह समारोहों के आयोजन और सामाजिक समरसता को बढ़ावा देने में महत्वपूर्ण भूमिका निभाई। उनका नेतृत्व, समर्पण और अन्याय के खिलाफ खड़े होने का साहस उन्हें एक अत्यंत सम्मानित व्यक्तित्व बनाता है।',
+      ur: 'جناب نشار خان جورا، مدھیہ پردیش کے ایک پرعزم سماجی مصلح اور کمیونٹی لیڈر ہیں۔ انہوں نے مسلم رنگریز برادری کی فلاح و بہبود، اتحاد اور ترقی کے لیے دو دہائیوں سے زیادہ کا عرصہ سرگرمی سے کام کرتے ہوئے گزارا ہے۔ انہوں نے اس سے قبل جورا اجتماعی شادی کمیٹی (شادی سممیلن کمیٹی) کے صدر کے طور پر خدمات انجام دیں، جہاں انہوں نے اجتماعی شادیوں کی تقریبات کے انعقاد اور سماجی ہم آہنگی کو فروغ دینے میں اہم کردار ادا کیا۔ ان کی قیادت، لگن اور ناانصافی کے خلاف کھڑے ہونے کی ہمت انہیں ایک انتہائی قابل احترام شخصیت بناتی ہے۔'
+    },
+    biography: {
+      en: 'Mr. Nishar Khan is a respected social worker from Joura, Morena (Madhya Pradesh), dedicated to the unity, progress, and welfare of the Muslim Rangrez Community. Known for his courage, honesty, and outspoken nature, he always raises his voice against injustice and stands firmly for what is right. Under his presidency of the Joura Mass Marriage Committee, he introduced reforms to simplify community marriages, successfully organizing large-scale mass weddings that supported countless underprivileged families. His fearless personality, straightforward approach, and unwavering commitment to defending the interests of the community have earned him deep respect, making him an inspiring and influential figure within the community.',
+      hi: 'श्री निशार खान जौरा, मुरैना (मध्य प्रदेश) के एक सम्मानित सामाजिक कार्यकर्ता हैं, जो मुस्लिम रंगरेज समुदाय की एकता, प्रगति और कल्याण के लिए समर्पित हैं। अपने साहस, ईमानदारी और मुखर स्वभाव के लिए जाने जाने वाले, वे हमेशा अन्याय के खिलाफ अपनी आवाज उठाते हैं और जो सही है उसके लिए दृढ़ता से खड़े रहते हैं। जौरा सामूहिक विवाह समिति के अध्यक्ष के रूप में, उन्होंने सामुदायिक विवाहों को सरल बनाने के लिए सुधार पेश किए, बड़े पैमाने पर सामूहिक विवाहों का सफलतापूर्वक आयोजन किया, जिससे अनगिनत वंचित परिवारों को मदद मिली। उनकी निडर छवि, सीधा दृष्टिकोण और समुदाय के हितों की रक्षा के लिए अटूट प्रतिबद्धता ने उन्हें गहरा सम्मान दिलाया है, जिससे वे समुदाय के भीतर एक प्रेरक और प्रभावशाली व्यक्ति बन गए हैं।',
+      ur: 'جناب نشار خان جورا، مورینا (مدھیہ پردیش) کے ایک معزز سماجی کارکن ہیں، جو مسلم رنگریز برادری کے اتحاد، ترقی اور فلاح و بہبود کے لیے وقف ہیں۔ اپنی ہمت، ایمانداری اور بے باک مزاج کے لیے جانے جانے والے, وہ ہمیشہ ناانصافی کے خلاف آواز اٹھاتے ہیں اور جو درست ہے اس کے لیے مضبوطی से کھڑے رہتے ہیں۔ جورا اجتماعی شادی کمیٹی کے صدر کی حیثیت سے، انہوں ने خاندانی شادیوں کو آسان بنانے کے لیے اصلاحات متعارف کرائیں، بڑے پیمانے پر اجتماعی شادیوں کا کامیابی سے انعقاد کیا جس سے بے شمار مستحق خاندانوں کو مدد ملی۔ ان کی نڈر شخصیت، سیدھا نقطہ نظر اور برادری کے مفادات کے تحفظ کے لیے غیر متزلزل عزم نے انہیں گہرا احترام بخشا ہے، جس سے وہ برادری میں ایک متاثر کن اور بااثر شخصیت بن گئے ہیں۔'
+    },
+    majorAchievements: [
+      'Former President of Joura Mass Marriage Committee (Marriage Sammelan Committee)',
+      'Organized large-scale mass marriages, promoting social harmony and reducing financial burden on underprivileged families',
+      'Actively worked for the unity, welfare, and development of the Muslim Rangrez Community in Morena district',
+      'Widely recognized for courageous public advocacy and standing firmly against social injustice',
+      'Established community harmony, youth guidance, and reform initiatives in Joura, MP'
+    ],
+    awardsHonors: [
+      'Community Leadership & Social Reform Honor (Joura, MP)',
+      'Outstanding Social Service Award by Rangrez Samaj Morena',
+      'Marriage Sammelan Committee Leadership Excellence Award'
+    ],
+    socialContributions: {
+      en: 'Dedicated to community welfare, promoting mass marriage to prevent financial debt, providing guidance to underprivileged youth, and raising voices for human rights.',
+      hi: 'सामुदायिक कल्याण के लिए समर्पित, आर्थिक कर्ज से बचाने के लिए सामूहिक विवाह को बढ़ावा देना, वंचित युवाओं को मार्गदर्शन देना और मानवाधिकारों के लिए आवाज उठाना।',
+      ur: 'معاشرتی بہبود کے لیے وقف، خاندانوں کو قرضوں سے بچانے کے لیے اجتماعی شادیوں کا فروغ، ضرورت مند نوجوانوں کی رہنمائی اور انسانی حقوق کے لیے آواز اٹھانا۔'
+    },
+    inspirationalMessage: {
+      en: 'Always have the courage to speak the truth and stand firmly against injustice. Unity and honest service are our greatest strengths.',
+      hi: 'हमेशा सच बोलने का साहस रखें और अन्याय के खिलाफ दृढ़ता से खड़े रहें। एकता और ईमानदार सेवा ही हमारी सबसे बड़ी ताकत है।',
+      ur: 'ہمیشہ سچ بولنے کا حوصلہ رکھیں اور ناانصافی کے خلاف مضبوطی سے کھڑے رہیں۔ اتحاد اور ایماندارانہ خدمت ہی ہماری سب سے بڑی طاقت ہے۔'
+    },
+    careerAdvice: {
+      en: 'Acquire education and combine it with moral values. Dedicate a part of your life to uplift and unite your community.',
+      hi: 'शिक्षा प्राप्त करें और इसे नैतिक मूल्यों के साथ जोड़ें। अपने जीवन का एक हिस्सा अपने समुदाय के उत्थान और एकता के लिए समर्पित करें।',
+      ur: 'تعلیم حاصل کریں اور اسے اخلاقی قدروں کے ساتھ جوڑیں۔ اپنی زندگی کا ایک حصہ اپنی برادری کی ترقی اور اتحاد کے لیے وقف کریں۔'
+    },
+    languagesKnown: ['Hindi', 'English', 'Urdu'],
+    expertise: ['Social Reform', 'Community Leadership', 'Mass Marriage Organizing', 'Conflict Resolution'],
+    contactPermission: true,
+    email: 'nisharkhan.joura@gmail.com',
+    phone: '+91 91314 26644',
+    whatsapp: '+91 91314 26644',
+    isMentor: true,
+    isVerified: true,
+    isFeatured: true,
+    isGovt: false,
+    isOverseas: false,
+    photoUrl: 'https://lh3.googleusercontent.com/d/1vLCuH1ZXg-jNIl1yYVnQE2Pu4lycCeNu',
+    coverImageUrl: 'https://lh3.googleusercontent.com/d/18yir3nthcRTt6rDoaw9VaIHgEAVTQHbg',
+    badges: ['🤝 Samajsevi', '⭐ Community Leader', 'Former Marriage Sammelan President', 'Morena MP Leader', '🎓 Intermediate Scholar']
   },
   {
     id: 'politician-fakhruddin-khan',

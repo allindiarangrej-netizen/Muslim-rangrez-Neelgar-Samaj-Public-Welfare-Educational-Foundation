@@ -66,10 +66,10 @@ export default function Hero({ currentLanguage, onNavigate }: HeroProps) {
           src={slides[activeSlide].bgImage}
           alt="Community Showcase"
           referrerPolicy="no-referrer"
-          className="w-full h-full object-cover object-center opacity-30 transition-all duration-1000 transform scale-105"
+          className="w-full h-full object-cover object-center opacity-50 contrast-110 saturate-105 brightness-115 transition-all duration-1000 transform scale-105"
         />
         {/* Multilayer gradient overlays to match branding */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#003118]/95 via-[#004B23]/80 to-[#0B132B]/90"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-[#002b15]/65 via-[#00381a]/40 to-[#03091e]/55"></div>
         {/* Subtle geometric pattern */}
         <div className="absolute inset-0 bg-[radial-gradient(#F4C430_1px,transparent_1px)] [background-size:16px_16px] opacity-5"></div>
       </div>

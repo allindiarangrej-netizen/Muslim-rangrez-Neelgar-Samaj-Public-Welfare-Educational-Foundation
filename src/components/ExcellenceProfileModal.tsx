@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { AchieverProfile } from '../data/hallOfExcellenceData';
+import { detectPoliticalParty } from '../data/politicalParties';
+import { PoliticalPartyBadge } from './common/PoliticalPartyBadge';
 import { ProfileImage } from './common/ProfileImage';
+import { PremiumCoverImage } from './common/PremiumCoverImage';
 import {
   X,
   MapPin,
@@ -43,6 +46,8 @@ const ExcellenceProfileModal: React.FC<ExcellenceProfileModalProps> = ({
   const [activeTab, setActiveTab] = useState<'journey' | 'achievements' | 'advice' | 'contact'>('journey');
 
   if (!achiever) return null;
+
+  const party = detectPoliticalParty(achiever);
 
   const handleShare = () => {
     const url = window.location.href;
@@ -93,12 +98,15 @@ const ExcellenceProfileModal: React.FC<ExcellenceProfileModalProps> = ({
 
       <div className="bg-white rounded-3xl max-w-4xl w-full max-h-[92vh] overflow-y-auto shadow-2xl border border-gray-200 relative flex flex-col">
         {/* Top Header Banner with Cover Image support */}
-        <div className="bg-gradient-to-r from-[#0B132B] via-[#004B23] to-[#0B132B] p-6 sm:p-8 text-white relative rounded-t-3xl overflow-hidden min-h-[220px]">
+        <div className="relative p-6 sm:p-8 text-white rounded-t-3xl overflow-hidden min-h-[220px] bg-slate-950">
           {/* Cover Image Background if available */}
           {achiever.coverImageUrl && (
-            <div
-              className="absolute inset-0 z-0 bg-cover bg-center opacity-30 mix-blend-overlay pointer-events-none scale-105 transform"
-              style={{ backgroundImage: `url(${achiever.coverImageUrl})` }}
+            <PremiumCoverImage 
+              src={achiever.coverImageUrl} 
+              alt={`${achiever.name} Cover`} 
+              overlayOpacity={0.25} 
+              focalPoint="center 30%"
+              enableVignette={true}
             />
           )}
 
@@ -152,9 +160,15 @@ const ExcellenceProfileModal: React.FC<ExcellenceProfileModalProps> = ({
                 name={achiever.displayName ? `${achiever.name} (${achiever.displayName})` : achiever.name}
                 designation={achiever.designation}
                 badge={achiever.badges?.[0] || 'Hall of Excellence'}
+                politicalParty={achiever.politicalParty}
                 size="custom"
                 containerClassName="w-32 h-32 sm:w-48 sm:h-48 rounded-2xl border-4 border-[#F4C430] shadow-2xl"
               />
+              {party && (
+                <div className="absolute -top-1.5 -left-1.5 z-20 shadow-xl scale-110">
+                  <PoliticalPartyBadge party={party} variant="photo-overlay" />
+                </div>
+              )}
               {achiever.isFeatured && (
                 <div className="absolute -bottom-2 -right-2 bg-[#F4C430] text-[#0B132B] p-1.5 rounded-full shadow-lg" title="Featured Achiever">
                   <Sparkles className="w-5 h-5" />
@@ -163,7 +177,7 @@ const ExcellenceProfileModal: React.FC<ExcellenceProfileModalProps> = ({
             </div>
 
             <div className="text-center sm:text-left flex-1">
-              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2.5">
                 <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
                   {achiever.name}
                   {achiever.displayName && (
@@ -172,12 +186,22 @@ const ExcellenceProfileModal: React.FC<ExcellenceProfileModalProps> = ({
                     </span>
                   )}
                 </h2>
+                {party && (
+                  <PoliticalPartyBadge party={party} variant="compact" className="scale-95" />
+                )}
               </div>
 
               <p className="text-[#FFD54A] font-bold text-base sm:text-lg mt-1 flex items-center justify-center sm:justify-start gap-2">
                 <Briefcase className="w-4 h-4 shrink-0" />
                 <span>{achiever.designation} — <strong className="text-white">{achiever.organization}</strong></span>
               </p>
+
+              {party && (
+                <p className="text-amber-400 font-extrabold text-sm sm:text-base mt-1.5 flex items-center justify-center sm:justify-start gap-2 bg-black/25 px-3 py-1.5 rounded-xl border border-amber-500/20 backdrop-blur-xs w-fit">
+                  <span className="text-lg filter drop-shadow">{party.symbolEmoji}</span>
+                  <span>{party.nameEn} ({party.abbr}) — <strong className="text-gray-200 font-semibold text-xs sm:text-sm">{party.nameHi}</strong></span>
+                </p>
+              )}
 
               {achiever.fatherName && (
                 <p className="text-gray-300 text-xs sm:text-sm mt-1">

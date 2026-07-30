@@ -18,6 +18,7 @@ import ExcellenceMentorshipModal from './ExcellenceMentorshipModal';
 import ExcellenceAdminPanel from './ExcellenceAdminPanel';
 import AchieverCard from './AchieverCard';
 import { ProfileImage } from './common/ProfileImage';
+import { PremiumCoverImage } from './common/PremiumCoverImage';
 import {
   Trophy,
   Award,
@@ -310,9 +311,16 @@ const HallOfExcellenceView: React.FC<HallOfExcellenceViewProps> = ({ currentLang
   return (
     <div className="space-y-8 animate-fadeIn pb-12">
       {/* 1. SECTION HERO BANNER */}
-      <div className="bg-gradient-to-r from-[#0B132B] via-[#004B23] to-[#0B132B] p-6 sm:p-10 rounded-3xl text-white shadow-xl relative overflow-hidden border border-[#D4AF37]/30">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-[#F4C430]/10 rounded-full blur-3xl transform translate-x-20 -translate-y-20 pointer-events-none"></div>
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-2xl transform -translate-x-16 translate-y-16 pointer-events-none"></div>
+      <div className="relative p-6 sm:p-10 rounded-3xl text-white shadow-xl overflow-hidden border border-[#D4AF37]/35 bg-slate-950">
+        <PremiumCoverImage 
+          src="https://images.unsplash.com/photo-1540575467063-178a50c2df87" 
+          alt="Hall of Excellence Banner" 
+          overlayOpacity={0.3} 
+          focalPoint="center 35%"
+          enableVignette={true}
+        />
+        <div className="absolute top-0 right-0 w-80 h-80 bg-[#F4C430]/15 rounded-full blur-3xl transform translate-x-20 -translate-y-20 pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-emerald-500/15 rounded-full blur-2xl transform -translate-x-16 translate-y-16 pointer-events-none"></div>
 
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
           <div className="space-y-3 max-w-3xl">
@@ -321,14 +329,14 @@ const HallOfExcellenceView: React.FC<HallOfExcellenceViewProps> = ({ currentLang
               <span>{currentLanguage === 'en' ? 'Official Digital Heritage & Mentorship Network' : currentLanguage === 'ur' ? 'آفیشل ڈیجیٹل ورثہ اور رہنمائی کا نیٹ ورک' : 'आधिकारिक डिजिटल धरोहर एवं मार्गदर्शन नेटवर्क'}</span>
             </div>
 
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white leading-tight">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white leading-tight drop-shadow-md">
               🏆 {currentLanguage === 'en' ? 'Hall of Excellence' : currentLanguage === 'ur' ? 'ہال آف ایکسیلنس' : 'गौरवशाली विभूतियाँ (हॉल ऑफ एक्सीलेंस)'}
               <span className="block text-xl sm:text-2xl font-bold text-[#FFD54A] mt-1">
-                {currentLanguage === 'en' ? '(Community Achievers & Role Models)' : currentLanguage === 'ur' ? '(برادری کے نمایاں افراد اور رول ماڈلز)' : '(समाज के सफल व्यक्तित्व एवं प्रेरणास्रोत)'}
+                {currentLanguage === 'en' ? '(Community Achievers & Role Models)' : currentLanguage === 'ur' ? '(برادری के نمایاں افراد और रول ماڈلز)' : '(समाज के सफल व्यक्तित्व एवं प्रेरणास्रोत)'}
               </span>
             </h1>
 
-            <p className="text-gray-200 text-sm sm:text-base leading-relaxed max-w-2xl font-medium">
+            <p className="text-gray-150 text-sm sm:text-base leading-relaxed max-w-2xl font-bold drop-shadow">
               {currentLanguage === 'en'
                 ? 'Recognizing and honoring successful members of the All India Rangrez (Neelgar) community. Inspiring younger generations, preserving community achievements, and connecting students with experienced role models for career guidance.'
                 : 'ऑल इंडिया रंगरेज समाज के सफल सदस्यों का सम्मान। भावी पीढ़ियों को प्रेरित करना, इतिहास को संजोना और छात्रों को अनुभवी मार्गदर्शकों से जोड़ना।'}
@@ -365,7 +373,7 @@ const HallOfExcellenceView: React.FC<HallOfExcellenceViewProps> = ({ currentLang
               onClick={() => {
                 setModalMode('story');
               }}
-              className="px-6 py-3.5 bg-white/10 hover:bg-white/20 text-white border border-white/20 font-bold text-xs sm:text-sm uppercase tracking-wider rounded-2xl shadow transition flex items-center justify-center gap-2 cursor-pointer flex-1 sm:flex-initial"
+              className="px-6 py-3.5 bg-white/10 hover:bg-white/20 text-white border border-white/20 font-bold text-xs sm:text-sm uppercase tracking-wider rounded-2xl shadow transition flex items-center justify-center gap-2 cursor-pointer flex-1 sm:flex-initial backdrop-blur-sm"
             >
               <BookOpen className="w-4 h-4 text-[#FFD54A]" />
               <span>{currentLanguage === 'en' ? 'Publish Success Story' : 'सफलता की कहानी भेजें'}</span>
@@ -375,22 +383,28 @@ const HallOfExcellenceView: React.FC<HallOfExcellenceViewProps> = ({ currentLang
       </div>
 
       {/* HAJIYON KI SPECIAL HALL OF EXCELLENCE BANNER */}
-      <div className="bg-gradient-to-r from-[#004B23] via-[#00381a] to-[#0B132B] rounded-3xl p-6 sm:p-8 text-white shadow-2xl border-2 border-[#FFD54A]/50 relative overflow-hidden">
-        <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-cover bg-center opacity-15 pointer-events-none mix-blend-overlay" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1591604466107-ec97de577aff?q=80&w=2070&auto=format&fit=crop')" }}></div>
+      <div className="relative p-6 sm:p-8 text-white rounded-3xl shadow-2xl border-2 border-[#FFD54A]/50 overflow-hidden bg-emerald-950">
+        <PremiumCoverImage 
+          src="https://images.unsplash.com/photo-1591604466107-ec97de577aff" 
+          alt="Sacred Pilgrimage Heritage Cover" 
+          overlayOpacity={0.35} 
+          focalPoint="center 40%"
+          enableVignette={true}
+        />
         <div className="flex flex-col lg:flex-row items-center justify-between gap-6 relative z-10">
           <div className="space-y-2 text-center lg:text-left">
             <div className="inline-flex items-center gap-2 bg-[#FFD54A] text-[#004B23] px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider shadow">
               <span>🕋 Sacred Pilgrimage Heritage</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-black text-white flex flex-wrap items-center justify-center lg:justify-start gap-2">
+            <h2 className="text-2xl sm:text-3xl font-black text-white flex flex-wrap items-center justify-center lg:justify-start gap-2 drop-shadow-md">
               <span>🕋 Hajiyon Ki Hall of Excellence</span>
               <span className="text-[#FFD54A] font-extrabold text-lg sm:text-xl">(حجاج کرام ہال آف ایکسیلنس)</span>
             </h2>
-            <p className="text-emerald-100 text-xs sm:text-sm font-medium italic max-w-2xl">
+            <p className="text-emerald-50 text-xs sm:text-sm font-extrabold italic max-w-2xl drop-shadow">
               "مَبْرُورٌ وَسَعْيٌ مَشْكُورٌ وَذَنْبٌ مَغْفُورٌ" — Special recognition dedicated to all respected Hajj & Umrah pilgrims from the Rangrez community. May Allah accept their sacred pilgrimage and grant continuous barakah.
             </p>
           </div>
-          <div className="flex items-center gap-4 shrink-0">
+          <div className="flex items-center gap-4 shrink-0 relative z-10">
             <div className="bg-white/10 backdrop-blur-md px-5 py-3 rounded-2xl border border-white/20 text-center">
               <div className="text-2xl font-black text-[#FFD54A]">
                 {achievers.filter(a => a.categoryTier === 'hajj' || (a.categoryTier as string) === 'hajj-pilgrims' || Boolean(a.hajjYear) || a.categoryId === 'hajj-pilgrims').length}

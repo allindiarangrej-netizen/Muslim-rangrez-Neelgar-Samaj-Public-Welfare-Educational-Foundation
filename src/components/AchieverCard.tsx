@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { AchieverProfile, detectCategoryTier, detectProfessionTag } from '../data/hallOfExcellenceData';
+import { detectPoliticalParty } from '../data/politicalParties';
+import { PoliticalPartyBadge } from './common/PoliticalPartyBadge';
 import {
   Eye,
   MapPin,
@@ -53,6 +55,7 @@ const AchieverCard: React.FC<AchieverCardProps> = ({
   const isHajj = achiever.categoryTier === 'hajj' || (achiever.categoryTier as string) === 'hajj-pilgrims' || Boolean(achiever.hajjYear) || achiever.categoryId === 'hajj-pilgrims';
   const computedTier = achiever.categoryTier || detectCategoryTier(achiever.designation, achiever.occupation, achiever.categoryId);
   const professionTag = detectProfessionTag(achiever.designation, achiever.occupation, achiever.categoryId);
+  const party = detectPoliticalParty(achiever);
 
   // Handle share profile action (native share or clipboard copy fallback)
   const handleShare = async (e: React.MouseEvent) => {
@@ -144,12 +147,20 @@ const AchieverCard: React.FC<AchieverCardProps> = ({
             name={achiever.displayName ? `${achiever.name} (${achiever.displayName})` : achiever.name}
             designation={achiever.designation}
             badge={isHajj ? '🕋 Hajiyon Pilgrim' : achiever.badges?.[0] || 'Hall of Excellence'}
+            politicalParty={achiever.politicalParty}
             size="xl"
             containerClassName={`sm:w-32 sm:h-32 rounded-2xl border-2 shadow-md group-hover:scale-105 transition-all duration-300 ${
               isHajj ? 'border-amber-400 shadow-amber-200' : computedTier === 'diamond' ? 'border-cyan-400' : 'border-[#F4C430]'
             }`}
             className="group-hover:scale-110 transition-transform duration-500 ease-out"
           />
+
+          {/* Political Party Badge Overlay on Profile Photo */}
+          {party && (
+            <div className="absolute -top-1.5 -left-1.5 z-20 shadow-lg scale-90 group-hover:scale-100 transition-all duration-300">
+              <PoliticalPartyBadge party={party} variant="photo-overlay" />
+            </div>
+          )}
 
           {/* Verified Badge Icon */}
           {achiever.isVerified && (
@@ -229,8 +240,12 @@ const AchieverCard: React.FC<AchieverCardProps> = ({
           </div>
 
           {/* Achiever Name */}
-          <h3 className="text-base sm:text-lg font-black text-[#0B132B] group-hover:text-[#004B23] transition-colors leading-tight truncate">
-            {achiever.name} {achiever.displayName && <span className="text-xs font-bold text-[#004B23] ml-1">({achiever.displayName})</span>}
+          <h3 className="text-base sm:text-lg font-black text-[#0B132B] group-hover:text-[#004B23] transition-colors leading-tight flex items-center gap-1.5 flex-wrap">
+            <span className="truncate">{achiever.name}</span>
+            {achiever.displayName && <span className="text-xs font-bold text-[#004B23]">({achiever.displayName})</span>}
+            {party && (
+              <PoliticalPartyBadge party={party} variant="compact" className="scale-[0.8] origin-left shrink-0 py-0 px-2" />
+            )}
           </h3>
 
           {/* Profession Highlight Pill */}
@@ -243,6 +258,12 @@ const AchieverCard: React.FC<AchieverCardProps> = ({
             <p className="text-xs font-bold text-gray-800 leading-tight truncate">
               {achiever.designation}
             </p>
+            {party && (
+              <p className="text-[11px] font-black text-amber-700 dark:text-amber-500 flex items-center gap-1 mt-0.5 leading-tight" title={`${party.nameEn} - Symbol: ${party.symbolLabel}`}>
+                <span className="text-xs filter drop-shadow-sm">{party.symbolEmoji}</span>
+                <span className="truncate">{party.nameEn} ({party.abbr})</span>
+              </p>
+            )}
             <p className="text-xs text-gray-500 font-medium truncate flex items-center gap-1">
               <Building2 className="w-3 h-3 text-gray-400 shrink-0" />
               <span className="truncate">{achiever.organization}</span>

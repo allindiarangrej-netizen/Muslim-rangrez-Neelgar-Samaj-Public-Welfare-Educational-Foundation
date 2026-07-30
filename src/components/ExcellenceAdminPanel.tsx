@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { AchieverProfile, AchieverCategory, MentorshipRequest, detectCategoryTier, detectProfessionTag, formatDriveUrl } from '../data/hallOfExcellenceData';
+import { POLITICAL_PARTIES } from '../data/politicalParties';
 import { ProfileImage } from './common/ProfileImage';
 import {
   ShieldCheck,
@@ -134,6 +135,7 @@ const ExcellenceAdminPanel: React.FC<ExcellenceAdminPanelProps> = ({
   const [isGovt, setIsGovt] = useState(true);
   const [isOverseas, setIsOverseas] = useState(false);
   const [categoryId, setCategoryId] = useState('doctors');
+  const [politicalParty, setPoliticalParty] = useState<string>('');
 
   // New Category form state
   const [catNameEn, setCatNameEn] = useState('');
@@ -206,6 +208,7 @@ const ExcellenceAdminPanel: React.FC<ExcellenceAdminPanelProps> = ({
       linkedin,
       socialMedia: facebook || instagram || youtube,
       categoryTier: activeTier as any,
+      politicalParty,
       isMentor,
       isVerified: true,
       isFeatured: false,
@@ -226,6 +229,7 @@ const ExcellenceAdminPanel: React.FC<ExcellenceAdminPanelProps> = ({
     setName('');
     setDesignation('');
     setOrganization('');
+    setPoliticalParty('');
   };
 
   const handleCreateCategory = (e: React.FormEvent) => {
@@ -1231,6 +1235,28 @@ const ExcellenceAdminPanel: React.FC<ExcellenceAdminPanelProps> = ({
                           <option value="🎓 Higher Education">🎓 Higher Education</option>
                         </select>
                       </div>
+                    </div>
+
+                    {/* Political Party Selector */}
+                    <div className="p-4 bg-[#004B23]/5 border border-[#004B23]/20 rounded-2xl">
+                      <label className="block font-extrabold text-[#0B132B] mb-1 text-xs">
+                        Political Party Affiliation (Leave blank/None for Auto-Detection or Non-Political):
+                      </label>
+                      <select
+                        value={politicalParty}
+                        onChange={(e) => setPoliticalParty(e.target.value)}
+                        className="w-full px-3.5 py-2 bg-white border border-gray-300 rounded-xl font-bold text-xs focus:ring-2 focus:ring-[#004B23]"
+                      >
+                        <option value="">🚫 None / Auto-Detect</option>
+                        {POLITICAL_PARTIES.map(p => (
+                          <option key={p.id} value={p.id}>
+                            {p.symbolEmoji} {p.nameEn} ({p.abbr})
+                          </option>
+                        ))}
+                      </select>
+                      <p className="text-[10px] text-gray-500 font-medium mt-1">
+                        If left as None / Auto-Detect, political party will be automatically detected if they hold political positions (e.g., MP, MLA, Sarpanch, etc.) in their designation, organization, or biography.
+                      </p>
                     </div>
 
                     {/* Quick Toggles */}
