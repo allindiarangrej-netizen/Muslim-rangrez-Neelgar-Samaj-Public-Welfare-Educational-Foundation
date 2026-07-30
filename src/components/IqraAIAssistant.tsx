@@ -501,20 +501,68 @@ export default function IqraAIAssistant({ currentLanguage, onNavigate, activeTab
     if (!textToSend) setInputQuery('');
     setIsTyping(true);
 
-    setTimeout(() => {
+    setTimeout(async () => {
       const response = generateAIResponse(query);
-      const aiMsg: Message = {
-        id: 'ai-' + Date.now(),
-        sender: 'ai',
-        text: response.text,
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        suggestedAction: response.action,
-        followUps: response.followUps,
-        isVerified: response.isVerified,
-        citation: response.citation
-      };
-      setMessages(prev => [...prev, aiMsg]);
-      setIsTyping(false);
+      if (response.isVerified) {
+        // Local RAG/FAQ match! Render instantly.
+        const aiMsg: Message = {
+          id: 'ai-' + Date.now(),
+          sender: 'ai',
+          text: response.text,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          suggestedAction: response.action,
+          followUps: response.followUps,
+          isVerified: response.isVerified,
+          citation: response.citation
+        };
+        setMessages(prev => [...prev, aiMsg]);
+        setIsTyping(false);
+      } else {
+        // Query is outside verified knowledge base. Query the general AI+ model!
+        try {
+          const res = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ prompt: query })
+          });
+          
+          if (!res.ok) {
+            throw new Error('API returned an error');
+          }
+          
+          const data = await res.json();
+          const aiMsg: Message = {
+            id: 'ai-' + Date.now(),
+            sender: 'ai',
+            text: `✨ **IQRA AI+** (General Assistant)\n\n${data.text}`,
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            suggestedAction: { label: 'Explore Portal Directory', tab: 'portal' },
+            followUps: [
+              'How can I help the community?',
+              'Show me local career resources',
+              'Tell me more about All India Rangrez Mahasabha'
+            ],
+            isVerified: false,
+            citation: 'IQRA AI+ (Powered by Gemini)'
+          };
+          setMessages(prev => [...prev, aiMsg]);
+        } catch (err) {
+          // Fall back gracefully to local unverified database response
+          const aiMsg: Message = {
+            id: 'ai-' + Date.now(),
+            sender: 'ai',
+            text: response.text,
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            suggestedAction: response.action,
+            followUps: response.followUps,
+            isVerified: response.isVerified,
+            citation: response.citation
+          };
+          setMessages(prev => [...prev, aiMsg]);
+        } finally {
+          setIsTyping(false);
+        }
+      }
     }, 500);
   };
 
@@ -644,9 +692,9 @@ export default function IqraAIAssistant({ currentLanguage, onNavigate, activeTab
                   maxHeight: 'none',
                 }
               : {
-                  bottom: 'calc(176px + env(safe-area-inset-bottom, 0px))',
-                  maxHeight: `calc(${viewportHeight}px - ${headerHeight}px - 16px - 176px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px))`,
-                  height: '720px',
+                  top: `${headerHeight + 16}px`,
+                  bottom: 'auto',
+                  height: `min(720px, calc(${viewportHeight}px - ${headerHeight}px - 32px - env(safe-area-inset-bottom, 0px)))`,
                 }
           }
         >

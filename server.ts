@@ -946,8 +946,11 @@ async function startServer() {
     }
     try {
       const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash",
+        model: "gemini-3.6-flash",
         contents: prompt,
+        config: {
+          systemInstruction: "You are 'IQRA AI+', the advanced general-knowledge mode of the IQRA AI Assistant integrated into the All India Rangrez Community Bharat Portal. When users ask general-knowledge, scientific, career, educational, or general questions that are outside the portal's verified database, you must provide clear, polite, and helpful answers in the language of their query (English, Hindi, or Urdu). Be encouraging and supportive of community development, education, and welfare."
+        }
       });
       res.json({ text: response.text });
     } catch (error) {

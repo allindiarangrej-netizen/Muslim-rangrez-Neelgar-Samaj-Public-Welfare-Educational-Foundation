@@ -59,9 +59,49 @@ const ExcellenceProfileModal: React.FC<ExcellenceProfileModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-black/70 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 animate-fadeIn">
+      {/* Schema.org JSON-LD for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Person",
+            "name": achiever.name,
+            "alternateName": achiever.displayName,
+            "gender": achiever.gender,
+            "birthDate": achiever.dob,
+            "jobTitle": achiever.designation,
+            "worksFor": {
+              "@type": "Organization",
+              "name": achiever.organization
+            },
+            "alumniOf": {
+              "@type": "EducationalOrganization",
+              "name": achiever.university
+            },
+            "address": {
+              "@type": "PostalAddress",
+              "addressLocality": achiever.currentCity,
+              "addressRegion": achiever.state,
+              "addressCountry": achiever.country
+            },
+            "image": achiever.photoUrl,
+            "description": `${achiever.designation} - ${achiever.organization}`
+          })
+        }}
+      />
+
       <div className="bg-white rounded-3xl max-w-4xl w-full max-h-[92vh] overflow-y-auto shadow-2xl border border-gray-200 relative flex flex-col">
-        {/* Top Header Banner */}
-        <div className="bg-gradient-to-r from-[#0B132B] via-[#004B23] to-[#0B132B] p-6 sm:p-8 text-white relative rounded-t-3xl overflow-hidden">
+        {/* Top Header Banner with Cover Image support */}
+        <div className="bg-gradient-to-r from-[#0B132B] via-[#004B23] to-[#0B132B] p-6 sm:p-8 text-white relative rounded-t-3xl overflow-hidden min-h-[220px]">
+          {/* Cover Image Background if available */}
+          {achiever.coverImageUrl && (
+            <div
+              className="absolute inset-0 z-0 bg-cover bg-center opacity-30 mix-blend-overlay pointer-events-none scale-105 transform"
+              style={{ backgroundImage: `url(${achiever.coverImageUrl})` }}
+            />
+          )}
+
           {/* Decorative pattern */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-[#F4C430]/10 rounded-full blur-3xl transform translate-x-16 -translate-y-16 pointer-events-none"></div>
           
@@ -123,6 +163,11 @@ const ExcellenceProfileModal: React.FC<ExcellenceProfileModalProps> = ({
               <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
                 <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
                   {achiever.name}
+                  {achiever.displayName && (
+                    <span className="text-[#FFD54A] font-bold text-lg sm:text-2xl ml-2">
+                      ({achiever.displayName})
+                    </span>
+                  )}
                 </h2>
               </div>
 
@@ -144,8 +189,14 @@ const ExcellenceProfileModal: React.FC<ExcellenceProfileModalProps> = ({
                 </span>
                 <span className="flex items-center gap-1 bg-white/10 px-3 py-1 rounded-lg">
                   <GraduationCap className="w-3.5 h-3.5 text-[#FFD54A]" />
-                  {achiever.qualification}
+                  {achiever.qualification} {achiever.university ? `(${achiever.university})` : ''}
                 </span>
+                {achiever.yearsOfExperience && (
+                  <span className="flex items-center gap-1 bg-amber-500/20 border border-amber-400/40 text-[#FFD54A] px-3 py-1 rounded-lg font-bold">
+                    <Briefcase className="w-3.5 h-3.5" />
+                    {achiever.yearsOfExperience} Exp.
+                  </span>
+                )}
                 <span className="flex items-center gap-1 bg-white/10 px-3 py-1 rounded-lg font-bold text-[#FFD54A]">
                   <Calendar className="w-3.5 h-3.5" />
                   {currentLanguage === 'en' ? `Achievement: ${achiever.yearOfAchievement}` : `उपलब्धि वर्ष: ${achiever.yearOfAchievement}`}

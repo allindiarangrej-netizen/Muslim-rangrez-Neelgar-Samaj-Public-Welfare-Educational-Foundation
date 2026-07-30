@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AchieverProfile, AchieverCategory, MentorshipRequest } from '../data/hallOfExcellenceData';
+import { AchieverProfile, AchieverCategory, MentorshipRequest, detectCategoryTier, detectProfessionTag, formatDriveUrl } from '../data/hallOfExcellenceData';
 import { ProfileImage } from './common/ProfileImage';
 import {
   ShieldCheck,
@@ -53,19 +53,83 @@ const ExcellenceAdminPanel: React.FC<ExcellenceAdminPanelProps> = ({
   const [showAddCatModal, setShowAddCatModal] = useState(false);
   const [exportSuccess, setExportSuccess] = useState(false);
 
-  // New Achiever form state
+  // Form Section Tab State
+  const [formSection, setFormSection] = useState<'personal' | 'contact' | 'location' | 'education' | 'career' | 'achievements' | 'special'>('personal');
+
+  // Personal Info
   const [name, setName] = useState('');
-  const [designation, setDesignation] = useState('');
-  const [organization, setOrganization] = useState('');
-  const [categoryId, setCategoryId] = useState('doctors');
-  const [city, setCity] = useState('');
-  const [state, setState] = useState('');
-  const [qualification, setQualification] = useState('');
+  const [gender, setGender] = useState<'Male' | 'Female' | 'Other'>('Male');
+  const [dob, setDob] = useState('');
+  const [fatherName, setFatherName] = useState('');
+  const [motherName, setMotherName] = useState('');
+  const [maritalStatus, setMaritalStatus] = useState('Married');
+  const [nationality, setNationality] = useState('Indian');
+  const [religion, setReligion] = useState('Islam');
+  const [bloodGroup, setBloodGroup] = useState('B+');
+  const [biography, setBiography] = useState('');
+  const [motivationalMsg, setMotivationalMsg] = useState('');
   const [photoUrl, setPhotoUrl] = useState('https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80');
+  const [coverPhotoUrl, setCoverPhotoUrl] = useState('https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=1200&auto=format&fit=crop&q=80');
+
+  // Contact Details
+  const [phone, setPhone] = useState('');
+  const [whatsapp, setWhatsapp] = useState('');
+  const [email, setEmail] = useState('');
+  const [website, setWebsite] = useState('');
+  const [linkedin, setLinkedin] = useState('');
+  const [facebook, setFacebook] = useState('');
+  const [instagram, setInstagram] = useState('');
+  const [youtube, setYoutube] = useState('');
+
+  // Location
+  const [country, setCountry] = useState('India');
+  const [state, setState] = useState('Rajasthan');
+  const [district, setDistrict] = useState('Jaipur');
+  const [city, setCity] = useState('Jaipur');
+  const [village, setVillage] = useState('');
+  const [address, setAddress] = useState('');
+
+  // Education
+  const [highestQualification, setHighestQualification] = useState('Post Graduate');
+  const [degree, setDegree] = useState('M.D. / M.S.');
+  const [specialization, setSpecialization] = useState('General Medicine');
+  const [university, setUniversity] = useState('SMS Medical College / Rajasthan University');
+  const [college, setCollege] = useState('SMS Medical College');
+  const [passingYear, setPassingYear] = useState('2015');
+  const [additionalQualifications, setAdditionalQualifications] = useState('');
+  const [certifications, setCertifications] = useState('');
+
+  // Career
+  const [designation, setDesignation] = useState('');
+  const [department, setDepartment] = useState('');
+  const [organization, setOrganization] = useState('');
+  const [employmentType, setEmploymentType] = useState<'Government' | 'Private' | 'Business' | 'NGO' | 'Self Employed' | 'Retired'>('Government');
+  const [yearsExperience, setYearsExperience] = useState('10');
+  const [careerSummary, setCareerSummary] = useState('');
+
+  // Achievements
+  const [majorAchievement, setMajorAchievement] = useState('');
+  const [awards, setAwards] = useState('');
+  const [nationalAwards, setNationalAwards] = useState('');
+  const [internationalAwards, setInternationalAwards] = useState('');
+  const [govtRecognition, setGovtRecognition] = useState('');
+  const [certificates, setCertificates] = useState('');
+  const [publications, setPublications] = useState('');
+  const [patents, setPatents] = useState('');
+  const [researchPapers, setResearchPapers] = useState('');
+  const [projects, setProjects] = useState('');
+  const [mediaCoverage, setMediaCoverage] = useState('');
+
+  // Special Recognition Tags & Manual Override
+  const [specialTags, setSpecialTags] = useState<string[]>([]);
+  const [manualTier, setManualTier] = useState<string>('auto');
+  const [manualProfession, setManualProfession] = useState<string>('auto');
+
+  // Quick Mentor, Govt, Overseas Toggles
   const [isMentor, setIsMentor] = useState(true);
   const [isGovt, setIsGovt] = useState(true);
   const [isOverseas, setIsOverseas] = useState(false);
-  const [biography, setBiography] = useState('');
+  const [categoryId, setCategoryId] = useState('doctors');
 
   // New Category form state
   const [catNameEn, setCatNameEn] = useState('');
@@ -74,41 +138,83 @@ const ExcellenceAdminPanel: React.FC<ExcellenceAdminPanelProps> = ({
   const [catIcon, setCatIcon] = useState('Award');
   const [catDesc, setCatDesc] = useState('');
 
+  // AI Auto Detection Engine Compute
+  const combinedText = `${designation} ${department} ${organization} ${specialTags.join(' ')} ${categoryId}`;
+  const autoDetectedTier = detectCategoryTier(designation, combinedText, categoryId);
+  const autoDetectedProfession = detectProfessionTag(designation, combinedText, categoryId);
+
+  const activeTier = manualTier === 'auto' ? autoDetectedTier : manualTier;
+  const activeProfession = manualProfession === 'auto' ? autoDetectedProfession : manualProfession;
+
+  // Auto Numbering / Rank Calculation
+  const tierAchieversCount = achievers.filter(a => {
+    const t = a.categoryTier || detectCategoryTier(a.designation, a.occupation, a.categoryId);
+    return t === activeTier;
+  }).length;
+  const autoProfileNumber = `#${String(tierAchieversCount + 1).padStart(3, '0')}`;
+
+  const toggleSpecialTag = (tag: string) => {
+    setSpecialTags(prev => prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]);
+  };
+
   const handleCreateAchiever = (e: React.FormEvent) => {
     e.preventDefault();
     const newProfile: AchieverProfile = {
       id: `ach-${Date.now()}`,
-      name,
-      gender: 'Male',
-      nativePlace: city || 'New Delhi',
-      currentCity: city || 'New Delhi',
-      state: state || 'Delhi',
-      country: isOverseas ? 'United States' : 'India',
-      occupation: designation || 'Distinguished Professional',
+      name: name || 'Distinguished Member',
+      fatherName,
+      gender,
+      dob,
+      nativePlace: village || city || 'Jaipur',
+      currentCity: city || 'Jaipur',
+      state: state || 'Rajasthan',
+      district,
+      country: country || 'India',
+      occupation: activeProfession || designation || 'Distinguished Professional',
       categoryId,
-      designation: designation || 'Senior Member',
+      designation: designation || 'Senior Officer / Professional',
       organization: organization || 'Government / Corporate Sector',
-      qualification: qualification || 'Post Graduate / Degree Holder',
-      university: 'Recognized University',
-      yearOfAchievement: 2025,
-      careerJourney: { en: biography || 'Dedicated professional serving with distinction.', hi: biography || 'प्रतिष्ठित पेशेवर।', ur: biography || 'نمایاں خدمات۔' },
-      biography: { en: biography || 'A proud member of the Rangrez community.', hi: biography || 'रंगरेज समुदाय का गर्व।', ur: biography || 'برادری کا فخر۔' },
-      majorAchievements: ['Recognized for professional excellence and community service'],
-      awardsHonors: ['Community Pride Award (2025)'],
+      qualification: highestQualification || 'Post Graduate / Professional Degree',
+      university: university || 'Recognized University',
+      yearOfAchievement: parseInt(passingYear) || 2025,
+      careerJourney: {
+        en: careerSummary || biography || 'Dedicated professional serving with utmost distinction.',
+        hi: careerSummary || biography || 'प्रतिष्ठित पेशेवर।',
+        ur: careerSummary || biography || 'نمایاں خدمات۔'
+      },
+      biography: {
+        en: biography || 'A proud member of the community.',
+        hi: biography || 'समुदाय का गर्व।',
+        ur: biography || 'برادری का फखर।'
+      },
+      majorAchievements: majorAchievement ? [majorAchievement] : ['Recognized for professional excellence and community service'],
+      awardsHonors: awards ? awards.split(',').map(s => s.trim()) : ['Community Pride Award'],
       socialContributions: { en: 'Contributes regularly to education and welfare.', hi: 'शिक्षा और कल्याण में योगदान।', ur: 'تعلیم اور فلاح میں تعاون۔' },
       inspirationalMessage: { en: 'Hard work and honesty will take you to the top.', hi: 'कड़ी मेहनत और ईमानदारी आपको शीर्ष पर ले जाएगी।', ur: 'محنت اور دیانتداری آپ کو بلندی پر لے جائے گی۔' },
       careerAdvice: { en: 'Stay focused on your studies and build discipline.', hi: 'अपनी पढ़ाई पर ध्यान केंद्रित रखें।', ur: 'اپنی تعلیم پر توجہ دیں۔' },
       languagesKnown: ['Hindi', 'English', 'Urdu'],
-      expertise: ['Professional Leadership', 'Community Mentorship'],
+      expertise: [activeProfession, 'Leadership', 'Mentorship'],
       contactPermission: true,
-      email: 'member@rangrezcommunity.org',
+      email: email || 'member@rangrezcommunity.org',
+      phone,
+      whatsapp,
+      website,
+      linkedin,
+      socialMedia: facebook || instagram || youtube,
+      categoryTier: activeTier as any,
       isMentor,
       isVerified: true,
       isFeatured: false,
-      isGovt,
-      isOverseas,
-      photoUrl,
-      badges: [isGovt ? '👮 Govt Officer' : '💼 Professional', isMentor ? '⭐ Mentor' : '🤝 Volunteer']
+      isGovt: employmentType === 'Government' || isGovt,
+      isOverseas: country !== 'India' || isOverseas,
+      photoUrl: formatDriveUrl(photoUrl) || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80',
+      badges: [
+        activeProfession,
+        autoProfileNumber,
+        ...specialTags,
+        isGovt ? '👮 Govt Service' : '💼 Professional',
+        isMentor ? '⭐ Mentor' : '🤝 Volunteer'
+      ]
     };
     onAddAchiever(newProfile);
     setShowAddModal(false);
@@ -519,119 +625,647 @@ const ExcellenceAdminPanel: React.FC<ExcellenceAdminPanelProps> = ({
 
       {/* Add New Achiever Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn">
-          <div className="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between border-b border-gray-200 pb-4 mb-4">
-              <h3 className="text-xl font-black text-[#0B132B] flex items-center gap-2">
-                <Plus className="w-6 h-6 text-[#004B23]" /> Add New Achiever Profile
-              </h3>
-              <button onClick={() => setShowAddModal(false)} className="p-2 hover:bg-gray-100 rounded-full cursor-pointer">
-                <X className="w-5 h-5" />
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-6 animate-fadeIn">
+          <div className="bg-white rounded-3xl max-w-4xl w-full shadow-2xl relative max-h-[92vh] flex flex-col overflow-hidden border border-gray-100">
+            {/* Modal Header */}
+            <div className="p-5 sm:p-6 bg-gradient-to-r from-[#004B23] to-[#002B14] text-white flex items-center justify-between shrink-0">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xl">🏆</span>
+                  <h3 className="text-xl sm:text-2xl font-black tracking-wide">Add Hall of Excellence Profile</h3>
+                </div>
+                <p className="text-xs text-emerald-200 mt-1">
+                  System automatically auto-categorizes tier, badges, profile rank, and profession tag in real time.
+                </p>
+              </div>
+              <button 
+                onClick={() => setShowAddModal(false)} 
+                className="p-2 hover:bg-white/10 rounded-full transition cursor-pointer text-white/80 hover:text-white"
+              >
+                <X className="w-6 h-6" />
               </button>
             </div>
 
-            <form onSubmit={handleCreateAchiever} className="space-y-4 text-sm">
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">Full Name with Prefix (e.g. Dr. / Shri / Adv.) *</label>
-                <input
-                  type="text"
-                  required
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="e.g. Dr. Salman Ahmed Rangrez"
-                  className="w-full px-4 py-2 bg-slate-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#004B23] focus:outline-none"
-                />
+            {/* AI Real-time Auto Categorization Live Bar */}
+            <div className="bg-emerald-950 text-white p-3.5 px-6 flex flex-wrap items-center justify-between gap-3 text-xs border-b border-emerald-800 shrink-0">
+              <div className="flex items-center gap-2 font-bold text-amber-300">
+                <Sparkles className="w-4 h-4 text-yellow-300 animate-pulse" />
+                <span>AI Auto Engine Live:</span>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-gray-700 mb-1">Designation / Title *</label>
-                  <input
-                    type="text"
-                    required
-                    value={designation}
-                    onChange={(e) => setDesignation(e.target.value)}
-                    placeholder="e.g. Senior Medical Officer"
-                    className="w-full px-4 py-2 bg-slate-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#004B23] focus:outline-none"
-                  />
+              <div className="flex flex-wrap items-center gap-2 sm:gap-4 font-extrabold text-[11px]">
+                <div className="bg-emerald-900/80 px-2.5 py-1 rounded-lg border border-emerald-700/60">
+                  Tier: <span className="text-yellow-300">{activeTier}</span>
                 </div>
-                <div>
-                  <label className="block text-xs font-bold text-gray-700 mb-1">Organization / Department *</label>
-                  <input
-                    type="text"
-                    required
-                    value={organization}
-                    onChange={(e) => setOrganization(e.target.value)}
-                    placeholder="e.g. AIIMS / High Court / ISRO"
-                    className="w-full px-4 py-2 bg-slate-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#004B23] focus:outline-none"
-                  />
+                <div className="bg-emerald-900/80 px-2.5 py-1 rounded-lg border border-emerald-700/60">
+                  Tag: <span className="text-emerald-200">{activeProfession}</span>
+                </div>
+                <div className="bg-emerald-900/80 px-2.5 py-1 rounded-lg border border-emerald-700/60">
+                  Rank: <span className="text-amber-300 font-mono">{autoProfileNumber}</span>
                 </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-gray-700 mb-1">Category / Profession *</label>
-                  <select
-                    value={categoryId}
-                    onChange={(e) => setCategoryId(e.target.value)}
-                    className="w-full px-4 py-2 bg-slate-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#004B23] focus:outline-none"
-                  >
-                    {categories.map(c => (
-                      <option key={c.id} value={c.id}>{c.nameEn}</option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-gray-700 mb-1">City & State *</label>
-                  <input
-                    type="text"
-                    required
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                    placeholder="e.g. Jaipur, Rajasthan"
-                    className="w-full px-4 py-2 bg-slate-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#004B23] focus:outline-none"
-                  />
-                </div>
-              </div>
+            </div>
 
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">Short Biography & Journey *</label>
-                <textarea
-                  rows={2}
-                  value={biography}
-                  onChange={(e) => setBiography(e.target.value)}
-                  placeholder="Summarize career achievement..."
-                  className="w-full p-3 bg-slate-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#004B23] focus:outline-none"
-                ></textarea>
-              </div>
-
-              <div className="flex flex-wrap items-center gap-6 pt-2">
-                <label className="flex items-center gap-2 cursor-pointer font-bold text-xs text-gray-700">
-                  <input type="checkbox" checked={isMentor} onChange={(e) => setIsMentor(e.target.checked)} className="rounded text-[#004B23]" />
-                  <span>✅ Available as Mentor</span>
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer font-bold text-xs text-gray-700">
-                  <input type="checkbox" checked={isGovt} onChange={(e) => setIsGovt(e.target.checked)} className="rounded text-[#004B23]" />
-                  <span>👮 Government Service</span>
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer font-bold text-xs text-gray-700">
-                  <input type="checkbox" checked={isOverseas} onChange={(e) => setIsOverseas(e.target.checked)} className="rounded text-[#004B23]" />
-                  <span>🌍 Overseas NRI</span>
-                </label>
-              </div>
-
-              <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-200">
+            {/* Form Section Tabs */}
+            <div className="bg-slate-100 px-4 pt-3 flex items-center gap-1 overflow-x-auto border-b border-gray-200 shrink-0 text-xs font-black no-scrollbar">
+              {[
+                { id: 'personal', label: '👤 Personal', icon: User },
+                { id: 'contact', label: '📞 Contact', icon: Phone },
+                { id: 'location', label: '📍 Location', icon: MapPin },
+                { id: 'education', label: '🎓 Education', icon: GraduationCap },
+                { id: 'career', label: '💼 Career', icon: Briefcase },
+                { id: 'achievements', label: '🏆 Achievements', icon: Award },
+                { id: 'special', label: '⭐ Special Recognition', icon: Star },
+              ].map((tab) => (
                 <button
+                  key={tab.id}
                   type="button"
-                  onClick={() => setShowAddModal(false)}
-                  className="px-5 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold rounded-xl cursor-pointer"
+                  onClick={() => setFormSection(tab.id as any)}
+                  className={`px-3.5 py-2.5 rounded-t-xl transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer border-t border-x ${
+                    formSection === tab.id
+                      ? 'bg-white text-[#004B23] border-gray-300 border-b-transparent shadow-xs font-black'
+                      : 'bg-transparent text-gray-600 border-transparent hover:bg-slate-200/70'
+                  }`}
                 >
-                  Cancel
+                  <span>{tab.label}</span>
                 </button>
-                <button
-                  type="submit"
-                  className="px-6 py-2.5 bg-[#004B23] hover:bg-[#00381a] text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow cursor-pointer"
-                >
-                  Save Achiever
-                </button>
+              ))}
+            </div>
+
+            {/* Form Form Body */}
+            <form onSubmit={handleCreateAchiever} className="flex flex-col flex-1 overflow-y-auto">
+              <div className="p-6 sm:p-8 space-y-6 text-xs text-gray-800 flex-1">
+                {/* 1. PERSONAL INFORMATION */}
+                {formSection === 'personal' && (
+                  <div className="space-y-4 animate-fadeIn">
+                    <div className="border-b border-gray-200 pb-2 flex items-center justify-between">
+                      <h4 className="font-black text-[#0B132B] text-sm uppercase tracking-wide">1. Personal Information</h4>
+                      <span className="text-[10px] text-gray-400 font-bold">* Required fields</span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="sm:col-span-2">
+                        <label className="block font-extrabold text-gray-700 mb-1">Full Name with Prefix *</label>
+                        <input
+                          type="text"
+                          required
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          placeholder="e.g. Dr. Salman Ahmed Rangrez / Er. Javed Khan"
+                          className="w-full px-3.5 py-2 bg-slate-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#004B23] focus:outline-none text-xs font-medium"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block font-bold text-gray-700 mb-1">Gender *</label>
+                        <select
+                          value={gender}
+                          onChange={(e) => setGender(e.target.value as any)}
+                          className="w-full px-3.5 py-2 bg-slate-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#004B23] focus:outline-none text-xs"
+                        >
+                          <option value="Male">Male</option>
+                          <option value="Female">Female</option>
+                          <option value="Other">Other</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block font-bold text-gray-700 mb-1">Date of Birth</label>
+                        <input
+                          type="date"
+                          value={dob}
+                          onChange={(e) => setDob(e.target.value)}
+                          className="w-full px-3.5 py-2 bg-slate-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#004B23] focus:outline-none text-xs"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block font-bold text-gray-700 mb-1">Father's Name</label>
+                        <input
+                          type="text"
+                          value={fatherName}
+                          onChange={(e) => setFatherName(e.target.value)}
+                          placeholder="Father's Name"
+                          className="w-full px-3.5 py-2 bg-slate-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#004B23] focus:outline-none text-xs"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block font-bold text-gray-700 mb-1">Mother's Name</label>
+                        <input
+                          type="text"
+                          value={motherName}
+                          onChange={(e) => setMotherName(e.target.value)}
+                          placeholder="Mother's Name"
+                          className="w-full px-3.5 py-2 bg-slate-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#004B23] focus:outline-none text-xs"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block font-bold text-gray-700 mb-1">Marital Status</label>
+                        <select
+                          value={maritalStatus}
+                          onChange={(e) => setMaritalStatus(e.target.value)}
+                          className="w-full px-3.5 py-2 bg-slate-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#004B23] focus:outline-none text-xs"
+                        >
+                          <option value="Married">Married</option>
+                          <option value="Unmarried">Unmarried</option>
+                          <option value="Single">Single</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block font-bold text-gray-700 mb-1">Blood Group</label>
+                        <select
+                          value={bloodGroup}
+                          onChange={(e) => setBloodGroup(e.target.value)}
+                          className="w-full px-3.5 py-2 bg-slate-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#004B23] focus:outline-none text-xs"
+                        >
+                          {['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'].map(b => (
+                            <option key={b} value={b}>{b}</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div className="sm:col-span-2">
+                        <label className="block font-bold text-gray-700 mb-1">Profile Photo URL *</label>
+                        <input
+                          type="url"
+                          required
+                          value={photoUrl}
+                          onChange={(e) => setPhotoUrl(e.target.value)}
+                          placeholder="https://..."
+                          className="w-full px-3.5 py-2 bg-slate-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#004B23] focus:outline-none text-xs font-mono"
+                        />
+                      </div>
+
+                      <div className="sm:col-span-2">
+                        <label className="block font-bold text-gray-700 mb-1">Biography / Personal Journey Summary</label>
+                        <textarea
+                          rows={3}
+                          value={biography}
+                          onChange={(e) => setBiography(e.target.value)}
+                          placeholder="Provide a detailed biography or summary of the achiever's life and service..."
+                          className="w-full p-3 bg-slate-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#004B23] focus:outline-none text-xs"
+                        />
+                      </div>
+
+                      <div className="sm:col-span-2">
+                        <label className="block font-bold text-gray-700 mb-1">Motivational / Inspirational Message for Youth</label>
+                        <input
+                          type="text"
+                          value={motivationalMsg}
+                          onChange={(e) => setMotivationalMsg(e.target.value)}
+                          placeholder="e.g. Work hard with honesty and stay dedicated to education."
+                          className="w-full px-3.5 py-2 bg-slate-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#004B23] focus:outline-none text-xs"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* 2. CONTACT DETAILS */}
+                {formSection === 'contact' && (
+                  <div className="space-y-4 animate-fadeIn">
+                    <div className="border-b border-gray-200 pb-2">
+                      <h4 className="font-black text-[#0B132B] text-sm uppercase tracking-wide">2. Contact Details</h4>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block font-bold text-gray-700 mb-1">Mobile Number</label>
+                        <input
+                          type="text"
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
+                          placeholder="+91 98290 12345"
+                          className="w-full px-3.5 py-2 bg-slate-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#004B23] focus:outline-none text-xs"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block font-bold text-gray-700 mb-1">WhatsApp Number</label>
+                        <input
+                          type="text"
+                          value={whatsapp}
+                          onChange={(e) => setWhatsapp(e.target.value)}
+                          placeholder="+91 98290 12345"
+                          className="w-full px-3.5 py-2 bg-slate-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#004B23] focus:outline-none text-xs"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block font-bold text-gray-700 mb-1">Email Address</label>
+                        <input
+                          type="email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          placeholder="doctor@example.com"
+                          className="w-full px-3.5 py-2 bg-slate-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#004B23] focus:outline-none text-xs"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block font-bold text-gray-700 mb-1">Official Website</label>
+                        <input
+                          type="url"
+                          value={website}
+                          onChange={(e) => setWebsite(e.target.value)}
+                          placeholder="https://..."
+                          className="w-full px-3.5 py-2 bg-slate-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#004B23] focus:outline-none text-xs"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block font-bold text-gray-700 mb-1">LinkedIn Profile</label>
+                        <input
+                          type="text"
+                          value={linkedin}
+                          onChange={(e) => setLinkedin(e.target.value)}
+                          placeholder="https://linkedin.com/in/..."
+                          className="w-full px-3.5 py-2 bg-slate-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#004B23] focus:outline-none text-xs"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block font-bold text-gray-700 mb-1">Facebook / Social Handle</label>
+                        <input
+                          type="text"
+                          value={facebook}
+                          onChange={(e) => setFacebook(e.target.value)}
+                          placeholder="facebook.com/..."
+                          className="w-full px-3.5 py-2 bg-slate-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#004B23] focus:outline-none text-xs"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* 3. LOCATION */}
+                {formSection === 'location' && (
+                  <div className="space-y-4 animate-fadeIn">
+                    <div className="border-b border-gray-200 pb-2">
+                      <h4 className="font-black text-[#0B132B] text-sm uppercase tracking-wide">3. Location & Origin</h4>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block font-bold text-gray-700 mb-1">Country</label>
+                        <input
+                          type="text"
+                          value={country}
+                          onChange={(e) => setCountry(e.target.value)}
+                          placeholder="India / UAE / USA"
+                          className="w-full px-3.5 py-2 bg-slate-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#004B23] focus:outline-none text-xs"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block font-bold text-gray-700 mb-1">State</label>
+                        <input
+                          type="text"
+                          value={state}
+                          onChange={(e) => setState(e.target.value)}
+                          placeholder="Rajasthan / Delhi / Maharashtra"
+                          className="w-full px-3.5 py-2 bg-slate-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#004B23] focus:outline-none text-xs"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block font-bold text-gray-700 mb-1">District</label>
+                        <input
+                          type="text"
+                          value={district}
+                          onChange={(e) => setDistrict(e.target.value)}
+                          placeholder="Jaipur / Nagaur / Jodhpur"
+                          className="w-full px-3.5 py-2 bg-slate-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#004B23] focus:outline-none text-xs"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block font-bold text-gray-700 mb-1">City / Present Town</label>
+                        <input
+                          type="text"
+                          value={city}
+                          onChange={(e) => setCity(e.target.value)}
+                          placeholder="Jaipur"
+                          className="w-full px-3.5 py-2 bg-slate-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#004B23] focus:outline-none text-xs"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block font-bold text-gray-700 mb-1">Native Village / Ancestral Place</label>
+                        <input
+                          type="text"
+                          value={village}
+                          onChange={(e) => setVillage(e.target.value)}
+                          placeholder="Native Village / Ancestral Home"
+                          className="w-full px-3.5 py-2 bg-slate-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#004B23] focus:outline-none text-xs"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block font-bold text-gray-700 mb-1">Residential Address</label>
+                        <input
+                          type="text"
+                          value={address}
+                          onChange={(e) => setAddress(e.target.value)}
+                          placeholder="Full address..."
+                          className="w-full px-3.5 py-2 bg-slate-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#004B23] focus:outline-none text-xs"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* 4. EDUCATION */}
+                {formSection === 'education' && (
+                  <div className="space-y-4 animate-fadeIn">
+                    <div className="border-b border-gray-200 pb-2">
+                      <h4 className="font-black text-[#0B132B] text-sm uppercase tracking-wide">4. Academic & Qualifications</h4>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block font-bold text-gray-700 mb-1">Highest Qualification Degree *</label>
+                        <input
+                          type="text"
+                          required
+                          value={highestQualification}
+                          onChange={(e) => setHighestQualification(e.target.value)}
+                          placeholder="M.D. / M.B.B.S. / LL.M. / Ph.D. / B.Tech"
+                          className="w-full px-3.5 py-2 bg-slate-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#004B23] focus:outline-none text-xs"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block font-bold text-gray-700 mb-1">Specialization / Subject</label>
+                        <input
+                          type="text"
+                          value={specialization}
+                          onChange={(e) => setSpecialization(e.target.value)}
+                          placeholder="Cardiology / Constitutional Law / AI"
+                          className="w-full px-3.5 py-2 bg-slate-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#004B23] focus:outline-none text-xs"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block font-bold text-gray-700 mb-1">University / Board</label>
+                        <input
+                          type="text"
+                          value={university}
+                          onChange={(e) => setUniversity(e.target.value)}
+                          placeholder="AIIMS / IIT / Rajasthan University"
+                          className="w-full px-3.5 py-2 bg-slate-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#004B23] focus:outline-none text-xs"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block font-bold text-gray-700 mb-1">Passing Year</label>
+                        <input
+                          type="text"
+                          value={passingYear}
+                          onChange={(e) => setPassingYear(e.target.value)}
+                          placeholder="2015"
+                          className="w-full px-3.5 py-2 bg-slate-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#004B23] focus:outline-none text-xs"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* 5. CAREER INFORMATION & AI CATEGORIZATION INPUTS */}
+                {formSection === 'career' && (
+                  <div className="space-y-4 animate-fadeIn">
+                    <div className="border-b border-gray-200 pb-2 flex items-center justify-between">
+                      <h4 className="font-black text-[#0B132B] text-sm uppercase tracking-wide">5. Career & Occupation</h4>
+                      <span className="text-emerald-700 font-extrabold text-[11px] bg-emerald-100 px-2.5 py-0.5 rounded-full">
+                        ✨ Keywords trigger Tier Engine
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block font-extrabold text-gray-700 mb-1">Designation / Occupation *</label>
+                        <input
+                          type="text"
+                          required
+                          value={designation}
+                          onChange={(e) => setDesignation(e.target.value)}
+                          placeholder="e.g. IAS / IPS / Senior Advocate / Chief Scientist / Director"
+                          className="w-full px-3.5 py-2 bg-amber-50/50 border border-amber-300 rounded-xl focus:ring-2 focus:ring-[#004B23] focus:outline-none text-xs font-bold text-[#0B132B]"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block font-extrabold text-gray-700 mb-1">Organization / Department *</label>
+                        <input
+                          type="text"
+                          required
+                          value={organization}
+                          onChange={(e) => setOrganization(e.target.value)}
+                          placeholder="e.g. High Court / Govt of Rajasthan / AIIMS / ISRO"
+                          className="w-full px-3.5 py-2 bg-amber-50/50 border border-amber-300 rounded-xl focus:ring-2 focus:ring-[#004B23] focus:outline-none text-xs font-bold text-[#0B132B]"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block font-bold text-gray-700 mb-1">Employment Type</label>
+                        <select
+                          value={employmentType}
+                          onChange={(e) => setEmploymentType(e.target.value as any)}
+                          className="w-full px-3.5 py-2 bg-slate-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#004B23] focus:outline-none text-xs"
+                        >
+                          <option value="Government">Government Service</option>
+                          <option value="Private">Private Corporate</option>
+                          <option value="Business">Business / Entrepreneur</option>
+                          <option value="Self Employed">Self Employed / Practice</option>
+                          <option value="NGO">Social / NGO</option>
+                          <option value="Retired">Retired Senior Officer</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block font-bold text-gray-700 mb-1">Category Group</label>
+                        <select
+                          value={categoryId}
+                          onChange={(e) => setCategoryId(e.target.value)}
+                          className="w-full px-3.5 py-2 bg-slate-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#004B23] focus:outline-none text-xs"
+                        >
+                          {categories.map(c => (
+                            <option key={c.id} value={c.id}>{c.nameEn}</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div className="sm:col-span-2">
+                        <label className="block font-bold text-gray-700 mb-1">Career Journey & Key Posts Held</label>
+                        <textarea
+                          rows={3}
+                          value={careerSummary}
+                          onChange={(e) => setCareerSummary(e.target.value)}
+                          placeholder="Detail major career milestones, positions held, departments served..."
+                          className="w-full p-3 bg-slate-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#004B23] focus:outline-none text-xs"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* 6. ACHIEVEMENTS & AWARDS */}
+                {formSection === 'achievements' && (
+                  <div className="space-y-4 animate-fadeIn">
+                    <div className="border-b border-gray-200 pb-2">
+                      <h4 className="font-black text-[#0B132B] text-sm uppercase tracking-wide">6. Key Achievements & Awards</h4>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="sm:col-span-2">
+                        <label className="block font-bold text-gray-700 mb-1">Major Headline Achievement</label>
+                        <input
+                          type="text"
+                          value={majorAchievement}
+                          onChange={(e) => setMajorAchievement(e.target.value)}
+                          placeholder="e.g. Awarded Gold Medal in Surgery / Lead counsel in Landmark Supreme Court Case"
+                          className="w-full px-3.5 py-2 bg-slate-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#004B23] focus:outline-none text-xs"
+                        />
+                      </div>
+
+                      <div className="sm:col-span-2">
+                        <label className="block font-bold text-gray-700 mb-1">Honors & Awards Received (comma separated)</label>
+                        <input
+                          type="text"
+                          value={awards}
+                          onChange={(e) => setAwards(e.target.value)}
+                          placeholder="e.g. Padma Awardee, State Excellence Award, National Health Icon 2024"
+                          className="w-full px-3.5 py-2 bg-slate-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#004B23] focus:outline-none text-xs"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* 7. SPECIAL RECOGNITION & MANUAL OVERRIDE ENGINE */}
+                {formSection === 'special' && (
+                  <div className="space-y-5 animate-fadeIn">
+                    <div className="border-b border-gray-200 pb-2 flex items-center justify-between">
+                      <h4 className="font-black text-[#0B132B] text-sm uppercase tracking-wide">7. Special Badges & Manual Tier Overrides</h4>
+                      <span className="text-amber-800 font-bold text-[10px] bg-amber-100 px-2 py-0.5 rounded-full">
+                        Admin Override Tools
+                      </span>
+                    </div>
+
+                    {/* Special Recognition Chips */}
+                    <div>
+                      <label className="block font-extrabold text-gray-800 mb-2">Assign Special Recognition Tags:</label>
+                      <div className="flex flex-wrap gap-2">
+                        {[
+                          '🏛️ IAS Officer',
+                          '👮 IPS Officer',
+                          '⚖️ High Court Judge',
+                          '🩺 Padma Awardee',
+                          '🔬 Senior Scientist',
+                          '🎖️ Colonel / Defense',
+                          '📜 District Magistrate',
+                          '🌐 Global CEO',
+                          '👑 Lifetime Legend',
+                          '⭐ Community Patron'
+                        ].map(tag => (
+                          <button
+                            key={tag}
+                            type="button"
+                            onClick={() => toggleSpecialTag(tag)}
+                            className={`px-3 py-1.5 rounded-xl font-bold text-xs transition cursor-pointer border ${
+                              specialTags.includes(tag)
+                                ? 'bg-[#004B23] text-white border-[#004B23] shadow-xs'
+                                : 'bg-slate-100 text-gray-700 border-gray-200 hover:bg-slate-200'
+                            }`}
+                          >
+                            {tag} {specialTags.includes(tag) && '✓'}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Manual Tier Override Selector */}
+                    <div className="p-4 bg-slate-50 border border-gray-200 rounded-2xl grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block font-extrabold text-[#0B132B] mb-1">
+                          Recognition Tier Classification:
+                        </label>
+                        <select
+                          value={manualTier}
+                          onChange={(e) => setManualTier(e.target.value)}
+                          className="w-full px-3.5 py-2 bg-white border border-gray-300 rounded-xl font-bold text-xs focus:ring-2 focus:ring-[#004B23]"
+                        >
+                          <option value="auto">✨ Auto Detect: {autoDetectedTier}</option>
+                          <option value="Diamond Excellence">💎 Diamond Excellence (IAS, IPS, Judges, Padma)</option>
+                          <option value="Platinum Achiever">🏆 Platinum Achiever (Senior Doctors, Advocates, Officers)</option>
+                          <option value="Gold Star">⭐ Gold Star (Doctors, Engineers, Lawyers)</option>
+                          <option value="Rising Star">🌟 Rising Star (Young Talent, Startups)</option>
+                          <option value="Lifetime Legend">👑 Lifetime Legend (Veterans, Service)</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block font-extrabold text-[#0B132B] mb-1">
+                          Profession Tag:
+                        </label>
+                        <select
+                          value={manualProfession}
+                          onChange={(e) => setManualProfession(e.target.value)}
+                          className="w-full px-3.5 py-2 bg-white border border-gray-300 rounded-xl font-bold text-xs focus:ring-2 focus:ring-[#004B23]"
+                        >
+                          <option value="auto">✨ Auto Detect: {autoDetectedProfession}</option>
+                          <option value="🏛️ Civil Services">🏛️ Civil Services</option>
+                          <option value="⚖️ Judiciary & Law">⚖️ Judiciary & Law</option>
+                          <option value="🩺 Medical & Healthcare">🩺 Medical & Healthcare</option>
+                          <option value="💻 Engineering & IT">💻 Engineering & IT</option>
+                          <option value="💼 Corporate & Business">💼 Corporate & Business</option>
+                          <option value="🎓 Higher Education">🎓 Higher Education</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* Quick Toggles */}
+                    <div className="p-4 bg-emerald-50/60 border border-emerald-200 rounded-2xl flex flex-wrap items-center gap-6">
+                      <label className="flex items-center gap-2 cursor-pointer font-extrabold text-xs text-[#004B23]">
+                        <input type="checkbox" checked={isMentor} onChange={(e) => setIsMentor(e.target.checked)} className="rounded text-[#004B23] w-4 h-4" />
+                        <span>⭐ Available as Community Mentor</span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer font-extrabold text-xs text-[#004B23]">
+                        <input type="checkbox" checked={isGovt} onChange={(e) => setIsGovt(e.target.checked)} className="rounded text-[#004B23] w-4 h-4" />
+                        <span>👮 Government Service Officer</span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer font-extrabold text-xs text-[#004B23]">
+                        <input type="checkbox" checked={isOverseas} onChange={(e) => setIsOverseas(e.target.checked)} className="rounded text-[#004B23] w-4 h-4" />
+                        <span>🌍 Overseas NRI Professional</span>
+                      </label>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Modal Footer Controls */}
+              <div className="p-4 px-6 bg-slate-100 border-t border-gray-200 flex items-center justify-between shrink-0">
+                <div className="text-[11px] text-gray-500 font-medium hidden sm:block">
+                  Current Section: <span className="font-bold text-[#004B23] uppercase">{formSection}</span>
+                </div>
+                <div className="flex items-center gap-3 ml-auto">
+                  <button
+                    type="button"
+                    onClick={() => setShowAddModal(false)}
+                    className="px-5 py-2.5 bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 text-xs font-bold rounded-xl transition cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-6 py-2.5 bg-[#004B23] hover:bg-[#00381a] text-white text-xs font-black uppercase tracking-wider rounded-xl shadow-md transition flex items-center gap-2 cursor-pointer"
+                  >
+                    <Plus className="w-4 h-4 text-[#FFD54A]" />
+                    <span>Publish Achiever Profile</span>
+                  </button>
+                </div>
               </div>
             </form>
           </div>

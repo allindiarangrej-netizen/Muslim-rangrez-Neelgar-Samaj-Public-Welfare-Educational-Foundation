@@ -13,6 +13,7 @@ export interface AchieverCategory {
 export interface AchieverProfile {
   id: string;
   name: string;
+  displayName?: string;
   fatherName?: string;
   gender: 'Male' | 'Female' | 'Other';
   dob?: string;
@@ -25,6 +26,8 @@ export interface AchieverProfile {
   categoryId: string;
   designation: string;
   organization: string;
+  employmentType?: string;
+  yearsOfExperience?: string;
   qualification: string;
   university: string;
   yearOfAchievement: number;
@@ -50,7 +53,383 @@ export interface AchieverProfile {
   isGovt: boolean;
   isOverseas: boolean;
   photoUrl: string;
+  coverImageUrl?: string;
   badges: string[];
+  categoryTier?: 'hajj' | 'diamond' | 'platinum' | 'gold' | 'silver' | 'bronze' | 'rising' | 'leadership' | 'lifetime';
+  hajjYear?: number;
+  hajjType?: 'Hajj' | 'Umrah' | 'Both';
+}
+
+export interface ExcellenceTierConfig {
+  id: 'hajj' | 'diamond' | 'platinum' | 'gold' | 'silver' | 'bronze' | 'rising' | 'leadership' | 'lifetime';
+  titleEn: string;
+  titleHi: string;
+  titleUr: string;
+  badge: string;
+  iconName: string;
+  themeGradient: string;
+  cardBorder: string;
+  badgeBg: string;
+  glowColor: string;
+  descriptionEn: string;
+  descriptionHi: string;
+  descriptionUr: string;
+}
+
+export const EXCELLENCE_TIERS: ExcellenceTierConfig[] = [
+  {
+    id: 'hajj',
+    titleEn: '🕋 Hajiyon Ki Hall of Excellence (Pilgrims of Honor)',
+    titleHi: '🕋 हाजियों का हॉल ऑफ एक्सीलेंस (पवित्र हज यात्री)',
+    titleUr: '🕋 حجاج کرام ہال آف ایکسیلنس',
+    badge: '🕋 Al-Haj / Hajjah Honoree',
+    iconName: 'Landmark',
+    themeGradient: 'from-[#004B23] via-[#0B3C1D] to-[#041A0E]',
+    cardBorder: 'border-[#FFD54A]/60',
+    badgeBg: 'bg-[#FFD54A] text-[#004B23]',
+    glowColor: 'rgba(255, 213, 74, 0.4)',
+    descriptionEn: 'Honoring community elders, leaders and members who completed the Holy Pilgrimage of Hajj & Umrah to Makkah & Madinah.',
+    descriptionHi: 'मक्का और मदीना की पवित्र हज और उमराह यात्रा पूर्ण करने वाले समाज के प्रतिष्ठित बुजुर्गों एवं मार्गदर्शकों का विशेष सम्मान।',
+    descriptionUr: 'مکہ مکرمہ اور مدینہ منورہ کی مقدس ترین حجی زیارت و عمرہ مکمل کرنے والے برادری کے باوقار و متبرک افراد۔'
+  },
+  {
+    id: 'diamond',
+    titleEn: '💎 Diamond Excellence',
+    titleHi: '💎 डायमंड एक्सीलेंस',
+    titleUr: '💎 ڈائمنڈ ایکسیلنس',
+    badge: '💎 Diamond Tier',
+    iconName: 'Award',
+    themeGradient: 'from-[#0B132B] via-[#1C2541] to-[#3A506B]',
+    cardBorder: 'border-cyan-400/60',
+    badgeBg: 'bg-cyan-400 text-slate-950',
+    glowColor: 'rgba(56, 189, 248, 0.4)',
+    descriptionEn: 'Highest National & International Achievers: IAS, IPS, Judges, Ministers, Vice Chancellors, Padma Awardees & Global Icons.',
+    descriptionHi: 'सर्वोच्च राष्ट्रीय और अंतर्राष्ट्रीय उपलब्धि धारक: आईएएस, आईपीएस, जज, मंत्री, कुलपति, पद्म पुरस्कार विजेता।',
+    descriptionUr: 'اعلیٰ ترین قومی و بین الاقوامی شخصیات: آئی اے ایس، آئی پی ایس، ججز، وزراء، وائس چانسلرز اور صدارتی اعزاز یافتہ۔'
+  },
+  {
+    id: 'platinum',
+    titleEn: '🏆 Platinum Excellence',
+    titleHi: '🏆 प्लेटिनम एक्सीलेंस',
+    titleUr: '🏆 پلاٹینم ایکسیلنس',
+    badge: '🏆 Platinum Tier',
+    iconName: 'Trophy',
+    themeGradient: 'from-slate-900 via-slate-800 to-slate-900',
+    cardBorder: 'border-slate-300/70',
+    badgeBg: 'bg-slate-200 text-slate-950',
+    glowColor: 'rgba(226, 232, 240, 0.4)',
+    descriptionEn: 'Senior Govt Officers, Senior Doctors, Executive Engineers, Army Officers, Senior Bureaucrats & Top Advocates.',
+    descriptionHi: 'वरिष्ठ प्रशासनिक अधिकारी, वरिष्ठ डॉक्टर, चीफ इंजीनियर, सेना के वरिष्ठ अधिकारी व वरिष्ठ अधिवक्ता।',
+    descriptionUr: 'سینئر انتظامی افسران، ماہر ڈاکٹرز، چیف انجینئرز اور فوج کے اعلیٰ افسران۔'
+  },
+  {
+    id: 'gold',
+    titleEn: '🥇 Gold Excellence',
+    titleHi: '🥇 गोल्ड एक्सीलेंस',
+    titleUr: '🥇 گولڈ ایکسیلنس',
+    badge: '🥇 Gold Tier',
+    iconName: 'Medal',
+    themeGradient: 'from-[#2A1B00] via-[#4A3000] to-[#1A1000]',
+    cardBorder: 'border-[#FFD54A]/80',
+    badgeBg: 'bg-[#FFD54A] text-[#2A1B00]',
+    glowColor: 'rgba(255, 213, 74, 0.5)',
+    descriptionEn: 'Doctors, Engineers, Professors, Teachers, Lawyers, Bank Managers, CAs & Corporate Leaders.',
+    descriptionHi: 'डॉक्टर, इंजीनियर, प्रोफेसर, सरकारी शिक्षक, वकील, बैंक प्रबंधक, सीए एवं कॉर्पोरेट लीडर्स।',
+    descriptionUr: 'ڈاکٹرز، انجینئرز، پروفیسرز، اساتذہ، وکلاء اور بینک مینیجرز۔'
+  },
+  {
+    id: 'silver',
+    titleEn: '🥈 Silver Excellence',
+    titleHi: '🥈 सिल्वर एक्सीलेंस',
+    titleUr: '🥈 سلور ایکسیلنس',
+    badge: '🥈 Silver Tier',
+    iconName: 'Shield',
+    themeGradient: 'from-zinc-900 via-zinc-800 to-zinc-900',
+    cardBorder: 'border-zinc-400/60',
+    badgeBg: 'bg-zinc-300 text-zinc-950',
+    glowColor: 'rgba(212, 212, 216, 0.4)',
+    descriptionEn: 'Government Employees, Emerging Professionals, Lecturers, Young Doctors/Engineers, Sports Champions & Artists.',
+    descriptionHi: 'सरकारी कर्मचारी, उभरते पेशेवर, व्याख्याता, युवा डॉक्टर व इंजीनियर, खेल चैंपियन और कलाकार।',
+    descriptionUr: 'سرکاری ملازمین، ابھرتے ہوئے نوجوان ماہرین، لیکچررز اور کھلاڑی۔'
+  },
+  {
+    id: 'bronze',
+    titleEn: '🥉 Bronze Excellence',
+    titleHi: '🥉 ब्रॉन्ज एक्सीलेंस',
+    titleUr: '🥉 برونز एकसीलेंस',
+    badge: '🥉 Bronze Tier',
+    iconName: 'Sparkles',
+    themeGradient: 'from-[#3A1F12] via-[#5C321E] to-[#24130A]',
+    cardBorder: 'border-amber-600/70',
+    badgeBg: 'bg-amber-600 text-white',
+    glowColor: 'rgba(217, 119, 6, 0.4)',
+    descriptionEn: 'Newly Selected Candidates, Competitive Exam Qualifiers, Government Recruitment Success Stories & Startup Founders.',
+    descriptionHi: 'नवनियुक्त अभ्यर्थी, प्रतियोगी परीक्षा विजेता, सरकारी नौकरियों में चयनित युवा व स्टार्टअप संस्थापक।',
+    descriptionUr: 'نو منتخب امیدوار، مسابقتی امتحانات میں کامیاب نوجوان اور اسٹارٹ اپ بانیان۔'
+  },
+  {
+    id: 'rising',
+    titleEn: '⭐ Rising Star Excellence',
+    titleHi: '⭐ राइजिंग स्टार्स',
+    titleUr: '⭐ رائزنگ اسٹارز',
+    badge: '⭐ Rising Star',
+    iconName: 'Star',
+    themeGradient: 'from-purple-950 via-indigo-950 to-slate-950',
+    cardBorder: 'border-purple-400/60',
+    badgeBg: 'bg-purple-400 text-purple-950',
+    glowColor: 'rgba(192, 132, 252, 0.4)',
+    descriptionEn: 'Outstanding Students, Scholarship Winners, Gold Medalists, Research Scholars & Young Innovators.',
+    descriptionHi: 'उत्कृष्ट छात्र-छात्राएं, राष्ट्रीय छात्रवृत्ति विजेता, गोल्ड मेडलिस्ट, शोधकर्ता एवं युवा नवोन्मेषक।',
+    descriptionUr: 'شاندار طالب علم، گولڈ میڈلسٹ، اسکالرشپ ہولڈرز اور ریسرچ اسکالرز۔'
+  },
+  {
+    id: 'leadership',
+    titleEn: '🌟 Community Leadership Excellence',
+    titleHi: '🌟 सामुदायिक नेतृत्व',
+    titleUr: '🌟 سماجی قیادت',
+    badge: '🌟 Community Leader',
+    iconName: 'HeartHandshake',
+    themeGradient: 'from-emerald-950 via-teal-950 to-emerald-950',
+    cardBorder: 'border-emerald-400/60',
+    badgeBg: 'bg-emerald-400 text-emerald-950',
+    glowColor: 'rgba(52, 211, 153, 0.4)',
+    descriptionEn: 'Social Reformers, Religious Scholars, Community Volunteers, Blood Donors, Education Promoters & Women Leaders.',
+    descriptionHi: 'समाज सुधारक, धार्मिक विद्वान, स्वयंसेवक, रक्तदान शिरोमणि, शिक्षा प्रेरक एवं महिला नेतृत्व।',
+    descriptionUr: 'سماجی مصلحین، دینی علماء، رضاکار، تعلیم کو فروغ دینے والے اور خواتین رہنما۔'
+  },
+  {
+    id: 'lifetime',
+    titleEn: '🎖 Lifetime Inspiration Excellence',
+    titleHi: '🎖 आजीवन प्रेरणा एवं समाज रत्न',
+    titleUr: '🎖 لائف ٹائم انسپیریشن',
+    badge: '🎖 Lifetime Legend',
+    iconName: 'Crown',
+    themeGradient: 'from-rose-950 via-red-950 to-slate-950',
+    cardBorder: 'border-rose-400/70',
+    badgeBg: 'bg-rose-500 text-white',
+    glowColor: 'rgba(244, 63, 94, 0.4)',
+    descriptionEn: 'Lifetime Contribution Awardees, Social Pioneers, Legendary Mentors & Community Pride Icons.',
+    descriptionHi: 'आजीवन योगदान पुरस्कार विजेता, समाज रत्न, मार्गदर्शक एवं समुदाय के महान गौरव स्तंभ।',
+    descriptionUr: 'لائف ٹائم اچیومنٹ ایوارڈ یافتا، عظیم رہنما اور برادری کا فخر۔'
+  }
+];
+
+export function formatDriveUrl(url: string = ''): string {
+  if (!url) return '';
+  const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+  if (match && match[1]) {
+    return `https://lh3.googleusercontent.com/d/${match[1]}`;
+  }
+  const idMatch = url.match(/id=([a-zA-Z0-9_-]+)/);
+  if (idMatch && idMatch[1]) {
+    return `https://lh3.googleusercontent.com/d/${idMatch[1]}`;
+  }
+  return url;
+}
+
+export function detectCategoryTier(designation: string = '', occupation: string = '', categoryId: string = ''): 'hajj' | 'diamond' | 'platinum' | 'gold' | 'silver' | 'bronze' | 'rising' | 'leadership' | 'lifetime' {
+  const d = (designation + ' ' + occupation + ' ' + categoryId).toLowerCase();
+
+  // 1. Lifetime Legend
+  if (d.includes('lifetime') || d.includes('samaj ratna') || d.includes('community jewel') || d.includes('pioneer') || d.includes('legend') || d.includes('president award')) {
+    return 'lifetime';
+  }
+
+  // 2. Diamond Tier
+  if (
+    d.includes('ias') ||
+    d.includes('ips') ||
+    d.includes('ifs') ||
+    d.includes('irs') ||
+    d.includes('collector') ||
+    d.includes('commissioner') ||
+    d.includes('dgp') ||
+    d.includes('ig police') ||
+    d.includes('dig') ||
+    d.includes('sp police') ||
+    d.includes('high court judge') ||
+    d.includes('supreme court judge') ||
+    d.includes('cabinet minister') ||
+    d.includes('member of parliament') ||
+    d.includes('vice chancellor') ||
+    d.includes('padma') ||
+    d.includes('global ceo') ||
+    d.includes('international scientist')
+  ) {
+    return 'diamond';
+  }
+
+  // 3. Platinum Tier
+  if (
+    d.includes('senior doctor') ||
+    d.includes('sr. doctor') ||
+    d.includes('senior professor') ||
+    d.includes('sr. professor') ||
+    d.includes('senior advocate') ||
+    d.includes('executive engineer') ||
+    d.includes('superintending engineer') ||
+    d.includes('colonel') ||
+    d.includes('navy captain') ||
+    d.includes('air force officer') ||
+    d.includes('district judge') ||
+    d.includes('additional sp') ||
+    d.includes('addl sp') ||
+    d.includes('sdm') ||
+    d.includes('cmo') ||
+    d.includes('chief medical officer')
+  ) {
+    return 'platinum';
+  }
+
+  // 8. Community Leadership & Public Governance
+  if (
+    d.includes('mandal president') ||
+    d.includes('politician') ||
+    d.includes('bjp') ||
+    d.includes('inc') ||
+    d.includes('party president') ||
+    d.includes('public-rep') ||
+    d.includes('public representative') ||
+    d.includes('ngo leader') ||
+    d.includes('religious scholar') ||
+    d.includes('community volunteer') ||
+    d.includes('education promoter') ||
+    d.includes('blood donor') ||
+    d.includes('social reformer') ||
+    d.includes('trustee')
+  ) {
+    return 'leadership';
+  }
+
+  // 4. Gold Tier
+  if (
+    d.includes('doctor') ||
+    d.includes('engineer') ||
+    d.includes('chartered accountant') ||
+    d.includes('ca ') ||
+    d.includes('lawyer') ||
+    d.includes('advocate') ||
+    d.includes('lecturer') ||
+    d.includes('principal') ||
+    d.includes('inspector') ||
+    d.includes('bank manager') ||
+    d.includes('business owner') ||
+    d.includes('entrepreneur') ||
+    d.includes('professor')
+  ) {
+    return 'gold';
+  }
+
+  // 5. Silver Tier
+  if (
+    d.includes('teacher') ||
+    d.includes('government employee') ||
+    d.includes('govt employee') ||
+    d.includes('junior engineer') ||
+    d.includes('je ') ||
+    d.includes('staff nurse') ||
+    d.includes('nurse') ||
+    d.includes('research scholar') ||
+    d.includes('social worker') ||
+    d.includes('sub inspector')
+  ) {
+    return 'silver';
+  }
+
+  // 6. Bronze Tier
+  if (
+    d.includes('newly selected') ||
+    d.includes('candidate') ||
+    d.includes('startup founder') ||
+    d.includes('young professional') ||
+    d.includes('exam qualifier') ||
+    d.includes('qualifier') ||
+    d.includes('recruit')
+  ) {
+    return 'bronze';
+  }
+
+  // 7. Rising Star
+  if (
+    d.includes('student topper') ||
+    d.includes('topper') ||
+    d.includes('gold medalist') ||
+    d.includes('scholarship winner') ||
+    d.includes('young innovator') ||
+    d.includes('student')
+  ) {
+    return 'rising';
+  }
+
+  // 9. Hajj Pilgrims
+  if (
+    d.includes('haji') ||
+    d.includes('hajj') ||
+    d.includes('hajjah') ||
+    d.includes('pilgrim') ||
+    d.includes('mecca') ||
+    d.includes('umrah') ||
+    d.includes('al-haj')
+  ) {
+    return 'hajj';
+  }
+
+  return 'gold';
+}
+
+export function detectProfessionTag(designation: string = '', occupation: string = '', categoryId: string = ''): string {
+  const d = (designation + ' ' + occupation + ' ' + categoryId).toLowerCase();
+
+  if (d.includes('doctor') || d.includes('physician') || d.includes('surgeon') || d.includes('md') || d.includes('mbbs') || d.includes('cmo') || d.includes('dentist')) {
+    return '🩺 Doctor';
+  }
+  if (d.includes('judge') || d.includes('justice') || d.includes('magistrate') || d.includes('judiciary')) {
+    return '⚖️ Judge';
+  }
+  if (d.includes('ips') || d.includes('police') || d.includes('sp ') || d.includes('dsp') || d.includes('dgp') || d.includes('ig police')) {
+    return '👮 Police';
+  }
+  if (d.includes('ias') || d.includes('collector') || d.includes('commissioner') || d.includes('ifs') || d.includes('irs')) {
+    return '🏛️ IAS / Civil Services';
+  }
+  if (d.includes('engineer') || d.includes('architect') || d.includes('b.tech') || d.includes('m.tech')) {
+    return '⚙️ Engineer';
+  }
+  if (d.includes('professor') || d.includes('vice chancellor') || d.includes('reader') || d.includes('phd')) {
+    return '📚 Professor';
+  }
+  if (d.includes('teacher') || d.includes('educator') || d.includes('faculty') || d.includes('principal')) {
+    return '🎓 Teacher';
+  }
+  if (d.includes('business') || d.includes('entrepreneur') || d.includes('founder') || d.includes('ceo') || d.includes('trader') || d.includes('merchant')) {
+    return '💼 Business';
+  }
+  if (d.includes('bank') || d.includes('banker') || d.includes('rbi') || d.includes('manager')) {
+    return '🏦 Banker';
+  }
+  if (d.includes('advocate') || d.includes('lawyer') || d.includes('attorney') || d.includes('legal')) {
+    return '⚖️ Lawyer';
+  }
+  if (d.includes('scientist') || d.includes('researcher') || d.includes('isro') || d.includes('barc') || d.includes('patent')) {
+    return '🧪 Scientist';
+  }
+  if (d.includes('hafiz') || d.includes('qari') || d.includes('mufti') || d.includes('aalim') || d.includes('maulana') || d.includes('scholar')) {
+    return '🕌 Religious Scholar';
+  }
+  if (d.includes('social worker') || d.includes('ngo') || d.includes('volunteer') || d.includes('blood donor')) {
+    return '❤️ Social Worker';
+  }
+  if (d.includes('sports') || d.includes('athlete') || d.includes('champion') || d.includes('cricketer')) {
+    return '🏆 Athlete';
+  }
+  if (d.includes('artist') || d.includes('designer') || d.includes('calligrapher') || d.includes('artisan')) {
+    return '🎨 Artist';
+  }
+  if (d.includes('mla') || d.includes('mp') || d.includes('minister') || d.includes('politician') || d.includes('mayor')) {
+    return '🏛️ Politician';
+  }
+
+  return '💼 Professional';
 }
 
 export interface MentorshipRequest {
@@ -95,6 +474,7 @@ export interface AwardItem {
 }
 
 export const INITIAL_CATEGORIES: AchieverCategory[] = [
+  { id: 'hajj-pilgrims', nameEn: 'Hajiyon Ki Hall of Excellence', nameHi: 'हाजियों का हॉल ऑफ एक्सीलेंस (पवित्र हज यात्री)', nameUr: 'حجاج کرام ہال آف ایکسیلنس', icon: 'Landmark', count: 88, descriptionEn: 'Honoring community elders & members who completed the Holy Pilgrimage of Hajj to Makkah & Madinah', descriptionHi: 'मक्का-मदीना की पवित्र हज यात्रा पूर्ण करने वाले समाज के बावक़ार हाजी साहिबान', descriptionUr: 'مکہ مکرمہ اور مدینہ منورہ کا مقدس فریضہ حج ادا کرنے والے برادری کے محترم حجاج کرام' },
   { id: 'govt-services', nameEn: 'Government Services', nameHi: 'सरकारी सेवाएं (प्रशासन/सेना/पुलिस)', nameUr: 'سرکاری خدمات (آئی اے ایس/پولیس/فوج)', icon: 'ShieldCheck', count: 66, descriptionEn: 'IAS, IPS, Defense, Police, Revenue & administrative officers', descriptionHi: 'आईएएस, आईपीएस, रक्षा, पुलिस, राजस्व व प्रशासनिक अधिकारी', descriptionUr: 'آئی اے ایس، آئی پی ایس، فوج، پولیس اور انتظامی افسران' },
   { id: 'law-judiciary', nameEn: 'Law & Judiciary', nameHi: 'कानून एवं न्यायपालिका', nameUr: 'قانون اور عدلیہ', icon: 'Scale', count: 43, descriptionEn: 'High Court & District Judges, Supreme Court Advocates & Jurists', descriptionHi: 'उच्च न्यायालय व जिला न्यायाधीश, उच्चतम न्यायालय अधिवक्ता व कानूनविद', descriptionUr: 'ہائیکورٹ و سیشن ججز، سپریم کورٹ کے وکلاء اور قانونی ماہرین' },
   { id: 'medical-excellence', nameEn: 'Medical Excellence', nameHi: 'चिकित्सा उत्कृष्टता', nameUr: 'میڈیکل ایکسیلنس', icon: 'Stethoscope', count: 54, descriptionEn: 'AIIMS Surgeons, Specialists, Chief Medical Officers & Healthcare leaders', descriptionHi: 'एम्स सर्जन, विशेषज्ञ, मुख्य चिकित्सा अधिकारी व स्वास्थ्य नेता', descriptionUr: 'ایمز سرجنز، ماہر ڈاکٹرز اور ہیلتھ کیئر لیڈرز' },
@@ -129,6 +509,422 @@ export const INITIAL_CATEGORIES: AchieverCategory[] = [
 ];
 
 export const INITIAL_ACHIEVERS: AchieverProfile[] = [
+  {
+    id: 'socialist-munshi-khan',
+    name: 'Munshi Khan',
+    displayName: 'Senior Socialist',
+    gender: 'Male',
+    nativePlace: 'Gota Vijaypur, Sheopur, Madhya Pradesh',
+    currentCity: 'Gota Vijaypur',
+    district: 'Sheopur',
+    state: 'Madhya Pradesh',
+    country: 'India',
+    occupation: 'Senior Socialist & Marriage Relationship Specialist',
+    categoryId: 'social-workers',
+    categoryTier: 'leadership',
+    designation: 'Senior Socialist',
+    organization: 'Rangrez Community Morena',
+    employmentType: 'Private',
+    yearsOfExperience: '25+ Years',
+    qualification: 'Graduate',
+    university: 'Recognized University',
+    yearOfAchievement: 2025,
+    careerJourney: {
+      en: 'With over two decades of dedicated community service, Shri Munshi Khan is a widely respected Senior Socialist and matrimonial relationship expert based in Gota Vijaypur, Sheopur district, Madhya Pradesh. Associated with the Rangrez Community Morena, he has devoted his life to promoting family harmony, counseling couples, mediating marital issues, and championing social upliftment in the region.',
+      hi: 'दो दशकों से अधिक की समर्पित जनसेवा के साथ, श्री मुंशी खान गोता विजयपुर, श्योपुर (म.प्र.) के एक अत्यंत सम्मानित वरिष्ठ समाजसेवी और वैवाहिक परामर्श विशेषज्ञ हैं। रंगरेज समाज मुरैना से जुड़े रहकर, उन्होंने अपना जीवन पारिवारिक सौहार्द को बढ़ावा देने, युवाओं का मार्गदर्शन करने और समाज सुधार के कार्यों में समर्पित किया है।',
+      ur: 'دو دہائیوں سے زائد کی بے لوث سماجی خدمت کے ساتھ، جناب منشی خان گوتا وجے پور، شوپور (ایم پی) کے ایک انتہائی محترم سینئر سماجی خادم اور ازدواجی و خاندانی مشیر ہیں۔ رنگریز برادری مورینا کے ساتھ مل کر، انہوں نے اپنی زندگی خاندانی ہم آہنگی، نوجوانوں کی رہنمائی اور سماجی اصلاحات کے لیے وقف کی ہے۔'
+    },
+    biography: {
+      en: 'Shri Munshi Khan is a distinguished Senior Socialist and community pillar residing in Gota Vijaypur, Sheopur (Madhya Pradesh). Possessing a Graduate degree and deep practical insight into social dynamics, he is recognized across Sheopur and Morena districts as a master of marital counseling and family dispute resolution. Working through Rangrez Community Morena, he has preserved countless homes, inspired youth toward higher education, and established peaceful conflict resolution mechanisms.',
+      hi: 'श्री मुंशी खान गोता विजयपुर, श्योपुर (म.प्र.) के एक प्रतिष्ठित वरिष्ठ समाजसेवी और सामाजिक धरोहर हैं। स्नातक स्तर की शिक्षा और सामाजिक व्यवहार के गहरे ज्ञान के साथ, उन्हें श्योपुर और मुरैना जिले भर में वैवाहिक विवादों के सर्वमान्य समाधान और पारिवारिक परामर्श के क्षेत्र में महारत हासिल है। रंगरेज समाज मुरैना के माध्यम से वे अनगिनत परिवारों को एकजुट रखने और युवाओं में नैतिक शिक्षा का प्रसार करने में सक्रिय हैं।',
+      ur: 'جناب منشی خان گوتا وجے پور، شوپور (ایم پی) سے تعلق رکھنے والے ایک باوقار سینئر سماجی رہنما اور معاشرتی رہنما ہیں۔ وہ خاندانی تنازعات کے حل اور ازدواجی رشتوں کو جوڑنے کے ماہر تسلیم کیے جاتے ہیں۔ انہوں نے رنگریز برادری مورینا کے ذریعے ان گنت خاندانوں کو بکھرنے سے بچایا ہے اور تعلیمی بیداری مہمات چلائی ہیں۔'
+    },
+    majorAchievements: [
+      'Senior Socialist and Master Relationship Counselor, Rangrez Community Morena',
+      '25+ years of distinguished public arbitration in resolving matrimonial and family disputes in Sheopur & Morena',
+      'Promoted social peace and marital stability across dozens of villages in Vijaypur Tehsil',
+      'Pioneered community dispute resolution and youth mentorship forums',
+      'Honored with Community Leadership & Social Excellence Honor (2025)'
+    ],
+    awardsHonors: [
+      'Rangrez Samaj Senior Socialist Leadership Award (2025)',
+      'Sheopur District Social Reformer & Arbitrator Honor',
+      'Matrimonial Harmony & Community Peace Excellence Award'
+    ],
+    socialContributions: {
+      en: 'Provides free marital arbitration, supports underprivileged families in marriage ceremonies, guides youth in higher education, and fosters inter-community harmony in Sheopur.',
+      hi: 'वैवाहिक परामर्श व मध्यस्थता सेवाएं निःशुल्क प्रदान करना, निर्धन परिवारों के विवाह कार्यक्रमों में सहयोग और श्योपुर में युवाओं के लिए उच्च शिक्षा मार्गदर्शन।',
+      ur: 'خاندانی مصالحت کی مفت خدمات، غریب خاندانوں کی شادیوں میں تعاون اور شوپور کے نوجوانوں کی تعلیمی و اخلاقی رہنمائی۔'
+    },
+    inspirationalMessage: {
+      en: 'A peaceful home is the bedrock of a strong society. Cultivate patience, empathy, and mutual trust in every relationship.',
+      hi: 'एक शांत और खुशहाल परिवार ही मजबूत समाज की नींव है। हर रिश्ते में धैर्य, सहानुभूति और आपसी विश्वास बनाए रखें।',
+      ur: 'ایک پرامن اور خوشگوار گھرانہ ہی مضبوط معاشرے کی بنیاد ہے۔ ہر رشتے میں صبر، ہمدردی اور باہمی اعتماد کو فروغ دیں۔'
+    },
+    careerAdvice: {
+      en: 'Combine quality education with moral integrity. Dialogue and humility can solve even the most complex human disputes.',
+      hi: 'गुणवत्तापूर्ण शिक्षा के साथ नैतिक मूल्यों को अपनाएं। संवाद और विनम्रता से बड़े से बड़े विवाद का हल निकाला जा सकता है।',
+      ur: 'اعلیٰ تعلیم کے ساتھ اخلاقی اقدار کو اپنائیں۔ بات چیت اور عاجزی سے بڑے سے بڑا تنازعہ بھی حل کیا جا سکتا ہے۔'
+    },
+    languagesKnown: ['Hindi', 'English', 'Urdu'],
+    expertise: ['Social Service', 'Matrimonial Relationships', 'Family Counseling', 'Community Welfare'],
+    contactPermission: true,
+    email: 'munshi.khan@rangrezcommunity.org',
+    phone: '+91 98290 66443',
+    whatsapp: '+91 98290 66443',
+    isMentor: true,
+    isVerified: true,
+    isFeatured: true,
+    isGovt: false,
+    isOverseas: false,
+    photoUrl: 'https://lh3.googleusercontent.com/d/1kVu7ZnDym9XicdHiCiut_5QZRxFNUsw6',
+    coverImageUrl: 'https://lh3.googleusercontent.com/d/1YK33jedar7nky-4pHmh-lgrnxgKrCl9R',
+    badges: ['🤝 Senior Socialist', 'Marriage Relationship Expert', '⭐ Community Leader', 'Sheopur MP Leader', '🤝 Family Arbitrator', '🎓 Graduate Scholar']
+  },
+  {
+    id: 'socialist-rafiq-ahmad',
+    name: 'Rafiq Ahmad',
+    displayName: 'Senior Socialist',
+    gender: 'Male',
+    nativePlace: 'Joura, Morena, Madhya Pradesh',
+    currentCity: 'Joura',
+    district: 'Morena',
+    state: 'Madhya Pradesh',
+    country: 'India',
+    occupation: 'Senior Socialist & Matrimonial Relationship Specialist',
+    categoryId: 'social-workers',
+    categoryTier: 'leadership',
+    designation: 'Senior Socialist',
+    organization: 'Rangrez Community Morena',
+    employmentType: 'Private',
+    yearsOfExperience: '25+ Years',
+    qualification: 'Graduate',
+    university: 'Recognized University',
+    yearOfAchievement: 2025,
+    careerJourney: {
+      en: 'With over two decades of selfless social service, Shri Rafiq Ahmad is a highly revered Senior Socialist and marital relationship expert in Joura, Morena district, Madhya Pradesh. Serving with distinction in the Rangrez Community Morena, he has dedicated his life to counseling families, resolving complex matrimonial disputes, fostering marital harmony, and uplifting the community through peaceful arbitration and educational advocacy.',
+      hi: 'दो दशकों से अधिक के निस्वार्थ समाज सेवा के साथ, श्री रफ़ीक अहमद जौरा, मुरैना (म.प्र.) के एक अत्यंत सम्मानित वरिष्ठ समाजसेवी और वैवाहिक परामर्श विशेषज्ञ हैं। रंगरेज समाज मुरैना में अपनी विशिष्ट सेवाएं देते हुए, उन्होंने अपना जीवन परिवारों के बीच सामंजस्य स्थापित करने, वैवाहिक विवादों का शांतिपूर्ण समाधान करने और सामाजिक उत्थान के लिए समर्पित किया है।',
+      ur: 'دو دہائیوں سے زائد کی بے لوث سماجی خدمت کے ساتھ، جناب رفیق احمد جوڑا، مورینا (ایم پی) کے ایک انتہائی محترم سینئر سماجی رہنما اور ازدواجی و خاندانی مشیر ہیں۔ رنگریز برادری مورینا میں اپنی نمایاں خدمات انجام دیتے ہوئے، انہوں نے اپنی زندگی خاندانی تنازعات کے حل، کامیاب ازدواجی رشتوں کی استواری اور معاشرتی فلاح کے لیے وقف کی ہے۔'
+    },
+    biography: {
+      en: 'Shri Rafiq Ahmad is a seasoned Senior Socialist and community pillar based in Joura, Morena (M.P.). A Graduate with deep wisdom and compassionate dispute-resolution skills, he is widely celebrated across Madhya Pradesh as an expert in preserving family bonds and resolving matrimonial & relationship challenges. Through Rangrez Community Morena, he mentors young couples, leads social reforms, and actively contributes to educational and welfare initiatives.',
+      hi: 'श्री रफ़ीक अहमद जौरा, मुरैना (म.प्र.) के एक वरिष्ठ समाजसेवी और समाज के मुख्य स्तंभ हैं। स्नातक की योग्यता और गहन सामाजिक समझ के साथ, उन्हें मध्य प्रदेश भर में पारिवारिक रिश्तों को सहेजने और वैवाहिक विवादों के शांतिपूर्ण समाधान में महारत हासिल है। रंगरेज समाज मुरैना के माध्यम से वे युवा जोड़ों का मार्गदर्शन करते हैं और सामाजिक सुधारों का नेतृत्व करते हैं।',
+      ur: 'جناب رفیق احمد جوڑا، مورینا (ایم پی) سے تعلق رکھنے والے ایک باوقار سینئر سماجی رہنما اور معاشرتی رہنما ہیں۔ وہ خاندانی رشتوں کو جوڑنے اور ازدواجی مسائل کے پرامن اور خوشگوار حل کے ماہر تسلیم کیے جاتے ہیں۔ وہ رنگریز برادری مورینا کے ذریعے نوجوان جوڑوں کی رہنمائی اور سماجی اصلاحات کا کام انجام دے رہے ہیں۔'
+    },
+    majorAchievements: [
+      'Senior Socialist and Trusted Family Arbitrator, Rangrez Community Morena',
+      '25+ years of exemplary service in resolving matrimonial disputes and building peaceful family bonds',
+      'Successfully counseled and united hundreds of families across Morena and Chambal region',
+      'Pioneered community counseling and social dispute resolution forums',
+      'Honored with Community Pride and Social Service Excellence Award (2025)'
+    ],
+    awardsHonors: [
+      'Rangrez Community Social Excellence Award (2025)',
+      'Morena Senior Socialist & Peace Maker Honor',
+      'Chambal Social Reformer & Matrimonial Harmony Award'
+    ],
+    socialContributions: {
+      en: 'Offers free counseling for family unity, mediates marital disputes, assists underprivileged families in marriage arrangements, and promotes youth education in Morena.',
+      hi: 'पारिवारिक एकता के लिए मुफ्त परामर्श, वैवाहिक विवादों का मध्यस्थता से समाधान, गरीब परिवारों के विवाह में सहयोग और मुरैना में युवा शिक्षा का संवर्धन।',
+      ur: 'خاندانی اتحاد کے لیے مفت مشاورت، ازدواجی تنازعات کی مصالحت، غریب خاندانوں کی شادیوں میں معاونت اور تعلیمی بیداری۔'
+    },
+    inspirationalMessage: {
+      en: 'Mutual respect, patience, and understanding are the pillars of every strong family. Invest time in nurturing relationships and serving your community.',
+      hi: 'आपसी सम्मान, धैर्य और समझ ही हर मजबूत परिवार का आधार है। रिश्तों को संवारने और अपने समाज की सेवा में अपना समय लगाएं।',
+      ur: 'باہمی احترام، صبر اور افہام و تفہیم ہی ہر مضبوط خاندان کی بنیاد ہے۔ رشتوں کو نبھانے اور معاشرے کی خدمت میں اپنا وقت دیں۔'
+    },
+    careerAdvice: {
+      en: 'Education combined with moral values builds a prosperous society. Always listen patiently and resolve conflicts through dialogue.',
+      hi: 'नैतिक मूल्यों के साथ शिक्षा एक समृद्ध समाज का निर्माण करती है। हमेशा धैर्यपूर्वक सुनें और बातचीत से विवाद सुलझाएं।',
+      ur: 'اخلاقی قدروں کے ساتھ تعلیم ایک خوشحال معاشرہ بناتی ہے۔ ہمیشہ صبر سے سنیں اور بات چیت کے ذریعے مسائل حل کریں۔'
+    },
+    languagesKnown: ['Hindi', 'English', 'Urdu'],
+    expertise: ['Social Reform', 'Matrimonial Counseling', 'Family Dispute Arbitration', 'Community Leadership'],
+    contactPermission: true,
+    email: 'rafiq.ahmad@rangrezcommunity.org',
+    phone: '+91 98290 77112',
+    whatsapp: '+91 98290 77112',
+    isMentor: true,
+    isVerified: true,
+    isFeatured: true,
+    isGovt: false,
+    isOverseas: false,
+    photoUrl: 'https://lh3.googleusercontent.com/d/1kICR_JmDjP1f1IOXUfCJjVjePW5mZxwM',
+    coverImageUrl: 'https://lh3.googleusercontent.com/d/1YjaXWcs0YLnAF-f3516GOh0IRf0DlMM7',
+    badges: ['🤝 Senior Socialist', 'Marriage Relationship Expert', '⭐ Community Leader', '25+ Yrs Social Service', 'Morena MP Leader', '🤝 Family Arbitrator']
+  },
+  {
+    id: 'politician-fakhruddin-khan',
+    name: 'Fakhruddin Khan',
+    displayName: 'Rahimbaks Khan',
+    fatherName: 'Elder Khan',
+    gender: 'Male',
+    dob: '1975-05-23',
+    nativePlace: 'Kailarash, Morena, Madhya Pradesh',
+    currentCity: 'Kailarash',
+    district: 'Morena',
+    state: 'Madhya Pradesh',
+    country: 'India',
+    occupation: 'Mandal President, BJP (Kailaras) & Politician',
+    categoryId: 'public-rep',
+    categoryTier: 'leadership',
+    designation: 'Mandal President Of B.J.P. Kailaras',
+    organization: 'BJP (Bharatiya Janata Party)',
+    employmentType: 'Private',
+    yearsOfExperience: '22 Years',
+    qualification: 'Graduate',
+    university: 'Jiwaji University Gwalior',
+    yearOfAchievement: 2025,
+    careerJourney: {
+      en: 'With over 22 years of dedicated public service and political leadership, Fakhruddin Khan (popularly known as Rahimbaks Khan) serves as the Mandal President of the Bharatiya Janata Party (B.J.P.) in Kailaras, Morena district, Madhya Pradesh. A graduate from Jiwaji University Gwalior, he has been a steadfast champion for grassroots community welfare, local development, educational upliftment, and public representation.',
+      hi: '22 वर्षों से अधिक के समर्पित सार्वजनिक जीवन और राजनीतिक नेतृत्व के साथ, फ़खरुद्दीन खान (उर्फ रहीमबख्श खान) कैलाश रस, जिला मुरैना (मध्य प्रदेश) में भारतीय जनता पार्टी (बीजेपी) के मंडल अध्यक्ष के रूप में सेवारत हैं। जीवाजी विश्वविद्यालय ग्वालियर से स्नातक, वे जमीनी स्तर पर जन कल्याण, स्थानीय विकास, शैक्षणिक उत्थान और समाज के अधिकारों के लिए निरंतर प्रयासरत हैं।',
+      ur: 'عوامی خدمت اور سیاسی قیادت کے 22 سال سے زائد کے تجربے کے ساتھ، فخر الدین خان (عرف رحیم بخش خان) کیلا رس، ضلع مورینا (مدھیہ پردیش) میں بھارتیہ جنتا پارٹی (بی جے پی) کے منڈل صدر کے طور پر خدمات انجام دے رہے ہیں۔ جیواجی یونیورسٹی گوالیار سے گریجویٹ، وہ نچلی سطح پر عوامی فلاح و بہبود، تعلیمی ترقی اور معاشرتی فلاح کے لیے مسلسل کوشاں ہیں۔'
+    },
+    biography: {
+      en: 'Shri Fakhruddin Khan (Rahimbaks Khan) is a prominent public figure and respected political leader from Kailaras, Morena, Madhya Pradesh. Armed with a Bachelor\'s Degree from Jiwaji University Gwalior and over two decades of experience in organizational leadership, he has played an instrumental role in bridging government welfare schemes with rural communities, promoting youth empowerment, and fostering social harmony across the region.',
+      hi: 'श्री फ़खरुद्दीन खान (रहीमबख्श खान) कैलाश रस, मुरैना (म.प्र.) से एक सम्मानित जननेता और राजनीतिक हस्ती हैं। जीवाजी विश्वविद्यालय ग्वालियर से स्नातक और संगठन नेतृत्व में दो दशकों से अधिक का अनुभव रखने वाले श्री खान ने सरकारी जनकल्याणकारी योजनाओं को ग्रामीण इलाकों तक पहुंचाने, युवा सशक्तिकरण और सामाजिक सौहार्द बनाए रखने में अग्रणी भूमिका निभाई है।',
+      ur: 'جناب فخر الدین خان (رحیم بخش خان) کیلا رس، مورینا (ایم پی) سے ایک نمایاں عوامی رہنما اور محترم سیاسی شخصیت ہیں۔ جیواجی یونیورسٹی گوالیار سے گریجویٹ اور دو دہائیوں سے زیادہ کی انتظامی و سیاسی قیادت کے حامل، وہ حکومتی اسکیموں کو غریبوں تک پہنچانے اور نوجوانوں کی رہنمائی میں نمایاں کردار ادا کر رہے ہیں۔'
+    },
+    majorAchievements: [
+      'Appointed Mandal President of Bharatiya Janata Party (B.J.P.) in Kailaras, Morena (Madhya Pradesh)',
+      '22+ years of continuous grassroots public governance and community advocacy',
+      'Successfully facilitated state government welfare schemes for thousands of families in Morena district',
+      'Graduated with honors from Jiwaji University Gwalior',
+      'Promoted youth voter awareness, skill development, and educational mentorship in Chambal region'
+    ],
+    awardsHonors: [
+      'B.J.P. Organizational Leadership Honor (Morena, MP)',
+      'Community Public Representative Excellence Award (2025)',
+      'Chambal Grassroots Leadership Recognition'
+    ],
+    socialContributions: {
+      en: 'Actively works for community cohesion, facilitates government schemes for underprivileged youth and farmers, and organizes blood donation drives and educational aid in Kailaras.',
+      hi: 'सामुदायिक सौहार्द को बढ़ावा देना, वंचित युवाओं व किसानों तक सरकारी सहायता पहुंचाना तथा कैलाश रस में रक्तदान शिविरों एवं शैक्षणिक सहायता अभियानों का संचालन।',
+      ur: 'سماجی ہم آہنگی کا فروغ، غریب کسانوں اور نوجوانوں کو حکومتی امداد کی فراہمی اور تعلیمی بیداری مہمات۔'
+    },
+    inspirationalMessage: {
+      en: 'True leadership lies in humble service to the people. Dedicate your energy towards education, discipline, and building a stronger, united society.',
+      hi: 'सच्चा नेतृत्व जनता की निस्वार्थ सेवा में निहित है। अपनी ऊर्जा को शिक्षा, अनुशासन और एक मजबूत, एकजुट समाज के निर्माण में लगाएं।',
+      ur: 'سچی قیادت عوام کی بے لوث خدمت کا نام ہے۔ اپنی توانائی تعلیم، ڈسپلن اور ایک مضبوط معاشرے کی تعمیر میں صرف کریں۔'
+    },
+    careerAdvice: {
+      en: 'Gain solid academic qualifications, stay connected to your roots, and actively participate in nation-building and public service.',
+      hi: 'ठोस शैक्षणिक योग्यता हासिल करें, अपनी जड़ों से जुड़े रहें और राष्ट्र निर्माण व जनसेवा में सक्रिय रूप से भाग लें।',
+      ur: 'اعلیٰ تعلیم حاصل کریں، اپنی جڑوں سے جڑے رہیں اور قوم کی تعمیر و ترقی میں حصہ لیں۔'
+    },
+    languagesKnown: ['Hindi', 'English', 'Urdu'],
+    expertise: ['Political Governance', 'Public Representation', 'Community Leadership', 'Development Work'],
+    contactPermission: true,
+    email: 'fakhruddin.khan@rangrezcommunity.org',
+    phone: '+91 98290 88221',
+    whatsapp: '+91 98290 88221',
+    isMentor: true,
+    isVerified: true,
+    isFeatured: true,
+    isGovt: false,
+    isOverseas: false,
+    photoUrl: 'https://lh3.googleusercontent.com/d/1jRBGUC1jvX1_RsMsIW101w-P4tyD2e5k',
+    coverImageUrl: 'https://lh3.googleusercontent.com/d/1GB3DLriIQH_mYNtPXav_81w3SU5ZXrMC',
+    badges: ['🏛️ Politician', 'BJP Mandal President', '⭐ Public Representative', '22+ Yrs Experience', 'Madhya Pradesh Leader', '🎓 Jiwaji Univ Alumni']
+  },
+  {
+    id: 'haji-1',
+    name: 'Al-Haj Haji Abdul Ghani Rangrez',
+    fatherName: 'Late Haji Mohammad Usman',
+    gender: 'Male',
+    dob: '1952-04-12',
+    nativePlace: 'Jaipur, Rajasthan',
+    currentCity: 'Jaipur',
+    state: 'Rajasthan',
+    district: 'Jaipur',
+    country: 'India',
+    occupation: 'Senior Community Patron & Social Pioneer',
+    categoryId: 'hajj-pilgrims',
+    categoryTier: 'hajj',
+    hajjYear: 2018,
+    hajjType: 'Hajj',
+    designation: 'Patron & Al-Haj Honoree',
+    organization: 'All India Rangrez Welfare Trust',
+    qualification: 'Senior Scholar & Businessman',
+    university: 'Rajasthan University',
+    yearOfAchievement: 2018,
+    careerJourney: {
+      en: 'Completed the blessed pilgrimage of Hajj in 2018. Has dedicated over 40 years to community social reform, sponsoring education for orphaned children and supporting Nikah ceremonies.',
+      hi: 'वर्ष 2018 में मक्का-मदीना की पवित्र हज यात्रा पूर्ण की। 40 वर्षों से समाज सुधार, यतीम बच्चों की शिक्षा व कन्या विवाह में निरंतर योगदान।',
+      ur: '2018 میں فریضہ حج کی سعادت حاصل کی اور 40 سالوں سے تعلیمی و سماجی خدمات میں پیش پیش ہیں۔'
+    },
+    biography: {
+      en: 'Al-Haj Haji Abdul Ghani Rangrez is a widely respected elder and philanthropist who has guided thousands of youth towards education and ethical business practices.',
+      hi: 'अल-हाज हाजी अब्दुल गनी रंगरेज समाज के सर्वमान्य वरिष्ठ बुजुर्ग व दानवीर हैं जिन्होंने हजारों युवाओं को शिक्षा और नैतिकता की राह दिखाई।',
+      ur: 'الحاج حاجی عبد الغنی رنگریز برادری کے باوقار و محترم بزرگ ہیں جنہوں نے ہزاروں نوجوانوں کو دینی و دنیاوی تعلیم کی ترغیب دی۔'
+    },
+    majorAchievements: [
+      'Completed Holy Hajj in 2018 at Makkah Al-Mukarramah',
+      'Established Free Educational Coaching Center for poor students in Jaipur',
+      'Honored as Samaj Ratna by All India Rangrez Community Council'
+    ],
+    awardsHonors: [
+      'Blessed Al-Haj Recognition Certificate (2018)',
+      'Community Samaj Ratna Lifetime Award (2021)'
+    ],
+    socialContributions: {
+      en: 'Pioneered zero-dowry community Nikah initiatives and funds annual educational scholarships for 50+ students.',
+      hi: 'बिना दहेज सामूहिक विवाह अभियानों का नेतृत्व और प्रतिवर्ष 50+ छात्रों को छात्रवृत्ति प्रदान करना।',
+      ur: 'بغیر جہیز اجتماعی نکاح کی شاندار شروعات کی اور ہر سال غریب بچوں کے تعلیمی اخراجات اٹھاتے ہیں۔'
+    },
+    inspirationalMessage: {
+      en: 'Hajj teaches humility, equality, and devotion. Let us bring that same spirit of brotherhood into serving our community and promoting knowledge.',
+      hi: 'हज हमें विनम्रता, समानता और निस्वार्थ सेवा सिखाता है। हमें इसी भावना से समाज सेवा और तालीम को आगे बढ़ाना चाहिए।',
+      ur: 'حج ہمیں عاجزی، مساوات اور خلوص سکھاتا ہے۔ اسی جذبے سے برادری اور تعلیم کی خدمت کیجئے۔'
+    },
+    careerAdvice: {
+      en: 'Always maintain honesty in business, earn lawful livelihood (Halal Rozi), and invest in your children’s higher education.',
+      hi: 'व्यापार में हमेशा ईमानदारी रखें, हलाल रोज़ी कमाएं और बच्चों की उच्च शिक्षा में निवेश करें।',
+      ur: 'کاروبار میں سچائی اور رزقِ حلال کی پابندی کریں اور بچوں کی تعلیم پر خاص توجہ دیں۔'
+    },
+    languagesKnown: ['Hindi', 'Urdu', 'Arabic', 'Marwari'],
+    expertise: ['Community Guidance', 'Social Arbitration', 'Educational Mentorship'],
+    contactPermission: true,
+    isMentor: true,
+    isVerified: true,
+    isFeatured: true,
+    isGovt: false,
+    isOverseas: false,
+    photoUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=80',
+    badges: ['🕋 Al-Haj', '🌟 Samaj Ratna', '🕌 Spiritual Leader', '📜 Trustee']
+  },
+  {
+    id: 'haji-2',
+    name: 'Al-Haj Haji Mohammad Yusuf Neelgar',
+    fatherName: 'Late Haji Abdul Razzaq',
+    gender: 'Male',
+    dob: '1958-09-18',
+    nativePlace: 'Indore, Madhya Pradesh',
+    currentCity: 'Indore',
+    state: 'Madhya Pradesh',
+    district: 'Indore',
+    country: 'India',
+    occupation: 'Industrialist & Community Vice President',
+    categoryId: 'hajj-pilgrims',
+    categoryTier: 'hajj',
+    hajjYear: 2022,
+    hajjType: 'Hajj',
+    designation: 'Industrialist & Al-Haj Honoree',
+    organization: 'Neelgar Textile Enterprises',
+    qualification: 'B.Com, Textile Technology',
+    university: 'Devi Ahilya Vishwavidyalaya Indore',
+    yearOfAchievement: 2022,
+    careerJourney: {
+      en: 'Completed Holy Hajj in 2022. Built a modern eco-friendly textile processing plant providing employment to over 300 community workers.',
+      hi: 'वर्ष 2022 में पवित्र हज यात्रा संपन्न की। इंदौर में 300+ रंगरेज भाइयों को रोजगार प्रदान करने वाला आधुनिक टेक्सटाइल उद्योग स्थापित किया।',
+      ur: '2022 میں فریضہ حج ادا کیا۔ اندور میں ایک جدید ٹیکسٹائل انڈسٹری قائم کر کے 300 سے زائد افراد کو روزگار دیا۔'
+    },
+    biography: {
+      en: 'Al-Haj Haji Mohammad Yusuf is a leading textile entrepreneur and social worker who modernised traditional dyeing art with export-grade technology.',
+      hi: 'अल-हाज हाजी मोहम्मद यूसुफ एक प्रमुख कपड़ा उद्योगपति व समाज सेवी हैं जिन्होंने पारंपरिक रंगाई कला को आधुनिक तकनीक से जोड़ा।',
+      ur: 'الحاج حاجی محمد یوسف ایک معروف تاجر اور سماجی رہنما ہیں جنہوں نے رنگریز صنعت کو عالمی سطح پر پہنچایا۔'
+    },
+    majorAchievements: [
+      'Completed Blessed Hajj 2022 at Makkah',
+      'Built 3 Community Skill Development Centers in MP',
+      'Exported Indian traditional dyed fabrics to 12 countries'
+    ],
+    awardsHonors: [
+      'Madhya Pradesh Industry Excellence Award (2019)',
+      'Community Al-Haj Honor Plaque (2022)'
+    ],
+    socialContributions: {
+      en: 'Donated land for Rangrez Community Skill Center and sponsors medical relief funds in Indore.',
+      hi: 'रंगरेज कम्युनिटी स्किल सेंटर के लिए भूमि दान व इंदौर में स्वास्थ्य कोष का संचालन।',
+      ur: 'سکور ہب کے لیے زمین وقف کی اور مفت میڈیکل فنڈ قائم کیا۔'
+    },
+    inspirationalMessage: {
+      en: 'Hard work combined with faith and honesty opens every door. Encourage our girls to pursue higher professional degrees.',
+      hi: 'मेहनत, ईमान और अल्लाह पर भरोसा हर दरवाजा खोल देता है। हमारी बेटियों को उच्च शिक्षा में आगे बढ़ाएं।',
+      ur: 'محنت اور ایمانداری کے ساتھ خدا پر یقین رکھیں۔ اپنی بیٹیوں کو اعلیٰ تعلیمی ڈگریوں کی ترغیب دیں۔'
+    },
+    careerAdvice: {
+      en: 'Focus on technology adoption in traditional businesses to compete globally.',
+      hi: 'पारंपरिक व्यवसायों में वैश्विक प्रतिस्पर्धा के लिए तकनीक का प्रयोग करें।',
+      ur: 'کاروبار میں جدید ٹیکنالوجی اپنائیں۔'
+    },
+    languagesKnown: ['Hindi', 'Urdu', 'English'],
+    expertise: ['Textile Manufacturing', 'Export Business', 'Community Welfare'],
+    contactPermission: true,
+    isMentor: true,
+    isVerified: true,
+    isFeatured: true,
+    isGovt: false,
+    isOverseas: false,
+    photoUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&auto=format&fit=crop&q=80',
+    badges: ['🕋 Al-Haj', '🏭 Industrialist', '💼 Entrepreneur']
+  },
+  {
+    id: 'haji-3',
+    name: 'Al-Hajjah Begum Rasheeda Khatoon',
+    fatherName: 'Late Sheikh Abdul Hameed',
+    gender: 'Female',
+    dob: '1962-11-05',
+    nativePlace: 'Kanpur, Uttar Pradesh',
+    currentCity: 'Kanpur',
+    state: 'Uttar Pradesh',
+    district: 'Kanpur Nagar',
+    country: 'India',
+    occupation: 'Former Principal & Women Welfare Leader',
+    categoryId: 'hajj-pilgrims',
+    categoryTier: 'hajj',
+    hajjYear: 2019,
+    hajjType: 'Hajj',
+    designation: 'Women Wing President & Hajjah Honoree',
+    organization: 'Rangrez Women Education Foundation',
+    qualification: 'M.A., B.Ed., Ph.D. in Islamic Studies & Literature',
+    university: 'Aligarh Muslim University (AMU)',
+    yearOfAchievement: 2019,
+    careerJourney: {
+      en: 'Completed Holy Hajj in 2019. Served 32 years in education, establishing girls literacy centers across UP and empowering thousands of women.',
+      hi: 'वर्ष 2019 में पवित्र हज यात्रा की। 32 वर्षों तक शिक्षा क्षेत्र में कार्य करते हुए महिला साक्षरता और सशक्तिकरण के लिए केंद्र स्थापित किए।',
+      ur: '2019 میں حج کی سعادت پائی۔ 32 سال تک تدریسی خدمات انجام دیں اور خواتین کی تعلیم کے لیے نمایاں کام کیا۔'
+    },
+    biography: {
+      en: 'Al-Hajjah Begum Rasheeda Khatoon is an iconic female education advocate who broke traditional barriers to graduate from AMU in 1983.',
+      hi: 'अल-हाजा बेगम रशीदा खातून महिला शिक्षा की अग्रणी मशालदार हैं जिन्होंने सामाजिक बाधाओं को तोड़कर 1983 में एएमयू से उच्च डिग्री हासिल की।',
+      ur: 'الحاجہ بیگم رشیدہ خاتون خواتین کی تعلیم و ترقی کی عظیم مثال ہیں جنہوں نے سینکڑوں بچیوں کی زندگی سنواری۔'
+    },
+    majorAchievements: [
+      'Completed Holy Hajj in 2019',
+      'Established 12 Girls Adult Literacy & Skill Centers in UP',
+      'Awarded State Best Teacher Honor by Governor of UP'
+    ],
+    awardsHonors: [
+      'UP State Governor Best Teacher Award (2015)',
+      'Community Muslim Stree Ratna Award (2020)'
+    ],
+    socialContributions: {
+      en: 'Provides free counseling and skill training in tailoring and computer literacy for underprivileged girls.',
+      hi: 'गरीब बच्चियों के लिए सिलाई-कढ़ाई व कंप्यूटर साक्षरता का नि:शुल्क प्रशिक्षण शिविर।',
+      ur: 'ضرورتمند لڑکیوں کو سلائی کڑھائی اور کمپیوٹر کی مفت تربیت۔'
+    },
+    inspirationalMessage: {
+      en: 'An educated mother creates an educated lineage. Educating a girl is the greatest legacy we can leave for the community.',
+      hi: 'एक शिक्षित माँ पूरे वंश को शिक्षित बनाती है। बेटियों की शिक्षा समुदाय के लिए सबसे बड़ी विरासत है।',
+      ur: 'ایک پڑھی لکھی ماں پوری نسل کو سنوارتی ہے۔ بچیوں کی تعلیم پر خاص توجہ دیں۔'
+    },
+    careerAdvice: {
+      en: 'Girls must aim for professional competitive exams like NET, PCS, and Teaching Services.',
+      hi: 'छात्राओं को नेट, पीसीएस और शिक्षण सेवाओं जैसी प्रतियोगी परीक्षाओं की तैयारी करनी चाहिए।',
+      ur: 'بچیوں کو اعلیٰ امتحانات کی تیاری کرنی چاہئے۔'
+    },
+    languagesKnown: ['Urdu', 'Hindi', 'English', 'Arabic'],
+    expertise: ['Women Education', 'Islamic Literature', 'Social Empowerment'],
+    contactPermission: true,
+    isMentor: true,
+    isVerified: true,
+    isFeatured: true,
+    isGovt: true,
+    isOverseas: false,
+    photoUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&auto=format&fit=crop&q=80',
+    badges: ['🕋 Al-Hajjah', '🎓 Ph.D.', '👩‍🏫 Best Teacher', '⭐ Women Leader']
+  },
   {
     id: 'ach-1',
     name: 'Dr. Zeeshan Ahmed Rangrez',
@@ -1316,5 +2112,47 @@ export const INITIAL_AWARDS_GALLERY: AwardItem[] = [
     description: 'Conferred by the National Trust for tireless pro-bono Supreme Court advocacy protecting minority educational scholarships and women rights.',
     type: 'Community Award',
     imageUrl: 'https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=500&auto=format&fit=crop&q=80'
+  },
+  {
+    id: 'aw-fakhruddin-khan',
+    title: {
+      en: 'B.J.P. Organizational Leadership & Public Service Honor 2025',
+      hi: 'बीजेपी संगठन नेतृत्व एवं जनसेवा सम्मान 2025',
+      ur: 'بی جے پی تنظیمی قیادت اور عوامی خدمت کا اعزاز 2025'
+    },
+    recipientName: 'Fakhruddin Khan (Rahimbaks Khan)',
+    category: 'Public Representatives',
+    year: 2025,
+    description: 'Conferred on Shri Fakhruddin Khan (Mandal President B.J.P. Kailaras) for 22 years of selfless public service, grassroots governance, and community leadership in Morena, MP.',
+    type: 'Community Award',
+    imageUrl: 'https://lh3.googleusercontent.com/d/1GB3DLriIQH_mYNtPXav_81w3SU5ZXrMC'
+  },
+  {
+    id: 'aw-rafiq-ahmad',
+    title: {
+      en: 'Rangrez Samaj Senior Socialist & Matrimonial Harmony Honor 2025',
+      hi: 'रंगरेज समाज वरिष्ठ समाजसेवी एवं वैवाहिक सौहार्द सम्मान 2025',
+      ur: 'رنگریز برادری سینئر سماجی خادم اور ازدواجی ہم آہنگی اعزاز 2025'
+    },
+    recipientName: 'Rafiq Ahmad (Senior Socialist)',
+    category: 'Social Workers & Reformers',
+    year: 2025,
+    description: 'Conferred on Shri Rafiq Ahmad for 25+ years of exemplary dedication in family dispute resolution, matrimonial arbitration, and social reforms in Joura, Morena (MP).',
+    type: 'Community Award',
+    imageUrl: 'https://lh3.googleusercontent.com/d/1YjaXWcs0YLnAF-f3516GOh0IRf0DlMM7'
+  },
+  {
+    id: 'aw-munshi-khan',
+    title: {
+      en: 'Rangrez Samaj Senior Socialist & Social Harmony Honor 2025',
+      hi: 'रंगरेज समाज वरिष्ठ समाजसेवी एवं सामाजिक सौहार्द सम्मान 2025',
+      ur: 'رنگریز برادری سینئر سماجی خادم اور سماجی ہم آہنگی اعزاز 2025'
+    },
+    recipientName: 'Munshi Khan (Senior Socialist)',
+    category: 'Social Workers & Reformers',
+    year: 2025,
+    description: 'Conferred on Shri Munshi Khan for 25+ years of dedicated arbitration, matrimonial counseling, and community leadership in Gota Vijaypur, Sheopur (MP).',
+    type: 'Community Award',
+    imageUrl: 'https://lh3.googleusercontent.com/d/1YK33jedar7nky-4pHmh-lgrnxgKrCl9R'
   }
 ];

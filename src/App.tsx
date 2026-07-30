@@ -43,6 +43,7 @@ import ScholarshipsMasterPortal from './components/ScholarshipsMasterPortal';
 import IqraAIAssistant from './components/IqraAIAssistant';
 import IqraAIPage from './components/IqraAIPage';
 import CareerCounsellingPortal from './components/CareerCounsellingPortal';
+import HallOfExcellenceView from './components/HallOfExcellenceView';
 import CommunityPortal from './components/CommunityPortal';
 import HallOfService from './components/HallOfService';
 import MahapanchayatSystem from './components/MahapanchayatSystem';
@@ -423,8 +424,17 @@ export default function App() {
             {(activeTab === 'executive-charter') && (
               <ExecutiveCharter currentLanguage={currentLanguage} />
             )}
-            {(activeTab === 'about' || activeTab.startsWith('about-') || activeTab === 'hall-of-excellence' || activeTab === 'excellence' || activeTab === 'legal-governance' || activeTab === 'legal-constitution' || activeTab === 'legal-awareness' || activeTab === 'legal-rti' || activeTab === 'legal-citizen-rights') && (
+            {(activeTab === 'about' || activeTab.startsWith('about-') || activeTab === 'legal-governance' || activeTab === 'legal-constitution' || activeTab === 'legal-awareness' || activeTab === 'legal-rti' || activeTab === 'legal-citizen-rights') && (
               <AboutUsHub
+                currentLanguage={currentLanguage}
+                activeSubTab={activeTab}
+                onNavigate={(tab) => setActiveTab(tab)}
+              />
+            )}
+
+            {/* B2. STANDALONE HALL OF EXCELLENCE RECOGNITION PLATFORM */}
+            {(activeTab === 'hall-of-excellence' || activeTab.startsWith('hall-of-excellence-') || activeTab === 'excellence') && (
+              <HallOfExcellenceView
                 currentLanguage={currentLanguage}
                 activeSubTab={activeTab}
                 onNavigate={(tab) => setActiveTab(tab)}

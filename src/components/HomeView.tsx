@@ -14,6 +14,7 @@ import NationalLeadership from './NationalLeadership';
 import SuccessStories from './SuccessStories';
 import CommunityHighlightsGallery from './CommunityHighlightsGallery';
 import EducationalExcellenceGallery from './EducationalExcellenceGallery';
+import { INITIAL_ACHIEVERS } from '../data/hallOfExcellenceData';
 
 interface HomeViewProps {
   currentLanguage: Language;
@@ -1444,6 +1445,119 @@ export default function HomeView({ currentLanguage, onNavigate }: HomeViewProps)
                 </button>
               </div>
             ))}
+          </div>
+
+        </div>
+      </section>
+
+
+      {/* ========================================== */}
+      {/* 5.5. HALL OF EXCELLENCE & HAJIYON SHOWCASE */}
+      {/* ========================================== */}
+      <section className="py-20 bg-gradient-to-b from-slate-900 via-[#0B132B] to-slate-950 text-white relative overflow-hidden border-y border-[#FFD54A]/30" id="hall_of_excellence_home_preview">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-[#FFD54A]/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 relative z-10">
+          
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <div className="space-y-3 max-w-2xl">
+              <span className="inline-flex items-center gap-2 bg-[#FFD54A] text-[#0B132B] px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider shadow">
+                <Award className="w-4 h-4 text-[#004B23]" />
+                <span>{currentLanguage === 'en' ? 'Flagship Digital Recognition Hub' : 'फ्लैगशिप डिजिटल सम्मान केंद्र'}</span>
+              </span>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-extrabold text-white tracking-tight leading-tight">
+                🏆 {currentLanguage === 'en' ? 'Hall of Excellence & Hajiyon Gallery' : 'गौरवशाली विभूतियाँ एवं हाजी दीर्घा'}
+              </h2>
+              <p className="text-gray-300 text-xs sm:text-sm leading-relaxed font-light">
+                {currentLanguage === 'en'
+                  ? 'Honoring outstanding personalities, IAS/IPS officers, doctors, scientists, and respected Hajj & Umrah pilgrims of the Rangrez community. Inspiring the next generation with true role models.'
+                  : 'ऑल इंडिया रंगरेज समाज के उत्कृष्ट सिविल सेवकों, डॉक्टरों, वैज्ञानिकों, उद्यमियों एवं पवित्र हज यात्रियों का डिजिटल सम्मान।'}
+              </p>
+            </div>
+
+            <div className="flex flex-wrap gap-3 shrink-0">
+              <button
+                onClick={() => onNavigate('hall-of-excellence')}
+                className="px-6 py-3.5 bg-[#FFD54A] hover:bg-amber-400 text-[#0B132B] font-black text-xs uppercase tracking-wider rounded-xl shadow-lg transition flex items-center gap-2 cursor-pointer transform hover:-translate-y-0.5"
+              >
+                <span>{currentLanguage === 'en' ? 'View Complete Directory (25+ Achievers)' : 'संपूर्ण विभूति निर्देशिका देखें'}</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+
+          {/* Quick Stats Strip */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 bg-white/5 border border-white/10 p-4 sm:p-6 rounded-2xl backdrop-blur-md">
+            <div className="text-center border-r border-white/10 last:border-0">
+              <div className="text-2xl sm:text-3xl font-black text-[#FFD54A]">250+</div>
+              <div className="text-[10px] uppercase font-bold text-gray-300 mt-0.5">Community Role Models</div>
+            </div>
+            <div className="text-center border-r border-white/10 last:border-0">
+              <div className="text-2xl sm:text-3xl font-black text-cyan-400">12+</div>
+              <div className="text-[10px] uppercase font-bold text-gray-300 mt-0.5">IAS / IPS Officers</div>
+            </div>
+            <div className="text-center border-r border-white/10 last:border-0">
+              <div className="text-2xl sm:text-3xl font-black text-emerald-400">45+</div>
+              <div className="text-[10px] uppercase font-bold text-gray-300 mt-0.5">Doctors & Scientists</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl sm:text-3xl font-black text-[#FFD54A]">🕋 80+</div>
+              <div className="text-[10px] uppercase font-bold text-gray-300 mt-0.5">Hajiyon Pilgrims</div>
+            </div>
+          </div>
+
+          {/* Featured Top Achievers Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {INITIAL_ACHIEVERS.slice(0, 6).map((ach, idx) => (
+              <div
+                key={ach.id}
+                onClick={() => onNavigate('hall-of-excellence')}
+                className="bg-gradient-to-br from-[#131F3A] to-[#0B132B] border border-[#FFD54A]/30 hover:border-[#FFD54A] rounded-2xl p-5 shadow-xl hover:shadow-2xl transition duration-300 flex flex-col justify-between group cursor-pointer relative overflow-hidden"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={ach.photoUrl}
+                      alt={ach.name}
+                      className="w-16 h-16 rounded-xl object-cover border-2 border-[#FFD54A] shadow-md group-hover:scale-105 transition"
+                    />
+                    <div>
+                      <span className="text-[10px] font-black uppercase tracking-wider text-[#FFD54A] bg-[#FFD54A]/10 border border-[#FFD54A]/30 px-2 py-0.5 rounded-full inline-block">
+                        #{idx + 1} {ach.categoryTier === 'hajj-pilgrims' || ach.hajjYear ? '🕋 Hajiyon Pilgrim' : '🏆 Top Achiever'}
+                      </span>
+                      <h3 className="text-base font-black text-white mt-1 group-hover:text-[#FFD54A] transition">
+                        {ach.name}
+                      </h3>
+                      <p className="text-xs text-gray-300 font-medium line-clamp-1">
+                        {ach.designation}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs text-gray-400">
+                  <span className="flex items-center gap-1">
+                    <MapPin className="w-3.5 h-3.5 text-[#FFD54A]" />
+                    <span>{ach.currentCity}, {ach.state}</span>
+                  </span>
+                  <span className="text-[#FFD54A] font-bold group-hover:translate-x-1 transition flex items-center gap-1">
+                    <span>Full Profile</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="text-center pt-2">
+            <button
+              onClick={() => onNavigate('hall-of-excellence')}
+              className="inline-flex items-center gap-2 px-8 py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs uppercase tracking-wider rounded-2xl shadow-xl transition cursor-pointer border border-emerald-400"
+            >
+              <Award className="w-4 h-4 text-[#FFD54A]" />
+              <span>{currentLanguage === 'en' ? 'Explore Hall of Excellence Portal' : 'हॉल ऑफ एक्सीलेंस पोर्टल खोलें'}</span>
+            </button>
           </div>
 
         </div>

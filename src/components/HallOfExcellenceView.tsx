@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   INITIAL_CATEGORIES,
   INITIAL_ACHIEVERS,
@@ -9,7 +9,9 @@ import {
   AchieverCategory,
   MentorshipRequest,
   SuccessStoryItem,
-  AwardItem
+  AwardItem,
+  EXCELLENCE_TIERS,
+  detectCategoryTier
 } from '../data/hallOfExcellenceData';
 import ExcellenceProfileModal from './ExcellenceProfileModal';
 import ExcellenceMentorshipModal from './ExcellenceMentorshipModal';
@@ -70,9 +72,11 @@ import {
 
 interface HallOfExcellenceViewProps {
   currentLanguage: 'en' | 'hi' | 'ur';
+  activeSubTab?: string;
+  onNavigate?: (tab: string) => void;
 }
 
-const HallOfExcellenceView: React.FC<HallOfExcellenceViewProps> = ({ currentLanguage }) => {
+const HallOfExcellenceView: React.FC<HallOfExcellenceViewProps> = ({ currentLanguage, activeSubTab, onNavigate }) => {
   // State initialization from rich dataset
   const [achievers, setAchievers] = useState<AchieverProfile[]>(INITIAL_ACHIEVERS);
   const [categories, setCategories] = useState<AchieverCategory[]>(INITIAL_CATEGORIES);
@@ -96,11 +100,51 @@ const HallOfExcellenceView: React.FC<HallOfExcellenceViewProps> = ({ currentLang
   // Search & Filter states for Directory
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedTier, setSelectedTier] = useState<string>('all');
   const [filterSector, setFilterSector] = useState<'all' | 'govt' | 'private'>('all');
   const [filterLocation, setFilterLocation] = useState<'all' | 'india' | 'overseas'>('all');
   const [filterState, setFilterState] = useState<string>('all');
   const [filterDistrict, setFilterDistrict] = useState<string>('all');
   const [filterMentorOnly, setFilterMentorOnly] = useState(false);
+
+  // Handle incoming deep links or header sub-tabs
+  useEffect(() => {
+    if (!activeSubTab) return;
+    if (activeSubTab === 'hall-of-excellence-hajj') {
+      setSelectedTier('hajj');
+      setActiveTab('directory');
+    } else if (activeSubTab === 'hall-of-excellence-diamond') {
+      setSelectedTier('diamond');
+      setActiveTab('directory');
+    } else if (activeSubTab === 'hall-of-excellence-platinum') {
+      setSelectedTier('platinum');
+      setActiveTab('directory');
+    } else if (activeSubTab === 'hall-of-excellence-gold') {
+      setSelectedTier('gold');
+      setActiveTab('directory');
+    } else if (activeSubTab === 'hall-of-excellence-silver') {
+      setSelectedTier('silver');
+      setActiveTab('directory');
+    } else if (activeSubTab === 'hall-of-excellence-bronze') {
+      setSelectedTier('bronze');
+      setActiveTab('directory');
+    } else if (activeSubTab === 'hall-of-excellence-rising') {
+      setSelectedTier('rising');
+      setActiveTab('directory');
+    } else if (activeSubTab === 'hall-of-excellence-leadership') {
+      setSelectedTier('leadership');
+      setActiveTab('directory');
+    } else if (activeSubTab === 'hall-of-excellence-lifetime') {
+      setSelectedTier('lifetime');
+      setActiveTab('directory');
+    } else if (activeSubTab === 'hall-of-excellence-nominate') {
+      setShowNominateModal(true);
+    } else if (activeSubTab === 'hall-of-excellence-stats') {
+      setActiveTab('charts');
+    } else if (activeSubTab === 'hall-of-excellence-admin') {
+      setActiveTab('admin');
+    }
+  }, [activeSubTab]);
 
   // Icon mapping helper
   const getCategoryIcon = (iconName: string) => {
@@ -157,13 +201,26 @@ const HallOfExcellenceView: React.FC<HallOfExcellenceViewProps> = ({ currentLang
       else if (selectedCategory === 'success-stories-cat') matchesCat = ['success-stories-cat'].includes(a.categoryId) || a.isFeatured;
     }
 
+    const matchesTier =
+      selectedTier === 'all' ||
+      a.categoryTier === selectedTier ||
+      (selectedTier === 'hajj' && (a.categoryTier === 'hajj-pilgrims' || Boolean(a.hajjYear) || a.categoryId === 'hajj-pilgrims' || a.categoryTier === 'hajj')) ||
+      (selectedTier === 'diamond' && (a.categoryTier === 'diamond' || a.categoryTier === 'diamond-tier')) ||
+      (selectedTier === 'platinum' && (a.categoryTier === 'platinum' || a.categoryTier === 'platinum-tier')) ||
+      (selectedTier === 'gold' && (a.categoryTier === 'gold' || a.categoryTier === 'gold-tier')) ||
+      (selectedTier === 'silver' && (a.categoryTier === 'silver' || a.categoryTier === 'silver-tier')) ||
+      (selectedTier === 'bronze' && (a.categoryTier === 'bronze' || a.categoryTier === 'bronze-tier')) ||
+      (selectedTier === 'rising' && (a.categoryTier === 'rising' || a.categoryTier === 'rising-star')) ||
+      (selectedTier === 'leadership' && (a.categoryTier === 'leadership' || a.categoryTier === 'community-leadership')) ||
+      (selectedTier === 'lifetime' && (a.categoryTier === 'lifetime' || a.categoryTier === 'lifetime-inspiration'));
+
     const matchesSector = filterSector === 'all' || (filterSector === 'govt' && a.isGovt) || (filterSector === 'private' && !a.isGovt);
     const matchesLoc = filterLocation === 'all' || (filterLocation === 'overseas' && a.isOverseas) || (filterLocation === 'india' && !a.isOverseas);
     const matchesState = filterState === 'all' || a.state === filterState;
     const matchesDistrict = filterDistrict === 'all' || a.district === filterDistrict || a.currentCity === filterDistrict;
     const matchesMentor = !filterMentorOnly || a.isMentor;
 
-    return matchesSearch && matchesCat && matchesSector && matchesLoc && matchesState && matchesDistrict && matchesMentor;
+    return matchesSearch && matchesCat && matchesTier && matchesSector && matchesLoc && matchesState && matchesDistrict && matchesMentor;
   });
 
   const allStates = Array.from(new Set(achievers.map(a => a.state))).sort();
@@ -311,6 +368,47 @@ const HallOfExcellenceView: React.FC<HallOfExcellenceViewProps> = ({ currentLang
             >
               <BookOpen className="w-4 h-4 text-[#FFD54A]" />
               <span>{currentLanguage === 'en' ? 'Publish Success Story' : 'सफलता की कहानी भेजें'}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* HAJIYON KI SPECIAL HALL OF EXCELLENCE BANNER */}
+      <div className="bg-gradient-to-r from-[#004B23] via-[#00381a] to-[#0B132B] rounded-3xl p-6 sm:p-8 text-white shadow-2xl border-2 border-[#FFD54A]/50 relative overflow-hidden">
+        <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-cover bg-center opacity-15 pointer-events-none mix-blend-overlay" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1591604466107-ec97de577aff?q=80&w=2070&auto=format&fit=crop')" }}></div>
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-6 relative z-10">
+          <div className="space-y-2 text-center lg:text-left">
+            <div className="inline-flex items-center gap-2 bg-[#FFD54A] text-[#004B23] px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider shadow">
+              <span>🕋 Sacred Pilgrimage Heritage</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-black text-white flex flex-wrap items-center justify-center lg:justify-start gap-2">
+              <span>🕋 Hajiyon Ki Hall of Excellence</span>
+              <span className="text-[#FFD54A] font-extrabold text-lg sm:text-xl">(حجاج کرام ہال آف ایکسیلنس)</span>
+            </h2>
+            <p className="text-emerald-100 text-xs sm:text-sm font-medium italic max-w-2xl">
+              "مَبْرُورٌ وَسَعْيٌ مَشْكُورٌ وَذَنْبٌ مَغْفُورٌ" — Special recognition dedicated to all respected Hajj & Umrah pilgrims from the Rangrez community. May Allah accept their sacred pilgrimage and grant continuous barakah.
+            </p>
+          </div>
+          <div className="flex items-center gap-4 shrink-0">
+            <div className="bg-white/10 backdrop-blur-md px-5 py-3 rounded-2xl border border-white/20 text-center">
+              <div className="text-2xl font-black text-[#FFD54A]">
+                {achievers.filter(a => a.categoryTier === 'hajj' || a.categoryTier === 'hajj-pilgrims' || Boolean(a.hajjYear) || a.categoryId === 'hajj-pilgrims').length}
+              </div>
+              <div className="text-[10px] uppercase font-bold text-emerald-200">Registered Hajiyon</div>
+            </div>
+            <button
+              onClick={() => {
+                setSelectedTier('hajj');
+                setActiveTab('directory');
+              }}
+              className={`px-5 py-3 rounded-2xl font-black text-xs uppercase tracking-wider transition shadow-lg cursor-pointer flex items-center gap-2 ${
+                selectedTier === 'hajj' && activeTab === 'directory'
+                  ? 'bg-[#FFD54A] text-[#004B23] ring-4 ring-[#FFD54A]/30 scale-105'
+                  : 'bg-emerald-600 hover:bg-emerald-500 text-white border border-emerald-300'
+              }`}
+            >
+              <span>🕋 View All Hajiyon Profiles</span>
+              <ChevronRight className="w-4 h-4" />
             </button>
           </div>
         </div>
@@ -622,34 +720,124 @@ const HallOfExcellenceView: React.FC<HallOfExcellenceViewProps> = ({ currentLang
                 </div>
               </div>
 
-              {/* Super-Category Profession Quick Filter Pills */}
-              <div className="pt-2">
-                <div className="flex items-center gap-1.5 overflow-x-auto pb-2 scrollbar-none">
+              {/* 1. Recognition Tiers Filter Section (Flex-Wrap Responsive) */}
+              <div className="pt-2 border-t border-gray-100">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-black uppercase tracking-wider text-[#004B23] flex items-center gap-1.5">
+                    <Award className="w-4 h-4 text-amber-500" />
+                    <span>{currentLanguage === 'en' ? 'Recognition Tier' : 'मान्यता श्रेणी (टियर)'}</span>
+                  </span>
+                  {selectedTier !== 'all' && (
+                    <button
+                      onClick={() => setSelectedTier('all')}
+                      className="text-[11px] font-bold text-emerald-700 hover:underline cursor-pointer"
+                    >
+                      Reset Tier Filter
+                    </button>
+                  )}
+                </div>
+
+                {/* Flex-Wrap Container Ensures All Chips Wrap Multi-Row on Desktop/Tablet/Mobile Without Clipping */}
+                <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                  <button
+                    onClick={() => setSelectedTier('all')}
+                    className={`px-3 py-1.5 rounded-full text-xs font-extrabold transition-all duration-200 flex items-center gap-1.5 border cursor-pointer ${
+                      selectedTier === 'all'
+                        ? 'bg-[#004B23] text-[#FFD54A] border-[#FFD54A] shadow-md ring-2 ring-[#FFD54A]/30'
+                        : 'bg-white text-gray-800 border-gray-200 hover:border-[#D4AF37] hover:shadow-[0_2px_8px_rgba(212,175,55,0.2)] hover:-translate-y-0.5'
+                    }`}
+                  >
+                    <span>🌟 All Tiers</span>
+                    <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${selectedTier === 'all' ? 'bg-[#FFD54A] text-[#004B23]' : 'bg-slate-100 text-gray-700'}`}>
+                      {achievers.length}
+                    </span>
+                  </button>
+
+                  {[
+                    { id: 'diamond', label: '💎 Diamond' },
+                    { id: 'platinum', label: '🏆 Platinum' },
+                    { id: 'gold', label: '🥇 Gold' },
+                    { id: 'silver', label: '🥈 Silver' },
+                    { id: 'bronze', label: '🥉 Bronze' },
+                    { id: 'rising', label: '⭐ Rising Stars' },
+                    { id: 'leadership', label: '🌟 Community Leaders' },
+                    { id: 'lifetime', label: '🎖 Lifetime Legend' },
+                    { id: 'hajj', label: '🕋 Hajiyon' },
+                  ].map((t) => {
+                    const count = achievers.filter(a =>
+                      t.id === 'hajj'
+                        ? (a.categoryTier === 'hajj-pilgrims' || Boolean(a.hajjYear) || a.categoryId === 'hajj-pilgrims' || a.categoryTier === 'hajj')
+                        : (a.categoryTier === t.id || (t.id === 'diamond' && a.categoryTier === 'diamond-tier') || (t.id === 'platinum' && a.categoryTier === 'platinum-tier') || (t.id === 'gold' && a.categoryTier === 'gold-tier') || (t.id === 'silver' && a.categoryTier === 'silver-tier') || (t.id === 'bronze' && a.categoryTier === 'bronze-tier') || (t.id === 'rising' && a.categoryTier === 'rising-star') || (t.id === 'leadership' && a.categoryTier === 'community-leadership') || (t.id === 'lifetime' && a.categoryTier === 'lifetime-inspiration'))
+                    ).length;
+
+                    const isSelected = selectedTier === t.id;
+
+                    return (
+                      <button
+                        key={t.id}
+                        onClick={() => setSelectedTier(t.id)}
+                        className={`px-3 py-1.5 rounded-full text-xs font-extrabold transition-all duration-200 flex items-center gap-1.5 border cursor-pointer ${
+                          isSelected
+                            ? 'bg-[#004B23] text-[#FFD54A] border-[#FFD54A] shadow-md ring-2 ring-[#FFD54A]/30 scale-[1.02]'
+                            : 'bg-white text-gray-800 border-gray-200 hover:border-[#D4AF37] hover:shadow-[0_2px_8px_rgba(212,175,55,0.2)] hover:-translate-y-0.5'
+                        }`}
+                      >
+                        <span>{t.label}</span>
+                        <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${isSelected ? 'bg-[#FFD54A] text-[#004B23]' : 'bg-emerald-50 text-[#004B23]'}`}>
+                          {count}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* 2. Profession Category Filter Section (Flex-Wrap Responsive) */}
+              <div className="pt-2 border-t border-gray-100">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-black uppercase tracking-wider text-gray-700 flex items-center gap-1.5">
+                    <Search className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>{currentLanguage === 'en' ? 'Filter by Profession' : 'पेशे के अनुसार फ़िल्टर करें'}</span>
+                  </span>
+                  {selectedCategory !== 'all' && (
+                    <button
+                      onClick={() => setSelectedCategory('all')}
+                      className="text-[11px] font-bold text-emerald-700 hover:underline cursor-pointer"
+                    >
+                      Reset Profession
+                    </button>
+                  )}
+                </div>
+
+                <div className="flex flex-wrap items-center gap-1.5">
                   {[
                     { id: 'all', label: '🌟 All Professions' },
-                    { id: 'govt-services', label: '🏛️ Government Services' },
-                    { id: 'law-judiciary', label: '⚖️ Law & Judiciary' },
-                    { id: 'medical-excellence', label: '🏥 Medical Excellence' },
-                    { id: 'academic-excellence', label: '🎓 Academic Excellence' },
-                    { id: 'professional-excellence', label: '💼 Professional Excellence' },
-                    { id: 'public-rep', label: '🗳️ Public Representatives' },
-                    { id: 'community-leaders', label: '🤝 Community Leaders' },
-                    { id: 'young-achievers', label: '✨ Young Achievers' },
-                    { id: 'lifetime-contribution', label: '👑 Lifetime Contribution' },
-                    { id: 'success-stories-cat', label: '📈 Success Stories' },
-                  ].map((cat) => (
-                    <button
-                      key={cat.id}
-                      onClick={() => setSelectedCategory(cat.id)}
-                      className={`px-3.5 py-1.5 rounded-full text-xs font-black shrink-0 transition cursor-pointer ${
-                        selectedCategory === cat.id
-                          ? 'bg-[#004B23] text-white shadow-sm'
-                          : 'bg-slate-100 text-gray-700 hover:bg-slate-200'
-                      }`}
-                    >
-                      {cat.label}
-                    </button>
-                  ))}
+                    { id: 'govt-services', label: '🏛️ Government' },
+                    { id: 'law-judiciary', label: '⚖️ Judiciary' },
+                    { id: 'medical-excellence', label: '🏥 Medical' },
+                    { id: 'academic-excellence', label: '🎓 Academic' },
+                    { id: 'professional-excellence', label: '💼 Professional' },
+                    { id: 'public-rep', label: '🗳️ Public Reps' },
+                    { id: 'community-leaders', label: '🤝 Leaders' },
+                    { id: 'young-achievers', label: '✨ Youth' },
+                    { id: 'lifetime-contribution', label: '👑 Lifetime' },
+                    { id: 'success-stories-cat', label: '📈 Stories' },
+                  ].map((cat) => {
+                    const isSelected = selectedCategory === cat.id;
+                    return (
+                      <button
+                        key={cat.id}
+                        onClick={() => setSelectedCategory(cat.id)}
+                        className={`px-3 py-1 rounded-full text-xs font-extrabold transition-all duration-200 cursor-pointer border ${
+                          isSelected
+                            ? 'bg-[#004B23] text-white border-[#FFD54A] shadow-sm'
+                            : 'bg-slate-100/90 text-gray-700 hover:bg-slate-200/90 hover:text-[#004B23] border-transparent'
+                        }`}
+                      >
+                        {cat.label}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -758,13 +946,14 @@ const HallOfExcellenceView: React.FC<HallOfExcellenceViewProps> = ({ currentLang
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filteredAchievers.map((ach) => (
+                  {filteredAchievers.map((ach, index) => (
                     <AchieverCard
                       key={ach.id}
                       achiever={ach}
                       currentLanguage={currentLanguage}
                       onSelect={setSelectedAchiever}
                       variant="directory"
+                      rankIndex={index}
                     />
                   ))}
                 </div>
