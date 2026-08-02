@@ -60,6 +60,7 @@ import PremiumHero from './components/common/PremiumHero';
 import AuthCallback from './components/AuthCallback';
 import AdminMediaDashboard from './components/AdminMediaDashboard';
 import EducationGallery from './components/EducationGallery';
+import FAQKnowledgeCenter from './components/FAQKnowledgeCenter';
 import { MapPin, Search, ExternalLink, Calendar, FileText, Info, HelpCircle, ArrowUp, ArrowLeft, ArrowRight } from 'lucide-react';
 import { jobListings, governmentSchemes, communityEvents } from './data';
 import { EXAMS } from './data/careerData';
@@ -958,6 +959,14 @@ export default function App() {
               <IqraAIPage 
                 currentLanguage={currentLanguage} 
                 onNavigate={setActiveTab} 
+              />
+            )}
+
+            {/* S. ENTERPRISE FAQ & KNOWLEDGE CENTER */}
+            {(activeTab === 'faq' || activeTab === 'faqs' || activeTab === 'knowledge-center' || activeTab === 'help-center') && (
+              <FAQKnowledgeCenter
+                currentLanguage={currentLanguage}
+                onNavigate={setActiveTab}
               />
             )}
 

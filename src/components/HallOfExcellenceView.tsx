@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { getText } from '../utils/i18nHelpers';
 import {
   INITIAL_CATEGORIES,
   INITIAL_ACHIEVERS,
@@ -180,12 +181,12 @@ const HallOfExcellenceView: React.FC<HallOfExcellenceViewProps> = ({ currentLang
   // Filter logic
   const filteredAchievers = achievers.filter((a) => {
     const matchesSearch =
-      a.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      a.designation.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      a.organization.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      a.currentCity.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (a.district && a.district.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      a.badges.some(b => b.toLowerCase().includes(searchTerm.toLowerCase()));
+      getText(a.name as any, 'en').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      getText(a.designation as any, 'en').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      getText(a.organization as any, 'en').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      getText(a.currentCity as any, 'en').toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (a.district && getText(a.district as any, 'en').toLowerCase().includes(searchTerm.toLowerCase())) ||
+      a.badges.some(b => getText(b as any, 'en').toLowerCase().includes(searchTerm.toLowerCase()));
 
     let matchesCat = selectedCategory === 'all' || a.categoryId === selectedCategory;
     if (!matchesCat) {
@@ -217,15 +218,15 @@ const HallOfExcellenceView: React.FC<HallOfExcellenceViewProps> = ({ currentLang
 
     const matchesSector = filterSector === 'all' || (filterSector === 'govt' && a.isGovt) || (filterSector === 'private' && !a.isGovt);
     const matchesLoc = filterLocation === 'all' || (filterLocation === 'overseas' && a.isOverseas) || (filterLocation === 'india' && !a.isOverseas);
-    const matchesState = filterState === 'all' || a.state === filterState;
-    const matchesDistrict = filterDistrict === 'all' || a.district === filterDistrict || a.currentCity === filterDistrict;
+    const matchesState = filterState === 'all' || getText(a.state as any, 'en') === filterState;
+    const matchesDistrict = filterDistrict === 'all' || getText(a.district as any, 'en') === filterDistrict || getText(a.currentCity as any, 'en') === filterDistrict;
     const matchesMentor = !filterMentorOnly || a.isMentor;
 
     return matchesSearch && matchesCat && matchesTier && matchesSector && matchesLoc && matchesState && matchesDistrict && matchesMentor;
   });
 
-  const allStates = Array.from(new Set(achievers.map(a => a.state))).sort();
-  const allDistricts = Array.from(new Set(achievers.filter(a => filterState === 'all' || a.state === filterState).map(a => a.district || a.currentCity))).filter(Boolean).sort();
+  const allStates = Array.from(new Set(achievers.map(a => getText(a.state as any, 'en')))).sort();
+  const allDistricts = Array.from(new Set(achievers.filter(a => filterState === 'all' || getText(a.state as any, 'en') === filterState).map(a => getText((a.district || a.currentCity) as any, 'en')))).filter(Boolean).sort();
 
   // Handlers for Admin actions
   const handleAddAchiever = (newAch: AchieverProfile) => {

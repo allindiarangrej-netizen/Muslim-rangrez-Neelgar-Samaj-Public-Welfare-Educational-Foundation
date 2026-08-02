@@ -31,24 +31,69 @@ export default function AnimatedCommunityStats({ currentLanguage }: AnimatedComm
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [activeMotivationTab, setActiveMotivationTab] = useState<'milestones' | 'anniversaries' | 'badges' | 'stories'>('milestones');
   const [liveToast, setLiveToast] = useState<string | null>(null);
+  const [isAdminOpen, setIsAdminOpen] = useState(false);
 
-  const statsList: StatItem[] = [
-    { id: 'volunteers', category: 'network', icon: <Hand className="h-6 w-6" />, emoji: '🤝', target: 1250, suffix: '+', labelEn: 'Total Active Volunteers', labelHi: 'कुल सक्रिय स्वयंसेवक' },
-    { id: 'committees', category: 'network', icon: <Building2 className="h-6 w-6" />, emoji: '🏢', target: 50, suffix: '', labelEn: 'Total Committees', labelHi: 'कुल समितियां' },
-    { id: 'hours', category: 'network', icon: <Clock className="h-6 w-6" />, emoji: '⏳', target: 100000, suffix: '+', labelEn: 'Volunteer Hours', labelHi: 'स्वयंसेवक सेवा घंटे' },
-    { id: 'families', category: 'relief', icon: <Users className="h-6 w-6" />, emoji: '👨‍👩‍👧‍👦', target: 25000, suffix: '+', labelEn: 'Families Helped', labelHi: 'सहायता प्राप्त परिवार' },
-    { id: 'patients', category: 'medical', icon: <HelpCircle className="h-6 w-6" />, emoji: '🏥', target: 5000, suffix: '+', labelEn: 'Patients Assisted', labelHi: 'सहायता प्राप्त रोगी' },
-    { id: 'blood', category: 'medical', icon: <Heart className="h-6 w-6" />, emoji: '🩸', target: 500, suffix: '+', labelEn: 'Blood Units Donated', labelHi: 'दान की गई रक्त इकाइयां' },
-    { id: 'trees', category: 'environment', icon: <Leaf className="h-6 w-6" />, emoji: '🌳', target: 10000, suffix: '+', labelEn: 'Trees Planted', labelHi: 'लगाए गए पेड़' },
-    { id: 'students', category: 'education', icon: <GraduationCap className="h-6 w-6" />, emoji: '🏫', target: 15000, suffix: '+', labelEn: 'Students Supported', labelHi: 'समर्थित छात्र' },
-    { id: 'scholarships', category: 'education', icon: <Award className="h-6 w-6" />, emoji: '🎓', target: 2000, suffix: '+', labelEn: 'Scholarships Facilitated', labelHi: 'सुविधाजनक छात्रवृत्तियां' },
-    { id: 'medical_camps', category: 'medical', icon: <ShieldCheck className="h-6 w-6" />, emoji: '🚑', target: 300, suffix: '+', labelEn: 'Medical Camps', labelHi: 'चिकित्सा शिविर' },
-    { id: 'relief_camps', category: 'relief', icon: <Building2 className="h-6 w-6" />, emoji: '🏠', target: 150, suffix: '+', labelEn: 'Relief Camps', labelHi: 'राहत शिविर' },
-    { id: 'meals', category: 'relief', icon: <Utensils className="h-6 w-6" />, emoji: '🍽️', target: 100000, suffix: '+', labelEn: 'Meals Distributed', labelHi: 'वितरित भोजन' },
-    { id: 'env_drives', category: 'environment', icon: <Leaf className="h-6 w-6" />, emoji: '🍃', target: 400, suffix: '+', labelEn: 'Environmental Drives', labelHi: 'पर्यावरण अभियान' },
-    { id: 'funds', category: 'network', icon: <Coins className="h-6 w-6" />, emoji: '💰', target: 50000000, suffix: '+', labelEn: 'Funds Utilized (₹)', labelHi: 'उपयोग की गई धनराशि (₹)' },
-    { id: 'beneficiaries', category: 'relief', icon: <Users className="h-6 w-6" />, emoji: '👥', target: 50000, suffix: '+', labelEn: 'Beneficiaries Reached', labelHi: 'लाभार्थियों तक पहुंच' },
+  // Custom targets stored in localStorage for Admin Panel configuration
+  const [customTargets, setCustomTargets] = useState<Record<string, number>>(() => {
+    try {
+      const stored = localStorage.getItem('admin_stats_config');
+      if (stored) return JSON.parse(stored);
+    } catch {
+      // fallback
+    }
+    return {
+      volunteers: 100,
+      committees: 100,
+      hours: 100,
+      families: 100,
+      patients: 100,
+      blood: 100,
+      trees: 100,
+      students: 100,
+      scholarships: 100,
+      medical_camps: 100,
+      relief_camps: 100,
+      meals: 100,
+      env_drives: 100,
+      funds: 100,
+      beneficiaries: 100,
+    };
+  });
+
+  const baseStatsList: Omit<StatItem, 'target'>[] = [
+    { id: 'volunteers', category: 'network', icon: <Hand className="h-6 w-6" />, emoji: '🤝', suffix: '+', labelEn: 'Total Active Volunteers', labelHi: 'कुल सक्रिय स्वयंसेवक' },
+    { id: 'committees', category: 'network', icon: <Building2 className="h-6 w-6" />, emoji: '🏢', suffix: '', labelEn: 'Total Committees', labelHi: 'कुल समितियां' },
+    { id: 'hours', category: 'network', icon: <Clock className="h-6 w-6" />, emoji: '⏳', suffix: '+', labelEn: 'Volunteer Hours', labelHi: 'स्वयंसेवक सेवा घंटे' },
+    { id: 'families', category: 'relief', icon: <Users className="h-6 w-6" />, emoji: '👨‍👩‍👧‍👦', suffix: '+', labelEn: 'Families Helped', labelHi: 'सहायता प्राप्त परिवार' },
+    { id: 'patients', category: 'medical', icon: <HelpCircle className="h-6 w-6" />, emoji: '🏥', suffix: '+', labelEn: 'Patients Assisted', labelHi: 'सहायता प्राप्त रोगी' },
+    { id: 'blood', category: 'medical', icon: <Heart className="h-6 w-6" />, emoji: '🩸', suffix: '+', labelEn: 'Blood Units Donated', labelHi: 'दान की गई रक्त इकाइयां' },
+    { id: 'trees', category: 'environment', icon: <Leaf className="h-6 w-6" />, emoji: '🌳', suffix: '+', labelEn: 'Trees Planted', labelHi: 'लगाए गए पेड़' },
+    { id: 'students', category: 'education', icon: <GraduationCap className="h-6 w-6" />, emoji: '🏫', suffix: '+', labelEn: 'Students Supported', labelHi: 'समर्थित छात्र' },
+    { id: 'scholarships', category: 'education', icon: <Award className="h-6 w-6" />, emoji: '🎓', suffix: '+', labelEn: 'Scholarships Facilitated', labelHi: 'सुविधाजनक छात्रवृत्तियां' },
+    { id: 'medical_camps', category: 'medical', icon: <ShieldCheck className="h-6 w-6" />, emoji: '🚑', suffix: '+', labelEn: 'Medical Camps', labelHi: 'चिकित्सा शिविर' },
+    { id: 'relief_camps', category: 'relief', icon: <Building2 className="h-6 w-6" />, emoji: '🏠', suffix: '+', labelEn: 'Relief Camps', labelHi: 'राहत शिविर' },
+    { id: 'meals', category: 'relief', icon: <Utensils className="h-6 w-6" />, emoji: '🍽️', suffix: '+', labelEn: 'Meals Distributed', labelHi: 'वितरित भोजन' },
+    { id: 'env_drives', category: 'environment', icon: <Leaf className="h-6 w-6" />, emoji: '🍃', suffix: '+', labelEn: 'Environmental Drives', labelHi: 'पर्यावरण अभियान' },
+    { id: 'funds', category: 'network', icon: <Coins className="h-6 w-6" />, emoji: '💰', suffix: '+', labelEn: 'Funds Utilized (₹)', labelHi: 'उपयोग की गई धनराशि (₹)' },
+    { id: 'beneficiaries', category: 'relief', icon: <Users className="h-6 w-6" />, emoji: '👥', suffix: '+', labelEn: 'Beneficiaries Reached', labelHi: 'लाभार्थियों तक पहुंच' },
   ];
+
+  const statsList: StatItem[] = baseStatsList.map(item => ({
+    ...item,
+    target: customTargets[item.id] ?? 100,
+  }));
+
+  const handleSaveAdminConfig = (newConfig: Record<string, number>) => {
+    setCustomTargets(newConfig);
+    try {
+      localStorage.setItem('admin_stats_config', JSON.stringify(newConfig));
+    } catch (e) {
+      console.error(e);
+    }
+    // Re-trigger animation
+    setHasAnimated(false);
+    setIsAdminOpen(false);
+  };
 
   // States to hold current animated numbers
   const [counts, setCounts] = useState<Record<string, number>>(() => {
@@ -192,12 +237,19 @@ export default function AnimatedCommunityStats({ currentLanguage }: AnimatedComm
                 : 'हमारी राष्ट्रीय समाज कल्याणकारी पहलों की रीयल-टाइम पारदर्शिता। प्रत्येक घंटा, रक्त इकाई, छात्र सहायता और उपयोग की गई धनराशि हमारे 7-सूत्रीय ऑडिट के तहत सत्यापित है।'}
             </p>
 
-            {/* Live Feed Audit Badge */}
+            {/* Live Feed Audit Badge & Admin Override */}
             <div className="pt-2 flex flex-wrap justify-center items-center gap-3">
               <span className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-900/80 text-emerald-300 border border-emerald-500/30">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping mr-2"></span>
                 {currentLanguage === 'en' ? 'Live Verifiable Impact Feed • Last update: 2 mins ago' : 'लाइव सत्यापित प्रभाव फ़ीड • अंतिम अपडेट: 2 मिनट पहले'}
               </span>
+
+              <button
+                onClick={() => setIsAdminOpen(true)}
+                className="inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold bg-[#F4C430]/20 text-[#FFD54A] border border-[#F4C430]/50 hover:bg-[#F4C430]/30 transition cursor-pointer"
+              >
+                ⚙ {currentLanguage === 'en' ? 'Admin Config' : 'प्रबंधक समायोजन'}
+              </button>
             </div>
           </div>
 
@@ -226,42 +278,49 @@ export default function AnimatedCommunityStats({ currentLanguage }: AnimatedComm
           </div>
 
           {/* 15 Animated Stat Cards Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5" id="statistics_animation_grid">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-5" id="statistics_animation_grid">
             {filteredStats.map((stat) => {
               const displayVal = counts[stat.id as keyof typeof counts] || 0;
               const formattedVal = stat.id === 'funds' 
-                ? `₹${(displayVal / 10000000).toFixed(1)} Cr`
+                ? `₹${displayVal}`
                 : displayVal.toLocaleString();
 
               return (
                 <div
                   key={stat.id}
-                  className="group relative bg-[#041d0f]/80 backdrop-blur-md rounded-2xl p-6 text-center border border-[#F4C430]/20 hover:border-[#F4C430]/80 shadow-xl hover:shadow-2xl hover:shadow-[#F4C430]/15 transition-all duration-300 hover:-translate-y-2 flex flex-col justify-between"
+                  className="group relative bg-gradient-to-b from-[#062c17]/90 via-[#041d0f]/85 to-[#021008]/90 backdrop-blur-xl rounded-2xl p-4 sm:p-5 text-center border border-[#F4C430]/25 hover:border-[#FFD54A] shadow-xl hover:shadow-[0_20px_50px_rgba(255,213,74,0.25)] transition-all duration-300 transform hover:-translate-y-2.5 hover:scale-[1.04] flex flex-col justify-between overflow-hidden cursor-pointer"
                 >
-                  <div className="absolute top-0 inset-x-0 h-[3px] bg-gradient-to-r from-transparent via-[#F4C430]/70 to-transparent rounded-t-2xl"></div>
+                  {/* Top Golden Accent Line */}
+                  <div className="absolute top-0 inset-x-0 h-[3px] bg-gradient-to-r from-transparent via-[#FFD54A] to-transparent rounded-t-2xl"></div>
 
-                  <div className="space-y-4">
-                    <div className="mx-auto w-14 h-14 rounded-2xl bg-[#07351B] border border-[#F4C430]/30 flex items-center justify-center text-2xl group-hover:scale-110 transition duration-300 text-[#F4C430] shadow-inner">
+                  {/* Shine Sweep Effect on Hover */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out pointer-events-none" />
+
+                  <div className="space-y-3 relative z-10">
+                    <div className="mx-auto w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-[#07351B] border border-[#FFD54A]/40 flex items-center justify-center text-2xl group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 text-[#FFD54A] shadow-inner">
                       <span>{stat.emoji}</span>
                     </div>
 
                     <div className="space-y-1">
-                      <div className="text-3xl sm:text-4xl font-serif font-extrabold text-[#F4C430] tracking-tight flex items-center justify-center drop-shadow">
-                        <span className="font-sans font-extrabold tabular-nums">
+                      <div className="text-3xl sm:text-4xl font-serif font-extrabold tracking-tight flex items-center justify-center drop-shadow-md">
+                        <span className="font-sans font-black tabular-nums bg-gradient-to-r from-[#FFF0AA] via-[#FFD54A] to-[#F4C430] bg-clip-text text-transparent group-hover:brightness-125 transition">
                           {formattedVal}
                         </span>
-                        <span className="text-xl sm:text-2xl ml-0.5 text-[#F4C430]/80">{stat.suffix}</span>
+                        <span className="text-xl sm:text-2xl ml-0.5 text-[#FFD54A] font-extrabold">{stat.suffix}</span>
                       </div>
 
-                      <h3 className="text-xs font-bold text-gray-200 tracking-wide uppercase font-sans leading-snug">
+                      <h3 className="text-xs font-bold text-gray-100 tracking-wide uppercase font-sans leading-snug">
                         {currentLanguage === 'en' ? stat.labelEn : stat.labelHi}
                       </h3>
                     </div>
                   </div>
 
-                  <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-[10px] font-mono text-emerald-400">
-                    <span className="flex items-center"><CheckCircle className="h-3 w-3 mr-1" /> Verified</span>
-                    <span className="uppercase text-gray-400">{stat.category}</span>
+                  <div className="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-[10px] font-mono text-emerald-400 relative z-10">
+                    <span className="flex items-center font-bold text-emerald-300">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 animate-pulse" />
+                      ✔ Verified
+                    </span>
+                    <span className="uppercase text-gray-400 text-[9px] font-semibold">{stat.category}</span>
                   </div>
                 </div>
               );
@@ -281,7 +340,7 @@ export default function AnimatedCommunityStats({ currentLanguage }: AnimatedComm
                 </p>
               </div>
               <div className="text-xs font-mono text-emerald-300 bg-emerald-950/80 px-3 py-1.5 rounded-xl border border-emerald-500/30">
-                100,000+ Total Hours Logged
+                100+ Total Hours Logged
               </div>
             </div>
 
@@ -635,6 +694,79 @@ export default function AnimatedCommunityStats({ currentLanguage }: AnimatedComm
         </div>
 
       </div>
+
+      {/* Admin Counter Target Config Modal */}
+      {isAdminOpen && (
+        <div className="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto animate-fadeIn">
+          <div className="bg-[#0B132B] border-2 border-[#FFD54A] rounded-3xl p-6 sm:p-8 max-w-2xl w-full text-white space-y-6 shadow-2xl relative">
+            <div className="flex justify-between items-center border-b border-gray-800 pb-4">
+              <h3 className="text-xl font-serif font-bold text-[#FFD54A] flex items-center gap-2">
+                ⚙ {currentLanguage === 'en' ? 'Admin Statistics Counter Panel' : 'प्रबंधक आंकड़े समायोजन पैनल'}
+              </h3>
+              <button 
+                onClick={() => setIsAdminOpen(false)}
+                className="text-gray-400 hover:text-white text-2xl font-bold cursor-pointer"
+              >
+                ×
+              </button>
+            </div>
+
+            <p className="text-xs text-gray-300">
+              {currentLanguage === 'en'
+                ? 'Configure live statistical target values for the national community impact dashboard. Changes persist instantly across browser sessions.'
+                : 'राष्ट्रीय सामुदायिक प्रभाव डैशबोर्ड के लिए लाइव सांख्यिकी लक्ष्य मान कॉन्फ़िगर करें। परिवर्तन तुरंत सहेजे जाते हैं।'}
+            </p>
+
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              const updated: Record<string, number> = {};
+              baseStatsList.forEach(item => {
+                const val = Number(formData.get(item.id)) || 100;
+                updated[item.id] = val;
+              });
+              handleSaveAdminConfig(updated);
+            }}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-[50vh] overflow-y-auto pr-2 custom-scrollbar">
+                {baseStatsList.map(item => (
+                  <div key={item.id} className="bg-white/5 p-3 rounded-xl border border-white/10 space-y-1">
+                    <label className="text-xs font-bold text-gray-200 block truncate">
+                      {item.emoji} {currentLanguage === 'en' ? item.labelEn : item.labelHi}
+                    </label>
+                    <input 
+                      type="number" 
+                      name={item.id}
+                      defaultValue={customTargets[item.id] ?? 100}
+                      className="w-full bg-black/40 border border-emerald-500/40 rounded-lg px-3 py-1.5 text-sm font-bold text-[#FFD54A] focus:outline-none focus:border-[#FFD54A]"
+                    />
+                  </div>
+                ))}
+              </div>
+
+              <div className="pt-6 border-t border-gray-800 flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    // Reset to default 100
+                    const reset: Record<string, number> = {};
+                    baseStatsList.forEach(i => reset[i.id] = 100);
+                    handleSaveAdminConfig(reset);
+                  }}
+                  className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-xl text-xs font-bold transition cursor-pointer"
+                >
+                  {currentLanguage === 'en' ? 'Reset Defaults (100)' : 'पुनर्सेट (100)'}
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2 bg-[#FFD54A] hover:bg-amber-400 text-emerald-950 rounded-xl text-xs font-extrabold uppercase tracking-wider shadow-lg transition cursor-pointer"
+                >
+                  {currentLanguage === 'en' ? 'Save & Apply Counters' : 'सहेजें एवं लागू करें'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

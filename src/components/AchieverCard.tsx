@@ -2,24 +2,22 @@ import React, { useState } from 'react';
 import { AchieverProfile, detectCategoryTier, detectProfessionTag } from '../data/hallOfExcellenceData';
 import { detectPoliticalParty } from '../data/politicalParties';
 import { PoliticalPartyBadge } from './common/PoliticalPartyBadge';
+import { getText } from '../utils/i18nHelpers';
 import {
-  Eye,
   MapPin,
   CheckCircle2,
   Sparkles,
-  Briefcase,
-  Award,
-  ChevronRight,
-  ArrowRight,
-  ShieldCheck,
   Building2,
-  Medal,
-  Star,
-  UserCheck,
   Share2,
-  Check
+  Check,
+  Briefcase,
+  Star,
+  Award,
+  Medal,
+  ChevronRight,
+  ShieldCheck,
+  User
 } from 'lucide-react';
-
 import { ProfileImage } from './common/ProfileImage';
 
 export interface AchieverCardProps {
@@ -42,285 +40,199 @@ const AchieverCard: React.FC<AchieverCardProps> = ({
   rankIndex
 }) => {
   // Determine language text for bio/journey
-  const bioText =
-    achiever.biography?.[currentLanguage] ||
-    achiever.biography?.en ||
-    achiever.careerJourney?.[currentLanguage] ||
-    achiever.careerJourney?.en ||
-    'Dedicated professional serving the community with distinction.';
+  const bioText = getText(achiever.biography, currentLanguage) || getText(achiever.careerJourney, currentLanguage) || '';
+  const name = getText(achiever.name, currentLanguage);
+  const displayName = getText(achiever.displayName, currentLanguage);
+  const fatherName = getText(achiever.fatherName, currentLanguage);
+  const designation = getText(achiever.designation, currentLanguage);
+  const organization = getText(achiever.organization, currentLanguage);
+  const currentCity = getText(achiever.currentCity, currentLanguage);
+  const state = getText(achiever.state, currentLanguage);
+  
+  // Custom Translation for Contribution Highlight (if any)
+  const contributionHighlight = getText(achiever.socialContributions, currentLanguage);
 
   const [copied, setCopied] = useState(false);
 
   // Dynamic Tier visual config
   const isHajj = achiever.categoryTier === 'hajj' || (achiever.categoryTier as string) === 'hajj-pilgrims' || Boolean(achiever.hajjYear) || achiever.categoryId === 'hajj-pilgrims';
-  const computedTier = achiever.categoryTier || detectCategoryTier(achiever.designation, achiever.occupation, achiever.categoryId);
-  const professionTag = detectProfessionTag(achiever.designation, achiever.occupation, achiever.categoryId);
+  const computedTier = achiever.categoryTier || detectCategoryTier(getText(achiever.designation, 'en'), getText(achiever.occupation, 'en'), achiever.categoryId);
+  const professionTagRaw = detectProfessionTag(getText(achiever.designation, 'en'), getText(achiever.occupation, 'en'), achiever.categoryId);
+  // Optional: translate professionTag based on dictionary if needed. We'll leave it as is or handle it similarly.
+  const professionTag = professionTagRaw; 
   const party = detectPoliticalParty(achiever);
 
-  // Handle share profile action (native share or clipboard copy fallback)
   const handleShare = async (e: React.MouseEvent) => {
     e.stopPropagation();
     const shareUrl = `${window.location.origin}${window.location.pathname}?achiever=${achiever.id}`;
     const shareData = {
-      title: `${achiever.name} - All India Rangrez Community Hall of Excellence`,
-      text: `Explore the achievements and biography of ${achiever.name} (${achiever.designation}, ${achiever.organization}) in the All India Rangrez Community Hall of Excellence.`,
+      title: `${name} - All India Rangrez Community Hall of Excellence`,
+      text: `Explore the achievements of ${name} in the All India Rangrez Community Hall of Excellence.`,
       url: shareUrl,
     };
-
     if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
-      try {
-        await navigator.share(shareData);
-        return;
-      } catch (err) {
-        // Fallback
-      }
-    } else if (navigator.share) {
-      try {
-        await navigator.share(shareData);
-        return;
-      } catch (err) {
-        // Fallback
-      }
+      try { await navigator.share(shareData); return; } catch (err) {}
     }
-
     try {
       await navigator.clipboard.writeText(shareUrl);
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
-    } catch (err) {
-      // Quiet fallback
-    }
+    } catch (err) {}
   };
 
   return (
     <div
-      id={achiever.id === 'ach-1' ? 'hall-of-excellence-achiever-card' : `hall-of-excellence-achiever-card-${achiever.id}`}
+      id={`hall-of-excellence-achiever-card-${achiever.id}`}
       data-testid="hall-of-excellence-achiever-card"
       role="button"
       tabIndex={0}
       onClick={() => onSelect(achiever)}
       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelect(achiever); } }}
-      style={{ transition: 'transform 250ms ease-out, box-shadow 250ms ease-out, border-color 250ms ease-out, background-color 250ms ease-out' }}
-      className={`group relative rounded-3xl border shadow-md hover:shadow-2xl hover:scale-[1.03] hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between overflow-hidden cursor-pointer select-none ${
-        isHajj
-          ? 'bg-gradient-to-b from-amber-50/40 via-white to-emerald-50/30 border-amber-300/80 hover:border-[#004B23] hover:shadow-emerald-900/20'
-          : computedTier === 'diamond'
-          ? 'bg-gradient-to-b from-cyan-50/50 via-white to-blue-50/30 border-cyan-300/80 hover:border-cyan-600 hover:shadow-cyan-900/20'
-          : computedTier === 'lifetime'
-          ? 'bg-gradient-to-b from-purple-50/50 via-white to-amber-50/30 border-purple-300/80 hover:border-purple-600 hover:shadow-purple-900/20'
-          : 'bg-white border-gray-200/90 hover:border-[#004B23]/80 hover:shadow-[#004B23]/20'
-      }`}
+      className={`group relative rounded-3xl border shadow-lg hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between overflow-hidden cursor-pointer select-none bg-white/90 backdrop-blur-md border-gray-100 hover:border-[#F4C430]/70`}
     >
-      {/* Decorative Top Accent Glow on Hover */}
-      <div className={`absolute top-0 left-0 right-0 h-1.5 transition-opacity duration-200 z-20 ${
-        isHajj ? 'bg-gradient-to-r from-[#004B23] via-[#F4C430] to-[#004B23]' : 'bg-gradient-to-r from-[#0B132B] via-[#F4C430] to-[#004B23]'
-      } opacity-0 group-hover:opacity-100`}></div>
+      {/* Decorative Golden Glow Border on Hover */}
+      <div className="absolute inset-0 rounded-3xl border-2 border-transparent group-hover:border-[#FFD54A]/50 pointer-events-none transition-colors duration-500"></div>
 
-      {/* Rank Badge at top right */}
-      {typeof rankIndex === 'number' && (
-        <div className="absolute top-3 right-3 z-20 flex items-center gap-1 bg-[#0B132B]/90 backdrop-blur-md text-[#FFD54A] px-2.5 py-1 rounded-xl text-xs font-black border border-[#FFD54A]/40 shadow-md">
-          <span>#{rankIndex + 1}</span>
-        </div>
-      )}
-
-      {/* Perfectly Centered Hover CTA Button */}
-      <div className="absolute inset-0 z-30 pointer-events-none flex items-center justify-center p-4">
-        <button
-          type="button"
-          className="px-5 py-3 rounded-2xl text-xs sm:text-sm font-black uppercase tracking-wider bg-gradient-to-r from-[#0B132B] via-[#1C2541] to-[#0B132B] text-[#FFD54A] hover:scale-105 border-2 border-[#FFD54A] shadow-2xl flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 scale-90 group-hover:scale-100 pointer-events-none group-hover:pointer-events-auto transition-all duration-200 cursor-pointer whitespace-nowrap"
-        >
-          <Eye className="w-4 h-4 text-[#FFD54A] shrink-0" />
-          <span>
-            {currentLanguage === 'en' ? 'View Profile' : currentLanguage === 'ur' ? 'پروفائل دیکھیں' : 'प्रोफाइल देखें'}
-          </span>
-          <ArrowRight className="w-4 h-4 text-[#FFD54A] shrink-0 group-hover:translate-x-1 transition-transform" />
-        </button>
-      </div>
-
-      {/* 1. HEADER / INFO & PHOTO BLOCK */}
-      <div className="p-5 pb-4 flex items-start gap-4 relative z-10">
-        {/* Achiever Photo with Hover Zoom */}
-        <div className="relative shrink-0">
+      <div className="p-6 pb-5 flex flex-col items-center text-center relative z-10">
+        
+        {/* Large Circular Photo with Verification Badge */}
+        <div className="relative shrink-0 mb-4 group-hover:scale-105 transition-transform duration-500 ease-out">
           <ProfileImage
             src={achiever.photoUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop&q=80'}
-            alt={achiever.name}
-            name={achiever.displayName ? `${achiever.name} (${achiever.displayName})` : achiever.name}
-            designation={achiever.designation}
-            badge={isHajj ? '🕋 Hajiyon Pilgrim' : achiever.badges?.[0] || 'Hall of Excellence'}
+            alt={name}
+            name={displayName ? `${name} (${displayName})` : name}
+            designation={designation}
+            badge={isHajj ? '🕋 Haji' : (achiever.badges?.[0] ? getText(achiever.badges[0] as any, currentLanguage) : 'Hall of Excellence')}
             politicalParty={achiever.politicalParty}
             size="xl"
-            containerClassName={`sm:w-32 sm:h-32 rounded-2xl border-2 shadow-md group-hover:scale-105 transition-all duration-300 ${
-              isHajj ? 'border-amber-400 shadow-amber-200' : computedTier === 'diamond' ? 'border-cyan-400' : 'border-[#F4C430]'
+            containerClassName={`w-32 h-32 sm:w-36 sm:h-36 rounded-full border-4 shadow-xl ${
+              isHajj ? 'border-amber-400 shadow-amber-200' : 'border-[#F4C430] shadow-[#F4C430]/20'
             }`}
-            className="group-hover:scale-110 transition-transform duration-500 ease-out"
           />
-
-          {/* Political Party Badge Overlay on Profile Photo */}
+          {achiever.isVerified && (
+            <div
+              className="absolute bottom-1 right-1 bg-blue-500 text-white p-1.5 rounded-full shadow-lg border-2 border-white group-hover:scale-110 group-hover:rotate-12 transition-transform"
+              title={currentLanguage === 'en' ? 'Verified Profile' : 'प्रमाणित प्रोफाइल'}
+            >
+              <CheckCircle2 className="w-5 h-5" />
+            </div>
+          )}
           {party && (
-            <div className="absolute -top-1.5 -left-1.5 z-20 shadow-lg scale-90 group-hover:scale-100 transition-all duration-300">
+            <div className="absolute top-0 right-0 z-20 shadow-lg scale-100">
               <PoliticalPartyBadge party={party} variant="photo-overlay" />
             </div>
           )}
+        </div>
 
-          {/* Verified Badge Icon */}
-          {achiever.isVerified && (
-            <div
-              className="absolute -bottom-1.5 -right-1.5 bg-[#004B23] text-[#FFD54A] p-1.5 rounded-full shadow-md border-2 border-white group-hover:scale-110 transition-transform"
-              title={currentLanguage === 'en' ? 'Verified Community Achiever' : 'प्रमाणित विभूति'}
-            >
-              <CheckCircle2 className="w-4 h-4" />
-            </div>
+        {/* Achievement Badges */}
+        <div className="flex flex-wrap items-center justify-center gap-1.5 mb-3 group-hover:animate-pulse">
+          {isHajj && (
+            <span className="inline-flex items-center gap-1 bg-gradient-to-r from-emerald-800 to-[#004B23] text-[#FFD54A] font-black text-[10px] px-2.5 py-1 rounded-full shadow-sm">
+              <span>🕋 {currentLanguage === 'en' ? 'Haji' : currentLanguage === 'ur' ? 'حاجی' : 'हाजी'} {achiever.hajjYear ? `(${achiever.hajjYear})` : ''}</span>
+            </span>
+          )}
+          {computedTier === 'diamond' && !isHajj && (
+            <span className="inline-flex items-center gap-1 bg-cyan-50 text-cyan-700 font-extrabold text-[10px] px-2.5 py-1 rounded-full border border-cyan-200 shadow-sm">
+              💎 Diamond Tier
+            </span>
+          )}
+          {computedTier === 'platinum' && !isHajj && (
+            <span className="inline-flex items-center gap-1 bg-slate-100 text-slate-700 font-extrabold text-[10px] px-2.5 py-1 rounded-full border border-slate-300 shadow-sm">
+              🏆 Platinum Tier
+            </span>
+          )}
+          {computedTier === 'gold' && !isHajj && (
+            <span className="inline-flex items-center gap-1 bg-amber-50 text-amber-700 font-extrabold text-[10px] px-2.5 py-1 rounded-full border border-amber-300 shadow-sm">
+              🥇 Gold Tier
+            </span>
+          )}
+          {achiever.isMentor && (
+            <span className="inline-flex items-center gap-1 bg-[#004B23] text-[#FFD54A] font-extrabold text-[10px] px-2.5 py-1 rounded-full shadow-sm">
+              <Sparkles className="w-3 h-3 text-[#FFD54A]" /> Mentor
+            </span>
           )}
         </div>
 
-        {/* Achiever Core Identification */}
-        <div className="flex-1 min-w-0 space-y-1.5 pr-8">
-          {/* Top Badges */}
-          <div className="flex flex-wrap items-center gap-1.5">
-            {isHajj && (
-              <span className="inline-flex items-center gap-1 bg-gradient-to-r from-emerald-800 to-[#004B23] text-[#FFD54A] font-black text-[10px] px-2.5 py-0.5 rounded-full border border-[#FFD54A]/60 shadow-xs">
-                <span>🕋 Haji {achiever.hajjYear ? `(${achiever.hajjYear})` : ''}</span>
-              </span>
-            )}
-            {computedTier === 'diamond' && !isHajj && (
-              <span className="inline-flex items-center gap-1 bg-cyan-950 text-cyan-200 font-extrabold text-[10px] px-2.5 py-0.5 rounded-full border border-cyan-400/60 shadow-xs">
-                <span>💎 Diamond Tier</span>
-              </span>
-            )}
-            {computedTier === 'platinum' && !isHajj && (
-              <span className="inline-flex items-center gap-1 bg-slate-900 text-slate-100 font-extrabold text-[10px] px-2.5 py-0.5 rounded-full border border-slate-300/60 shadow-xs">
-                <span>🏆 Platinum Tier</span>
-              </span>
-            )}
-            {computedTier === 'gold' && !isHajj && (
-              <span className="inline-flex items-center gap-1 bg-amber-950 text-amber-200 font-extrabold text-[10px] px-2.5 py-0.5 rounded-full border border-amber-400/60 shadow-xs">
-                <span>🥇 Gold Tier</span>
-              </span>
-            )}
-            {computedTier === 'silver' && !isHajj && (
-              <span className="inline-flex items-center gap-1 bg-zinc-800 text-zinc-100 font-extrabold text-[10px] px-2.5 py-0.5 rounded-full border border-zinc-300/60 shadow-xs">
-                <span>🥈 Silver Tier</span>
-              </span>
-            )}
-            {computedTier === 'bronze' && !isHajj && (
-              <span className="inline-flex items-center gap-1 bg-amber-900 text-amber-100 font-extrabold text-[10px] px-2.5 py-0.5 rounded-full border border-amber-500/60 shadow-xs">
-                <span>🥉 Bronze Tier</span>
-              </span>
-            )}
-            {computedTier === 'rising' && !isHajj && (
-              <span className="inline-flex items-center gap-1 bg-purple-950 text-purple-200 font-extrabold text-[10px] px-2.5 py-0.5 rounded-full border border-purple-400/60 shadow-xs">
-                <span>⭐ Rising Star</span>
-              </span>
-            )}
-            {computedTier === 'leadership' && !isHajj && (
-              <span className="inline-flex items-center gap-1 bg-emerald-950 text-emerald-200 font-extrabold text-[10px] px-2.5 py-0.5 rounded-full border border-emerald-400/60 shadow-xs">
-                <span>🌟 Community Leader</span>
-              </span>
-            )}
-            {computedTier === 'lifetime' && (
-              <span className="inline-flex items-center gap-1 bg-rose-950 text-rose-200 font-extrabold text-[10px] px-2.5 py-0.5 rounded-full border border-rose-400/60 shadow-xs">
-                <span>👑 Lifetime Legend</span>
-              </span>
-            )}
-            {achiever.isMentor && (
-              <span
-                data-testid="mentorship-badge"
-                className="inline-flex items-center gap-1 bg-[#004B23] text-[#FFD54A] font-extrabold text-[10px] px-2 py-0.5 rounded-full border border-[#FFD54A]/50"
-              >
-                <Sparkles className="w-3 h-3 text-[#FFD54A] animate-pulse shrink-0" />
-                <span>Mentor</span>
-              </span>
-            )}
-            {achiever.isGovt && (
-              <span className="inline-flex items-center gap-1 bg-blue-100 text-blue-900 font-extrabold text-[10px] px-2 py-0.5 rounded-full border border-blue-300">
-                <ShieldCheck className="w-3 h-3 text-blue-700" />
-                <span>Govt</span>
-              </span>
-            )}
-          </div>
+        {/* Large Name */}
+        <h3 className="text-xl sm:text-2xl font-black text-[#004B23] group-hover:text-[#00381a] transition-colors leading-tight mb-1 font-serif drop-shadow-sm group-hover:drop-shadow-md">
+          {name}
+        </h3>
+        {displayName && (
+          <p className="text-sm font-bold text-gray-500 mb-1">({displayName})</p>
+        )}
 
-          {/* Achiever Name */}
-          <h3 className="text-base sm:text-lg font-black text-[#0B132B] group-hover:text-[#004B23] transition-colors leading-tight flex items-center gap-1.5 flex-wrap">
-            <span className="truncate">{achiever.name}</span>
-            {achiever.displayName && <span className="text-xs font-bold text-[#004B23]">({achiever.displayName})</span>}
-            {party && (
-              <PoliticalPartyBadge party={party} variant="compact" className="scale-[0.8] origin-left shrink-0 py-0 px-2" />
-            )}
-          </h3>
+        {/* Father's Name */}
+        {fatherName && (
+          <p className="text-xs font-semibold text-gray-500 mb-3 flex items-center gap-1">
+            <User className="w-3 h-3" />
+            {currentLanguage === 'en' ? 'Father:' : currentLanguage === 'ur' ? 'والد:' : 'पिता:'} {fatherName}
+          </p>
+        )}
 
-          {/* Profession Highlight Pill */}
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-[#004B23] font-black text-xs max-w-full shadow-2xs group-hover:bg-[#004B23] group-hover:text-white transition-colors">
-            <span>{professionTag}</span>
-          </div>
-
-          {/* Designation & Organization */}
-          <div className="space-y-0.5 pt-0.5">
-            <p className="text-xs font-bold text-gray-800 leading-tight truncate">
-              {achiever.designation}
-            </p>
-            {party && (
-              <p className="text-[11px] font-black text-amber-700 dark:text-amber-500 flex items-center gap-1 mt-0.5 leading-tight" title={`${party.nameEn} - Symbol: ${party.symbolLabel}`}>
-                <span className="text-xs filter drop-shadow-sm">{party.symbolEmoji}</span>
-                <span className="truncate">{party.nameEn} ({party.abbr})</span>
-              </p>
-            )}
-            <p className="text-xs text-gray-500 font-medium truncate flex items-center gap-1">
-              <Building2 className="w-3 h-3 text-gray-400 shrink-0" />
-              <span className="truncate">{achiever.organization}</span>
-            </p>
-          </div>
+        {/* Position & Organization */}
+        <div className="bg-slate-50 border border-gray-100 rounded-xl p-3 w-full mb-3 shadow-inner">
+          <p className="text-sm font-black text-[#0B132B] mb-0.5">
+            {designation}
+          </p>
+          <p className="text-xs text-gray-600 font-medium flex items-center justify-center gap-1">
+            <Building2 className="w-3.5 h-3.5 text-gray-400 shrink-0" />
+            <span className="truncate">{organization}</span>
+          </p>
         </div>
+
+        {/* One-line Contribution Highlight */}
+        {contributionHighlight && (
+          <div className="w-full relative bg-gradient-to-r from-emerald-50 to-amber-50 border-l-4 border-l-[#F4C430] p-2.5 rounded-r-xl shadow-sm mb-3 group-hover:bg-gradient-to-r group-hover:from-emerald-100 transition-colors">
+            <p className="text-xs font-bold text-emerald-900 flex items-center justify-center gap-1.5 line-clamp-1">
+              <Star className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+              <span className="truncate">{contributionHighlight}</span>
+            </p>
+          </div>
+        )}
+
       </div>
 
-      {/* 2. BODY / BIOGRAPHY & EXPERTISE */}
-      <div className="px-5 py-3.5 bg-slate-50/70 group-hover:bg-slate-100/80 border-t border-b border-gray-100 flex-1 flex flex-col justify-between gap-3 transition-colors">
-        <p className="text-xs sm:text-sm text-gray-600 leading-relaxed line-clamp-2 italic">
-          "{bioText}"
+      {/* BODY / BIOGRAPHY & EXPERTISE */}
+      <div className="px-6 py-4 bg-slate-50/50 group-hover:bg-white flex-1 flex flex-col justify-start gap-3 transition-colors border-t border-gray-100">
+        <p className="text-xs sm:text-sm text-gray-600 leading-relaxed line-clamp-3 text-center sm:text-left">
+          {bioText}
         </p>
         
         {/* Expertise Tags */}
         {achiever.expertise && achiever.expertise.length > 0 && (
-          <div className="flex flex-wrap items-center gap-1.5 pt-1">
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-1.5 pt-2 mt-auto">
             {achiever.expertise.slice(0, 3).map((exp, idx) => (
               <span
                 key={idx}
-                className="text-[10px] font-extrabold bg-white text-gray-700 px-2 py-0.5 rounded-md border border-gray-200/80 shadow-2xs group-hover:border-emerald-300 transition-colors"
+                className="text-[10px] font-extrabold bg-white text-[#004B23] px-2.5 py-1 rounded-lg border border-gray-200 shadow-sm group-hover:border-[#F4C430] transition-colors"
               >
-                {exp}
+                {getText(exp, currentLanguage)}
               </span>
             ))}
-            {achiever.expertise.length > 3 && (
-              <span className="text-[10px] font-bold text-gray-400">
-                +{achiever.expertise.length - 3}
-              </span>
-            )}
           </div>
         )}
       </div>
 
-      {/* 3. FOOTER WITH LOCATION & SHARE ACTION */}
-      <div className="p-4 px-5 bg-white flex items-center justify-between gap-3 relative z-10 border-t border-gray-100/60 min-h-[56px]">
-        {/* Left: Location / City & State */}
-        <div className="flex items-center gap-1.5 text-xs font-bold text-gray-500 truncate max-w-[45%]">
-          <MapPin className="w-3.5 h-3.5 text-[#F4C430] shrink-0" />
+      {/* FOOTER WITH LOCATION & SHARE ACTION */}
+      <div className="p-4 px-6 bg-white flex items-center justify-between gap-3 relative z-10 border-t border-gray-100">
+        {/* Location / City & State */}
+        <div className="flex items-center gap-1.5 text-xs font-bold text-gray-500 truncate max-w-[50%]">
+          <MapPin className="w-4 h-4 text-[#004B23] shrink-0" />
           <span className="truncate">
-            {achiever.currentCity}, {achiever.state}
+            {currentCity}{state ? `, ${state}` : ''}
           </span>
         </div>
 
-        {/* Right: Buttons Container */}
+        {/* Action Buttons Container */}
         <div className="flex items-center gap-2 ml-auto shrink-0 z-10">
           {onSecondaryAction && (
             <button
               type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onSecondaryAction(achiever);
-              }}
-              className="px-3 py-1.5 bg-[#004B23] hover:bg-[#00381a] text-[#FFD54A] text-xs font-black uppercase tracking-wider rounded-xl shadow-xs transition flex items-center gap-1 shrink-0 cursor-pointer"
+              onClick={(e) => { e.stopPropagation(); onSecondaryAction(achiever); }}
+              className="px-3 py-1.5 bg-[#004B23] hover:bg-[#00381a] text-[#FFD54A] text-[10px] sm:text-xs font-black uppercase tracking-wider rounded-xl shadow-md transition flex items-center gap-1 shrink-0 cursor-pointer"
             >
               <Sparkles className="w-3 h-3 text-[#FFD54A]" />
-              <span>{secondaryActionLabel || (currentLanguage === 'en' ? 'Guidance' : 'मार्गदर्शन')}</span>
+              <span>{secondaryActionLabel || (currentLanguage === 'en' ? 'Guidance' : currentLanguage === 'ur' ? 'رہنمائی' : 'मार्गदर्शन')}</span>
             </button>
           )}
 
@@ -330,30 +242,13 @@ const AchieverCard: React.FC<AchieverCardProps> = ({
             data-testid="share-button"
             aria-label="Share"
             onClick={handleShare}
-            title={
-              currentLanguage === 'en'
-                ? copied
-                  ? 'Copied profile link!'
-                  : 'Share Profile'
-                : currentLanguage === 'ur'
-                ? copied
-                  ? 'لنک کاپی ہو گیا!'
-                  : 'پروفائل شیئر کریں'
-                : copied
-                ? 'लिंक कॉपी हुआ!'
-                : 'प्रोफाइल शेयर करें'
-            }
-            className={`p-2 rounded-xl border text-xs font-bold transition-all flex items-center justify-center shrink-0 shadow-2xs cursor-pointer ${
+            className={`p-2 rounded-xl border text-xs font-bold transition-all flex items-center justify-center shrink-0 shadow-sm cursor-pointer ${
               copied
-                ? 'bg-emerald-500 text-white border-emerald-600 shadow-sm scale-105'
-                : 'bg-slate-50 hover:bg-slate-100 text-gray-600 hover:text-[#004B23] border-gray-200/80 hover:border-[#004B23]/40 hover:scale-105'
+                ? 'bg-emerald-500 text-white border-emerald-600 scale-105'
+                : 'bg-slate-50 hover:bg-slate-100 text-[#004B23] border-gray-200 hover:border-[#004B23]/40'
             }`}
           >
-            {copied ? (
-              <Check className="w-4 h-4 text-white animate-bounce" />
-            ) : (
-              <Share2 className="w-4 h-4" />
-            )}
+            {copied ? <Check className="w-4 h-4 text-white animate-bounce" /> : <Share2 className="w-4 h-4" />}
           </button>
         </div>
       </div>

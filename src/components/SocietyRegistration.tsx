@@ -147,7 +147,7 @@ export default function SocietyRegistration({ currentLanguage }: SocietyRegistra
                 <div className="flex justify-between items-end border-t border-white/10 pt-4 text-left font-mono">
                   <div className="space-y-1 text-[9px] text-gray-400">
                     <p>REG: 02/42/01/28332/26</p>
-                    <p>DATE: 20-01-2026</p>
+                    <p>DATE: 30 April 2026</p>
                     <p className="text-emerald-400 font-bold">STATUS: VERIFIED ACTIVE</p>
                   </div>
 
@@ -233,7 +233,7 @@ export default function SocietyRegistration({ currentLanguage }: SocietyRegistra
                   </span>
                   <span className="font-medium text-gray-900 flex items-center space-x-1">
                     <Calendar className="h-4 w-4 text-[#F4C430]" />
-                    <span>{currentLanguage === 'en' ? 'January 20, 2026' : '20 जनवरी, 2026'}</span>
+                    <span>{currentLanguage === 'en' ? '30 April 2026' : currentLanguage === 'ur' ? '30 اپریل 2026' : '30 अप्रैल 2026'}</span>
                   </span>
                 </div>
 
@@ -404,7 +404,7 @@ export default function SocietyRegistration({ currentLanguage }: SocietyRegistra
                 </div>
                 <div className="space-y-1 border-t border-emerald-100 pt-3">
                   <span className="text-gray-400 font-mono text-[10px] uppercase block">{currentLanguage === 'en' ? 'Date of Registration' : 'पंजीकरण की तिथि'}</span>
-                  <span className="font-medium text-gray-800">20th January 2026</span>
+                  <span className="font-medium text-gray-800">{currentLanguage === 'en' ? '30 April 2026' : currentLanguage === 'ur' ? '30 اپریل 2026' : '30 अप्रैल 2026'}</span>
                 </div>
                 <div className="space-y-1 border-t border-emerald-100 pt-3">
                   <span className="text-gray-400 font-mono text-[10px] uppercase block">{currentLanguage === 'en' ? 'Registrar Registry Status' : 'रजिस्ट्रार रिकॉर्ड स्थिति'}</span>

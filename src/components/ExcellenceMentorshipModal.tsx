@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { getText } from '../utils/i18nHelpers';
 import { AchieverProfile, MentorshipRequest, SuccessStoryItem, AwardItem } from '../data/hallOfExcellenceData';
 import {
   X,
@@ -57,7 +58,7 @@ const ExcellenceMentorshipModal: React.FC<ExcellenceMentorshipModalProps> = ({
 
   // Award form states
   const [awardTitle, setAwardTitle] = useState('');
-  const [recipientName, setRecipientName] = useState(achiever ? achiever.name : '');
+  const [recipientName, setRecipientName] = useState(achiever ? getText(achiever.name, currentLanguage) : '');
   const [awardCategory, setAwardCategory] = useState('Doctors & Medical');
   const [awardYear, setAwardYear] = useState('2025');
   const [awardType, setAwardType] = useState<'Certificate' | 'Medal' | 'Trophy' | 'Government Award' | 'Community Award'>('Government Award');
@@ -75,7 +76,7 @@ const ExcellenceMentorshipModal: React.FC<ExcellenceMentorshipModalProps> = ({
         email,
         phone,
         mentorId: achiever?.id || 'general',
-        mentorName: achiever?.name || 'General Community Mentor'
+        mentorName: achiever ? (getText(achiever.name as any, currentLanguage) as string) : 'General Community Mentor'
       });
     } else if (mode === 'story' && onSubmitStory) {
       onSubmitStory({
@@ -120,7 +121,7 @@ const ExcellenceMentorshipModal: React.FC<ExcellenceMentorshipModalProps> = ({
                 {mode === 'award' && (currentLanguage === 'en' ? 'Submit Award to Gallery' : 'पुरस्कार गैलरी में जोड़ें')}
               </h3>
               <p className="text-xs text-[#FFD54A] font-bold">
-                {mode === 'mentorship' && achiever ? `Mentor: ${achiever.name} (${achiever.designation})` : 'All India Rangrez Samaj Trust'}
+                {mode === 'mentorship' && achiever ? `Mentor: ${getText(achiever.name, currentLanguage)} (${getText(achiever.designation, currentLanguage)})` : 'All India Rangrez Samaj Trust'}
               </p>
             </div>
           </div>

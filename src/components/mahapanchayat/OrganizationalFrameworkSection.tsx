@@ -47,7 +47,7 @@ export const OrganizationalFrameworkSection: React.FC<OrganizationalFrameworkSec
       badge: 'District Implementation',
       descEn: 'Enforces dowry-free Nikah guidelines, mediates local family disputes out of court, and maintains the verified household directory.',
       descHi: 'दहेज-मुक्त निकाह नियमों को लागू करना, पारिवारिक विवादों का स्थानीय समाधान करना और सत्यापित परिवार डायरेक्टरी को अपडेट रखना।',
-      stats: '350+ District Committees • 4,200+ Active Officers • Qazi Panels',
+      stats: '100+ District Committees • 100+ Active Officers • Qazi Panels',
     },
     {
       level: 'Tier 4: Tehsil & Block Mentorship Boards',

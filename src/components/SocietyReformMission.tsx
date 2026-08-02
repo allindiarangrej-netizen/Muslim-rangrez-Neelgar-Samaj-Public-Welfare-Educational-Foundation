@@ -21,7 +21,7 @@ export default function SocietyReformMission({ currentLanguage }: SocietyReformM
   const [calcContribution, setCalcContribution] = useState<number>(100);
   const [calcWeddings, setCalcWeddings] = useState<number>(5);
   const [hasEndorsed, setHasEndorsed] = useState<boolean>(false);
-  const [endorseCount, setEndorseCount] = useState<number>(5412);
+  const [endorseCount, setEndorseCount] = useState<number>(100);
   const [showShareModal, setShowShareModal] = useState<boolean>(false);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 

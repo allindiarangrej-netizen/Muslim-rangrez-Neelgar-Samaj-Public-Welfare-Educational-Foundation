@@ -3,6 +3,8 @@ import { ShieldCheck } from 'lucide-react';
 import { Language } from './types';
 import { getText } from './utils';
 
+import Counter from '../Counter';
+
 interface HeroHeaderProps {
   currentLanguage: Language;
 }
@@ -44,13 +46,15 @@ export const HeroHeader: React.FC<HeroHeaderProps> = ({ currentLanguage }) => {
       {/* Real-time National Impact Ticker */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4">
         {[
-          { labelEn: 'Verified Voters', labelHi: 'सत्यापित मतदाता', labelUr: 'تصدیق شدہ ووٹرز', value: '1,42,850+', color: 'text-[#004B23]' },
-          { labelEn: 'Active Surveys', labelHi: 'सक्रिय सर्वे', labelUr: 'فعال سروے', value: '842+', color: 'text-blue-700' },
-          { labelEn: 'Reform Approval', labelHi: 'सुधार सहमति', labelUr: 'اصلاحی منظوری', value: '94%', color: 'text-emerald-600' },
-          { labelEn: 'Resolutions', labelHi: 'कुल संकल्प', labelUr: 'قراردادیں', value: '12,500+', color: 'text-amber-600' },
+          { labelEn: 'Verified Voters', labelHi: 'सत्यापित मतदाता', labelUr: 'تصدیق شدہ ووٹرز', value: 100, suffix: '+', color: 'text-[#004B23]' },
+          { labelEn: 'Active Surveys', labelHi: 'सक्रिय सर्वे', labelUr: 'فعال سروے', value: 100, suffix: '+', color: 'text-blue-700' },
+          { labelEn: 'Reform Approval', labelHi: 'सुधार सहमति', labelUr: 'اصلاحی منظوری', value: 94, suffix: '%', color: 'text-emerald-600' },
+          { labelEn: 'Resolutions', labelHi: 'कुल संकल्प', labelUr: 'قراردادیں', value: 100, suffix: '+', color: 'text-amber-600' },
         ].map((stat, idx) => (
-          <div key={idx} className="bg-white p-4 rounded-2xl border border-gray-100 shadow-md text-center">
-            <span className={`text-2xl sm:text-3xl font-extrabold ${stat.color} font-serif block`}>{stat.value}</span>
+          <div key={idx} className="bg-white p-4 rounded-2xl border border-gray-100 shadow-md text-center hover:shadow-lg transition transform hover:-translate-y-1">
+            <span className={`text-2xl sm:text-3xl font-extrabold ${stat.color} font-serif block`}>
+              <Counter value={stat.value} suffix={stat.suffix} className={`text-2xl sm:text-3xl font-extrabold ${stat.color} font-serif`} showVerified={true} />
+            </span>
             <span className="text-[10px] sm:text-xs font-bold text-gray-500 uppercase tracking-widest block mt-1">
               {getText(stat.labelEn, stat.labelHi, stat.labelUr, currentLanguage)}
             </span>

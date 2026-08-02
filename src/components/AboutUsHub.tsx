@@ -311,7 +311,7 @@ const AboutUsHub: React.FC<AboutUsHubProps> = ({
       </div>
 
       {/* 2. SUB-NAVIGATION PILLS BAR (COMPACT MAHAPANCHAYAT-STYLE PILLS) */}
-      <div className="bg-[#F5F2EB] border-b border-gray-200 sticky top-0 z-30 shadow-md py-3 sm:py-4 px-3 sm:px-6">
+      <div className="bg-[#F5F2EB] border-b border-gray-200 shadow-md py-3 sm:py-4 px-3 sm:px-6">
         <div className="max-w-7xl mx-auto">
           <div 
             role="tablist"
@@ -416,10 +416,10 @@ const AboutUsHub: React.FC<AboutUsHubProps> = ({
                   </h4>
                   <p className="text-xs text-gray-600 leading-relaxed">
                     {currentLanguage === 'en'
-                      ? 'Registering 100,000+ Rangrez members across India to provide streamlined healthcare benefits, emergency blood donor network, and social security coverage.'
+                      ? 'Registering 100+ Rangrez members across India to provide streamlined healthcare benefits, emergency blood donor network, and social security coverage.'
                       : currentLanguage === 'ur'
-                      ? 'پورے ہندوستان میں 1,00,000+ رنگریز اراکین کا رجسٹریشن تاکہ صحت کے فوائد، ہنگامی خون عطیہ کرنے والوں کا نیٹ ورک اور سماجی تحفظ فراہم کیا جا سکے۔'
-                      : 'सुव्यवस्थित स्वास्थ्य लाभ, आपातकालीन रक्तदान नेटवर्क और सामाजिक सुरक्षा प्रदान करने के लिए भारत भर में 100,000+ महासभा सदस्यों का पंजीकरण।'}
+                      ? 'پورے ہندوستان میں 100+ رنگریز اراکین کا رجسٹریشن تاکہ صحت کے فوائد، ہنگامی خون عطیہ کرنے والوں کا نیٹ ورک اور سماجی تحفظ فراہم کیا جا سکے۔'
+                      : 'सुव्यवस्थित स्वास्थ्य लाभ, आपातकालीन रक्तदान नेटवर्क और सामाजिक सुरक्षा प्रदान करने के लिए भारत भर में 100+ महासभा सदस्यों का पंजीकरण।'}
                   </p>
                 </div>
 
@@ -1212,7 +1212,7 @@ const AboutUsHub: React.FC<AboutUsHubProps> = ({
                     titleHi: 'स्थापना एवं कोविड राहत रिपोर्ट',
                     size: '2.8 MB PDF',
                     status: 'Archived Record',
-                    highlight: '5,000+ Families Assisted'
+                    highlight: '100+ Families Assisted'
                   }
                 ].map((report, idx) => (
                   <div key={idx} className="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition flex flex-col justify-between space-y-4">

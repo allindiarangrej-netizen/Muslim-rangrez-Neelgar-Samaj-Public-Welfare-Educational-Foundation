@@ -1,17 +1,17 @@
 import { useEffect, useRef, useState } from 'react';
-import 'intersection-observer';
 
 /**
  * Custom hook using IntersectionObserver and requestAnimationFrame to count up to a target number
- * using easeOutExpo timing when the element scrolls into view.
+ * using easeOutCubic timing when the element scrolls into view.
  * 
  * @param target The target number to count up to.
  * @param duration Duration of the animation in seconds.
- * @returns An object containing a ref to be attached to the target element.
+ * @returns An object containing a ref to be attached to the target element and current count value.
  */
-export function useCountUp(target: number, duration: number = 2.5) {
+export function useCountUp(target: number, duration: number = 1.8) {
   const countUpRef = useRef<HTMLSpanElement | null>(null);
   const [hasStarted, setHasStarted] = useState(false);
+  const [displayValue, setDisplayValue] = useState(0);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -24,7 +24,7 @@ export function useCountUp(target: number, duration: number = 2.5) {
         }
       },
       {
-        threshold: 0.1, // Trigger when 10% of the element is visible
+        threshold: 0.15,
       }
     );
 
@@ -40,8 +40,6 @@ export function useCountUp(target: number, duration: number = 2.5) {
 
   useEffect(() => {
     if (!hasStarted) return;
-    const element = countUpRef.current;
-    if (!element) return;
 
     let startTimestamp: number | null = null;
     let animationFrameId: number;
@@ -51,20 +49,23 @@ export function useCountUp(target: number, duration: number = 2.5) {
       const elapsed = timestamp - startTimestamp;
       const progress = Math.min(elapsed / (duration * 1000), 1);
       
-      // easeOutExpo easing function
-      const easeProgress = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+      // Smooth easeOutCubic curve (0 -> 5 -> 12 -> 28 -> 45 -> 67 -> 82 -> 95 -> 100)
+      const easeProgress = 1 - Math.pow(1 - progress, 3);
       const currentValue = Math.floor(easeProgress * target);
       
-      if (element) {
-        element.textContent = currentValue.toLocaleString('en-IN');
+      setDisplayValue(currentValue);
+
+      if (countUpRef.current) {
+        countUpRef.current.textContent = currentValue.toLocaleString('en-IN');
       }
-      
+
       if (progress < 1) {
         animationFrameId = window.requestAnimationFrame(step);
       } else {
-        if (element) {
-          element.textContent = target.toLocaleString('en-IN');
+        if (countUpRef.current) {
+          countUpRef.current.textContent = target.toLocaleString('en-IN');
         }
+        setDisplayValue(target);
       }
     };
 
@@ -75,5 +76,5 @@ export function useCountUp(target: number, duration: number = 2.5) {
     };
   }, [hasStarted, target, duration]);
 
-  return { ref: countUpRef };
+  return { ref: countUpRef, count: displayValue };
 }

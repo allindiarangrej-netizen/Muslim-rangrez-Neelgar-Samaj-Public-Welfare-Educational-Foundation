@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { getText } from '../utils/i18nHelpers';
 import { AchieverProfile, AchieverCategory, MentorshipRequest, detectCategoryTier, detectProfessionTag, formatDriveUrl } from '../data/hallOfExcellenceData';
 import { POLITICAL_PARTIES } from '../data/politicalParties';
 import { ProfileImage } from './common/ProfileImage';
@@ -154,7 +155,7 @@ const ExcellenceAdminPanel: React.FC<ExcellenceAdminPanelProps> = ({
 
   // Auto Numbering / Rank Calculation
   const tierAchieversCount = achievers.filter(a => {
-    const t = a.categoryTier || detectCategoryTier(a.designation, a.occupation, a.categoryId);
+    const t = a.categoryTier || detectCategoryTier(getText(a.designation as any, 'en'), getText(a.occupation as any, 'en'), a.categoryId);
     return t === activeTier;
   }).length;
   const autoProfileNumber = `#${String(tierAchieversCount + 1).padStart(3, '0')}`;
@@ -281,9 +282,9 @@ const ExcellenceAdminPanel: React.FC<ExcellenceAdminPanelProps> = ({
   };
 
   const filteredAchievers = achievers.filter(a =>
-    a.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    a.designation.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    a.organization.toLowerCase().includes(searchTerm.toLowerCase())
+    getText(a.name as any, 'en').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    getText(a.designation as any, 'en').toLowerCase().includes(searchTerm.toLowerCase()) ||
+    getText(a.organization as any, 'en').toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -415,26 +416,26 @@ const ExcellenceAdminPanel: React.FC<ExcellenceAdminPanelProps> = ({
                         <div className="flex items-center gap-4">
                           <ProfileImage 
                             src={ach.photoUrl} 
-                            alt={ach.name} 
-                            name={ach.name}
-                            designation={ach.designation}
-                            badge={ach.organization || 'Hall of Excellence'}
+                            alt={getText(getText(ach.name as any, 'en') as any, 'en')} 
+                            name={getText(getText(ach.name as any, 'en') as any, 'en')}
+                            designation={getText(getText(ach.designation as any, 'en') as any, 'en')}
+                            badge={getText(ach.organization as any, 'en') || 'Hall of Excellence'}
                             size="md"
                             containerClassName="rounded-xl border border-gray-200"
                           />
                           <div>
-                            <div className="font-extrabold text-[#0B132B]">{ach.name}</div>
+                            <div className="font-extrabold text-[#0B132B]">{getText(getText(ach.name as any, 'en') as any, 'en')}</div>
                             <div className="text-[10px] font-mono text-gray-400">ID: {ach.id}</div>
                           </div>
                         </div>
                       </td>
                       <td className="p-4">
-                        <div className="font-bold text-[#004B23]">{ach.designation}</div>
-                        <div className="text-xs text-gray-600">{ach.organization}</div>
+                        <div className="font-bold text-[#004B23]">{getText(getText(ach.designation as any, 'en') as any, 'en')}</div>
+                        <div className="text-xs text-gray-600">{getText(getText(ach.organization as any, 'en') as any, 'en')}</div>
                       </td>
                       <td className="p-4">
-                        <div className="font-medium text-gray-800">{ach.currentCity}</div>
-                        <div className="text-xs text-gray-400">{ach.state}</div>
+                        <div className="font-medium text-gray-800">{getText(ach.currentCity as any, 'en')}</div>
+                        <div className="text-xs text-gray-400">{getText(ach.state as any, 'en')}</div>
                       </td>
                       <td className="p-4 text-center">
                         <button
@@ -507,7 +508,7 @@ const ExcellenceAdminPanel: React.FC<ExcellenceAdminPanelProps> = ({
                       </td>
                       <td className="p-4">
                         <div className="font-bold text-[#004B23]">{req.careerGoal}</div>
-                        <div className="text-xs text-gray-600">{req.qualification}</div>
+                        <div className="text-xs text-gray-600">{getText(req.qualification as any, 'en')}</div>
                       </td>
                       <td className="p-4">
                         <div className="font-bold text-[#0B132B]">{req.mentorName}</div>

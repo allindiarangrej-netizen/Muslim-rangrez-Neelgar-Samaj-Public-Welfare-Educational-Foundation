@@ -12,24 +12,24 @@ export interface AchieverCategory {
 
 export interface AchieverProfile {
   id: string;
-  name: string;
-  displayName?: string;
-  fatherName?: string;
+  name: { en: string; hi: string; ur: string } | string;
+  displayName?: { en: string; hi: string; ur: string } | string;
+  fatherName?: { en: string; hi: string; ur: string } | string;
   gender: 'Male' | 'Female' | 'Other';
   dob?: string;
-  nativePlace: string;
-  currentCity: string;
-  state: string;
-  district?: string;
-  country: string;
-  occupation: string;
+  nativePlace: { en: string; hi: string; ur: string } | string;
+  currentCity: { en: string; hi: string; ur: string } | string;
+  state: { en: string; hi: string; ur: string } | string;
+  district?: { en: string; hi: string; ur: string } | string;
+  country: { en: string; hi: string; ur: string } | string;
+  occupation: { en: string; hi: string; ur: string } | string;
   categoryId: string;
-  designation: string;
-  organization: string;
-  employmentType?: string;
+  designation: { en: string; hi: string; ur: string } | string;
+  organization: { en: string; hi: string; ur: string } | string;
+  employmentType?: { en: string; hi: string; ur: string } | string;
   yearsOfExperience?: string;
-  qualification: string;
-  university: string;
+  qualification: { en: string; hi: string; ur: string } | string;
+  university: { en: string; hi: string; ur: string } | string;
   yearOfAchievement: number;
   careerJourney: { en: string; hi: string; ur: string };
   biography: { en: string; hi: string; ur: string };
@@ -39,7 +39,7 @@ export interface AchieverProfile {
   inspirationalMessage: { en: string; hi: string; ur: string };
   careerAdvice: { en: string; hi: string; ur: string };
   languagesKnown: string[];
-  expertise: string[];
+  expertise: ({ en: string; hi: string; ur: string } | string)[];
   contactPermission?: boolean;
   email?: string;
   phone?: string;
@@ -54,7 +54,7 @@ export interface AchieverProfile {
   isOverseas: boolean;
   photoUrl: string;
   coverImageUrl?: string;
-  badges: string[];
+  badges: ({ en: string; hi: string; ur: string } | string)[];
   categoryTier?: 'hajj' | 'diamond' | 'platinum' | 'gold' | 'silver' | 'bronze' | 'rising' | 'leadership' | 'lifetime';
   politicalParty?: string;
   hajjYear?: number;
@@ -437,7 +437,7 @@ export interface MentorshipRequest {
   id: string;
   studentName: string;
   studentAge: number;
-  qualification: string;
+  qualification: { en: string; hi: string; ur: string } | string;
   careerGoal: string;
   question: string;
   email: string;
@@ -503,23 +503,23 @@ export const INITIAL_CATEGORIES: AchieverCategory[] = [
 export const INITIAL_ACHIEVERS: AchieverProfile[] = [
   {
     id: 'socialist-munshi-khan',
-    name: 'Munshi Khan',
-    displayName: 'Senior Socialist',
+    name: { en: 'Munshi Khan', hi: 'मुंशी खान', ur: 'منشی خان' },
+    displayName: { en: 'Senior Socialist', hi: 'वरिष्ठ समाजवादी', ur: 'سینئر سوشلسٹ' },
     gender: 'Male',
-    nativePlace: 'Gota Vijaypur, Sheopur, Madhya Pradesh',
-    currentCity: 'Gota Vijaypur',
-    district: 'Sheopur',
-    state: 'Madhya Pradesh',
-    country: 'India',
-    occupation: 'Senior Socialist & Marriage Relationship Specialist',
+    nativePlace: { en: 'Gota Vijaypur, Sheopur, Madhya Pradesh', hi: 'गोटा विजयपुर, श्योपुर, मध्य प्रदेश', ur: 'گوٹا وجے پور، شیوپور، مدھیہ پردیش' },
+    currentCity: { en: 'Gota Vijaypur', hi: 'गोटा विजयपुर', ur: 'گوٹا وجے پور' },
+    district: { en: 'Sheopur', hi: 'श्योपुर', ur: 'شیوپور' },
+    state: { en: 'Madhya Pradesh', hi: 'मध्य प्रदेश', ur: 'مدھیہ پردیش' },
+    country: { en: 'India', hi: 'भारत', ur: 'انڈیا' },
+    occupation: { en: 'Senior Socialist & Marriage Relationship Specialist', hi: 'वरिष्ठ समाजवादी एवं विवाह संबंध विशेषज्ञ', ur: 'سینئر سوشلسٹ اور میرج ریلیشن شپ اسپیشلسٹ' },
     categoryId: 'social-workers',
     categoryTier: 'leadership',
-    designation: 'Senior Socialist',
-    organization: 'Rangrez Community Morena',
-    employmentType: 'Private',
+    designation: { en: 'Senior Socialist', hi: 'वरिष्ठ समाजवादी', ur: 'سینئر سوشلسٹ' },
+    organization: { en: 'Rangrez Community Morena', hi: 'रंगरेज़ समुदाय मुरैना', ur: 'رنگریز کمیونٹی مورینہ' },
+    employmentType: { en: 'Private', hi: 'निजी', ur: 'نجی' },
     yearsOfExperience: '25+ Years',
-    qualification: 'Graduate',
-    university: 'Recognized University',
+    qualification: { en: 'Graduate', hi: 'स्नातक', ur: 'گریجویٹ' },
+    university: { en: 'Recognized University', hi: 'मान्यता प्राप्त विश्वविद्यालय', ur: 'تسلیم شدہ یونیورسٹی' },
     yearOfAchievement: 2025,
     careerJourney: {
       en: 'With over two decades of dedicated community service, Shri Munshi Khan is a widely respected Senior Socialist and matrimonial relationship expert based in Gota Vijaypur, Sheopur district, Madhya Pradesh. Associated with the Rangrez Community Morena, he has devoted his life to promoting family harmony, counseling couples, mediating marital issues, and championing social upliftment in the region.',
@@ -575,23 +575,23 @@ export const INITIAL_ACHIEVERS: AchieverProfile[] = [
   },
   {
     id: 'socialist-rafiq-ahmad',
-    name: 'Rafiq Ahmad',
-    displayName: 'Senior Socialist',
+    name: { en: 'Rafiq Ahmad', hi: 'रफीक अहमद', ur: 'رفیق احمد' },
+    displayName: { en: 'Senior Socialist', hi: 'वरिष्ठ समाजवादी', ur: 'سینئر سوشلسٹ' },
     gender: 'Male',
-    nativePlace: 'Joura, Morena, Madhya Pradesh',
-    currentCity: 'Joura',
-    district: 'Morena',
-    state: 'Madhya Pradesh',
-    country: 'India',
-    occupation: 'Senior Socialist & Matrimonial Relationship Specialist',
+    nativePlace: { en: 'Joura, Morena, Madhya Pradesh', hi: 'जौरा, मुरैना, मध्य प्रदेश', ur: 'جورا، مورینا، مدھیہ پردیش' },
+    currentCity: { en: 'Joura', hi: 'जोउरा', ur: 'جورہ' },
+    district: { en: 'Morena', hi: 'मुरैना', ur: 'مورینا' },
+    state: { en: 'Madhya Pradesh', hi: 'मध्य प्रदेश', ur: 'مدھیہ پردیش' },
+    country: { en: 'India', hi: 'भारत', ur: 'انڈیا' },
+    occupation: { en: 'Senior Socialist & Matrimonial Relationship Specialist', hi: 'वरिष्ठ समाजवादी एवं वैवाहिक संबंध विशेषज्ञ', ur: 'سینئر سوشلسٹ اور ازدواجی تعلقات کے ماہر' },
     categoryId: 'social-workers',
     categoryTier: 'leadership',
-    designation: 'Senior Socialist',
-    organization: 'Rangrez Community Morena',
-    employmentType: 'Private',
+    designation: { en: 'Senior Socialist', hi: 'वरिष्ठ समाजवादी', ur: 'سینئر سوشلسٹ' },
+    organization: { en: 'Rangrez Community Morena', hi: 'रंगरेज़ समुदाय मुरैना', ur: 'رنگریز کمیونٹی مورینہ' },
+    employmentType: { en: 'Private', hi: 'निजी', ur: 'نجی' },
     yearsOfExperience: '25+ Years',
-    qualification: 'Graduate',
-    university: 'Recognized University',
+    qualification: { en: 'Graduate', hi: 'स्नातक', ur: 'گریجویٹ' },
+    university: { en: 'Recognized University', hi: 'मान्यता प्राप्त विश्वविद्यालय', ur: 'تسلیم شدہ یونیورسٹی' },
     yearOfAchievement: 2025,
     careerJourney: {
       en: 'With over two decades of selfless social service, Shri Rafiq Ahmad is a highly revered Senior Socialist and marital relationship expert in Joura, Morena district, Madhya Pradesh. Serving with distinction in the Rangrez Community Morena, he has dedicated his life to counseling families, resolving complex matrimonial disputes, fostering marital harmony, and uplifting the community through peaceful arbitration and educational advocacy.',
@@ -647,25 +647,25 @@ export const INITIAL_ACHIEVERS: AchieverProfile[] = [
   },
   {
     id: 'socialist-nishar-khan',
-    name: 'Nishar Khan',
-    displayName: 'Samajsevi',
-    fatherName: 'Haji Waldar Khan',
+    name: { en: 'Nishar Khan', hi: 'निशार खान', ur: 'نثار خان' },
+    displayName: { en: 'Samajsevi', hi: 'समाजसेवी', ur: 'سماجسیوی' },
+    fatherName: { en: 'Haji Waldar Khan', hi: 'हाजी वलदार खान', ur: 'حاجی ولدار خان' },
     gender: 'Male',
     dob: '01/01/1983',
-    nativePlace: 'Joura, Morena, Madhya Pradesh',
-    currentCity: 'Joura',
-    district: 'Morena',
-    state: 'Madhya Pradesh',
-    country: 'India',
-    occupation: 'Social Reformer & Community Leader',
+    nativePlace: { en: 'Joura, Morena, Madhya Pradesh', hi: 'जौरा, मुरैना, मध्य प्रदेश', ur: 'جورا، مورینا، مدھیہ پردیش' },
+    currentCity: { en: 'Joura', hi: 'जोउरा', ur: 'جورہ' },
+    district: { en: 'Morena', hi: 'मुरैना', ur: 'مورینا' },
+    state: { en: 'Madhya Pradesh', hi: 'मध्य प्रदेश', ur: 'مدھیہ پردیش' },
+    country: { en: 'India', hi: 'भारत', ur: 'انڈیا' },
+    occupation: { en: 'Social Reformer & Community Leader', hi: 'समाज सुधारक एवं सामुदायिक नेता', ur: 'سوشل ریفارمر اور کمیونٹی لیڈر' },
     categoryId: 'social-workers',
     categoryTier: 'leadership',
-    designation: 'Samajsevi',
-    organization: 'Rangrez samaj Joura',
-    employmentType: 'Private',
+    designation: { en: 'Samajsevi', hi: 'समाजसेवी', ur: 'سماجسیوی' },
+    organization: { en: 'Rangrez samaj Joura', hi: 'रंगरेज समाज जौरा', ur: 'رنگریز سماج جورہ' },
+    employmentType: { en: 'Private', hi: 'निजी', ur: 'نجی' },
     yearsOfExperience: '20+ Years',
-    qualification: 'Intermediate',
-    university: 'MP State Board',
+    qualification: { en: 'Intermediate', hi: 'मध्यवर्ती', ur: 'انٹرمیڈیٹ' },
+    university: { en: 'MP State Board', hi: 'एमपी राज्य बोर्ड', ur: 'ایم پی اسٹیٹ بورڈ' },
     yearOfAchievement: 2025,
     careerJourney: {
       en: 'Shri Nishar Khan is a committed social reformer and community leader from Joura, Madhya Pradesh. He has spent more than two decades actively working for the welfare, unity, and development of the Muslim Rangrez Community. He previously served as the President of the Joura Mass Marriage Committee (Marriage Sammelan Committee), where he played a significant role in organizing community mass marriage ceremonies and promoting social harmony. His leadership, dedication, and courage to stand against injustice have made him a highly respected figure.',
@@ -721,25 +721,25 @@ export const INITIAL_ACHIEVERS: AchieverProfile[] = [
   },
   {
     id: 'politician-fakhruddin-khan',
-    name: 'Fakhruddin Khan',
-    displayName: 'Rahimbaks Khan',
-    fatherName: 'Elder Khan',
+    name: { en: 'Fakhruddin Khan', hi: 'फखरुद्दीन खान', ur: 'فخرالدین خان' },
+    displayName: { en: 'Rahimbaks Khan', hi: 'रहीमबक्स खान', ur: 'رحیم بخش خان' },
+    fatherName: { en: 'Elder Khan', hi: 'बड़े खान', ur: 'بزرگ خان' },
     gender: 'Male',
     dob: '1975-05-23',
-    nativePlace: 'Kailarash, Morena, Madhya Pradesh',
-    currentCity: 'Kailarash',
-    district: 'Morena',
-    state: 'Madhya Pradesh',
-    country: 'India',
-    occupation: 'Mandal President, BJP (Kailaras) & Politician',
+    nativePlace: { en: 'Kailarash, Morena, Madhya Pradesh', hi: 'कैलाश, मुरैना, मध्य प्रदेश', ur: 'کیلارش، مورینا، مدھیہ پردیش' },
+    currentCity: { en: 'Kailarash', hi: 'कैलाश', ur: 'کیلارش' },
+    district: { en: 'Morena', hi: 'मुरैना', ur: 'مورینا' },
+    state: { en: 'Madhya Pradesh', hi: 'मध्य प्रदेश', ur: 'مدھیہ پردیش' },
+    country: { en: 'India', hi: 'भारत', ur: 'انڈیا' },
+    occupation: { en: 'Mandal President, BJP (Kailaras) & Politician', hi: 'मंडल अध्यक्ष, भाजपा (कैलारस) एवं राजनीतिज्ञ', ur: 'منڈل صدر، بی جے پی (کیلارس) اور سیاست دان' },
     categoryId: 'public-rep',
     categoryTier: 'leadership',
-    designation: 'Mandal President Of B.J.P. Kailaras',
-    organization: 'BJP (Bharatiya Janata Party)',
-    employmentType: 'Private',
+    designation: { en: 'Mandal President Of B.J.P. Kailaras', hi: 'भाजपा मंडल अध्यक्ष कैलारस', ur: 'بی جے پی کے منڈل صدر کیلارس' },
+    organization: { en: 'BJP (Bharatiya Janata Party)', hi: 'बीजेपी (भारतीय जनता पार्टी)', ur: 'بی جے پی (بھارتیہ جنتا پارٹی)' },
+    employmentType: { en: 'Private', hi: 'निजी', ur: 'نجی' },
     yearsOfExperience: '22 Years',
-    qualification: 'Graduate',
-    university: 'Jiwaji University Gwalior',
+    qualification: { en: 'Graduate', hi: 'स्नातक', ur: 'گریجویٹ' },
+    university: { en: 'Jiwaji University Gwalior', hi: 'जीवाजी विश्वविद्यालय ग्वालियर', ur: 'جیواجی یونیورسٹی گوالیار' },
     yearOfAchievement: 2025,
     careerJourney: {
       en: 'With over 22 years of dedicated public service and political leadership, Fakhruddin Khan (popularly known as Rahimbaks Khan) serves as the Mandal President of the Bharatiya Janata Party (B.J.P.) in Kailaras, Morena district, Madhya Pradesh. A graduate from Jiwaji University Gwalior, he has been a steadfast champion for grassroots community welfare, local development, educational upliftment, and public representation.',
@@ -795,25 +795,25 @@ export const INITIAL_ACHIEVERS: AchieverProfile[] = [
   },
   {
     id: 'haji-asgar-sahab',
-    name: 'Haji Asgar Sahab',
-    displayName: 'Al-Haj Asgar Khan',
-    fatherName: 'Chhote Khan',
+    name: { en: 'Haji Asgar Sahab', hi: 'हाजी असगर साहब', ur: 'حاجی اصغر صاحب' },
+    displayName: { en: 'Al-Haj Asgar Khan', hi: 'अल-हज असगर खान', ur: 'الحاج اصغر خان' },
+    fatherName: { en: 'Chhote Khan', hi: 'छोटे खान', ur: 'چھوٹے خان' },
     gender: 'Male',
     dob: '04/06/1972',
-    nativePlace: 'M.S. Road, Joura, Morena, Madhya Pradesh',
-    currentCity: 'Joura',
-    district: 'Morena',
-    state: 'Madhya Pradesh',
-    country: 'India',
-    occupation: 'Islamic Preacher, Volunteer & Social Worker',
+    nativePlace: { en: 'M.S. Road, Joura, Morena, Madhya Pradesh', hi: 'एमएस। रोड, जौरा, मुरैना, मध्य प्रदेश', ur: 'MS۔ روڈ، جورا، مورینا، مدھیہ پردیش' },
+    currentCity: { en: 'Joura', hi: 'जोउरा', ur: 'جورہ' },
+    district: { en: 'Morena', hi: 'मुरैना', ur: 'مورینا' },
+    state: { en: 'Madhya Pradesh', hi: 'मध्य प्रदेश', ur: 'مدھیہ پردیش' },
+    country: { en: 'India', hi: 'भारत', ur: 'انڈیا' },
+    occupation: { en: 'Islamic Preacher, Volunteer & Social Worker', hi: 'इस्लामी उपदेशक, स्वयंसेवक और सामाजिक कार्यकर्ता', ur: 'اسلامی مبلغ، رضاکار اور سماجی کارکن' },
     categoryId: 'social-workers',
     categoryTier: 'hajj',
     hajjYear: 2009,
     hajjType: 'Hajj',
-    designation: 'Islamic Volunteer, Socialist',
-    organization: 'Dawat aur Tablig',
-    qualification: 'Intermidiat',
-    university: 'Madhya Pradesh State Board',
+    designation: { en: 'Islamic Volunteer, Socialist', hi: 'इस्लामी स्वयंसेवक, समाजवादी', ur: 'اسلامی رضاکار، سوشلسٹ' },
+    organization: { en: 'Dawat aur Tablig', hi: 'दावत और तबलीग', ur: 'دعوت اور تبلیغ' },
+    qualification: { en: 'Intermidiat', hi: 'मध्यवर्ती', ur: 'انٹرمیڈیٹ' },
+    university: { en: 'Madhya Pradesh State Board', hi: 'मध्य प्रदेश राज्य बोर्ड', ur: 'مدھیہ پردیش اسٹیٹ بورڈ' },
     yearOfAchievement: 2009,
     careerJourney: {
       en: 'Dedicated to the service of Islam and the Rangrez Community since his youth, Haji Asgar Sahab has spent decades working with Dawat aur Tablig. He has completed 23 Chillas (40-day preaching missions), 8–10 four-month Tabligh journeys, two international preaching tours to Tanzania, two family Tabligh journeys, and two special visits to the Nizamuddin Markaz. He consistently guides community elders, families, and youth to establish the five daily prayers, follow the Qur’an & Sunnah, and live according to noble values.',

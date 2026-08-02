@@ -381,8 +381,8 @@ export default function MahapanchayatHistoryReader({ currentLanguage }: Mahapanc
         /* FULL-PAGE BOOK READER VIEW */
         <div className={`rounded-3xl border shadow-xl flex flex-col overflow-hidden transition-all duration-300 ${themeClasses.bg}`}>
           
-          {/* STICKY TOP NAVIGATION BAR */}
-          <div className="sticky top-0 z-40 bg-[#004B23] text-white p-4 sm:p-5 flex items-center justify-between border-b border-emerald-800 shadow-md">
+          {/* TOP NAVIGATION BAR */}
+          <div className="z-40 bg-[#004B23] text-white p-4 sm:p-5 flex items-center justify-between border-b border-emerald-800 shadow-md">
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setSelectedChapterIndex(null)}

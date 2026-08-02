@@ -195,11 +195,11 @@ export const INITIAL_AI_ANALYTICS_DATA: Record<string, AIAnalyticsData> = {
       seniorCitizenParticipationPct: 17.0
     },
     mostRequestedReforms: [
-      { topic: 'Strict Dowry Abolition & Simple Marriage Charter', requestsCount: 4250, growthRate: '+34% YoY' },
-      { topic: 'National IAS/IPS & Medical Scholarship Fund', requestsCount: 3890, growthRate: '+48% YoY' },
-      { topic: 'Zero-Commission ONDC Textile Marketplace', requestsCount: 3120, growthRate: '+29% YoY' },
-      { topic: 'District Sharia & Legal Reconciliation Cells', requestsCount: 2780, growthRate: '+22% YoY' },
-      { topic: 'Tehsil Youth Anti-Addiction & Sports Grants', requestsCount: 2150, growthRate: '+41% YoY' }
+      { topic: 'Strict Dowry Abolition & Simple Marriage Charter', requestsCount: 100, growthRate: '+34% YoY' },
+      { topic: 'National IAS/IPS & Medical Scholarship Fund', requestsCount: 100, growthRate: '+48% YoY' },
+      { topic: 'Zero-Commission ONDC Textile Marketplace', requestsCount: 100, growthRate: '+29% YoY' },
+      { topic: 'District Sharia & Legal Reconciliation Cells', requestsCount: 100, growthRate: '+22% YoY' },
+      { topic: 'Tehsil Youth Anti-Addiction & Sports Grants', requestsCount: 100, growthRate: '+41% YoY' }
     ],
     frequentlySuggestedTopics: [
       { tag: '#ZeroDowry', mentions: 1420, category: 'Marriage Norms' },

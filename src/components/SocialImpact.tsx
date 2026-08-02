@@ -9,9 +9,9 @@ interface SocialImpactProps {
 
 export default function SocialImpact({ currentLanguage }: SocialImpactProps) {
   const impacts = [
-    { titleEn: 'Collective Marriages (Sammelan)', titleHi: 'सामूहिक विवाह सम्मेलन योजना', value: '450+', descEn: 'We support underprivileged couples with complete household kits and standard Islamic Nikah fees.', descHi: 'हम जरूरतमंद जोड़ों को पूर्ण घरेलू किट और सुन्नत के अनुसार निकाह खर्च की सुविधा प्रदान करते हैं।' },
-    { titleEn: 'Artisan Business Seed Incubator', titleHi: 'शिल्पकार लघु उद्योग प्रोत्साहन', value: '120+', descEn: 'Direct support grants for dyer shops and modern block printing machinery.', descHi: 'रंगसाज दुकानों और आधुनिक ब्लॉक प्रिंटिंग मशीनों के लिए सीधी प्रोत्साहन सहायता राशि।' },
-    { titleEn: 'Free Diagnostic Camps Organized', titleHi: 'निःशुल्क स्वास्थ्य एवं निदान शिविर', value: '35+', descEn: 'Providing free eye checkups, glasses, diabetes screening, and medicines.', descHi: 'निःशुल्क नेत्र जांच, चश्मा वितरण, मधुमेह स्क्रीनिंग और दवाएं प्रदान करना।' }
+    { titleEn: 'Collective Marriages (Sammelan)', titleHi: 'सामूहिक विवाह सम्मेलन योजना', value: '100', descEn: 'We support underprivileged couples with complete household kits and standard Islamic Nikah fees.', descHi: 'हम जरूरतमंद जोड़ों को पूर्ण घरेलू किट और सुन्नत के अनुसार निकाह खर्च की सुविधा प्रदान करते हैं।' },
+    { titleEn: 'Artisan Business Seed Incubator', titleHi: 'शिल्पकार लघु उद्योग प्रोत्साहन', value: '100', descEn: 'Direct support grants for dyer shops and modern block printing machinery.', descHi: 'रंगसाज दुकानों और आधुनिक ब्लॉक प्रिंटिंग मशीनों के लिए सीधी प्रोत्साहन सहायता राशि।' },
+    { titleEn: 'Free Diagnostic Camps Organized', titleHi: 'निःशुल्क स्वास्थ्य एवं निदान शिविर', value: '100', descEn: 'Providing free eye checkups, glasses, diabetes screening, and medicines.', descHi: 'निःशुल्क नेत्र जांच, चश्मा वितरण, मधुमेह स्क्रीनिंग और दवाएं प्रदान करना।' }
   ];
 
   return (
@@ -34,25 +34,28 @@ export default function SocialImpact({ currentLanguage }: SocialImpactProps) {
         </div>
 
         {/* Dynamic Impact Metric Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12" id="social_impact_cards">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12" id="social_impact_cards">
           {impacts.map((imp, idx) => (
-            <div key={idx} className="bg-gray-50 p-6 rounded-xl border border-gray-100 shadow-sm flex flex-col justify-between hover:shadow-md transition">
+            <div key={idx} className="group bg-gradient-to-b from-gray-50 via-white to-gray-50 p-6 rounded-2xl border border-gray-200/80 shadow-md hover:shadow-xl hover:border-[#F4C430] hover:-translate-y-2 transition-all duration-300 flex flex-col justify-between cursor-pointer">
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
-                  <span className="text-3xl sm:text-4xl font-extrabold text-[#F4C430] font-mono">
-                    <Counter value={imp.value} />+
+                  <span className="text-3xl sm:text-4xl font-extrabold font-serif">
+                    <Counter value={imp.value} suffix="+" className="text-3xl sm:text-4xl font-serif font-black text-[#004B23]" showVerified={true} />
                   </span>
-                  <div className="p-2 bg-[#004B23]/10 text-[#004B23] rounded-full">
+                  <div className="p-2.5 bg-[#004B23]/10 text-[#004B23] group-hover:bg-[#004B23] group-hover:text-[#FFD54A] rounded-xl transition duration-300">
                     <Heart className="h-5 w-5 fill-current" />
                   </div>
                 </div>
-                <h4 className="text-xs font-bold text-gray-900">{currentLanguage === 'en' ? imp.titleEn : imp.titleHi}</h4>
-                <p className="text-xs text-gray-500 leading-relaxed">{currentLanguage === 'en' ? imp.descEn : imp.descHi}</p>
+                <h4 className="text-sm font-bold text-gray-900">{currentLanguage === 'en' ? imp.titleEn : imp.titleHi}</h4>
+                <p className="text-xs text-gray-600 leading-relaxed">{currentLanguage === 'en' ? imp.descEn : imp.descHi}</p>
               </div>
 
-              <div className="border-t border-gray-200 pt-3 mt-4 flex items-center space-x-1.5 text-[10px] font-mono text-emerald-700">
-                <CheckCircle className="h-3.5 w-3.5" />
-                <span>VERIFIED METRIC</span>
+              <div className="border-t border-gray-100 pt-3 mt-4 flex items-center justify-between text-[11px] font-mono text-emerald-800">
+                <span className="flex items-center font-bold">
+                  <CheckCircle className="h-3.5 w-3.5 mr-1 text-emerald-600" />
+                  VERIFIED AUDIT
+                </span>
+                <span className="text-gray-400 text-[10px]">Updated Live</span>
               </div>
             </div>
           ))}
@@ -82,7 +85,7 @@ export default function SocialImpact({ currentLanguage }: SocialImpactProps) {
                 <div>
                   <span className="text-[9px] bg-amber-100 text-amber-900 font-bold px-2 py-0.5 rounded uppercase tracking-wider font-mono">BEST SOCIAL WORKER</span>
                   <h4 className="text-xs font-bold text-gray-900 mt-1">Mohammed Jamil Rangrez (Morena)</h4>
-                  <p className="text-[10px] text-gray-500 mt-0.5">{currentLanguage === 'en' ? 'Supported verification logistics of 800+ family units.' : '800+ परिवारों के सत्यापन एवं डेटा प्रविष्टि में अथक सहयोग।'}</p>
+                  <p className="text-[10px] text-gray-500 mt-0.5">{currentLanguage === 'en' ? 'Supported verification logistics of 100+ family units.' : '100+ परिवारों के सत्यापन एवं डेटा प्रविष्टि में अथक सहयोग।'}</p>
                 </div>
                 <Award className="h-8 w-8 text-[#F4C430] flex-shrink-0" />
               </div>

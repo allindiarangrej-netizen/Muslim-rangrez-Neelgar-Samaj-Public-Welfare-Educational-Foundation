@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { getText } from '../utils/i18nHelpers';
 import { motion, AnimatePresence } from 'motion/react';
 import { ProfileImage } from './common/ProfileImage';
 import { 
@@ -15,6 +16,7 @@ import NationalLeadership from './NationalLeadership';
 import SuccessStories from './SuccessStories';
 import CommunityHighlightsGallery from './CommunityHighlightsGallery';
 import EducationalExcellenceGallery from './EducationalExcellenceGallery';
+import Counter from './Counter';
 import { INITIAL_ACHIEVERS } from '../data/hallOfExcellenceData';
 
 interface HomeViewProps {
@@ -41,20 +43,20 @@ export default function HomeView({ currentLanguage, onNavigate }: HomeViewProps)
     const timer = setInterval(() => {
       step++;
       setStats({
-        families: Math.floor((25000 / steps) * step),
-        districts: Math.floor((220 / steps) * step),
-        volunteers: Math.floor((1250 / steps) * step),
-        programs: Math.floor((15 / steps) * step),
-        events: Math.floor((18 / steps) * step)
+        families: Math.floor((100 / steps) * step),
+        districts: Math.floor((100 / steps) * step),
+        volunteers: Math.floor((100 / steps) * step),
+        programs: Math.floor((100 / steps) * step),
+        events: Math.floor((100 / steps) * step)
       });
 
       if (step >= steps) {
         setStats({
-          families: 25000,
-          districts: 220,
-          volunteers: 1250,
-          programs: 15,
-          events: 18
+          families: 100,
+          districts: 100,
+          volunteers: 100,
+          programs: 100,
+          events: 100
         });
         clearInterval(timer);
       }
@@ -482,13 +484,13 @@ export default function HomeView({ currentLanguage, onNavigate }: HomeViewProps)
 
             <div className="grid grid-cols-2 gap-4 pt-4 border-t border-gray-100">
               <div className="space-y-1">
-                <p className="text-2xl font-serif font-extrabold text-[#004B23]">25,000+</p>
+                <Counter value={100} suffix="+" className="text-2xl font-serif font-extrabold text-[#004B23]" showVerified={true} />
                 <p className="text-xs text-gray-500 uppercase tracking-wider font-mono">
                   {currentLanguage === 'en' ? 'Families Connected' : 'जुड़े हुए परिवार'}
                 </p>
               </div>
               <div className="space-y-1">
-                <p className="text-2xl font-serif font-extrabold text-[#F4C430]">220+</p>
+                <Counter value={100} suffix="+" className="text-2xl font-serif font-extrabold text-[#F4C430]" showVerified={true} />
                 <p className="text-xs text-gray-500 uppercase tracking-wider font-mono">
                   {currentLanguage === 'en' ? 'District Committees' : 'जिला कमेटियां'}
                 </p>
@@ -1159,7 +1161,9 @@ export default function HomeView({ currentLanguage, onNavigate }: HomeViewProps)
               </div>
               <div className="space-y-1">
                 <span className="text-xs text-gray-500">{currentLanguage === 'en' ? 'Total Disbursed Funds' : 'कुल वितरित छात्रवृत्ति'}</span>
-                <p className="text-3xl font-serif font-extrabold text-[#004B23]">₹ 18,45,000</p>
+                <p className="text-3xl font-serif font-extrabold text-[#004B23]">
+                  <Counter value={100} prefix="₹ " className="text-3xl font-serif font-extrabold text-[#004B23]" />
+                </p>
               </div>
               <div className="space-y-2 pt-2">
                 <div className="flex justify-between text-xs font-mono text-gray-500">
@@ -1185,7 +1189,9 @@ export default function HomeView({ currentLanguage, onNavigate }: HomeViewProps)
               </div>
               <div className="space-y-1">
                 <span className="text-xs text-gray-500">{currentLanguage === 'en' ? 'Verified Census Entries' : 'सत्यापित परिवार संख्या'}</span>
-                <p className="text-3xl font-serif font-extrabold text-[#004B23]">8,420 Families</p>
+                <p className="text-3xl font-serif font-extrabold text-[#004B23]">
+                  <Counter value={100} suffix=" Families" className="text-3xl font-serif font-extrabold text-[#004B23]" />
+                </p>
               </div>
               <div className="space-y-2 pt-2">
                 <div className="flex justify-between text-xs font-mono text-gray-500">
@@ -1211,7 +1217,9 @@ export default function HomeView({ currentLanguage, onNavigate }: HomeViewProps)
               </div>
               <div className="space-y-1">
                 <span className="text-xs text-gray-500">{currentLanguage === 'en' ? 'Active Token-Based Profiles' : 'टोकन-आधारित सक्रिय प्रोफाइल'}</span>
-                <p className="text-3xl font-serif font-extrabold text-[#004B23]">1,150 Profiles</p>
+                <p className="text-3xl font-serif font-extrabold text-[#004B23]">
+                  <Counter value={100} suffix=" Profiles" className="text-3xl font-serif font-extrabold text-[#004B23]" />
+                </p>
               </div>
               <div className="space-y-2 pt-2">
                 <div className="flex justify-between text-xs font-mono text-gray-500">
@@ -1520,9 +1528,9 @@ export default function HomeView({ currentLanguage, onNavigate }: HomeViewProps)
                   <div className="flex items-center gap-3">
                     <ProfileImage
                       src={ach.photoUrl}
-                      alt={ach.name}
-                      name={ach.displayName ? `${ach.name} (${ach.displayName})` : ach.name}
-                      designation={ach.designation}
+                      alt={getText(ach.name as any, currentLanguage)}
+                      name={ach.displayName ? `${getText(ach.name as any, currentLanguage)} (${getText(ach.displayName as any, currentLanguage)})` : getText(ach.name as any, currentLanguage)}
+                      designation={getText(ach.designation as any, currentLanguage)}
                       badge={ach.categoryTier === 'hajj' || (ach.categoryTier as string) === 'hajj-pilgrims' || ach.hajjYear ? '🕋 Hajiyon Pilgrim' : '🏆 Top Achiever'}
                       size="md"
                       containerClassName="w-16 h-16 rounded-xl border-2 border-[#FFD54A] shadow-md group-hover:scale-105 transition"
@@ -1532,10 +1540,10 @@ export default function HomeView({ currentLanguage, onNavigate }: HomeViewProps)
                         #{idx + 1} {ach.categoryTier === 'hajj' || (ach.categoryTier as string) === 'hajj-pilgrims' || ach.hajjYear ? '🕋 Hajiyon Pilgrim' : '🏆 Top Achiever'}
                       </span>
                       <h3 className="text-base font-black text-white mt-1 group-hover:text-[#FFD54A] transition">
-                        {ach.name}
+                        {getText(ach.name as any, currentLanguage)}
                       </h3>
                       <p className="text-xs text-gray-300 font-medium line-clamp-1">
-                        {ach.designation}
+                        {getText(ach.designation as any, currentLanguage)}
                       </p>
                     </div>
                   </div>
@@ -1544,7 +1552,7 @@ export default function HomeView({ currentLanguage, onNavigate }: HomeViewProps)
                 <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs text-gray-400">
                   <span className="flex items-center gap-1">
                     <MapPin className="w-3.5 h-3.5 text-[#FFD54A]" />
-                    <span>{ach.currentCity}, {ach.state}</span>
+                    <span>{getText(ach.currentCity as any, currentLanguage)}, {getText(ach.state as any, currentLanguage)}</span>
                   </span>
                   <span className="text-[#FFD54A] font-bold group-hover:translate-x-1 transition flex items-center gap-1">
                     <span>Full Profile</span>
@@ -2431,11 +2439,11 @@ export default function HomeView({ currentLanguage, onNavigate }: HomeViewProps)
             <div className="space-y-3">
               <div className="flex justify-between items-center text-xs font-mono text-gray-500 border-b border-gray-100 pb-1">
                 <span>Education Grants Fund:</span>
-                <span className="font-bold text-[#004B23]">₹ 8,45,000 (Allocated)</span>
+                <span className="font-bold text-[#004B23]">₹ 100 (Allocated)</span>
               </div>
               <div className="flex justify-between items-center text-xs font-mono text-gray-500 border-b border-gray-100 pb-1">
                 <span>Medical Relief Fund:</span>
-                <span className="font-bold text-[#004B23]">₹ 4,20,000 (Allocated)</span>
+                <span className="font-bold text-[#004B23]">₹ 100 (Allocated)</span>
               </div>
               <div className="flex justify-between items-center text-xs font-mono text-gray-500">
                 <span>Administrative / Logistics Expense:</span>

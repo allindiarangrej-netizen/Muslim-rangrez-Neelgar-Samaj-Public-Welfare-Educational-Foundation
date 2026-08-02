@@ -4,6 +4,7 @@ import { Language, SupportTicket } from '../types';
 import { getSupabase } from '../lib/supabaseClient';
 import { bloodDonors } from '../data';
 import ReCAPTCHA from 'react-google-recaptcha';
+import FAQKnowledgeCenter from './FAQKnowledgeCenter';
 
 interface HelpSupportProps {
   currentLanguage: Language;
@@ -400,179 +401,11 @@ export default function HelpSupport({ currentLanguage }: HelpSupportProps) {
         {/* ================= 1. SEARCHABLE FAQS & ACCORDION KNOWLEDGE BASE ================= */}
         {activeSupportSub === 'faqs' && (
           <div className="space-y-8 animate-fadeIn" id="searchable_faqs_panel">
-            {/* Search & Category Filter Toolbar */}
-            <div className="bg-white p-6 rounded-3xl border border-gray-200 shadow-sm space-y-4">
-              <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
-                <div className="relative w-full md:w-96">
-                  <Search className="absolute left-3.5 top-3 h-4 w-4 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder={currentLanguage === 'en' ? 'Search questions, keywords, or topics...' : 'प्रश्न, विषय या कीवर्ड खोजें...'}
-                    value={faqSearchQuery}
-                    onChange={(e) => setFaqSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#004B23]/20 focus:border-[#004B23] transition"
-                  />
-                  {faqSearchQuery && (
-                    <button onClick={() => setFaqSearchQuery('')} className="absolute right-3 top-3 text-xs text-gray-400 hover:text-gray-600 font-bold">✕</button>
-                  )}
-                </div>
-                <div className="text-xs text-gray-500 font-medium">
-                  {currentLanguage === 'en' ? `Showing ${filteredFaqs.length} answered questions` : `${filteredFaqs.length} उत्तरित प्रश्न उपलब्ध`}
-                </div>
-              </div>
-
-              {/* FAQ Category Buttons */}
-              <div className="flex flex-wrap gap-2 pt-2 border-t border-gray-100">
-                {faqCategories.map((cat) => (
-                  <button
-                    key={cat}
-                    onClick={() => setSelectedFaqCategory(cat)}
-                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 ${
-                      selectedFaqCategory === cat
-                        ? 'bg-[#004B23] text-white shadow-md'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:text-gray-900'
-                    }`}
-                  >
-                    <span>{cat}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Main Content Layout: FAQs Accordion + Contact Helplines Sidebar */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-              
-              {/* Left Column: Accordion List (8 Cols) */}
-              <div className="lg:col-span-8 space-y-4">
-                {filteredFaqs.length === 0 ? (
-                  <div className="bg-white border border-gray-200 rounded-3xl p-12 text-center space-y-3">
-                    <HelpCircle className="h-10 w-10 text-gray-300 mx-auto" />
-                    <h4 className="font-serif font-bold text-gray-800 text-base">No FAQ matches your search</h4>
-                    <p className="text-xs text-gray-500 max-w-md mx-auto">
-                      Try clearing your search keyword or submit a direct query to our helpdesk below.
-                    </p>
-                    <button
-                      onClick={() => { setSelectedFaqCategory('All'); setFaqSearchQuery(''); }}
-                      className="px-4 py-2 bg-[#004B23] text-white rounded-xl text-xs font-bold"
-                    >
-                      Reset Search
-                    </button>
-                  </div>
-                ) : (
-                  filteredFaqs.map((faq) => {
-                    const isOpen = expandedFaqId === faq.id;
-                    return (
-                      <div
-                        key={faq.id}
-                        className={`bg-white rounded-2xl border transition-all duration-300 overflow-hidden ${
-                          isOpen ? 'border-[#004B23] shadow-md ring-1 ring-[#004B23]/10' : 'border-gray-200 shadow-sm hover:border-gray-300'
-                        }`}
-                      >
-                        <button
-                          onClick={() => setExpandedFaqId(isOpen ? null : faq.id)}
-                          className="w-full p-5 text-left flex items-center justify-between gap-4 focus:outline-none"
-                        >
-                          <div className="flex items-start space-x-3">
-                            <span className="p-1.5 rounded-lg bg-[#004B23]/10 text-[#004B23] font-extrabold text-xs shrink-0 mt-0.5">
-                              Q
-                            </span>
-                            <div>
-                              <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#004B23] block mb-1">
-                                {faq.category}
-                              </span>
-                              <h3 className="font-serif font-bold text-sm sm:text-base text-gray-900 leading-snug">
-                                {currentLanguage === 'en' ? faq.qEn : currentLanguage === 'ur' ? faq.qUr : faq.qHi}
-                              </h3>
-                            </div>
-                          </div>
-                          <div className={`p-1.5 rounded-full shrink-0 transition-transform duration-300 ${isOpen ? 'bg-[#004B23] text-white rotate-180' : 'bg-gray-100 text-gray-600'}`}>
-                            <ChevronDown className="h-4 w-4" />
-                          </div>
-                        </button>
-
-                        {isOpen && (
-                          <div className="px-5 pb-5 pt-2 border-t border-gray-100 bg-gray-50/50 flex items-start space-x-3">
-                            <span className="p-1.5 rounded-lg bg-amber-100 text-amber-800 font-extrabold text-xs shrink-0 mt-0.5">
-                              A
-                            </span>
-                            <div className="text-xs sm:text-sm text-gray-700 leading-relaxed font-light space-y-2">
-                              <p>{currentLanguage === 'en' ? faq.aEn : faq.aHi}</p>
-                              <div className="pt-2 flex items-center space-x-4 text-[11px] text-gray-400 font-mono">
-                                <span>✔ Verified by Central Legal & Media Desk</span>
-                                <button
-                                  onClick={() => triggerToast(currentLanguage === 'en' ? 'Thanks for your feedback!' : 'प्रतिक्रिया के लिए धन्यवाद!')}
-                                  className="text-[#004B23] hover:underline font-bold"
-                                >
-                                  {currentLanguage === 'en' ? 'Helpful?' : 'क्या यह उपयोगी था?'}
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })
-                )}
-              </div>
-
-              {/* Right Column: Emergency Helplines & Direct Contact Sidebar (4 Cols) */}
-              <div className="lg:col-span-4 space-y-6">
-                <div className="bg-[#0B132B] text-white p-6 rounded-3xl shadow-xl border border-[#FFD54A]/30 space-y-5">
-                  <div className="flex items-center space-x-2.5">
-                    <PhoneCall className="h-5 w-5 text-[#FFD54A] animate-pulse" />
-                    <h3 className="font-serif font-bold text-base">{currentLanguage === 'en' ? 'Direct Support Helplines' : 'सीधी सहायता हेल्पलाइन'}</h3>
-                  </div>
-                  <p className="text-xs text-gray-300 leading-relaxed">
-                    {currentLanguage === 'en'
-                      ? 'Can’t find your answer above? Connect directly with regional coordinators or our national emergency command desk.'
-                      : 'क्या आपको अपना उत्तर नहीं मिला? क्षेत्रीय समन्वयकों या हमारे राष्ट्रीय आपातकालीन सहायता डेस्क से संपर्क करें।'}
-                  </p>
-
-                  <div className="space-y-3 pt-2">
-                    <div className="p-3 bg-white/10 rounded-xl border border-white/10 flex items-center justify-between">
-                      <div>
-                        <span className="text-[10px] text-[#FFD54A] font-bold uppercase block">Medical Emergency (24/7)</span>
-                        <span className="text-xs font-mono font-bold">+91 98765 43210</span>
-                      </div>
-                      <a href="tel:+919876543210" className="p-2 bg-[#004B23] hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition">Call</a>
-                    </div>
-
-                    <div className="p-3 bg-white/10 rounded-xl border border-white/10 flex items-center justify-between">
-                      <div>
-                        <span className="text-[10px] text-emerald-400 font-bold uppercase block">Central Secretariat Desk</span>
-                        <span className="text-xs font-mono font-bold">+91 755 267 8900</span>
-                      </div>
-                      <a href="tel:+917552678900" className="p-2 bg-white/20 hover:bg-white/30 text-white rounded-lg text-xs font-bold transition">Call</a>
-                    </div>
-
-                    <div className="p-3 bg-white/10 rounded-xl border border-white/10 flex items-center justify-between">
-                      <div>
-                        <span className="text-[10px] text-blue-300 font-bold uppercase block">Media & Support Vault</span>
-                        <span className="text-xs font-mono font-bold">support@rangrezcommunity.org</span>
-                      </div>
-                      <button onClick={() => { navigator.clipboard.writeText('support@rangrezcommunity.org'); triggerToast('Email copied to clipboard!'); }} className="p-2 bg-white/20 hover:bg-white/30 text-white rounded-lg text-xs font-bold transition">Copy</button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Quick Action Banner to Switch to Ticket Helpdesk */}
-                <div className="bg-gradient-to-br from-emerald-900 to-[#004B23] text-white p-6 rounded-3xl shadow-lg border border-emerald-700 space-y-4">
-                  <h4 className="font-serif font-bold text-base">Need specific family assistance?</h4>
-                  <p className="text-xs text-emerald-100">
-                    Submit an online ticket with your Family ID and receive priority tracking and SMS updates.
-                  </p>
-                  <button
-                    onClick={() => setActiveSupportSub('ticket')}
-                    className="w-full py-2.5 bg-[#FFD54A] text-[#0B132B] font-extrabold rounded-xl text-xs uppercase tracking-wider hover:bg-amber-400 transition shadow"
-                  >
-                    Raise Support Ticket →
-                  </button>
-                </div>
-              </div>
-
-            </div>
+            <FAQKnowledgeCenter currentLanguage={currentLanguage} />
           </div>
         )}
+
+        {/* OLD_FAQ_SECTION_REMOVED */}
 
         {/* ================= 2. RAISE QUERY & TICKET HELPDESK ================= */}
         {activeSupportSub === 'ticket' && (

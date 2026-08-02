@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { AchieverProfile } from '../data/hallOfExcellenceData';
 import { detectPoliticalParty } from '../data/politicalParties';
 import { PoliticalPartyBadge } from './common/PoliticalPartyBadge';
+import { getText } from '../utils/i18nHelpers';
 import { ProfileImage } from './common/ProfileImage';
 import { PremiumCoverImage } from './common/PremiumCoverImage';
 import {
@@ -71,27 +72,27 @@ const ExcellenceProfileModal: React.FC<ExcellenceProfileModalProps> = ({
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Person",
-            "name": achiever.name,
-            "alternateName": achiever.displayName,
+            "name": getText(achiever.name, currentLanguage),
+            "alternateName": getText(achiever.displayName, currentLanguage),
             "gender": achiever.gender,
             "birthDate": achiever.dob,
-            "jobTitle": achiever.designation,
+            "jobTitle": getText(achiever.designation, currentLanguage),
             "worksFor": {
               "@type": "Organization",
-              "name": achiever.organization
+              "name": getText(achiever.organization, currentLanguage)
             },
             "alumniOf": {
               "@type": "EducationalOrganization",
-              "name": achiever.university
+              "name": getText(achiever.university, currentLanguage)
             },
             "address": {
               "@type": "PostalAddress",
-              "addressLocality": achiever.currentCity,
-              "addressRegion": achiever.state,
-              "addressCountry": achiever.country
+              "addressLocality": getText(achiever.currentCity, currentLanguage),
+              "addressRegion": getText(achiever.state, currentLanguage),
+              "addressCountry": getText(achiever.country, currentLanguage)
             },
             "image": achiever.photoUrl,
-            "description": `${achiever.designation} - ${achiever.organization}`
+            "description": `${getText(achiever.designation, currentLanguage)} - ${getText(achiever.organization, currentLanguage)}`
           })
         }}
       />
@@ -103,7 +104,7 @@ const ExcellenceProfileModal: React.FC<ExcellenceProfileModalProps> = ({
           {achiever.coverImageUrl && (
             <PremiumCoverImage 
               src={achiever.coverImageUrl} 
-              alt={`${achiever.name} Cover`} 
+              alt={`${getText(achiever.name, currentLanguage)} Cover`} 
               overlayOpacity={0.25} 
               focalPoint="center 30%"
               enableVignette={true}
@@ -156,10 +157,10 @@ const ExcellenceProfileModal: React.FC<ExcellenceProfileModalProps> = ({
             <div className="relative shrink-0">
               <ProfileImage
                 src={achiever.photoUrl}
-                alt={achiever.name}
-                name={achiever.displayName ? `${achiever.name} (${achiever.displayName})` : achiever.name}
-                designation={achiever.designation}
-                badge={achiever.badges?.[0] || 'Hall of Excellence'}
+                alt={getText(achiever.name, currentLanguage)}
+                name={getText(achiever.displayName, currentLanguage) ? `${getText(achiever.name, currentLanguage)} (${getText(achiever.displayName, currentLanguage)})` : getText(achiever.name, currentLanguage)}
+                designation={getText(achiever.designation, currentLanguage)}
+                badge={achiever.badges?.[0] ? getText(achiever.badges[0] as any, currentLanguage) : 'Hall of Excellence'}
                 politicalParty={achiever.politicalParty}
                 size="custom"
                 containerClassName="w-32 h-32 sm:w-48 sm:h-48 rounded-2xl border-4 border-[#F4C430] shadow-2xl"
@@ -179,10 +180,10 @@ const ExcellenceProfileModal: React.FC<ExcellenceProfileModalProps> = ({
             <div className="text-center sm:text-left flex-1">
               <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2.5">
                 <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                  {achiever.name}
-                  {achiever.displayName && (
+                  {getText(achiever.name, currentLanguage)}
+                  {getText(achiever.displayName, currentLanguage) && (
                     <span className="text-[#FFD54A] font-bold text-lg sm:text-2xl ml-2">
-                      ({achiever.displayName})
+                      ({getText(achiever.displayName, currentLanguage)})
                     </span>
                   )}
                 </h2>
@@ -193,7 +194,7 @@ const ExcellenceProfileModal: React.FC<ExcellenceProfileModalProps> = ({
 
               <p className="text-[#FFD54A] font-bold text-base sm:text-lg mt-1 flex items-center justify-center sm:justify-start gap-2">
                 <Briefcase className="w-4 h-4 shrink-0" />
-                <span>{achiever.designation} — <strong className="text-white">{achiever.organization}</strong></span>
+                <span>{getText(achiever.designation, currentLanguage)} — <strong className="text-white">{getText(achiever.organization, currentLanguage)}</strong></span>
               </p>
 
               {party && (
@@ -203,20 +204,20 @@ const ExcellenceProfileModal: React.FC<ExcellenceProfileModalProps> = ({
                 </p>
               )}
 
-              {achiever.fatherName && (
+              {getText(achiever.fatherName, currentLanguage) && (
                 <p className="text-gray-300 text-xs sm:text-sm mt-1">
-                  <span className="text-gray-400">{currentLanguage === 'en' ? 'S/o / D/o / W/o:' : 'पुत्र / पुत्री / पत्नी:'}</span> {achiever.fatherName}
+                  <span className="text-gray-400">{currentLanguage === 'en' ? 'S/o / D/o / W/o:' : 'पुत्र / पुत्री / पत्नी:'}</span> {getText(achiever.fatherName, currentLanguage)}
                 </p>
               )}
 
               <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 mt-3 text-xs text-gray-200">
                 <span className="flex items-center gap-1 bg-white/10 px-3 py-1 rounded-lg">
                   <MapPin className="w-3.5 h-3.5 text-[#FFD54A]" />
-                  {achiever.currentCity}, {achiever.state} ({achiever.country})
+                  {getText(achiever.currentCity, currentLanguage)}, {getText(achiever.state, currentLanguage)} ({getText(achiever.country, currentLanguage)})
                 </span>
                 <span className="flex items-center gap-1 bg-white/10 px-3 py-1 rounded-lg">
                   <GraduationCap className="w-3.5 h-3.5 text-[#FFD54A]" />
-                  {achiever.qualification} {achiever.university ? `(${achiever.university})` : ''}
+                  {getText(achiever.qualification, currentLanguage)} {getText(achiever.university, currentLanguage) ? `(${getText(achiever.university, currentLanguage)})` : ''}
                 </span>
                 {achiever.yearsOfExperience && (
                   <span className="flex items-center gap-1 bg-amber-500/20 border border-amber-400/40 text-[#FFD54A] px-3 py-1 rounded-lg font-bold">
@@ -234,7 +235,7 @@ const ExcellenceProfileModal: React.FC<ExcellenceProfileModalProps> = ({
               <div className="flex flex-wrap items-center justify-center sm:justify-start gap-1.5 mt-4">
                 {achiever.badges.map((b, i) => (
                   <span key={i} className="bg-[#004B23] border border-[#FFD54A]/40 text-[#FFD54A] font-extrabold text-[11px] px-2.5 py-1 rounded-md shadow-sm">
-                    {b}
+                    {getText(b as any, currentLanguage)}
                   </span>
                 ))}
               </div>
@@ -298,15 +299,15 @@ const ExcellenceProfileModal: React.FC<ExcellenceProfileModalProps> = ({
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-200">
                 <div>
                   <div className="text-[11px] font-extrabold text-gray-400 uppercase tracking-wider">{currentLanguage === 'en' ? 'Native Place (मूल स्थान)' : 'मूल वतन'}</div>
-                  <div className="font-bold text-gray-800 mt-0.5">{achiever.nativePlace}</div>
+                  <div className="font-bold text-gray-800 mt-0.5">{getText(achiever.nativePlace, currentLanguage)}</div>
                 </div>
                 <div>
                   <div className="text-[11px] font-extrabold text-gray-400 uppercase tracking-wider">{currentLanguage === 'en' ? 'University / Alma Mater' : 'विश्वविद्यालय / संस्थान'}</div>
-                  <div className="font-bold text-gray-800 mt-0.5">{achiever.university}</div>
+                  <div className="font-bold text-gray-800 mt-0.5">{getText(achiever.university, currentLanguage)}</div>
                 </div>
                 <div>
                   <div className="text-[11px] font-extrabold text-gray-400 uppercase tracking-wider">{currentLanguage === 'en' ? 'Occupation Category' : 'पेशा / श्रेणी'}</div>
-                  <div className="font-bold text-[#004B23] mt-0.5">{achiever.occupation}</div>
+                  <div className="font-bold text-[#004B23] mt-0.5">{getText(achiever.occupation, currentLanguage)}</div>
                 </div>
               </div>
 
@@ -349,7 +350,7 @@ const ExcellenceProfileModal: React.FC<ExcellenceProfileModalProps> = ({
                   <div className="flex flex-wrap gap-1.5">
                     {achiever.expertise.map((exp, i) => (
                       <span key={i} className="bg-[#004B23]/10 text-[#004B23] font-extrabold text-xs px-3 py-1 rounded-full">
-                        {exp}
+                        {getText(exp, currentLanguage)}
                       </span>
                     ))}
                   </div>
@@ -420,7 +421,7 @@ const ExcellenceProfileModal: React.FC<ExcellenceProfileModalProps> = ({
                   "{getLocalizedText(achiever.inspirationalMessage)}"
                 </p>
                 <div className="mt-4 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-gray-400">
-                  <span>— {achiever.name} ({achiever.designation})</span>
+                  <span>— {getText(achiever.name, currentLanguage)} ({getText(achiever.designation, currentLanguage)})</span>
                   <span className="text-[#FFD54A] font-bold">🌟 Hall of Excellence Role Model</span>
                 </div>
               </div>
@@ -532,8 +533,8 @@ const ExcellenceProfileModal: React.FC<ExcellenceProfileModalProps> = ({
                     </h4>
                     <p className="text-sm text-gray-200 max-w-xl">
                       {achiever.isMentor
-                        ? `${achiever.name} has graciously agreed to provide 1-on-1 career guidance, scholarship tips, and competitive exam mentorship to community students.`
-                        : `${achiever.name} inspires thousands of youth across India. Join our community portal to access mentorship resources.`}
+                        ? `${getText(achiever.name, currentLanguage)} has graciously agreed to provide 1-on-1 career guidance, scholarship tips, and competitive exam mentorship to community students.`
+                        : `${getText(achiever.name, currentLanguage)} inspires thousands of youth across India. Join our community portal to access mentorship resources.`}
                     </p>
                   </div>
 

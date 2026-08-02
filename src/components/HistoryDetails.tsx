@@ -104,9 +104,9 @@ const HISTORICAL_MILESTONES: MilestoneEvent[] = [
     titleEn: "All India Rangrez Samaj Trust Unification & Digital Census",
     titleHi: "अखिल भारतीय रंगरेज समाज ट्रस्ट एकीकरण एवं डिजिटल जनगणना",
     titleUr: "آل انڈیا رنگریز سماج ٹرسٹ کا اتحاد اور ڈیجیٹل مردم شماری",
-    descEn: "Launch of the unified national platform, digital socio-economic census, 80G/12A tax exemption certification, and nationwide educational scholarship network connecting 100,000+ families.",
-    descHi: "एकीकृत राष्ट्रीय मंच का शुभारंभ, डिजिटल सामाजिक-आर्थिक जनगणना, 80G/12A कर छूट प्रमाणन, और 1,00,000+ परिवारों को जोड़ने वाला राष्ट्रव्यापी शैक्षिक छात्रवृत्ति नेटवर्क।",
-    descUr: "متحدہ قومی پلیٹ فارم کا آغاز، ڈیجیٹل سماجی و معاشی مردم شماری، 80G/12A ٹیکس استثنیٰ تصدیق، اور 1,00,000+ خاندانوں کو جوڑنے والا ملک گیر تعلیمی وظیفہ نیٹ ورک۔",
+    descEn: "Launch of the unified national platform, digital socio-economic census, 80G/12A tax exemption certification, and nationwide educational scholarship network connecting 100+ families.",
+    descHi: "एकीकृत राष्ट्रीय मंच का शुभारंभ, डिजिटल सामाजिक-आर्थिक जनगणना, 80G/12A कर छूट प्रमाणन, और 100+ परिवारों को जोड़ने वाला राष्ट्रव्यापी शैक्षिक छात्रवृत्ति नेटवर्क।",
+    descUr: "متحدہ قومی پلیٹ فارم کا آغاز، ڈیجیٹل سماجی و معاشی مردم شماری، 80G/12A ٹیکس استثنیٰ تصدیق، اور 100+ خاندانوں کو جوڑنے والا ملک گیر تعلیمی وظیفہ نیٹ ورک۔",
     location: "Pan-India & Global Diaspora",
     category: "modern"
   }
@@ -123,7 +123,7 @@ const HISTORIC_DYEING_CENTERS = [
     historyEn: "Patronized by Maharaja Sawai Jai Singh II, Sanganer and Pali became world-renowned capitals of natural vegetable dyes and intricate indigo block patterns.",
     historyHi: "महाराजा सवाई जय सिंह द्वितीय के संरक्षण में, सांगानेर और पाली प्राकृतिक वनस्पति रंगों और जटिल नील ब्लॉक पैटर्न की विश्व प्रसिद्ध राजधानियां बने।",
     historyUr: "مہاراجہ سوائی جے سنگھ دوم کی سرپرستی میں، سانگانیر اور پالی قدرتی نباتاتی رنگوں اور نفیس نیل بلاک پیٹرن کے عالمی شہرت یافتہ مراکز بنے।",
-    artisans: "2,500+ Active Traditional Families",
+    artisans: "100+ Active Traditional Families",
     badgeColor: "bg-amber-100 text-amber-800 border-amber-300"
   },
   {

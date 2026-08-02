@@ -307,9 +307,9 @@ const POLITICAL_POSITION_KEYWORDS = [
 export function detectPoliticalParty(profile: {
   id?: string;
   politicalParty?: string;
-  designation?: string;
-  occupation?: string;
-  organization?: string;
+  designation?: any;
+  occupation?: any;
+  organization?: any;
   categoryId?: string;
   biography?: { en?: string; hi?: string; ur?: string } | string;
   majorAchievements?: string[];
