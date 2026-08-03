@@ -2731,94 +2731,38 @@ export default function CommunityPortal({
                     </div>
                   </div>
 
-                  <form onSubmit={async (e) => { 
+                  <form onSubmit={(e) => { 
                     e.preventDefault(); 
-                    const fd = new FormData(e.currentTarget);
-                    const amountStr = fd.get('amount') as string;
-                    const amount = parseFloat(amountStr) || 1000;
-                    const donorName = fd.get('donorName') as string;
-                    const pan = fd.get('pan') as string;
-                    const phone = fd.get('phone') as string;
-                    const paymentMethod = fd.get('paymentMethod') as string;
-
-                    const sb = getSupabase();
-                    if (sb) {
-                      try {
-                        const { data: userData } = await sb.auth.getUser();
-                        await sb.from('donations').insert({
-                          donor_name: donorName,
-                          donor_phone: phone,
-                          donor_pan: pan,
-                          amount: amount,
-                          fund_type: `Chief Calamity Relief Fund (${paymentMethod})`,
-                          user_id: userData?.user?.id || null
-                        });
-                      } catch (err) {
-                        console.error("Error saving donation pledge:", err);
-                      }
-                    }
-
-                    alert(currentLanguage === 'en' ? 'Thank you for your generous pledge! Official 80G tax exemption receipt will be generated automatically upon bank clearance.' : 'आपके उदार योगदान के लिए धन्यवाद! 80G रसीद स्वतः जारी होगी।'); 
+                    alert('Donation services will be available after the official launch.'); 
                     setShowReliefFundModal(false); 
                   }} className="space-y-4 text-left">
-                    <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">Select Contribution Amount *</label>
-                      <div className="grid grid-cols-3 gap-2 mb-2">
-                        {['₹ 1,000', '₹ 2,500', '₹ 5,000', '₹ 10,000', '₹ 25,000', 'Custom'].map((amt, idx) => (
-                          <button 
-                            type="button" 
-                            key={idx}
-                            onClick={() => {
-                              const input = document.getElementById('reliefAmountInput') as HTMLInputElement;
-                              if (input && amt !== 'Custom') {
-                                input.value = amt.replace(/[^\d]/g, '');
-                              }
-                            }}
-                            className="py-2 rounded-xl border border-slate-300 text-xs font-bold hover:border-orange-600 hover:bg-orange-50 text-slate-700 transition cursor-pointer"
-                          >
-                            {amt}
-                          </button>
-                        ))}
-                      </div>
-                      <input id="reliefAmountInput" type="number" name="amount" required defaultValue={5000} min={10} placeholder="Enter custom amount in INR" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-orange-600 outline-none" />
+                    <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 space-y-2">
+                      <p className="text-sm font-bold text-amber-950">
+                        Donation services will be available after the official launch.
+                      </p>
+                      <p className="text-xs text-amber-800 leading-relaxed">
+                        Donation gateway is currently under development and will be activated after verification.
+                      </p>
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-xs font-bold text-slate-700 mb-1">Donor Name *</label>
-                        <input type="text" name="donorName" required placeholder="Full name for tax receipt" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-orange-600 outline-none" />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-bold text-slate-700 mb-1">PAN Number (For 80G) *</label>
-                        <input type="text" name="pan" required placeholder="ABCDE1234F" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-orange-600 outline-none uppercase" />
-                      </div>
+
+                    <div className="p-3 bg-slate-100 rounded-xl border border-slate-200 text-xs">
+                      <span className="font-bold text-slate-700">Development Field: </span>
+                      <span className="font-mono text-emerald-900 font-bold">Bank Name: Baba ji ka thullu</span>
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-xs font-bold text-slate-700 mb-1">Mobile Phone *</label>
-                        <input type="tel" name="phone" required placeholder="+91 98XXX XXXXX" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-orange-600 outline-none" />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-bold text-slate-700 mb-1">Payment Method *</label>
-                        <select name="paymentMethod" className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-sm focus:border-orange-600 outline-none">
-                          <option>UPI / Google Pay / PhonePe</option>
-                          <option>Direct Bank NEFT / RTGS</option>
-                          <option>Net Banking / Debit Card</option>
-                        </select>
-                      </div>
-                    </div>
+
                     <div className="pt-4 flex items-center justify-end space-x-3 border-t border-slate-100">
                       <button 
                         type="button" 
                         onClick={() => setShowReliefFundModal(false)}
                         className="px-5 py-2.5 rounded-xl text-slate-600 font-bold text-sm hover:bg-slate-100 transition cursor-pointer"
                       >
-                        Cancel
+                        Close
                       </button>
                       <button 
                         type="submit" 
                         className="bg-orange-600 hover:bg-orange-700 text-white font-bold px-6 py-2.5 rounded-xl text-sm transition shadow-lg cursor-pointer"
                       >
-                        Proceed to Payment &rarr;
+                        Contribute &rarr;
                       </button>
                     </div>
                   </form>

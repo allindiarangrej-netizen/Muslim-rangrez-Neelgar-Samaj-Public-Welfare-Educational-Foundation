@@ -553,10 +553,10 @@ export default function ScholarshipsMasterPortal({ currentLanguage }: Scholarshi
               {[
                 { id: 'doc1', title: 'Annual Family Income Certificate (< ₹2.5L / ₹8L)', desc: 'Issued by Tehsildar / SDM / Competent Revenue Authority within the last 6 months.' },
                 { id: 'doc2', title: 'Minority / Caste Certificate (SC / ST / OBC)', desc: 'Valid statutory caste or religious minority community certificate.' },
-                { id: 'doc3', title: 'Aadhaar Card linked with Bank Account (NPCI Seeded)', desc: 'Mandatory for direct benefit transfer (DBT) via Public Financial Management System.' },
+                { id: 'doc3', title: 'Aadhaar Card linked for Direct Transfer (DBT)', desc: 'Mandatory for direct benefit transfer (DBT) via Public Financial Management System.' },
                 { id: 'doc4', title: 'Institute Admission Letter & Bonafide Certificate', desc: 'Signed and stamped by Principal or Head of Institution with current year fee receipt.' },
                 { id: 'doc5', title: 'Previous Year Attested Marksheets (min 50%+ marks)', desc: '10th, 12th, or last degree semester marksheets with passing grade.' },
-                { id: 'doc6', title: 'Student Bank Passbook Front Page & Passport Photo', desc: 'Clear photo showing account number, IFSC code, and student name.' }
+                { id: 'doc6', title: 'Student Identity Document & Passport Photo', desc: 'Clear photo showing student identity card or bonafide certificate.' }
               ].map(doc => (
                 <div 
                   key={doc.id}

@@ -155,8 +155,8 @@ export default function UniversalEducationSearch({
       state: 'All India',
       rating: 'MoMA Verified',
       fee: '₹6,000 - ₹12,000 / Yr',
-      descEn: 'Direct bank account transfer (DBT) scholarship for meritorious girl students belonging to minority communities to prevent school dropouts.',
-      descHi: 'स्कूल ड्रॉपआउट को रोकने के लिए अल्पसंख्यक समुदायों की मेधावी छात्राओं के लिए सीधे बैंक खाते में (DBT) छात्रवृत्ति।',
+      descEn: 'Direct Benefit Transfer (DBT) scholarship for meritorious girl students belonging to minority communities to prevent school dropouts.',
+      descHi: 'स्कूल ड्रॉपआउट को रोकने के लिए अल्पसंख्यक समुदायों की मेधावी छात्राओं के लिए प्रत्यक्ष लाभ अंतरण (DBT) छात्रवृत्ति।',
       tab: 'scholarships',
       tags: ['Girls Scholarship', 'Begum Hazrat Mahal', 'Minority Girls', 'School Scholarship']
     },

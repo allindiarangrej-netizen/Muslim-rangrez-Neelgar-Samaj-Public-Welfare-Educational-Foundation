@@ -62,7 +62,7 @@ interface BloodBankCoordinator {
   id: string;
   name: string;
   city: string;
-  bankName: string;
+  centerName: string;
   phone: string;
   whatsapp?: string;
   showWhatsAppPublicly?: boolean;
@@ -132,10 +132,10 @@ const DONOR_ROSTER: BloodDonor[] = [
 ];
 
 const COORDINATORS: BloodBankCoordinator[] = [
-  { id: 'COORD-1', name: 'Haji Abdul Qadir (State Head)', city: 'Jaipur', bankName: 'SMS Hospital Red Cross Blood Bank', phone: '+91 98281-44556', address: 'JLN Marg, Jaipur, Rajasthan 302004', availability: '24x7 Emergency Line' },
-  { id: 'COORD-2', name: 'Dr. Tariq Mehmood', city: 'Bhopal', bankName: 'Hamidia Hospital Blood Centre', phone: '+91 94250-88776', address: 'Royal Market Road, Bhopal, MP 462001', availability: 'Mon - Sat (8 AM - 8 PM)' },
-  { id: 'COORD-3', name: 'Sister Saima Rangrez', city: 'Indore', bankName: 'MY Hospital Rotary Blood Bank', phone: '+91 97520-33445', address: 'MY Hospital Campus, Indore, MP 452001', availability: '24x7 Emergency Line' },
-  { id: 'COORD-4', name: 'Mr. Imran Siddiqui', city: 'Lucknow', bankName: 'KGMU Transfusion Medicine Dept.', phone: '+91 99350-66778', address: 'Chowk, Lucknow, UP 226003', availability: '24x7 Emergency Line' }
+  { id: 'COORD-1', name: 'Haji Abdul Qadir (State Head)', city: 'Jaipur', centerName: 'SMS Hospital Red Cross Blood Bank', phone: '+91 98281-44556', address: 'JLN Marg, Jaipur, Rajasthan 302004', availability: '24x7 Emergency Line' },
+  { id: 'COORD-2', name: 'Dr. Tariq Mehmood', city: 'Bhopal', centerName: 'Hamidia Hospital Blood Centre', phone: '+91 94250-88776', address: 'Royal Market Road, Bhopal, MP 462001', availability: 'Mon - Sat (8 AM - 8 PM)' },
+  { id: 'COORD-3', name: 'Sister Saima Rangrez', city: 'Indore', centerName: 'MY Hospital Rotary Blood Bank', phone: '+91 97520-33445', address: 'MY Hospital Campus, Indore, MP 452001', availability: '24x7 Emergency Line' },
+  { id: 'COORD-4', name: 'Mr. Imran Siddiqui', city: 'Lucknow', centerName: 'KGMU Transfusion Medicine Dept.', phone: '+91 99350-66778', address: 'Chowk, Lucknow, UP 226003', availability: '24x7 Emergency Line' }
 ];
 
 export default function BloodBankAndDonorsPortal({ currentLanguage, defaultTab = 'stock', onNavigate }: BloodBankAndDonorsPortalProps) {
@@ -745,7 +745,7 @@ export default function BloodBankAndDonorsPortal({ currentLanguage, defaultTab =
                       </span>
                     </div>
                     <h3 className="text-lg font-bold text-slate-900">{c.name}</h3>
-                    <p className="text-xs font-semibold text-[#780000]">{c.bankName}</p>
+                    <p className="text-xs font-semibold text-[#780000]">{c.centerName}</p>
                     <p className="text-xs text-slate-500 flex items-center gap-1">
                       <MapPin className="h-3.5 w-3.5 text-slate-400 shrink-0" />
                       <span>{c.address}</span>

@@ -707,21 +707,21 @@ const AboutUsHub: React.FC<AboutUsHubProps> = ({
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
                 <div className="bg-white/10 p-5 rounded-2xl border border-white/15 space-y-2">
                   <div className="text-xs font-mono font-bold text-[#FFD54A] uppercase">1. {currentLanguage === 'en' ? 'Direct Bank Transfer (DBT)' : 'सीधा बैंक ट्रांसफर (DBT)'}</div>
-                  <h4 className="font-bold text-sm text-white">{currentLanguage === 'en' ? 'Zero Cash Transactions' : 'शून्य नकद लेनदेन'}</h4>
+                  <h4 className="font-bold text-sm text-white">{currentLanguage === 'en' ? 'Direct Benefit Distribution' : 'प्रत्यक्ष लाभ वितरण'}</h4>
                   <p className="text-xs text-emerald-100 leading-relaxed">
                     {currentLanguage === 'en'
-                      ? 'All educational scholarships and widow pensions are distributed exclusively via NEFT/RTGS directly into the beneficiary bank accounts.'
-                      : 'सभी छात्रवृत्तियां और विधवा पेंशन सीधे लाभार्थियों के बैंक खातों में NEFT/RTGS के माध्यम से भेजी जाती हैं।'}
+                      ? 'All educational scholarships and widow pensions are distributed directly to verified beneficiaries after committee approval.'
+                      : 'सभी छात्रवृत्तियां और विधवा पेंशन समिति के अनुमोदन के बाद सीधे सत्यापित लाभार्थियों को दी जाती हैं।'}
                   </p>
                 </div>
 
                 <div className="bg-white/10 p-5 rounded-2xl border border-white/15 space-y-2">
-                  <div className="text-xs font-mono font-bold text-[#FFD54A] uppercase">2. {currentLanguage === 'en' ? 'Separate Religious Account' : 'पृथक धार्मिक खाता'}</div>
+                  <div className="text-xs font-mono font-bold text-[#FFD54A] uppercase">2. {currentLanguage === 'en' ? 'Dedicated Welfare Fund' : 'समर्पित कल्याण कोष'}</div>
                   <h4 className="font-bold text-sm text-white">{currentLanguage === 'en' ? 'Strict Shariah & Legal Ring-Fencing' : 'सख्त शरई एवं कानूनी सुरक्षा'}</h4>
                   <p className="text-xs text-emerald-100 leading-relaxed">
                     {currentLanguage === 'en'
-                      ? 'Zakat donations are kept in a dedicated, separate bank account and never mixed with general trust operational or event expenses.'
-                      : 'ज़कात की राशि एक अलग समर्पित बैंक खाते में रखी जाती है और इसे कभी भी सामान्य ट्रस्ट या कार्यक्रम के खर्चों में नहीं मिलाया जाता।'}
+                      ? 'Zakat funds are maintained with strict segregation and never mixed with general trust operational or event expenses.'
+                      : 'ज़कात की राशि अलग कोष में रखी जाती है और इसे कभी भी सामान्य ट्रस्ट या कार्यक्रम के खर्चों में नहीं मिलाया जाता।'}
                   </p>
                 </div>
 

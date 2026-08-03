@@ -119,7 +119,6 @@ CREATE TABLE IF NOT EXISTS public.committees (
     "treasurerName" text,
     "totalMembers" integer DEFAULT 0,
     "status" text DEFAULT 'Active',
-    "bankAccountVerified" boolean DEFAULT false,
     "createdAt" timestamp with time zone DEFAULT now(),
     "updatedAt" timestamp with time zone DEFAULT now(),
     "createdBy" text,

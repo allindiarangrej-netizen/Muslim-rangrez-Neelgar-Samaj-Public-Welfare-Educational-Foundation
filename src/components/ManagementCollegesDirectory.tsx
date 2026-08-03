@@ -704,7 +704,7 @@ export default function ManagementCollegesDirectory({ currentLanguage = 'en' }: 
                             </p>
                           </div>
                           <p className="text-[11px] font-medium opacity-80 leading-relaxed italic">
-                            * Education loan assistance is available through tie-ups with leading banks (SBI, HDFC, ICICI) with special low-interest rates for premier B-schools.
+                            * Education loan assistance is available through tie-ups with leading financial institutions with special low-interest rates for premier B-schools.
                           </p>
                         </div>
                       </div>
