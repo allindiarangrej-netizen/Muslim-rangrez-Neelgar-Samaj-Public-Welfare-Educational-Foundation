@@ -18,14 +18,29 @@ export default function Counter({
   className = '',
   showVerified = false
 }: CounterProps) {
-  const numericValue = typeof value === 'number' ? value : parseInt(value.replace(/[^0-9]/g, ''), 10) || 0;
+  let numericValue = 0;
+  let parsedPrefix = prefix;
+  let parsedSuffix = suffix;
+
+  if (typeof value === 'number') {
+    numericValue = value;
+  } else if (typeof value === 'string') {
+    const cleaned = value.trim();
+    if (cleaned.startsWith('₹') && !parsedPrefix) parsedPrefix = '₹';
+    if (cleaned.endsWith('+') && !parsedSuffix) parsedSuffix = '+';
+    if (cleaned.endsWith('%') && !parsedSuffix) parsedSuffix = '%';
+
+    const rawNum = cleaned.replace(/[^0-9.]/g, '');
+    numericValue = parseFloat(rawNum) || 0;
+  }
+
   const { ref } = useCountUp(numericValue, duration);
 
   return (
     <span className={`inline-flex items-center gap-1 font-serif font-extrabold ${className}`}>
-      {prefix && <span>{prefix}</span>}
+      {parsedPrefix && <span>{parsedPrefix}</span>}
       <span ref={ref}>0</span>
-      {suffix && <span>{suffix}</span>}
+      {parsedSuffix && <span>{parsedSuffix}</span>}
       {showVerified && (
         <span className="ml-1.5 inline-flex items-center px-1.5 py-0.5 rounded-full text-[9px] font-sans font-bold bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
           ✓ Verified
@@ -34,3 +49,4 @@ export default function Counter({
     </span>
   );
 }
+

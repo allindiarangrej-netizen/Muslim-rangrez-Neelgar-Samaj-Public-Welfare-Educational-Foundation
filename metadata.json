@@ -1,6 +1,6 @@
 {
-  "name": "My App",
-  "description": "A brief description of what the app does",
+  "name": "Muslim Rangrez Samaj Enterprise Portal",
+  "description": "Comprehensive enterprise platform for Muslim Rangrez (Neelgar) Samaj featuring digital ID cards, socio-economic census, Hall of Excellence, scholarships, job directory, IQRA AI assistant, and community governance.",
   "requestFramePermissions": ["camera", "microphone", "geolocation"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

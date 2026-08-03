@@ -191,6 +191,94 @@
     animation-play-state: paused;
   }
 
+  @keyframes shine {
+    0% {
+      transform: translateX(-100%) rotate(45deg);
+    }
+    100% {
+      transform: translateX(200%) rotate(45deg);
+    }
+  }
+
+  @keyframes pulseGlow {
+    0%, 100% {
+      box-shadow: 0 0 15px rgba(255, 213, 74, 0.2);
+    }
+    50% {
+      box-shadow: 0 0 30px rgba(255, 213, 74, 0.45);
+    }
+  }
+
+  /* Enterprise Interactive Card Utility */
+  .interactive-card {
+    position: relative;
+    border-radius: 1.25rem; /* 20px */
+    transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 300ms cubic-bezier(0.16, 1, 0.3, 1), border-color 300ms cubic-bezier(0.16, 1, 0.3, 1), background-color 300ms cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform, box-shadow;
+    overflow: hidden;
+  }
+
+  .interactive-card:hover {
+    transform: translateY(-6px) scale(1.015);
+    box-shadow: 0 20px 40px -15px rgba(0, 75, 35, 0.25), 0 0 20px 2px rgba(255, 213, 74, 0.2);
+  }
+
+  .interactive-card:active {
+    transform: translateY(-2px) scale(0.99);
+  }
+
+  /* Glassmorphism Card Style */
+  .glass-card {
+    background: linear-gradient(135deg, rgba(11, 30, 46, 0.85) 0%, rgba(7, 19, 32, 0.95) 100%);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .glass-card:hover {
+    border-color: rgba(255, 213, 74, 0.5);
+  }
+
+  /* Golden & Emerald Gradient Text Helpers */
+  .gradient-text-gold {
+    background: linear-gradient(135deg, #FFD54A 0%, #FFF5CC 50%, #E6B800 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .gradient-text-emerald {
+    background: linear-gradient(135deg, #10B981 0%, #34D399 50%, #059669 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Shine Sweep Animation Overlay */
+  .shine-overlay {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .shine-overlay::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+      60deg,
+      transparent 30%,
+      rgba(255, 255, 255, 0.08) 50%,
+      transparent 70%
+    );
+    transform: translateX(-100%) rotate(45deg);
+    transition: transform 0.8s ease-in-out;
+    pointer-events: none;
+  }
+
+  .shine-overlay:hover::after {
+    transform: translateX(100%) rotate(45deg);
+  }
+
   /* Hall of Excellence Achiever Card transition enhancements */
   #hall-of-excellence-achiever-card,
   [id^="hall-of-excellence-achiever-card"],

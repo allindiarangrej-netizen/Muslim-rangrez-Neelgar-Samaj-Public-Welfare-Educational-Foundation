@@ -88,8 +88,10 @@ const AchieverCard: React.FC<AchieverCardProps> = ({
       tabIndex={0}
       onClick={() => onSelect(achiever)}
       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelect(achiever); } }}
-      className={`group relative rounded-3xl border shadow-lg hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between overflow-hidden cursor-pointer select-none bg-white/90 backdrop-blur-md border-gray-100 hover:border-[#F4C430]/70`}
+      className={`interactive-card group relative rounded-3xl border shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 flex flex-col justify-between overflow-hidden cursor-pointer select-none bg-white/95 backdrop-blur-md border-gray-100 hover:border-[#FFD54A] active:scale-[0.985]`}
     >
+      {/* Shine overlay */}
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-in-out pointer-events-none" />
       {/* Decorative Golden Glow Border on Hover */}
       <div className="absolute inset-0 rounded-3xl border-2 border-transparent group-hover:border-[#FFD54A]/50 pointer-events-none transition-colors duration-500"></div>
 

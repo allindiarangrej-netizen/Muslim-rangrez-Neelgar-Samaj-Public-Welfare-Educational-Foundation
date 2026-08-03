@@ -17,6 +17,8 @@ import {
 import ExcellenceProfileModal from './ExcellenceProfileModal';
 import ExcellenceMentorshipModal from './ExcellenceMentorshipModal';
 import AchieverCard from './AchieverCard';
+import AnimatedCounter from './AnimatedCounter';
+import InteractiveCard from './InteractiveCard';
 import { ProfileImage } from './common/ProfileImage';
 import { PremiumCoverImage, PremiumCoverSlideshow } from './common/PremiumCoverImage';
 import {
@@ -563,71 +565,83 @@ const HallOfExcellenceView: React.FC<HallOfExcellenceViewProps> = ({ currentLang
           <div className="space-y-8">
             {/* Premium Dashboard Statistics Cards */}
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
-              <div className="bg-gradient-to-br from-[#0B132B] to-[#142244] text-white p-4 sm:p-5 rounded-2xl shadow-md border border-[#FFD54A]/30 flex flex-col justify-between">
+              <InteractiveCard variant="gold" className="p-4 sm:p-5 flex flex-col justify-between">
                 <div className="flex items-center justify-between">
                   <span className="text-2xl">🏆</span>
                   <span className="text-[10px] font-extrabold uppercase bg-amber-400/20 text-[#FFD54A] px-2 py-0.5 rounded-md">Total</span>
                 </div>
                 <div className="mt-3">
-                  <div className="text-2xl sm:text-3xl font-black text-[#FFD54A]">{achievers.length}</div>
+                  <div className="text-2xl sm:text-3xl font-black text-[#FFD54A]">
+                    <AnimatedCounter value={achievers.length} />
+                  </div>
                   <div className="text-xs font-bold text-gray-300 mt-0.5">{currentLanguage === 'en' ? 'Total Achievers' : 'कुल विभूतियाँ'}</div>
                 </div>
-              </div>
+              </InteractiveCard>
 
-              <div className="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-gray-200 flex flex-col justify-between hover:border-[#004B23] transition">
+              <InteractiveCard variant="light" className="p-4 sm:p-5 flex flex-col justify-between">
                 <div className="flex items-center justify-between">
                   <Briefcase className="w-6 h-6 text-[#004B23]" />
                   <span className="text-[10px] font-extrabold uppercase bg-emerald-100 text-[#004B23] px-2 py-0.5 rounded-md">Active</span>
                 </div>
                 <div className="mt-3">
-                  <div className="text-2xl sm:text-3xl font-black text-[#0B132B]">{categories.length}</div>
+                  <div className="text-2xl sm:text-3xl font-black text-[#0B132B]">
+                    <AnimatedCounter value={categories.length} />
+                  </div>
                   <div className="text-xs font-bold text-gray-600 mt-0.5">{currentLanguage === 'en' ? 'Total Professions' : 'कुल पेशे'}</div>
                 </div>
-              </div>
+              </InteractiveCard>
 
-              <div className="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-gray-200 flex flex-col justify-between hover:border-amber-500 transition">
+              <InteractiveCard variant="light" className="p-4 sm:p-5 flex flex-col justify-between">
                 <div className="flex items-center justify-between">
                   <Sparkles className="w-6 h-6 text-amber-500" />
                   <span className="text-[10px] font-extrabold uppercase bg-amber-100 text-amber-800 px-2 py-0.5 rounded-md">Free</span>
                 </div>
                 <div className="mt-3">
-                  <div className="text-2xl sm:text-3xl font-black text-[#0B132B]">{achievers.filter(a => a.isMentor).length}</div>
+                  <div className="text-2xl sm:text-3xl font-black text-[#0B132B]">
+                    <AnimatedCounter value={achievers.filter(a => a.isMentor).length} />
+                  </div>
                   <div className="text-xs font-bold text-gray-600 mt-0.5">{currentLanguage === 'en' ? 'Total Mentors' : 'कुल मार्गदर्शक'}</div>
                 </div>
-              </div>
+              </InteractiveCard>
 
-              <div className="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-gray-200 flex flex-col justify-between hover:border-blue-500 transition">
+              <InteractiveCard variant="light" className="p-4 sm:p-5 flex flex-col justify-between">
                 <div className="flex items-center justify-between">
                   <ShieldCheck className="w-6 h-6 text-blue-600" />
                   <span className="text-[10px] font-extrabold uppercase bg-blue-100 text-blue-800 px-2 py-0.5 rounded-md">IAS / IPS</span>
                 </div>
                 <div className="mt-3">
-                  <div className="text-2xl sm:text-3xl font-black text-[#0B132B]">{achievers.filter(a => a.isGovt).length}</div>
+                  <div className="text-2xl sm:text-3xl font-black text-[#0B132B]">
+                    <AnimatedCounter value={achievers.filter(a => a.isGovt).length} />
+                  </div>
                   <div className="text-xs font-bold text-gray-600 mt-0.5">{currentLanguage === 'en' ? 'Govt Officers' : 'सरकारी अधिकारी'}</div>
                 </div>
-              </div>
+              </InteractiveCard>
 
-              <div className="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-gray-200 flex flex-col justify-between hover:border-purple-500 transition">
+              <InteractiveCard variant="light" className="p-4 sm:p-5 flex flex-col justify-between">
                 <div className="flex items-center justify-between">
                   <Globe className="w-6 h-6 text-purple-600" />
                   <span className="text-[10px] font-extrabold uppercase bg-purple-100 text-purple-800 px-2 py-0.5 rounded-md">Global</span>
                 </div>
                 <div className="mt-3">
-                  <div className="text-2xl sm:text-3xl font-black text-[#0B132B]">{achievers.filter(a => a.isOverseas).length}</div>
+                  <div className="text-2xl sm:text-3xl font-black text-[#0B132B]">
+                    <AnimatedCounter value={achievers.filter(a => a.isOverseas).length} />
+                  </div>
                   <div className="text-xs font-bold text-gray-600 mt-0.5">{currentLanguage === 'en' ? 'Overseas NRI' : 'प्रवासी भारतीय'}</div>
                 </div>
-              </div>
+              </InteractiveCard>
 
-              <div className="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-gray-200 flex flex-col justify-between hover:border-rose-500 transition">
+              <InteractiveCard variant="light" className="p-4 sm:p-5 flex flex-col justify-between">
                 <div className="flex items-center justify-between">
                   <Award className="w-6 h-6 text-rose-600" />
                   <span className="text-[10px] font-extrabold uppercase bg-rose-100 text-rose-800 px-2 py-0.5 rounded-md">Honors</span>
                 </div>
                 <div className="mt-3">
-                  <div className="text-2xl sm:text-3xl font-black text-[#0B132B]">{awards.length}</div>
+                  <div className="text-2xl sm:text-3xl font-black text-[#0B132B]">
+                    <AnimatedCounter value={awards.length} />
+                  </div>
                   <div className="text-xs font-bold text-gray-600 mt-0.5">{currentLanguage === 'en' ? 'Award Winners' : 'पुरस्कार विजेता'}</div>
                 </div>
-              </div>
+              </InteractiveCard>
             </div>
 
             {/* Featured Achievers Grid */}

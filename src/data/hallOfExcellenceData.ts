@@ -480,7 +480,7 @@ export const INITIAL_CATEGORIES: AchieverCategory[] = [
   { id: 'law-judiciary', nameEn: 'Law & Judiciary', nameHi: 'कानून एवं न्यायपालिका', nameUr: 'قانون اور عدلیہ', icon: 'Scale', count: 0, descriptionEn: 'High Court & District Judges, Supreme Court Advocates & Jurists', descriptionHi: 'उच्च न्यायालय व जिला न्यायाधीश, उच्चतम न्यायालय अधिवक्ता व कानूनविद', descriptionUr: 'ہائیکورٹ و سیشن ججز، سپریم کورٹ کے وکلاء اور قانونی ماہرین' },
   { id: 'medical-health', nameEn: 'Medical & Healthcare', nameHi: 'चिकित्सा एवं स्वास्थ्य सेवा', nameUr: 'طبی اور صحت کی دیکھ بھال', icon: 'Activity', count: 0, descriptionEn: 'Super specialists, senior doctors, surgeons & medical officers', descriptionHi: 'सुपर स्पेशलिस्ट, वरिष्ठ डॉक्टर, सर्जन व चिकित्सा अधिकारी', descriptionUr: 'سپر اسپیشلسٹ، سینئر ڈاکٹرز، سرجنز اور میڈیکل آفیسرز' },
   { id: 'science-tech', nameEn: 'Science & Technology', nameHi: 'विज्ञान एवं तकनीकी अनुसंधान', nameUr: 'سائنس اور ٹیکنالوجی ریسرچ', icon: 'Atom', count: 0, descriptionEn: 'ISRO/NASA scientists, tech innovators & global researchers', descriptionHi: 'इसरो/नासा वैज्ञानिक, तकनीकी अन्वेषक व वैश्विक शोधकर्ता', descriptionUr: 'اسرو اور ناسا کے سائنسدان، موجد اور محققین' },
-  { id: 'public-rep', nameEn: 'Public Representatives', nameHi: 'जनप्रतिनिधि एवं राजनेता', nameUr: 'عوامی نمائندے اور سیاست دان', icon: 'Users', count: 1, descriptionEn: 'MPs, MLAs, Cabinet Ministers, Mayors & Party Presidents', descriptionHi: 'सांसद, विधायक, कैबिनेट मंत्री, महापौर एवं पार्टी अध्यक्ष', descriptionUr: 'ممبران پارلیمنٹ، اسمبلی اراکین، وزراء اور میئرز' },
+  { id: 'public-rep', nameEn: 'Public Representatives', nameHi: 'जनप्रतिनिधि एवं राजनेता', nameUr: 'عوامی نمائندے اور سیاست دان', icon: 'Users', count: 2, descriptionEn: 'MPs, MLAs, Cabinet Ministers, Mayors & Party Presidents', descriptionHi: 'सांसद, विधायक, कैबिनेट मंत्री, महापौर एवं पार्टी अध्यक्ष', descriptionUr: 'ممبران پارلیمنٹ، اسمبلی اراکین، وزراء اور میئرز' },
   { id: 'civil-services', nameEn: 'Civil Services & UPSC', nameHi: 'सिविल सेवा (UPSC/SPSC)', nameUr: 'سول سروسز اور یو پی ایس سی', icon: 'Award', count: 0, descriptionEn: 'IAS, IPS, IFS, IRS, DySP & administrative executives', descriptionHi: 'आईएएस, आईपीएस, आईएफएस, आईआरएस, डीवाईएसपी व प्रशासनिक अधिकारी', descriptionUr: 'آئی اے ایس، آئی پی ایس، آئی ایف ایس اور انتظامی افسران' },
   { id: 'engineering-services', nameEn: 'Engineering Services', nameHi: 'अभियांत्रिकी सेवाएं (इंजीनियरिंग)', nameUr: 'انجینئرنگ خدمات', icon: 'Settings', count: 0, descriptionEn: 'Chief Engineers, Executive Engineers & IIT graduates', descriptionHi: 'मुख्य अभियंता, अधिशासी अभियंता व आईआईटी स्नातक', descriptionUr: 'چیف انجینئرز، ایگزیکٹو انجینئرز اور آئی آئی ٹی گریجویٹس' },
   { id: 'it-software', nameEn: 'IT & Software Engineers', nameHi: 'आईटी एवं सॉफ्टवेयर विशेषज्ञ', nameUr: 'آئی ٹی اور سافٹ ویئر انجینئرز', icon: 'Cpu', count: 0, descriptionEn: 'Google, Microsoft, Meta staff, tech leads & silicon valley architects', descriptionHi: 'गूगल, माइक्रोसॉफ्ट, मेटा स्टाफ, टेक लीड व सिलिकॉन वैली विशेषज्ञ', descriptionUr: 'گوگل، مائیکروسافٹ اور سلیکان ویلی کے سافٹ ویئر انجینئرز' },
@@ -488,7 +488,7 @@ export const INITIAL_CATEGORIES: AchieverCategory[] = [
   { id: 'teachers', nameEn: 'Government Teachers', nameHi: 'सरकारी शिक्षक', nameUr: 'سرکاری اساتذہ', icon: 'GraduationCap', count: 0, descriptionEn: 'Principal, Lecturer, PGT, TGT & Headmasters', descriptionHi: 'प्रधानाचार्य, व्याख्याता, वरिष्ठ अध्यापक', descriptionUr: 'سرکاری اسکولوں کے اساتذہ' },
   { id: 'armed-forces', nameEn: 'Armed Forces', nameHi: 'सशस्त्र बल (सेना)', nameUr: 'مسلح افواج', icon: 'ShieldAlert', count: 0, descriptionEn: 'Army, Navy, Air Force & Paramilitary Officers', descriptionHi: 'थल सेना, नौसेना, वायु सेना व अर्धसैनिक अधिकारी', descriptionUr: 'آرمی، نیوی اور ایئر فورس افسران' },
   { id: 'overseas', nameEn: 'Overseas Professionals', nameHi: 'प्रवासी भारतीय विशेषज्ञ (NRI)', nameUr: 'بیرون ملک مقیم ماہرین', icon: 'Globe', count: 0, descriptionEn: 'Community professionals working in USA, UK, Gulf & Europe', descriptionHi: 'अमेरिका, ब्रिटेन, खाड़ी व यूरोप में कार्यरत विशेषज्ञ', descriptionUr: 'امریکہ، یورپ اور خلیج میں کام کرنے والے ماہرین' },
-  { id: 'entrepreneurs', nameEn: 'Entrepreneurs & CEOs', nameHi: 'उद्यमी एवं उद्योगपति', nameUr: 'تاجر اور صنعت کار', icon: 'Briefcase', count: 0, descriptionEn: 'Business founders, industrial pioneers & startup mentors', descriptionHi: 'व्यवसाय संस्थापक, औद्योगिक अग्रणी व मेंटर', descriptionUr: 'کامیاب کاروباری شخصیات اور سی ای اوز' },
+  { id: 'entrepreneurs', nameEn: 'Entrepreneurs & CEOs', nameHi: 'उद्यमी एवं उद्योगपति', nameUr: 'تاجر اور صنعت کار', icon: 'Briefcase', count: 2, descriptionEn: 'Business founders, industrial pioneers & startup mentors', descriptionHi: 'व्यवसाय संस्थापक, औद्योगिक अग्रणी व मेंटर', descriptionUr: 'کامیاب کاروباری شخصیات اور سی ای اوز' },
   { id: 'gold-medalists', nameEn: 'Gold Medalists & Toppers', nameHi: 'गोल्ड मेडलिस्ट एवं टॉपर्स', nameUr: 'گولڈ میڈلسٹ اور ٹاپرز', icon: 'Medal', count: 0, descriptionEn: 'University toppers, national scholars & excellence awardees', descriptionHi: 'विश्वविद्यालय टॉपर व राष्ट्रीय छात्रवृत्ति विजेता', descriptionUr: 'یونیورسٹی ٹاپرز اور گولڈ میڈلسٹ' },
   { id: 'ca-finance', nameEn: 'Chartered Accountants', nameHi: 'चार्टर्ड अकाउंटेंट्स (CA)', nameUr: 'چارٹرڈ اکاؤنٹنٹس', icon: 'TrendingUp', count: 0, descriptionEn: 'CAs, Financial Analysts, Banking Leaders & Economists', descriptionHi: 'सीए, वित्तीय विश्लेषक, बैंकिंग अधिकारी', descriptionUr: 'سی اے اور مالیاتی ماہرین' },
   { id: 'it-professionals', nameEn: 'IT Professionals', nameHi: 'आईटी एवं तकनीकी विशेषज्ञ', nameUr: 'آئی टी विशेषज्ञ', icon: 'Laptop', count: 0, descriptionEn: 'Google, Microsoft, Amazon architects & IT managers', descriptionHi: 'गूगल, माइक्रोसॉफ्ट, अमेज़न आर्किटेक्ट व आईटी प्रबंधक', descriptionUr: 'گوگل اور مائیکروسافٹ کے آئی ٹی ماہرین' },
@@ -496,7 +496,7 @@ export const INITIAL_CATEGORIES: AchieverCategory[] = [
   { id: 'nurses', nameEn: 'Nurses & Healthcare', nameHi: 'नर्सिंग एवं स्वास्थ्य कार्यकर्ता', nameUr: 'نرسیں اور ہیلتھ کیئر', icon: 'Heart', count: 0, descriptionEn: 'Chief Nursing Officers, AIIMS specialists & health leaders', descriptionHi: 'मुख्य नर्सिंग अधिकारी, एम्स विशेषज्ञ', descriptionUr: 'اعلیٰ نرسنگ آفیسرز اور صحت کے کارکن' },
   { id: 'fire-emergency', nameEn: 'Fire & Emergency', nameHi: 'अग्निशमन एवं आपातकालीन सेवा', nameUr: 'فائر اور ایمرجنسی سروسز', icon: 'Flame', count: 0, descriptionEn: 'Chief Fire Officers, Disaster Response Commandants', descriptionHi: 'मुख्य अग्निशमन अधिकारी, आपदा प्रतिक्रिया कमांडर', descriptionUr: 'فائر آفیسرز اور ایمرجنسی کمانڈر' },
   { id: 'sports', nameEn: 'Sports Persons', nameHi: 'खिलाड़ी एवं खेल रत्न', nameUr: 'کھلاڑی اور اسپورٹس مین', icon: 'Activity', count: 0, descriptionEn: 'National & international champions, Olympians & coaches', descriptionHi: 'राष्ट्रीय व अंतर्राष्ट्रीय चैंपियन, कोच व खिलाड़ी', descriptionUr: 'قومی اور بین الاقوامی کھلاڑی' },
-  { id: 'media-writers', nameEn: 'Writers, Artists & Media', nameHi: 'लेखक, कलाकार एवं पत्रकार', nameUr: 'مصنفین، فنکار اور صحافی', icon: 'PenTool', count: 0, descriptionEn: 'Authors, senior journalists, poets & cultural icons', descriptionHi: 'साहित्यकार, वरिष्ठ पत्रकार, कवि व सांस्कृतिक धरोहर', descriptionUr: 'مصنفिन، صحافی اور شعراء' },
+  { id: 'media-writers', nameEn: 'Writers, Artists & Media', nameHi: 'लेखक, कलाकार एवं पत्रकार', nameUr: 'مصنفین، فنکار اور صحافی', icon: 'PenTool', count: 1, descriptionEn: 'Authors, senior journalists, poets & cultural icons', descriptionHi: 'साहित्यकार, वरिष्ठ पत्रकार, कवि व सांस्कृतिक धरोहर', descriptionUr: 'مصنفین، صحافی اور شعراء' },
   { id: 'social-workers', nameEn: 'Social Workers & Reformers', nameHi: 'समाज सेवी एवं सुधारक', nameUr: 'سماجی کارکن اور مصلح', icon: 'HeartHandshake', count: 3, descriptionEn: 'Philanthropists, NGO leaders & community reformers', descriptionHi: 'दानवीर, एनजीओ संस्थापक व समाज सुधारक', descriptionUr: 'فلاحی اور سماجی رہنما' }
 ];
 
@@ -816,9 +816,9 @@ export const INITIAL_ACHIEVERS: AchieverProfile[] = [
     university: { en: 'Madhya Pradesh State Board', hi: 'मध्य प्रदेश राज्य बोर्ड', ur: 'مدھیہ پردیش اسٹیٹ بورڈ' },
     yearOfAchievement: 2009,
     careerJourney: {
-      en: 'Dedicated to the service of Islam and the Rangrez Community since his youth, Haji Asgar Sahab has spent decades working with Dawat aur Tablig. He has completed 23 Chillas (40-day preaching missions), 8–10 four-month Tabligh journeys, two international preaching tours to Tanzania, two family Tabligh journeys, and two special visits to the Nizamuddin Markaz. He consistently guides community elders, families, and youth to establish the five daily prayers, follow the Qur’an & Sunnah, and live according to noble values.',
-      hi: 'अपनी युवावस्था से ही इस्लाम और रंगरेज समाज की सेवा में समर्पित, हाजी असगर साहब ने दावत और तबलीग के साथ दशकों तक कार्य किया है। उन्होंने 23 चिल्ले (40-दिवसीय प्रचार मिशन), 8-10 चार महीने की तबलीग यात्राएं, तंजानिया के दो अंतर्राष्ट्रीय प्रचार दौरे, दो पारिवारिक तबलीग यात्राएं और निजामुद्दीन मरकज की दो विशेष प्रचार यात्राएं पूरी की हैं। वे निरंतर लोगों—विशेषकर रंगरेज समाज के युवाओं, बुजुर्गों और परिवारों को पांच वक्त की नमाज कायम करने, कुरान और सुन्नत का पालन करने और नेक अखलाक अपनाने के लिए प्रेरित करते हैं।',
-      ur: 'اپنی جوانی سے ہی اسلام اور رنگریز برادری کی خدمت کے لیے وقف, حاجی اصغر صاحب نے دعوت اور تبلیغ کے ساتھ دہائیاں گزاری ہیں۔ انہوں نے 23 چلے (40 روزہ تبلیغی مشن), 8-10 چار ماہ کے تبلیغی اسفار, تنزانیہ کے دو بین الاقوامی تبلیغی دورے, دو خاندانی تبلیغی اسفار اور نظام الدین مرکز کے دو خصوصی تبلیغی اسفار مکمل کیے ہیں۔ وہ مسلسل لوگوں—بالخصوص رنگریز برادری کے نوجوانوں, بزرگوں اور خاندانوں کو پانچ وقت کی نماز قائم کرنے, قرآن و سنت پر عمل کرنے اور عمدہ اخلاق اپنانے کی ترغیب دیتے ہیں۔'
+      en: 'Dedicated to the service of Islam and the Rangrez Community since his youth, Haji Asgar Sahab has spent decades working with Dawat aur Tablig. He has completed 23 Chillas (40-day preaching missions), 8–10 four-month Tabligh journeys, two international preaching tours to Tanzania, two family Tabligh journeys, and two special preaching visits to Nizamuddin Markaz. He continuously inspires community members, elders, and families to observe prayers, follow Quranic teachings, and adopt moral character.',
+      hi: 'अपनी युवावस्था से ही इस्लाम और रंगरेज समुदाय की सेवा के लिए समर्पित, हाजी असगर साहब ने दशकों तक दावत और तबलीग के साथ काम किया है। उन्होंने 23 चिल्ले (40 दिवसीय प्रचार मिशन), 8-10 चार महीने की तबलीग यात्राएं, तंजانिया के दो अंतर्राष्ट्रीय प्रचार दौरे, दो पारिवारिक तबलीग यात्राएं और निजामुद्दीन मरकज के दो विशेष प्रचार दौरे पूरे किए हैं। वे समाज के सदस्यों, बुजुर्गों और परिवारों को नमाज़ पढ़ने, कुरान की शिक्षाओं का पालन करने और नैतिक चरित्र अपनाने के लिए प्रेरित करते हैं।',
+      ur: 'اپنی جوانی سے ہی اسلام اور رنگریز برادری کی خدمت کے لیے وقف، حاجی اصغر صاحب نے دعوت اور تبلیغ کے ساتھ دہائیاں گزاری ہیں۔ انہوں نے 23 چلے (40 روزہ تبلیغی مشن)، 8-10 چار ماہ کے تبلیغی اسفار، تنزانیہ کے دو بین الاقوامی تبلیغی دورے، دو خاندانی تبلیغی اسفار اور نظام الدین مرکز کے دو خصوصی تبلیغی اسفار مکمل کیے ہیں۔ وہ مسلسل لوگوں—بالخصوص رنگریز برادری کے نوجوانوں، بزرگوں اور خاندانوں کو پانچ وقت کی نماز قائم کرنے، قرآن و سنت پر عمل کرنے اور عمدہ اخلاق اپنانے کی ترغیب دیتے ہیں۔'
     },
     biography: {
       en: 'Al-Haj Asgar Khan, son of Mr. Chhote Khan, is a highly respected member and elder of the Rangrez Community from Joura, Morena District, Madhya Pradesh. Having performed Hajj in 2009, he is widely known for his humility, gentle nature, and unwavering dedication to the teachings of Islam. Known for his honesty, courage, and compassionate approach, he always speaks the truth, promotes unity and kindness, and sincerely advises those around him. Through his lifelong commitment to Dawah, moral values, and community guidance, Al-Haj Asgar Khan continues to inspire others to lead lives rooted in faith, compassion, and righteousness.',
@@ -863,6 +863,271 @@ export const INITIAL_ACHIEVERS: AchieverProfile[] = [
     photoUrl: 'https://lh3.googleusercontent.com/d/14--ovBXj67M740_UzPNJ0aJp5id1KKrE',
     coverImageUrl: 'https://lh3.googleusercontent.com/d/1wxCjuqdmhKKD9JiPDF39-2Dl7GDqOvBk',
     badges: ['🕋 Al-Haj', '🕌 Spiritual Guide', '🤝 Senior Samajsevi', '⭐ Community Leader', '🌍 International Dawah']
+  },
+  {
+    id: 'parvej-khan-morena',
+    name: { en: 'Janab Parvej Khan', hi: 'जनाब परवेज खान', ur: 'جناب پرویز خان' },
+    fatherName: { en: 'Janab Kale Khan', hi: 'जनाब काले खान', ur: 'جناب کالے خان' },
+    gender: 'Male',
+    dob: '01/01/1992',
+    nativePlace: { en: 'Islampura, Morena, Madhya Pradesh', hi: 'इस्लामपुरा, मुरैना, मध्य प्रदेश', ur: 'اسلام پورہ، مورینا، مدھیہ پردیش' },
+    currentCity: { en: 'Morena', hi: 'मुरैना', ur: 'مورینا' },
+    district: { en: 'Morena', hi: 'मुरैना', ur: 'मोरिना' },
+    state: { en: 'Madhya Pradesh', hi: 'मध्य प्रदेश', ur: 'مدھیہ پردیش' },
+    country: { en: 'India', hi: 'भारत', ur: 'انڈیا' },
+    occupation: { en: 'Politician & Youth Leader (BSP Morena Assembly Vice President)', hi: 'राजनीतिज्ञ एवं युवा सामाजिक नेता (बसपा मुरैना विधानसभा उपाध्यक्ष)', ur: 'سیاست داں اور نوجوان سماجی رہنما (بی ایس پی مورینا اسمبلی نائب صدر)' },
+    categoryId: 'public-rep',
+    categoryTier: 'leadership',
+    designation: { en: 'Morena Assembly Vice President (BSP)', hi: 'मुरैना विधानसभा उपाध्यक्ष (बसपा)', ur: 'مورینا اسمبلی نائب صدر (بی ایس پی)' },
+    organization: { en: 'Bahujan Samaj Party (BSP) & Rangrez Samaj', hi: 'बहुजन समाज पार्टी (बसपा) एवं रंगरेज समाज', ur: 'بہوجن سماج پارٹی (بی ایس پی) و رنگریز برادری' },
+    politicalParty: 'Bahujan Samaj Party (BSP)',
+    qualification: { en: 'Bachelor of Arts (B.A.)', hi: 'कला स्नातक (बी.ए.)', ur: 'بیچلرز آف آرٹس (بی اے)' },
+    university: { en: 'Jiwaji University, Gwalior (MP)', hi: 'जीवाजी विश्वविद्यालय, ग्वालियर (मप्र)', ur: 'جیواجی یونیورسٹی، گوالیار' },
+    yearOfAchievement: 2024,
+    careerJourney: {
+      en: 'Parvej Khan is a socially aware, active and visionary young leader who closely follows every important issue concerning the community. Serving as Morena Assembly Vice President of BSP, he works tirelessly to advocate unity, education, social reform, and empowerment.',
+      hi: 'परवेज खान एक सामाजिक रूप से जागरूक, सक्रिय और दूरदर्शी युवा नेता हैं जो समुदाय से जुड़े हर महत्वपूर्ण मुद्दे को गहराई से समझते हैं। बसपा के मुरैना विधानसभा उपाध्यक्ष के रूप में, वे समाज में एकता, शिक्षा, सामाजिक सुधार और कुरीतियों के उन्मूलन के लिए निरंतर प्रयासरत हैं।',
+      ur: 'پرویز خان ایک سماجی طور پر بیدار، متحرک اور دور اندیش نوجوان رہنما ہیں جو برادری کے تمام اہم مسائل سے گہرا لگاؤ رکھتے ہیں۔ بی ایس پی کے مورینا اسمبلی نائب صدر کے طور پر، وہ اتحاد، تعلیم، سماجی اصلاحات اور بے جا رسومات کے خاتمے کے لیے مسلسل کوشاں ہیں۔'
+    },
+    biography: {
+      en: 'Janab Parvej Khan, son of Janab Kale Khan, born on 1st January 1992 in Islampura, Morena (M.P.), completed his Bachelor of Arts degree and emerged as a prominent youth voice in political and social spheres. Having experienced life struggles firsthand, he believes that the progress of society depends upon unity, education, awareness, and social reform. Currently serving as Vice President of the Morena Assembly Constituency for BSP, he advocates removing wasteful customs and encouraging youth participation in public leadership.',
+      hi: 'जनाब काले खान के सुपुत्र जनाब परवेज खान का जन्म 01 जनवरी 1992 को इस्लामपुरा, मुरैना (म.प्र.) में हुआ। बी.ए. स्नातक परवेज खान राजनीतिक और सामाजिक क्षेत्रों में युवाओं की एक सशक्त आवाज बनकर उभरे हैं। जीवन में संघर्षों को करीब से देखने के बाद वे मानते हैं कि समाज की प्रगति एकता, शिक्षा, जागरूकता और सामाजिक सुधार पर निर्भर करती है। बहुजन समाज पार्टी (बसपा) के मुरैना विधानसभा उपाध्यक्ष के रूप में वे फिजूलखर्ची वाली सामाजिक कुरीतियों को समाप्त करने और युवाओं को राष्ट्रनिर्माण से जोड़ने का काम कर रहे हैं।',
+      ur: 'جناب کالے خان کے صاحبزادے جناب پرویز خان 01 جنوری 1992 کو اسلام پورہ، مورینا (ایم پی) میں پیدا ہوئے۔ بی اے گریجویٹ پرویز خان سیاسی اور سماجی میدان میں نوجوانوں کی ایک مضبوط آواز بن کر ابھرے ہیں۔ زندگی کی جدوجہد کا تجربہ رکھنے کی وجہ سے ان کا ماننا ہے کہ برادری کی ترقی اتحاد، تعلیم، بیداری اور سماجی اصلاحات پر منحصر ہے۔ بہوجن سماج پارٹی (بی ایس پی) کے مورینا اسمبلی نائب صدر کے طور پر وہ فضول رسم و رواج کے خاتمے اور نوجوانوں کو عوامی قیادت میں لانے کے لیے سرگرم عمل ہیں۔'
+    },
+    majorAchievements: [
+      'Appointed as Morena Assembly Vice President for Bahujan Samaj Party (BSP)',
+      'Championed youth leadership and education initiatives across Morena District',
+      'Actively advocated removing wasteful customs and social evils in Rangrez Samaj',
+      'Organized public awareness campaigns and social reform conventions in MP'
+    ],
+    awardsHonors: [
+      'Morena Youth Leadership & Public Governance Recognition 2024',
+      'Rangrez Samaj Social Reformer Appreciation Honor'
+    ],
+    socialContributions: {
+      en: 'Consistently encourages unity among people, advocates removal of unnecessary social customs hindering community development, and leads youth empowerment initiatives in Morena.',
+      hi: 'लोगों में एकता को बढ़ावा देने, समाज के विकास में बाधक अनावश्यक रीति-रिवाजों को हटाने और मुरैना में युवा सशक्तिकरण का नेतृत्व करने में निरंतर सक्रिय।',
+      ur: 'لوگوں میں اتحاد کو فروغ دینے، برادری کی ترقی میں حائل بے جا رسومات کے خاتمے اور مورینا میں نوجوانوں کی بیداری کے لیے مسلسل کوشاں۔'
+    },
+    inspirationalMessage: {
+      en: 'Progress of society depends upon unity, education, awareness and social reform. Struggle builds resilience, and collective effort brings lasting change.',
+      hi: 'समाज की प्रगति एकता, शिक्षा, जागरूकता और सामाजिक सुधार पर निर्भर करती है। संघर्ष हमें मजबूत बनाता है और सामूहिक प्रयास से ही स्थायी बदलाव आता है।',
+      ur: 'برادری کی ترقی اتحاد، تعلیم، بیداری اور سماجی اصلاح پر منحصر ہے۔ جدوجہد انسان کو مضبوط بناتی ہے اور اجتماعی کوششوں سے ہی دیرپا تبدیلی آتی ہے۔'
+    },
+    careerAdvice: {
+      en: 'Focus on higher education, develop political awareness, and actively serve the community with honesty, courage, and dedication.',
+      hi: 'उच्च शिक्षा पर ध्यान दें, राजनीतिक जागरूकता विकसित करें और पूरी ईमानदारी, साहस और निष्ठा के साथ समाज की सेवा करें।',
+      ur: 'اعلیٰ تعلیم پر توجہ دیں، سیاسی شعور بیدار کریں اور مکمل ایمانداری، ہمت اور لگن کے ساتھ برادری کی خدمت کریں۔'
+    },
+    languagesKnown: ['Hindi', 'Urdu', 'English'],
+    expertise: ['Public Governance', 'Youth Leadership', 'Social Reform', 'Community Advocacy'],
+    contactPermission: true,
+    isMentor: true,
+    isVerified: true,
+    isFeatured: true,
+    isGovt: false,
+    isOverseas: false,
+    photoUrl: 'https://lh3.googleusercontent.com/d/1bgFoF6M2XUFpPMKwON9o_a8e8MHPTAal',
+    coverImageUrl: 'https://lh3.googleusercontent.com/d/1muPXpLY_ziTvdDfKAd8bpMBZsKUj088t',
+    badges: ['🏛️ Public Leader', '🌟 BSP Assembly Vice President', '🤝 Social Reformer', '⭐ Youth Icon']
+  },
+  {
+    id: 'khalid-khan-tentara',
+    name: { en: 'Janab Khalid Khan', hi: 'जनाब खालिद खान', ur: 'جناب خالد خان' },
+    fatherName: { en: 'Janab Haji Latif Khan', hi: 'जनाब हाजी लतीफ खान', ur: 'جناب حاجی لطیف खान' },
+    gender: 'Male',
+    dob: '12/02/1977',
+    nativePlace: { en: 'Tentara, Tehsil Sabalgarh, District Morena, Madhya Pradesh', hi: 'टैंटरा, तहसील सबलगढ़, जिला मुरैना, मध्य प्रदेश', ur: 'ٹینٹرا، تحصیل سبلاگڑھ، ضلع مورینا، مدھیہ پردیش' },
+    currentCity: { en: 'Tentara (Morena)', hi: 'टैंटरा (मुरैना)', ur: 'ٹینٹرا (مورینا)' },
+    district: { en: 'Morena', hi: 'मुरैना', ur: 'मोरिना' },
+    state: { en: 'Madhya Pradesh', hi: 'मध्य प्रदेश', ur: 'مدھیہ پردیش' },
+    country: { en: 'India', hi: 'भारत', ur: 'انڈیا' },
+    occupation: { en: 'Transport Entrepreneur & Social Worker', hi: 'परिवहन व्यवसायी एवं समाजसेवी', ur: 'ٹرانسپورٹ تاجر و سماجی خادم' },
+    categoryId: 'entrepreneurs',
+    categoryTier: 'gold',
+    designation: { en: 'Transport Entrepreneur, Social Worker', hi: 'ट्रांसपोर्ट व्यवसायी, समाजसेवी', ur: 'ٹرانسپورٹ بزنس مین، سماجی خادم' },
+    organization: { en: 'Khan Transport Services & Sabalgarh Samaj Samiti', hi: 'खान ट्रांसपोर्ट सर्विसेज एवं सबलगढ़ समाज समिति', ur: 'خان ٹرانسپورٹ سروسز و سبلاگڑھ سماج کمیٹی' },
+    qualification: { en: 'Higher Secondary (12th)', hi: 'उच्चतर माध्यमिक (12वीं)', ur: 'ہائر سیکنڈری (12ویں)' },
+    university: { en: 'MP State School Board', hi: 'म.प्र. राज्य बोर्ड', ur: 'ایم پی اسٹیٹ بورڈ' },
+    yearOfAchievement: 2023,
+    careerJourney: {
+      en: 'Janab Khalid Khan built a successful transport business based on principles of honesty, discipline, and hard work in Sabalgarh, Morena. Alongside business, he is a dedicated social worker who actively supports community education, peace, and social welfare.',
+      hi: 'जनाब खालिद खान ने सबलगढ़, मुरैना में ईमानदारी, अनुशासन और कड़ी मेहनत के सिद्धांतों पर एक सफल ट्रांसपोर्ट व्यवसाय स्थापित किया। व्यवसाय के साथ-साथ वे एक समर्पित समाजसेवी हैं जो सामुदायिक शिक्षा, शांति और सामाजिक कल्याण का निरंतर समर्थन करते हैं।',
+      ur: 'جناب خالد خان نے سبلاگڑھ، مورینا میں ایمانداری، نظم و ضبط اور سخت محنت کے اصولوں پر ایک کامیاب ٹرانسپورٹ کا کاروبار قائم کیا۔ کاروبار کے ساتھ ساتھ وہ ایک مخلص سماجی خادم ہیں جو تعلیمی بیداری اور سماجی فلاح و بہبود میں اہم کردار ادا کرتے ہیں۔'
+    },
+    biography: {
+      en: 'Janab Khalid Khan is a respected social worker from Tentara, Tehsil Sabalgarh, District Morena (M.P.). Son of Janab Haji Latif Khan, born on 12th February 1977, he has consistently contributed to community welfare, social awareness, and public service initiatives. He is known for promoting unity, brotherhood, and educational awareness within society. His dedication to helping people and supporting community development has earned him immense respect among the local people.',
+      hi: 'जनाब हाजी लतीफ खान के सुपुत्र जनाब खालिद खान का जन्म 12 फरवरी 1977 को टैंटरा (तहसील सबलगढ़, जिला मुरैना, म.प्र.) में हुआ। वे एक सम्मानित ट्रांसपोर्ट व्यवसायी और प्रमुख समाजसेवी हैं। अपनी स्वच्छ छवि, अनुशासित जीवनशैली और शालीन व्यवहार के लिए जाने जाने वाले खालिद खान जब भी अपने विचार व्यक्त करते हैं, उनमें दूरदर्शिता और परिपक्वता झलकती है। वे समुदाय के शैक्षणिक और सामाजिक सौहार्द कार्यक्रमों में अग्रणी भूमिका निभाते हैं।',
+      ur: 'جناب حاجی لطیف خان کے صاحبزادے جناب خالد خان 12 فروری 1977 کو ٹینٹرا (تحصیل سبلاگڑھ، ضلع مورینا، ایم پی) میں پیدا ہوئے۔ وہ ایک باوقار ٹرانسپورٹ تاجر اور معروف سماجی خادم ہیں۔ اپنی صاف ستھری ساکھ، باضابطہ طرز زندگی اور سنجیدہ اخلاق کے لیے جانے جانے والے خالد خان سنجیدگی اور دور اندیشی کے ساتھ بات کرتے ہیں۔ وہ مورینا اور چنبل کے علاقے میں تعلیمی، اصلاحی اور فلاحی کاموں میں ہمیشہ پیش پیش رہتے ہیں۔'
+    },
+    majorAchievements: [
+      'Established and operated a highly credible logistics & transport business in Sabalgarh',
+      'Maintained a distinguished record of community service and social arbitration in Morena',
+      'Actively funded and supported educational scholarships for underprivileged Rangrez students',
+      'Promoted inter-community harmony and peace building in Sabalgarh Tehsil'
+    ],
+    awardsHonors: [
+      'Sabalgarh Transport Entrepreneurship & Social Service Honor',
+      'Rangrez Samaj Clean Image & Public Respect Award'
+    ],
+    socialContributions: {
+      en: 'Provides assistance for poor families, sponsors educational supplies, supports matrimonial reconciliation, and advocates for community unity in Tentara and Sabalgarh.',
+      hi: 'जरूरतमंद परिवारों की सहायता, गरीब बच्चों की शिक्षा में मदद, पारिवारिक सौहार्द और टैंटरा व सबलगढ़ में समाज की एकजुटता के लिए निरंतर सेवा।',
+      ur: 'ضرورت مند خاندانوں کی مدد، غریب بچوں کی تعلیم کے لیے مالی تعاون اور ٹینٹرا و سبلاگڑھ میں برادری کے اتحاد کے لیے گرانقدر خدمات۔'
+    },
+    inspirationalMessage: {
+      en: 'Honesty and discipline in business paired with humility in heart build lifelong respect. Always stand for truth, education, and social harmony.',
+      hi: 'व्यापार में ईमानदारी और जीवन में अनुशासन ही सच्चा सम्मान दिलाता है। हमेशा सच्चाई, शिक्षा और सामाजिक सौहार्द के पक्ष में खड़े रहें।',
+      ur: 'کاروبار میں ایمانداری اور زندگی میں نظم و ضبط ہی حقیقی عزت کا سبب بنتا ہے۔ ہمیشہ سچائی، تعلیم اور سماجی ہم آہنگی کے ساتھ کھڑے رہیں۔'
+    },
+    careerAdvice: {
+      en: 'Combine entrepreneurship with social responsibility. Build your work on trust and never forget to give back to the society that nurtured you.',
+      hi: 'उद्यमिता को सामाजिक उत्तरदायित्व के साथ जोड़ें। अपने काम को भरोसे की नींव पर बनाएं और समाज को वापस लौटाना कभी न भूलें।',
+      ur: 'کاروباری سفر کو سماجی ذمہ داری کے ساتھ جوڑیں۔ اپنے کام کی بنیاد اعتماد پر رکھیں اور جس معاشرے نے آپ کو پروان چڑھایا اسے واپس دینا کبھی نہ بھولیں۔'
+    },
+    languagesKnown: ['Hindi', 'Urdu'],
+    expertise: ['Logistics & Transport Management', 'Social Welfare', 'Community Arbitration', 'Public Relations'],
+    contactPermission: true,
+    isMentor: true,
+    isVerified: true,
+    isFeatured: true,
+    isGovt: false,
+    isOverseas: false,
+    photoUrl: 'https://lh3.googleusercontent.com/d/10IjHFOTYJWYCKDiFqf50BI3fj7qc5QMZ',
+    coverImageUrl: 'https://lh3.googleusercontent.com/d/1GuBAP52qFWce1VnDQqjgpj1060g77Gf9',
+    badges: ['💼 Transport Entrepreneur', '🤝 Respectful Social Worker', '⭐ Sabalgarh Samaj Icon', '✨ Clean Public Image']
+  },
+  {
+    id: 'jaan-muhammad-khan-nurabad',
+    name: { en: 'Janab Jaan Muhammad Khan', hi: 'जनाब जान मोहम्मद खान', ur: 'جناب جان محمد خان' },
+    fatherName: { en: 'Janab Mustafa Khan', hi: 'जनाब मुस्तफा खान', ur: 'جناب مصطفیٰ خان' },
+    gender: 'Male',
+    dob: '05/06/1982',
+    nativePlace: { en: 'Nurabad, District Morena, Madhya Pradesh', hi: 'नूराबाद, जिला मुरैना, मध्य प्रदेश', ur: 'نورآباد، ضلع مورینا، مدھیہ پردیش' },
+    currentCity: { en: 'Nurabad (Morena)', hi: 'नूराबाद (मुरैना)', ur: 'نورآباد (مورینا)' },
+    district: { en: 'Morena', hi: 'मुरैना', ur: 'मोरिना' },
+    state: { en: 'Madhya Pradesh', hi: 'मध्य प्रदेश', ur: 'مدھیہ پردیش' },
+    country: { en: 'India', hi: 'भारत', ur: 'انڈیا' },
+    occupation: { en: 'Timber Merchant, Social Analyst & Community Spokesperson', hi: 'लकड़ी व्यापारी, सामाजिक विश्लेषक एवं प्रवक्ता', ur: 'ٹمبر تاجر، سماجی تجزیہ نگار اور برادری کے ترجمان' },
+    categoryId: 'entrepreneurs',
+    categoryTier: 'leadership',
+    designation: { en: 'Timber Merchant, Social Analyst & Community Spokesperson', hi: 'लकड़ी व्यापारी, सामाजिक विश्लेषक एवं प्रवक्ता', ur: 'ٹمبر تاجر، سماجی تجزیہ نگار اور برادری کے ترجمان' },
+    organization: { en: 'Nurabad Saw Mill & Bamour Rangrez Committee', hi: 'नूराबाद सॉ मिल एवं बानमोर रंगरेज समिति', ur: 'نورآباد سا مل و بامور رنگریز کمیٹی' },
+    qualification: { en: 'Graduate', hi: 'स्नातक', ur: 'گریجویٹ' },
+    university: { en: 'Jiwaji University, Gwalior (MP)', hi: 'जीवाजी विश्वविद्यालय, ग्वालियर', ur: 'جیواجی یونیورسٹی، گوالیار' },
+    yearOfAchievement: 2024,
+    careerJourney: {
+      en: 'Janab Jaan Muhammad Khan is a respected timber merchant who operates a sawmill in Nurabad, Morena. Renowned for his intellectual clarity, logical debate skills, and deep social analysis, he serves as an influential spokesperson for Rangrez Samaj across the Chambal region.',
+      hi: 'जनाब जान मोहम्मद खान एक प्रतिष्ठित इमारती लकड़ी व्यापारी हैं जो नूराबाद, मुरैना में सॉ मिल संचालित करते हैं। अपनी बौद्धिक स्पष्टता, तर्कसंगत संवाद और गहरे सामाजिक विश्लेषण के लिए प्रसिद्ध, वे चंबल क्षेत्र में रंगरेज समाज के प्रभावशाली प्रवक्ता के रूप में जाने जाते हैं।',
+      ur: 'جناب جان محمد خان ایک معزز ٹمبر تاجر ہیں جو نورآباد، مورینا میں سا مل چلاتے ہیں۔ اپنی عقلی گفتگو، دلائل پر مبنی انداز اور سماجی تجزیہ نگاری کے لیے معروف، وہ چنبل کے علاقے میں رنگریز برادری کے بااثر ترجمان کے طور پر جانے جاتے ہیں۔'
+    },
+    biography: {
+      en: 'Janab Jaan Muhammad Khan, son of Janab Mustafa Khan, born on 5th June 1982 in Nurabad, District Morena (M.P.), is a graduate timber entrepreneur, social analyst, and community spokesperson. He is widely appreciated for presenting his opinions with facts, logic, and clarity during community conventions and online forums. Previously serving as the Special Advisor to the Bamour Committee, his analytical approach, articulate speech, and dedication to social progress continue to guide and inspire community youth.',
+      hi: 'जनाब मुस्तफा खान के सुपुत्र जनाब जान मोहम्मद खान का जन्म 05 जून 1982 को नूराबाद, जिला मुरैना (म.प्र.) में हुआ। स्नातक शिक्षित जान मोहम्मद खान एक सफल लकड़ी व्यापारी, प्रखर सामाजिक विश्लेषक और समाज के मुख्य प्रवक्ता हैं। वे समाज की बैठकों, ऑनलाईन चर्चाओं और सम्मेलनों में तथ्यों और तर्क के साथ अपनी बात रखते हैं। पूर्व में बानमोर समिति के विशेष सलाहकार के रूप में उनकी विश्लेषणात्मक दृष्टि और संवाद शैली ने समाज के युवाओं को बहुत प्रेरित किया है।',
+      ur: 'جناب مصطفیٰ خان کے صاحبزادے جناب جان محمد خان 05 جون 1982 کو نورآباد، ضلع مورینا (ایم پی) میں پیدا ہوئے۔ گریجویٹ تعلیم یافتہ جان محمد خان ایک کامیاب ٹمبر تاجر، سماجی تجزیہ نگار اور برادری کے بااصول ترجمان ہیں۔ وہ آن لائن اور آف لائن میٹنگوں میں حقائق اور دلائل کے ساتھ بات رکھتے ہیں۔ سابقہ طور پر بامور کمیٹی کے خصوصی مشیر کے طور پر ان کی دانشمندانہ قیادت اور تجزیاتی صلاحیتوں نے برادری کے نوجوانوں میں شعور بیدار کیا ہے۔'
+    },
+    majorAchievements: [
+      'Built and operated a thriving timber trade and sawmill business in Nurabad',
+      'Served as Special Advisor to the Bamour Rangrez Committee providing strategic guidance',
+      'Represented Rangrez Samaj as a key spokesperson in media and state-level dialogues',
+      'Promoted fact-based constructive dialogue and digital awareness among community youth'
+    ],
+    awardsHonors: [
+      'Rangrez Samaj Best Intellectual Spokesperson & Social Analyst Honor',
+      'Bamour Committee Special Advisory Excellence Recognition'
+    ],
+    socialContributions: {
+      en: 'Advocates fact-based social discussions, provides advisory support to local committees, encourages youth education, and works to unite community members across Madhya Pradesh.',
+      hi: 'तथ्य-आधारित सामाजिक संवाद, स्थानीय समितियों को रणनीतिक मार्गदर्शन, युवा शिक्षा को बढ़ावा और मध्य प्रदेश में समाज को संगठित करने का कार्य।',
+      ur: 'حقائق پر مبنی سماجی گفتگو، مقامی کمیٹیوں کو مشورے، نوجوانوں کی تعلیم اور مدھیہ پردیش میں برادری کی بیداری کے لیے کوشاں۔'
+    },
+    inspirationalMessage: {
+      en: 'Express your thoughts with logic, facts, and clarity. Constructive dialogue and positive thinking are the keys to social progress.',
+      hi: 'अपने विचारों को तर्क, तथ्य और स्पष्टता के साथ व्यक्त करें। रचनात्मक संवाद और सकारात्मक सोच ही सामाजिक प्रगति की कुंजी है।',
+      ur: 'اپنے خیالات کا اظہار دلائل، حقائق اور وضاحت کے ساتھ کریں۔ تعمیری گفتگو اور مثبت سوچ ہی سماجی ترقی کی کنجی ہے۔'
+    },
+    careerAdvice: {
+      en: 'Develop strong analytical thinking, master effective communication, and back your business and social efforts with solid integrity.',
+      hi: 'मजबूत विश्लेषणात्मक सोच विकसित करें, प्रभावी संचार कौशल सीखें और अपने व्यापार व समाज सेवा को अटूट ईमानदारी से जोडें।',
+      ur: 'مضبوط تجزیاتی سوچ پیدا کریں، موثر اندازِ بیان سیکھیں اور اپنے تجارتی اور سماجی کاموں کو صداقت کے ساتھ انجام دیں۔'
+    },
+    languagesKnown: ['Hindi', 'Urdu', 'English'],
+    expertise: ['Social Analysis & Media Relations', 'Public Speaking & Dawah', 'Timber Trade & Sawmill Management', 'Strategic Committee Advisory'],
+    contactPermission: true,
+    isMentor: true,
+    isVerified: true,
+    isFeatured: true,
+    isGovt: false,
+    isOverseas: false,
+    photoUrl: 'https://lh3.googleusercontent.com/d/1YOnQfHXErIVuzv5IE-HPKhOmWohtIt6T',
+    coverImageUrl: 'https://lh3.googleusercontent.com/d/1wxCjuqdmhKKD9JiPDF39-2Dl7GDqOvBk',
+    badges: ['🗣️ Community Spokesperson', '💡 Social Analyst', '🪵 Timber Entrepreneur', '⭐ Bamour Committee Advisor']
+  },
+  {
+    id: 'ramjan-ali-vijaypur',
+    name: { en: 'Janab Ramjan Ali', hi: 'जनाब रमजान अली', ur: 'جناب رمضان علی' },
+    fatherName: { en: 'Janab Jakir Ali', hi: 'जनाब जाकिर अली', ur: 'جناب ذاکر علی' },
+    gender: 'Male',
+    dob: '01/07/1989',
+    nativePlace: { en: 'Vijaypur, District Sheopur, Madhya Pradesh', hi: 'विजयपुर, जिला श्योपुर, मध्य प्रदेश', ur: 'وجے پور، ضلع شوپور، مدھیہ پردیش' },
+    currentCity: { en: 'Vijaypur (Sheopur)', hi: 'विजयपुर (श्योपुर)', ur: 'وجے پور (شوپور)' },
+    district: { en: 'Sheopur', hi: 'श्योपुर', ur: 'شوپور' },
+    state: { en: 'Madhya Pradesh', hi: 'मध्य प्रदेश', ur: 'مدھیہ پردیش' },
+    country: { en: 'India', hi: 'भारत', ur: 'انڈیا' },
+    occupation: { en: 'Journalist (Dainik Jagran) & Media Incharge (Vijaypur Rangrez Committee)', hi: 'पत्रकार (दैनिक जागरण) एवं मीडिया प्रभारी (विजयपुर रंगरेज समिति)', ur: 'صحافی (دینک جاگرن) و میڈیا انچارج (وجے پور رنگریز کمیٹی)' },
+    categoryId: 'media-writers',
+    categoryTier: 'leadership',
+    designation: { en: 'Journalist / Correspondent (Dainik Jagran), Media Incharge', hi: 'पत्रकार / संवाददाता (दैनिक जागरण), मीडिया प्रभारी', ur: 'صحافی / نامہ نگار (دینک جاگرن)، میڈیا انچارج' },
+    organization: { en: 'Dainik Jagran Newspaper & Vijaypur Rangrez Committee', hi: 'दैनिक जागरण समाचार पत्र एवं विजयपुर रंगरेज समिति', ur: 'دینک جاگرن اخبار و وجے پور रंगریز کمیٹی' },
+    qualification: { en: 'Graduate in Journalism & Mass Communication', hi: 'पत्रकारिता एवं जनसंचार स्नातक', ur: 'صحافت و ماس کمیونیکیشن گریجویٹ' },
+    university: { en: 'Makhanlal Chaturvedi National University of Journalism, Bhopal', hi: 'माखनलाल चतुर्वेदी राष्ट्रीय पत्रकारिता विश्वविद्यालय, भोपाल', ur: 'ماکھن لال چترویدی صحافت یونیورسٹی، بھوپال' },
+    yearOfAchievement: 2024,
+    careerJourney: {
+      en: 'Janab Ramjan Ali is an energetic media professional and correspondent with Dainik Jagran in Sheopur District. As Media Incharge of Vijaypur Rangrez Committee, he bridges mainstream journalism with community development, giving voice to local issues with courage and integrity.',
+      hi: 'जनाब रमजान अली एक ऊर्जावान मीडिया पेशेवर और श्योपुर जिले में दैनिक जागरण के संवाददाता हैं। विजयपुर रंगरेज समिति के मीडिया प्रभारी के रूप में वे निर्भीक पत्रकारिता और सामाजिक विकास को जोड़ते हुए जनसमस्याओं को ईमानदारी से उठाते हैं।',
+      ur: 'جناب رمضان علی ایک متحرک صحافی اور شوپور ضلع میں دینک جاگرن کے نامہ نگار ہیں۔ وجے پور رنگریز کمیٹی کے میڈیا انچارج کے طور پر وہ صحافت کے ذریعے برادری کے مسائل اور عوامی آواز کو بیباکی اور سچائی کے ساتھ اٹھاتے ہیں۔'
+    },
+    biography: {
+      en: 'Janab Ramjan Ali is a journalist with Dainik Jagran and serves as the Media Incharge of the Vijaypur Rangrez Committee. Son of Janab Jakir Ali, born on 1st July 1989 in Vijaypur, District Sheopur (M.P.), he is actively involved in responsible journalism, community communication, and social awareness campaigns. Through his reporting and media coordination, he strives to highlight public concerns, promote positive social initiatives, and strengthen communication within the community.',
+      hi: 'जनाब जाकिर अली के सुपुत्र जनाब रमजान अली का जन्म 01 जुलाई 1989 को विजयपुर, जिला श्योपुर (म.प्र.) में हुआ। वे एक निडर पत्रकार और समर्पित मीडिया समन्वयक हैं। \'दैनिक जागरण\' के संवाददाता और विजयपुर रंगरेज समिति के मीडिया प्रभारी के रूप में, वे अपनी निर्भीक और तथ्य-आधारित रिपोर्टिंग के लिए जाने जाते हैं। जिम्मेदार पत्रकारिता के माध्यम से वे समाज की आवाज बुलंद करने और जन-जागरूकता फैलाने में महत्वपूर्ण भूमिका निभा रहे हैं।',
+      ur: 'جناب ذاکر علی کے صاحبزادے جناب رمضان علی 01 جولائی 1989 کو وجے پور، ضلع شوپور (ایم پی) میں پیدا ہوئے۔ وہ ایک بے باک صحافی اور میڈیا کوآرڈینیٹر ہیں۔ \'دینک جاگرن\' کے رپورٹر اور وجے پور رنگریز کمیٹی کے میڈیا انچارج کے طور پر وہ اپنی سچی اور حقائق پر مبنی رپورٹिंग کے لیے معروف ہیں۔ ذمہ دارانہ صحافت کے ذریعے وہ برادری کے مسائل کو حکومت اور عوام تک پہنچانے کا فریضہ بخوبی انجام دے رہے ہیں۔'
+    },
+    majorAchievements: [
+      'Appointed Mainstream Journalist & Correspondent for Dainik Jagran in Sheopur District',
+      'Serving as Media Incharge for Vijaypur Rangrez Committee coordinating public relations',
+      'Highlighted grassroots community issues and welfare demands in top national press',
+      'Organized digital literacy and media awareness drives for rural youth in Vijaypur'
+    ],
+    awardsHonors: [
+      'Dainik Jagran Excellence in Rural Reporting Honor',
+      'Vijaypur Rangrez Committee Fearless Journalism & Media Leadership Award'
+    ],
+    socialContributions: {
+      en: 'Raises public awareness on social schemes, coordinates committee media announcements, highlights local civic issues, and leads digital outreach for Vijaypur Rangrez Samaj.',
+      hi: 'सरकारी योजनाओं पर जागरूकता, समिति की मीडिया विज्ञप्तियाँ, स्थानीय मुद्दों को उजागर करना और विजयपुर रंगरेज समाज का डिजिटल मीडिया नेतृत्व।',
+      ur: 'سرکاری اسکیموں کی آگاہی، کمیٹی کی میڈیا کوریج، مقامی عوامی مسائل کی نشاندہی اور وجے پور میں رنگریز برادری کا میڈیا کوآرڈینیشن।'
+    },
+    inspirationalMessage: {
+      en: 'Truth, transparency, and facts are the bedrock of journalism and community trust. Always present the truth fearlessly and constructively.',
+      hi: 'सच्चाई, पारदर्शिता और तथ्य ही पत्रकारिता और सामाजिक विश्वास की नींव हैं। हमेशा निर्भीकता और सकारात्मकता के साथ सत्य को सामने लाएं।',
+      ur: 'سچائی، شفافیت اور حقائق ہی صحافت اور عوامی اعتماد کی بنیاد ہیں۔ ہمیشہ بیباکی اور مثبت جذبے کے ساتھ سچ کو پیش کریں۔'
+    },
+    careerAdvice: {
+      en: 'Master journalism ethics, verify facts thoroughly before speaking or writing, and use your communication skills to empower society.',
+      hi: 'पत्रकारिता की नैतिकता सीखें, लिखने या बोलने से पहले तथ्यों की गहन जांच करें और अपने संचार कौशल का उपयोग समाज को सशक्त बनाने में करें।',
+      ur: 'صحافتی اخلاقیات پر عمل کریں، بات کرنے یا لکھنے سے پہلے حقائق کی تصدیق کریں اور اپنے قلم و زباں کا استعمال معاشرے کی بہتری کے لیے کریں۔'
+    },
+    languagesKnown: ['Hindi', 'Urdu', 'English'],
+    expertise: ['Print & Digital Journalism', 'Media & Public Relations', 'Fact-Checking & Investigative Reporting', 'Community Coordination'],
+    contactPermission: true,
+    isMentor: true,
+    isVerified: true,
+    isFeatured: true,
+    isGovt: false,
+    isOverseas: false,
+    photoUrl: 'https://lh3.googleusercontent.com/d/1EgQj9VwbWwygGrDQzJ07byp6ZSEgKFrE',
+    coverImageUrl: 'https://lh3.googleusercontent.com/d/1qeOBqpoigLcroKs-LMgR-WtCx3CtKexu',
+    badges: ['📰 Dainik Jagran Journalist', '📢 Media Incharge Vijaypur', '✍️ Fearless Reporter', '⭐ Community Media Icon']
   }
 ];
 

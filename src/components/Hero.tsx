@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ShieldCheck, ArrowRight, UserPlus, FileText, Landmark, BookOpen } from 'lucide-react';
 import { Language } from '../types';
 import { IMAGES } from '../data/mediaRegistry';
+import InteractiveCard from './InteractiveCard';
 
 interface HeroProps {
   currentLanguage: Language;
@@ -123,58 +124,70 @@ export default function Hero({ currentLanguage, onNavigate }: HeroProps) {
           </div>
         </div>
 
-        {/* Floating Quick Action Icons inside the banner footer */}
+        {/* Floating Quick Action Cards inside the banner footer */}
         <div className="hidden md:grid grid-cols-3 gap-6 mt-16 border-t border-white/10 pt-8" id="quick_access_pills">
-          <div 
+          <InteractiveCard 
+            variant="glass"
             onClick={() => onNavigate('schemes')}
-            className="flex items-center space-x-4 bg-white/5 border border-white/5 p-4 rounded-lg hover:bg-white/10 transition cursor-pointer"
+            ariaLabel="Government Schemes Eligibility Checker"
+            className="p-4"
           >
-            <div className="p-3 bg-[#004B23] rounded-full text-[#F4C430]">
-              <Landmark className="h-5 w-5" />
+            <div className="flex items-center space-x-4">
+              <div className="p-3 bg-[#004B23] rounded-full text-[#F4C430] border border-[#FFD54A]/30">
+                <Landmark className="h-5 w-5" />
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-white">
+                  {currentLanguage === 'en' ? 'Government Schemes' : 'सरकारी स्कीमें'}
+                </h4>
+                <p className="text-xs text-gray-300">
+                  {currentLanguage === 'en' ? 'Eligibility Checker Wizard' : 'पात्रता (योग्यता) जांचने का ज़रिया'}
+                </p>
+              </div>
             </div>
-            <div>
-              <h4 className="text-sm font-bold text-white">
-                {currentLanguage === 'en' ? 'Government Schemes' : 'सरकारी स्कीमें'}
-              </h4>
-              <p className="text-xs text-gray-400">
-                {currentLanguage === 'en' ? 'Eligibility Checker Wizard' : 'पात्रता (योग्यता) जांचने का ज़रिया'}
-              </p>
-            </div>
-          </div>
+          </InteractiveCard>
 
-          <div 
+          <InteractiveCard 
+            variant="glass"
             onClick={() => onNavigate('membership-register')}
-            className="flex items-center space-x-4 bg-white/5 border border-white/5 p-4 rounded-lg hover:bg-white/10 transition cursor-pointer"
+            ariaLabel="Digital ID & Verification"
+            className="p-4"
           >
-            <div className="p-3 bg-[#004B23] rounded-full text-[#F4C430]">
-              <UserPlus className="h-5 w-5" />
+            <div className="flex items-center space-x-4">
+              <div className="p-3 bg-[#004B23] rounded-full text-[#F4C430] border border-[#FFD54A]/30">
+                <UserPlus className="h-5 w-5" />
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-white">
+                  {currentLanguage === 'en' ? 'Digital ID & Verification' : 'डिजिटल आईडी और तस्दीक़'}
+                </h4>
+                <p className="text-xs text-gray-300">
+                  {currentLanguage === 'en' ? 'Download verified QR Card' : 'तस्दीक़-शुदा क्यूआर कार्ड डाउनलोड करें'}
+                </p>
+              </div>
             </div>
-            <div>
-              <h4 className="text-sm font-bold text-white">
-                {currentLanguage === 'en' ? 'Digital ID & Verification' : 'डिजिटल आईडी और तस्दीक़'}
-              </h4>
-              <p className="text-xs text-gray-400">
-                {currentLanguage === 'en' ? 'Download verified QR Card' : 'तस्दीक़-शुदा क्यूआर कार्ड डाउनलोड करें'}
-              </p>
-            </div>
-          </div>
+          </InteractiveCard>
 
-          <div 
+          <InteractiveCard 
+            variant="glass"
             onClick={() => onNavigate('education')}
-            className="flex items-center space-x-4 bg-white/5 border border-white/5 p-4 rounded-lg hover:bg-white/10 transition cursor-pointer"
+            ariaLabel="Socio-Economic Census"
+            className="p-4"
           >
-            <div className="p-3 bg-[#004B23] rounded-full text-[#F4C430]">
-              <BookOpen className="h-5 w-5" />
+            <div className="flex items-center space-x-4">
+              <div className="p-3 bg-[#004B23] rounded-full text-[#F4C430] border border-[#FFD54A]/30">
+                <BookOpen className="h-5 w-5" />
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-white">
+                  {currentLanguage === 'en' ? 'Socio-Economic Census' : 'समाजी-माशी मर्दुमशुमारी'}
+                </h4>
+                <p className="text-xs text-gray-300">
+                  {currentLanguage === 'en' ? 'Dynamic family tree models' : 'ख़ानदानी शजरा (फैमिली ट्री) मॉडल'}
+                </p>
+              </div>
             </div>
-            <div>
-              <h4 className="text-sm font-bold text-white">
-                {currentLanguage === 'en' ? 'Socio-Economic Census' : 'समाजी-माशी मर्दुमशुमारी'}
-              </h4>
-              <p className="text-xs text-gray-400">
-                {currentLanguage === 'en' ? 'Dynamic family tree models' : 'ख़ानदानी शजरा (फैमिली ट्री) मॉडल'}
-              </p>
-            </div>
-          </div>
+          </InteractiveCard>
         </div>
 
         {/* Carousel Indicators */}

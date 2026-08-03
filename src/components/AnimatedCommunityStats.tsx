@@ -7,6 +7,7 @@ import {
   Flame, Gift, BookOpen, UserCheck, ChevronRight, Zap 
 } from 'lucide-react';
 import { Language } from '../types';
+import AnimatedCounter from './AnimatedCounter';
 
 interface StatItem {
   id: string;
@@ -280,15 +281,12 @@ export default function AnimatedCommunityStats({ currentLanguage }: AnimatedComm
           {/* 15 Animated Stat Cards Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-5" id="statistics_animation_grid">
             {filteredStats.map((stat) => {
-              const displayVal = counts[stat.id as keyof typeof counts] || 0;
-              const formattedVal = stat.id === 'funds' 
-                ? `₹${displayVal}`
-                : displayVal.toLocaleString();
+              const prefix = stat.id === 'funds' ? '₹' : '';
 
               return (
                 <div
                   key={stat.id}
-                  className="group relative bg-gradient-to-b from-[#062c17]/90 via-[#041d0f]/85 to-[#021008]/90 backdrop-blur-xl rounded-2xl p-4 sm:p-5 text-center border border-[#F4C430]/25 hover:border-[#FFD54A] shadow-xl hover:shadow-[0_20px_50px_rgba(255,213,74,0.25)] transition-all duration-300 transform hover:-translate-y-2.5 hover:scale-[1.04] flex flex-col justify-between overflow-hidden cursor-pointer"
+                  className="interactive-card group relative bg-gradient-to-b from-[#062c17]/90 via-[#041d0f]/85 to-[#021008]/90 backdrop-blur-xl rounded-2xl p-4 sm:p-5 text-center border border-[#F4C430]/25 hover:border-[#FFD54A] shadow-xl hover:shadow-[0_20px_50px_rgba(255,213,74,0.25)] transition-all duration-300 transform hover:-translate-y-2.5 hover:scale-[1.04] flex flex-col justify-between overflow-hidden cursor-pointer active:scale-95"
                 >
                   {/* Top Golden Accent Line */}
                   <div className="absolute top-0 inset-x-0 h-[3px] bg-gradient-to-r from-transparent via-[#FFD54A] to-transparent rounded-t-2xl"></div>
@@ -303,10 +301,12 @@ export default function AnimatedCommunityStats({ currentLanguage }: AnimatedComm
 
                     <div className="space-y-1">
                       <div className="text-3xl sm:text-4xl font-serif font-extrabold tracking-tight flex items-center justify-center drop-shadow-md">
-                        <span className="font-sans font-black tabular-nums bg-gradient-to-r from-[#FFF0AA] via-[#FFD54A] to-[#F4C430] bg-clip-text text-transparent group-hover:brightness-125 transition">
-                          {formattedVal}
-                        </span>
-                        <span className="text-xl sm:text-2xl ml-0.5 text-[#FFD54A] font-extrabold">{stat.suffix}</span>
+                        <AnimatedCounter
+                          value={stat.target}
+                          prefix={prefix}
+                          suffix={stat.suffix}
+                          className="font-sans font-black tabular-nums bg-gradient-to-r from-[#FFF0AA] via-[#FFD54A] to-[#F4C430] bg-clip-text text-transparent group-hover:brightness-125 transition"
+                        />
                       </div>
 
                       <h3 className="text-xs font-bold text-gray-100 tracking-wide uppercase font-sans leading-snug">
