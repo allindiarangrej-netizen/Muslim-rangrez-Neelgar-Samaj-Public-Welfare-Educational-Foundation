@@ -58,6 +58,7 @@ import BloodBankAndDonorsPortal from './components/BloodBankAndDonorsPortal';
 import CommunityServiceDetail from './components/CommunityServiceDetail';
 import PremiumHero from './components/common/PremiumHero';
 import AuthCallback from './components/AuthCallback';
+import { TEMPORARY_ARCHIVE_MODE } from './data/archiveConfig';
 import AdminMediaDashboard from './components/AdminMediaDashboard';
 import EducationGallery from './components/EducationGallery';
 import FAQKnowledgeCenter from './components/FAQKnowledgeCenter';
@@ -122,6 +123,12 @@ export default function App() {
     const remaining = parts.join('/');
     if (!remaining) return 'home';
 
+    if (TEMPORARY_ARCHIVE_MODE) {
+      if (remaining === 'hall-of-excellence' || remaining === 'about-excellence' || remaining === 'excellence') {
+        return 'home';
+      }
+    }
+
     if (remaining === 'admin/login') return 'admin-login';
     if (remaining === 'admin/dashboard') return 'admin-dashboard';
     return remaining;
@@ -129,6 +136,11 @@ export default function App() {
 
   // Enhanced navigation setter that ensures smooth scrolling to top for consistent UX
   const setActiveTab = (tabId: string) => {
+    if (TEMPORARY_ARCHIVE_MODE) {
+      if (tabId === 'hall-of-excellence' || tabId === 'about-excellence' || tabId === 'excellence') {
+        tabId = 'home';
+      }
+    }
     if (activeTab === tabId) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
@@ -493,7 +505,7 @@ export default function App() {
             )}
 
             {/* B2. STANDALONE HALL OF EXCELLENCE RECOGNITION PLATFORM */}
-            {(activeTab === 'hall-of-excellence' || activeTab.startsWith('hall-of-excellence-') || activeTab === 'excellence') && (
+            {!TEMPORARY_ARCHIVE_MODE && (activeTab === 'hall-of-excellence' || activeTab.startsWith('hall-of-excellence-') || activeTab === 'excellence') && (
               <HallOfExcellenceView
                 currentLanguage={currentLanguage}
                 activeSubTab={activeTab}

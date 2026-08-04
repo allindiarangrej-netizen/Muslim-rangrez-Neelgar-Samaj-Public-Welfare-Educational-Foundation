@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { Language } from '../types';
 import { SocialButton, COMMUNITY_SOCIAL_URLS } from './common/SocialIcons';
+import { TEMPORARY_ARCHIVE_MODE } from '../data/archiveConfig';
 
 interface HeaderProps {
   currentLanguage: Language;
@@ -306,8 +307,36 @@ export default function Header({
   };
 
   // Primary menu items for tight laptop views (lg: 1024px to 1279px)
-  const primaryLgItems = navigationItems.slice(0, 5); // Home, About, Hall of Excellence, Community Portal, Mahapanchayat
-  const secondaryLgItems = navigationItems.slice(5); // Services, Careers, Support, Media
+  const filteredNavigationItems = React.useMemo(() => {
+    if (!TEMPORARY_ARCHIVE_MODE) return navigationItems;
+
+    return navigationItems
+      .filter(item => item.id !== 'hall-of-excellence')
+      .map(item => {
+        if (!item.subItems) return item;
+        let subItems = item.subItems;
+
+        // Under 'about': remove 'about-message' (President's message) and 'about-gallery' (Trust Office gallery)
+        if (item.id === 'about') {
+          subItems = subItems.filter(sub => sub.id !== 'about-message' && sub.id !== 'about-gallery' && sub.id !== 'about-excellence');
+        }
+
+        // Under 'education': remove 'education-gallery'
+        if (item.id === 'education') {
+          subItems = subItems.filter(sub => sub.id !== 'education-gallery');
+        }
+
+        // Under 'media': remove 'media-photos' (Photo Gallery) and 'media-events' (Event Gallery)
+        if (item.id === 'media') {
+          subItems = subItems.filter(sub => sub.id !== 'media-photos' && sub.id !== 'media-events');
+        }
+
+        return { ...item, subItems };
+      });
+  }, [navigationItems]);
+
+  const primaryLgItems = filteredNavigationItems.slice(0, 5);
+  const secondaryLgItems = filteredNavigationItems.slice(5);
 
   const isMoreLgActive = secondaryLgItems.some(item => checkIsItemActive(item));
 
@@ -493,7 +522,7 @@ export default function Header({
           >
             {/* FULL LIST ON XL (1280px+), COMPACT LIST WITH 'MORE' ON LG (1024px-1279px) */}
             <div className="hidden xl:flex items-center justify-center w-full gap-1 xl:gap-1.5 2xl:gap-2">
-              {navigationItems.map((item) => {
+              {filteredNavigationItems.map((item) => {
                 const isActive = checkIsItemActive(item);
 
                 return (
@@ -845,7 +874,7 @@ export default function Header({
 
             {/* Mobile Nav Links Accordion Scrollable Body */}
             <div className="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
-              {navigationItems.map((item) => {
+              {filteredNavigationItems.map((item) => {
                 const isExpanded = mobileExpandedItem === item.id;
                 const isActive = checkIsItemActive(item);
 

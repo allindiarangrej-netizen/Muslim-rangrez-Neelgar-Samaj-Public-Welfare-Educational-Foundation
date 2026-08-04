@@ -45,6 +45,7 @@ import SocietyRegistration from './SocietyRegistration';
 import LegalAwareness from './LegalAwareness';
 import HallOfExcellenceView from './HallOfExcellenceView';
 import PortalVersionInfo from './PortalVersionInfo';
+import { TEMPORARY_ARCHIVE_MODE } from '../data/archiveConfig';
 
 interface AboutUsHubProps {
   currentLanguage: 'en' | 'hi' | 'ur';
@@ -86,6 +87,11 @@ const AboutUsHub: React.FC<AboutUsHubProps> = ({
 
   // Normalize tab selection
   const getNormalizedTab = (tab?: string): string => {
+    if (TEMPORARY_ARCHIVE_MODE) {
+      if (tab === 'about-excellence' || tab === 'hall-of-excellence' || tab === 'excellence' || tab === 'achievers' || tab === 'community-achievers') {
+        return 'about-history';
+      }
+    }
     if (!tab || tab === 'about') return 'about-history';
     if (tab === 'legal-governance' || tab === 'governance-overview' || tab === 'about-legal-governance' || tab === 'legal-constitution' || tab === 'legal-awareness' || tab === 'legal-rti' || tab === 'legal-citizen-rights') return 'about-legal-governance';
     if (tab === 'hall-of-excellence' || tab === 'excellence' || tab === 'achievers' || tab === 'community-achievers') return 'about-excellence';
@@ -192,6 +198,10 @@ const AboutUsHub: React.FC<AboutUsHubProps> = ({
       isNew: true
     }
   ];
+
+  const activeNavItems = TEMPORARY_ARCHIVE_MODE
+    ? navItems.filter(item => item.id !== 'about-excellence')
+    : navItems;
 
   // Comprehensive FAQ List
   const faqs = [
@@ -318,7 +328,7 @@ const AboutUsHub: React.FC<AboutUsHubProps> = ({
             aria-label="About Us Subsections"
             className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2.5 sm:gap-3"
           >
-            {navItems.map((item: any) => {
+            {activeNavItems.map((item: any) => {
               const isActive = currentTab === item.id;
               const label = currentLanguage === 'en' ? item.labelEn : currentLanguage === 'ur' ? item.labelUr : item.labelHi;
               return (

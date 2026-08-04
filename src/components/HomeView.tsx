@@ -18,6 +18,7 @@ import CommunityHighlightsGallery from './CommunityHighlightsGallery';
 import EducationalExcellenceGallery from './EducationalExcellenceGallery';
 import Counter from './Counter';
 import { INITIAL_ACHIEVERS } from '../data/hallOfExcellenceData';
+import { TEMPORARY_ARCHIVE_MODE } from '../data/archiveConfig';
 
 interface HomeViewProps {
   currentLanguage: Language;
@@ -376,7 +377,7 @@ export default function HomeView({ currentLanguage, onNavigate }: HomeViewProps)
         <div className="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-t from-[#FDFBF7] to-transparent pointer-events-none"></div>
       </section>
 
-      <CommunityHighlightsGallery currentLanguage={currentLanguage} onNavigate={onNavigate} />
+      {!TEMPORARY_ARCHIVE_MODE && <CommunityHighlightsGallery currentLanguage={currentLanguage} onNavigate={onNavigate} />}
 
       {/* ========================================== */}
       {/* 1. ABOUT SOCIETY: HEROIC ENTRY & IDENTITY  */}
@@ -1122,7 +1123,7 @@ export default function HomeView({ currentLanguage, onNavigate }: HomeViewProps)
       {/* ========================================== */}
       <AnimatedCommunityStats currentLanguage={currentLanguage} />
       <SuccessStories currentLanguage={currentLanguage} />
-      <NationalLeadership currentLanguage={currentLanguage} />
+      {!TEMPORARY_ARCHIVE_MODE && <NationalLeadership currentLanguage={currentLanguage} />}
 
 
       {/* ========================================== */}
@@ -1463,7 +1464,8 @@ export default function HomeView({ currentLanguage, onNavigate }: HomeViewProps)
       {/* ========================================== */}
       {/* 5.5. HALL OF EXCELLENCE & HAJIYON SHOWCASE */}
       {/* ========================================== */}
-      <section className="py-20 bg-gradient-to-b from-slate-900 via-[#0B132B] to-slate-950 text-white relative overflow-hidden border-y border-[#FFD54A]/30" id="hall_of_excellence_home_preview">
+      {!TEMPORARY_ARCHIVE_MODE && (
+        <section className="py-20 bg-gradient-to-b from-slate-900 via-[#0B132B] to-slate-950 text-white relative overflow-hidden border-y border-[#FFD54A]/30" id="hall_of_excellence_home_preview">
         <div className="absolute top-0 right-0 w-96 h-96 bg-[#FFD54A]/10 rounded-full blur-3xl pointer-events-none"></div>
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
@@ -1575,6 +1577,7 @@ export default function HomeView({ currentLanguage, onNavigate }: HomeViewProps)
 
         </div>
       </section>
+      )}
 
 
       {/* ========================================== */}
@@ -2223,7 +2226,7 @@ export default function HomeView({ currentLanguage, onNavigate }: HomeViewProps)
       {/* ========================================== */}
       {/* NEW: EDUCATIONAL EXCELLENCE SCROLLING ROW */}
       {/* ========================================== */}
-      <EducationalExcellenceGallery currentLanguage={currentLanguage} onNavigate={onNavigate} />
+      {!TEMPORARY_ARCHIVE_MODE && <EducationalExcellenceGallery currentLanguage={currentLanguage} onNavigate={onNavigate} />}
 
 
       {/* ========================================== */}

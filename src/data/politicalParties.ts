@@ -323,14 +323,18 @@ export function detectPoliticalParty(profile: {
     return null;
   }
 
+  // Explicit overrides based on ID
+  if (profile.id === 'parvej-khan-morena' || profile.id === 'alauddin-khan') {
+    return POLITICAL_PARTIES.find(p => p.id === 'bsp') || null;
+  }
+  if (profile.id === 'politician-fakhruddin-khan') {
+    return POLITICAL_PARTIES.find(p => p.id === 'bjp') || null;
+  }
+
   const rawParty = (profile.politicalParty || '').toLowerCase().trim();
 
   // Do not automatically detect political party or position based on generic keywords in the future
   if (!rawParty || rawParty === 'none' || rawParty === 'auto-detect') {
-    // Preserve political party only for Fakhruddin Khan explicitly
-    if (profile.id === 'politician-fakhruddin-khan') {
-      return POLITICAL_PARTIES.find(p => p.id === 'bjp') || null;
-    }
     return null;
   }
 

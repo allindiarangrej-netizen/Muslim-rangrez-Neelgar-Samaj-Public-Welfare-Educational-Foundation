@@ -496,8 +496,8 @@ export const INITIAL_CATEGORIES: AchieverCategory[] = [
   { id: 'nurses', nameEn: 'Nurses & Healthcare', nameHi: 'नर्सिंग एवं स्वास्थ्य कार्यकर्ता', nameUr: 'نرسیں اور ہیلتھ کیئر', icon: 'Heart', count: 0, descriptionEn: 'Chief Nursing Officers, AIIMS specialists & health leaders', descriptionHi: 'मुख्य नर्सिंग अधिकारी, एम्स विशेषज्ञ', descriptionUr: 'اعلیٰ نرسنگ آفیسرز اور صحت کے کارکن' },
   { id: 'fire-emergency', nameEn: 'Fire & Emergency', nameHi: 'अग्निशमन एवं आपातकालीन सेवा', nameUr: 'فائر اور ایمرجنسی سروسز', icon: 'Flame', count: 0, descriptionEn: 'Chief Fire Officers, Disaster Response Commandants', descriptionHi: 'मुख्य अग्निशमन अधिकारी, आपदा प्रतिक्रिया कमांडर', descriptionUr: 'فائر آفیسرز اور ایمرجنسی کمانڈر' },
   { id: 'sports', nameEn: 'Sports Persons', nameHi: 'खिलाड़ी एवं खेल रत्न', nameUr: 'کھلاڑی اور اسپورٹس مین', icon: 'Activity', count: 0, descriptionEn: 'National & international champions, Olympians & coaches', descriptionHi: 'राष्ट्रीय व अंतर्राष्ट्रीय चैंपियन, कोच व खिलाड़ी', descriptionUr: 'قومی اور بین الاقوامی کھلاڑی' },
-  { id: 'media-writers', nameEn: 'Writers, Artists & Media', nameHi: 'लेखक, कलाकार एवं पत्रकार', nameUr: 'مصنفین، فنکار اور صحافی', icon: 'PenTool', count: 1, descriptionEn: 'Authors, senior journalists, poets & cultural icons', descriptionHi: 'साहित्यकार, वरिष्ठ पत्रकार, कवि व सांस्कृतिक धरोहर', descriptionUr: 'مصنفین، صحافی اور شعراء' },
-  { id: 'social-workers', nameEn: 'Social Workers & Reformers', nameHi: 'समाज सेवी एवं सुधारक', nameUr: 'سماجی کارکن اور مصلح', icon: 'HeartHandshake', count: 3, descriptionEn: 'Philanthropists, NGO leaders & community reformers', descriptionHi: 'दानवीर, एनजीओ संस्थापक व समाज सुधारक', descriptionUr: 'فلاحی اور سماجی رہنما' }
+  { id: 'media-writers', nameEn: 'Writers, Artists & Media', nameHi: 'लेखक, कलाकार एवं पत्रकार', nameUr: 'مصنفین، فنکار اور صحافی', icon: 'PenTool', count: 2, descriptionEn: 'Authors, senior journalists, poets & cultural icons', descriptionHi: 'साहित्यकार, वरिष्ठ पत्रकार, कवि व सांस्कृतिक धरोहर', descriptionUr: 'مصنفین، صحافی اور شعراء' },
+  { id: 'social-workers', nameEn: 'Social Workers & Reformers', nameHi: 'समाज सेवी एवं सुधारक', nameUr: 'سماجی کارکن اور مصلح', icon: 'HeartHandshake', count: 4, descriptionEn: 'Philanthropists, NGO leaders & community reformers', descriptionHi: 'दानवीर, एनजीओ संस्थापक व समाज सुधारक', descriptionUr: 'فلاحی اور سماجی رہنما' }
 ];
 
 export const INITIAL_ACHIEVERS: AchieverProfile[] = [
@@ -722,8 +722,7 @@ export const INITIAL_ACHIEVERS: AchieverProfile[] = [
   {
     id: 'politician-fakhruddin-khan',
     name: { en: 'Fakhruddin Khan', hi: 'फखरुद्दीन खान', ur: 'فخرالدین خان' },
-    displayName: { en: 'Rahimbaks Khan', hi: 'रहीमबक्स खान', ur: 'رحیم بخش خان' },
-    fatherName: { en: 'Elder Khan', hi: 'बड़े खान', ur: 'بزرگ خان' },
+    fatherName: { en: 'Janab Rahimbaks', hi: 'जनाब रहीमबक्स', ur: 'جناب رحیم بخش' },
     gender: 'Male',
     dob: '1975-05-23',
     nativePlace: { en: 'Kailarash, Morena, Madhya Pradesh', hi: 'कैलाश, मुरैना, मध्य प्रदेश', ur: 'کیلارش، مورینا، مدھیہ پردیش' },
@@ -742,14 +741,14 @@ export const INITIAL_ACHIEVERS: AchieverProfile[] = [
     university: { en: 'Jiwaji University Gwalior', hi: 'जीवाजी विश्वविद्यालय ग्वालियर', ur: 'جیواجی یونیورسٹی گوالیار' },
     yearOfAchievement: 2025,
     careerJourney: {
-      en: 'With over 22 years of dedicated public service and political leadership, Fakhruddin Khan (popularly known as Rahimbaks Khan) serves as the Mandal President of the Bharatiya Janata Party (B.J.P.) in Kailaras, Morena district, Madhya Pradesh. A graduate from Jiwaji University Gwalior, he has been a steadfast champion for grassroots community welfare, local development, educational upliftment, and public representation.',
-      hi: '22 वर्षों से अधिक के समर्पित सार्वजनिक जीवन और राजनीतिक नेतृत्व के साथ, फ़खरुद्दीन खान (उर्फ रहीमबख्श खान) कैलाश रस, जिला मुरैना (मध्य प्रदेश) में भारतीय जनता पार्टी (बीजेपी) के मंडल अध्यक्ष के रूप में सेवारत हैं। जीवाजी विश्वविद्यालय ग्वालियर से स्नातक, वे जमीनी स्तर पर जन कल्याण, स्थानीय विकास, शैक्षणिक उत्थान और समाज के अधिकारों के लिए निरंतर प्रयासरत हैं।',
-      ur: 'عوامی خدمت اور سیاسی قیادت کے 22 سال سے زائد کے تجربے کے ساتھ, فخر الدین خان (عرف رحیم بخش خان) کیلا رس, ضلع مورینا (مدھیہ پردیش) میں بھارتیہ جنتا پارٹی (بی جے پی) کے منڈل صدر کے طور پر خدمات انجام دے رہے ہیں۔ جیواجی یونیورسٹی گوالیار سے گریجویٹ, وہ نچلی سطح پر عوامی فلاح و بہبود, تعلیمی ترقی اور معاشرتی فلاح کے لیے مسلسل کوشاں ہیں۔'
+      en: 'With over 22 years of dedicated public service and political leadership, Fakhruddin Khan s/o Janab Rahimbaks serves as the Mandal President of the Bharatiya Janata Party (B.J.P.) in Kailaras, Morena district, Madhya Pradesh. A graduate from Jiwaji University Gwalior, he has been a steadfast champion for grassroots community welfare, local development, educational upliftment, and public representation.',
+      hi: '22 वर्षों से अधिक के समर्पित सार्वजनिक जीवन और राजनीतिक नेतृत्व के साथ, फ़खरुद्दीन खान (सुपुत्र जनाब रहीमबख्श) कैलारस, जिला मुरैना (मध्य प्रदेश) में भारतीय जनता पार्टी (बीजेपी) के मंडल अध्यक्ष के रूप में सेवारत हैं। जीवाजी विश्वविद्यालय ग्वालियर से स्नातक, वे जमीनी स्तर पर जन कल्याण, स्थानीय विकास, शैक्षणिक उत्थान और समाज के अधिकारों के लिए निरंतर प्रयासरत हैं।',
+      ur: 'عوامی خدمت اور سیاسی قیادت کے 22 سال سے زیادہ کے تجربے کے ساتھ، فخر الدین خان (ولد جناب رحیم بخش) کیلارس، ضلع مورینا (مدھیہ پردیش) میں بھارتیہ جنता पार्टी (بی جے پی) کے منڈل صدر کے طور پر خدمات انجام دے رہے ہیں۔ جیواجی یونیورسٹی گوالیار سے گریجویٹ، وہ نچلی سطح پر عوامی فلاح و بہبود، تعلیمی ترقی اور معاشرتی فلاح کے لیے مسلسل کوشاں ہیں۔'
     },
     biography: {
-      en: 'Shri Fakhruddin Khan (Rahimbaks Khan) is a prominent public figure and respected political leader from Kailaras, Morena, Madhya Pradesh. Armed with a Bachelor\'s Degree from Jiwaji University Gwalior and over two decades of experience in organizational leadership, he has played an instrumental role in bridging government welfare schemes with rural communities, promoting youth empowerment, and fostering social harmony across the region.',
-      hi: 'श्री फ़खरुद्दीन खान (रहीमबख्श खान) कैलाश रस, मुरैना (म.प्र.) से एक सम्मानित जननेता और राजनीतिक हस्ती हैं। जीवाजी विश्वविद्यालय ग्वालियर से स्नातक और संगठन नेतृत्व में दो दशकों से अधिक का अनुभव रखने वाले श्री खान ने सरकारी जनकल्याणकारी योजनाओं को ग्रामीण इलाकों तक पहुंचाने, युवा सशक्तिकरण और सामाजिक सौहार्द बनाए रखने में अग्रणी भूमिका निभाई है।',
-      ur: 'جناب فخر الدین خان (رحیم بخش خان) کیلا رس, مورینا (ایم پی) سے ایک نمایاں عوامی رہنما اور محترم سیاسی شخصیت ہیں۔ جیواجی یونیورسٹی گوالیار سے گریجویٹ اور دو دہائیوں سے زیادہ کی انتظامی و سیاسی قیادت کے حامل, وہ حکومتی اسکیموں کو غریبوں تک پہنچانے اور نوجوانوں کی رہنمائی میں نمایاں کردار ادا کر رہے ہیں۔'
+      en: 'Shri Fakhruddin Khan, son of Janab Rahimbaks, is a prominent public figure and respected political leader from Kailaras, Morena, Madhya Pradesh. Armed with a Bachelor\'s Degree from Jiwaji University Gwalior and over two decades of experience in organizational leadership, he has played an instrumental role in bridging government welfare schemes with rural communities, promoting youth empowerment, and fostering social harmony across the region.',
+      hi: 'श्री फ़खरुद्दीन खान (सुपुत्र जनाब रहीमबख्श) कैलारस, मुरैना (म.प्र.) से एक सम्मानित जननेता और राजनीतिक हस्ती हैं। जीवाजी विश्वविद्यालय ग्वालियर से स्नातक और संगठन नेतृत्व में दो दशकों से अधिक का अनुभव रखने वाले श्री खान ने सरकारी जनकल्याणकारी योजनाओं को ग्रामीण इलाकों तक पहुंचाने, युवा सशक्तिकरण और सामाजिक सौहार्द बनाए रखने में अग्रणी भूमिका निभाई है।',
+      ur: 'جناب فخر الدین خان (ولد جناب رحیم بخش) کیلارس، مورینا (ایم پی) سے ایک نمایاں عوامی رہنما اور محترم سیاسی شخصیت ہیں۔ جیواجی یونیورسٹی گوالیار سے گریجویٹ اور دو دہائیوں سے زیادہ کی انتظامی و سیاسی قیادت کے حامل، وہ حکومتی اسکیموں کو غریبوں تک پہنچانے اور نوجوانوں کی رہنمائی میں نمایاں کردار ادا کر رہے ہیں۔'
     },
     majorAchievements: [
       'Appointed Mandal President of Bharatiya Janata Party (B.J.P.) in Kailaras, Morena (Madhya Pradesh)',
@@ -1128,6 +1127,267 @@ export const INITIAL_ACHIEVERS: AchieverProfile[] = [
     photoUrl: 'https://lh3.googleusercontent.com/d/1EgQj9VwbWwygGrDQzJ07byp6ZSEgKFrE',
     coverImageUrl: 'https://lh3.googleusercontent.com/d/1qeOBqpoigLcroKs-LMgR-WtCx3CtKexu',
     badges: ['📰 Dainik Jagran Journalist', '📢 Media Incharge Vijaypur', '✍️ Fearless Reporter', '⭐ Community Media Icon']
+  },
+  {
+    id: 'yunus-khan-joura',
+    name: { en: 'Janab Yunus Khan', hi: 'जनाब युनुस खान', ur: 'جناب یونس خان' },
+    fatherName: { en: 'Janab Havaldar Khan', hi: 'जनाब हवलदार खान', ur: 'جناب حوالدار خان' },
+    gender: 'Male',
+    dob: '1986-06-30',
+    nativePlace: { en: 'Islampura, Ward No. 4, Joura, District Morena, Madhya Pradesh, India', hi: 'इस्लामपुरा, वार्ड नं. 4, जौरा, जिला मुरैना, मध्य प्रदेश, भारत', ur: 'اسلام پورہ، وارڈ نمبر 4، جورا، ضلع مورینا، مدھیہ پردیش، بھارت' },
+    currentCity: { en: 'Joura', hi: 'जौरा', ur: 'جورا' },
+    district: { en: 'Morena', hi: 'मुरैना', ur: 'مورینا' },
+    state: { en: 'Madhya Pradesh', hi: 'मध्य प्रदेश', ur: 'مدھیہ پردیش' },
+    country: { en: 'India', hi: 'भारत', ur: 'भारत' },
+    occupation: { en: 'Journalist & Media Incharge, Joura Rangrez Committee', hi: 'पत्रकार एवं मीडिया प्रभारी, जौरा रंगरेज कमेटी', ur: 'صحافی اور میڈیا انچارج، جورا رنگریز کمیٹی' },
+    categoryId: 'professionals',
+    categoryTier: 'gold',
+    designation: { en: 'Media Incharge, Joura Rangrez Committee', hi: 'मीडिया प्रभारी, जौरा रंगरेज कमेटी', ur: 'میڈیا انچارج، جورا رنگریز کمیٹی' },
+    organization: { en: 'Joura Rangrez Committee', hi: 'जौरा रंगरेज कमेटी', ur: 'जौरा रंगरेज कमेटी' },
+    yearsOfExperience: '12 Years',
+    qualification: { en: 'Graduate', hi: 'स्नातक', ur: 'گریجویٹ' },
+    university: { en: 'Jiwaji University Gwalior', hi: 'जीवाजी विश्वविद्यालय ग्वालियर', ur: 'जीवाजी यूनिवर्सिटी गवालीार' },
+    yearOfAchievement: 2025,
+    careerJourney: {
+      en: 'Janab Yunus Khan is a well-respected journalist, media professional and socially aware personality from Joura. As the Media Incharge of the Joura Rangrez Committee, he has been consistently highlighting the activities, achievements and social reform initiatives of the community. With his dedication to responsible journalism and social awareness, he plays a key role in public communication and community welfare. He is known for raising public concerns and promoting developmental news, inspiring positive thinking within the community.',
+      hi: 'जनाब यूनुस खान जौरा के एक सम्मानित पत्रकार, मीडिया पेशेवर और सामाजिक रूप से जागरूक व्यक्ति हैं। जौरा रंगरेज कमेटी के मीडिया प्रभारी के रूप में, वे लगातार समुदाय की गतिविधियों, उपलब्धियों और सामाजिक सुधार पहलों को उजागर कर रहे हैं। जिम्मेदार पत्रकारिता और सामाजिक जागरूकता के प्रति अपने समर्पण के साथ, वे जनसंचार और सामुदायिक कल्याण में महत्वपूर्ण भूमिका निभाते हैं। वह जनता की चिंताओं को उठाने और सकारात्मक विचारों को बढ़ावा देने के लिए जाने जाते हैं।',
+      ur: 'جناب یونس خان جورا کے ایک معزز صحافی، میڈیا پروفیشنل اور سماجی طور پر بیدار شخصیت ہیں۔ جورا رنگریز کمیٹی کے میڈیا انچارج کے طور پر، وہ برادری کی سرگرمیوں، کامیابیوں اور سماجی اصلاحاتی اقدامات کو مستقل طور پر اجاگر کر رہے ہیں۔ ذمہ دارانہ صحافت اور سماجی بیداری کے تئیں اپنی لگن کے ساتھ، وہ عوامی رابطے اور سماجی بہبود میں کلیدی کردار ادا کرتے ہیں۔ وہ عوامی خدشات کو اٹھانے اور ترقیاتی خبروں کو فروغ دینے کے لیے جانے جاتے ہیں۔'
+    },
+    biography: {
+      en: 'Janab Yunus Khan is a well-respected journalist, media professional and socially aware personality from Joura. As the Media Incharge of the Joura Rangrez Committee, he has been consistently highlighting the activities, achievements and social reform initiatives of the community. With his dedication to responsible journalism and social awareness, he plays a key role in public communication and community welfare. He is known for raising public concerns and promoting developmental news, inspiring positive thinking within the community.',
+      hi: 'जनाब यूनुस खान जौरा के एक सम्मानित पत्रकार, मीडिया पेशेवर and सामाजिक रूप से जागरूक व्यक्ति हैं। जौरा रंगरेज कमेटी के मीडिया प्रभारी के रूप में, वे लगातार समुदाय की गतिविधियों, उपलब्धियों और सामाजिक सुधार पहलों को उजागर कर रहे हैं। जिम्मेदार पत्रकारिता और सामाजिक जागरूकता के प्रति अपने समर्पण के साथ, वे जनसंचार और सामुदायिक कल्याण में महत्वपूर्ण भूमिका निभाते हैं। वह जनता की चिंताओं को उठाने और सकारात्मक विचारों को बढ़ावा देने के लिए जाने जाते हैं।',
+      ur: 'جناب یونس خان جورا کے ایک معزز صحافی، میڈیا پروفیشنل اور سماجی طور پر بیدار شخصیت ہیں۔ جورا رنگریز کمیٹی کے میڈیا انچارج کے طور پر، وہ برادری کی سرگرمیوں، کامیابیوں اور سماجی اصلاحاتی اقدامات کو مستقل طور پر اجاگر کر رہے ہیں۔ ذمہ دارانہ صحافت اور سماجی بیداری کے تئیں اپنی لگن کے ساتھ، وہ عوامی رابطے اور سماجی بہبود میں کلیدی کردار ادا کرتے ہیں۔ وہ عوامی خدشات کو اٹھانے اور ترقیاتی خبروں کو فروغ دینے کے لیے جانے جاتے ہیں۔'
+    },
+    majorAchievements: [
+      'Appointed Media Incharge of Joura Rangrez Committee',
+      'Successfully reported and highlighted numerous local developmental initiatives',
+      'Dedicated advocate for social reforms and clean journalism'
+    ],
+    awardsHonors: [
+      'Rangrez Samaj Media Excellence Award'
+    ],
+    socialContributions: {
+      en: 'Actively coordinates media publicity and communication for social reforms, community welfare projects, and public awareness campaigns.',
+      hi: 'सामाजिक सुधारों, सामुदायिक कल्याण परियोजनाओं और सार्वजनिक जागरूकता अभियानों के लिए मीडिया प्रचार और संचार का सक्रिय रूप से समन्वय करते हैं।',
+      ur: 'سماجی اصلاحات، کمیونٹی ویلفیئر پراجیکٹس، اور عوامی بیداری مہموں کے لیے میڈیا کی تشہیر اور رابطے کو فعال طور پر مربوط کرتے ہیں۔'
+    },
+    inspirationalMessage: {
+      en: 'Truthful journalism and honest social representation are the strongest pillars of community empowerment. Always present facts with integrity.',
+      hi: 'सच्ची पत्रकारिता और ईमानदार सामाजिक प्रतिनिधित्व सामुदायिक सशक्तिकरण के सबसे मजबूत स्तंभ हैं। हमेशा ईमानदारी से तथ्य प्रस्तुत करें।',
+      ur: 'سچی صحافت اور ایماندارانہ سماجی نمائندگی کمیونٹی کو بااختیار بنانے کے سب سے مضبوط ستون ہیں۔ ہمیشہ دیانتداری سے حقائق پیش کریں۔'
+    },
+    careerAdvice: {
+      en: 'Develop strong analytical skills, practice objective reporting, and dedicate your media platform to raising public awareness and helping the underprivileged.',
+      hi: 'मजबूत विश्लेषणात्मक कौशल विकसित करें, उद्देश्यपूर्ण रिपोर्टिंग का अभ्यास करें, और अपने मीडिया प्लेटफॉर्म को सार्वजनिक जागरूकता बढ़ाने और वंचितों की मदद करने के लिए समर्पित करें।',
+      ur: 'مضبوط تجزیاتی مہارتیں تیار کریں، معروضی رپورٹنگ کی مشق کریں، اور اپنے میڈیا پلیٹ فارم کو عوامی بیداری پیدا کرنے اور پسماندہ افراد کی مدد کے لیے وقف کریں۔'
+    },
+    languagesKnown: ['Hindi', 'Urdu', 'English'],
+    expertise: ['Journalism', 'Media & Public Relations', 'Community Welfare', 'Social Awareness'],
+    contactPermission: true,
+    isMentor: true,
+    isVerified: true,
+    isFeatured: true,
+    isGovt: false,
+    isOverseas: false,
+    photoUrl: 'https://lh3.googleusercontent.com/d/1fLxeR_WrkmrsdX5p4-lj0_P-bP8O2qJZ',
+    coverImageUrl: 'https://lh3.googleusercontent.com/d/19HIAsh2jTipEtm1kmJmvadZv5aeaARqe',
+    badges: ['📰 Journalist', '📢 Media Incharge Joura', '🤝 Social Reformer', '⭐ Public Voice']
+  },
+  {
+    id: 'alauddin-khan',
+    name: { en: 'Janab Alauddin Khan', hi: 'जनाब अलाउद्दीन खान', ur: 'جناب علاؤ الدین خان' },
+    fatherName: { en: 'Janab Bundu Khan', hi: 'जनाब बुन्दू खान', ur: 'جناب بندو خان' },
+    gender: 'Male',
+    dob: '1982-01-26',
+    nativePlace: { en: 'Jitendrapur Gird Kailaras District Morena Madhya Pradesh', hi: 'जितेन्द्रपुर गिर्द कैलारस जिला मुरैना मध्य प्रदेश', ur: 'جتیندر پور گرد کیلارس ضلع مورینا مدھیہ پردیش' },
+    currentCity: { en: 'Kailaras', hi: 'कैलारस', ur: 'کیلارس' },
+    district: { en: 'Morena', hi: 'मुरैना', ur: 'مورینا' },
+    state: { en: 'Madhya Pradesh', hi: 'मध्य प्रदेश', ur: 'مدھیہ پردیش' },
+    country: { en: 'India', hi: 'भारत', ur: 'भारत' },
+    occupation: { en: 'General Merchant & Timber Business & Politician (BSP Sector Maha Sachiv)', hi: 'सामान्य व्यापारी, लकड़ी व्यवसायी एवं राजनीतिज्ञ (बसपा सेक्टर महासचिव)', ur: 'جنرل مرچنٹ، لکڑی کے تاجر اور سیاست دان (بی ایس پی سیکٹر مہاسچیو)' },
+    categoryId: 'public-rep',
+    categoryTier: 'leadership',
+    designation: { en: '18 Sector Maha Sachiv (BSP Kailaras)', hi: '18 सेक्टर महासचिव (बसपा कैलारस)', ur: '18 سیکٹر مہاسچیو (بی ایس پی کیلارس)' },
+    organization: { en: 'Bahujan Samaj Party (BSP)', hi: 'बहुजन समाज पार्टी (बसपा)', ur: 'بہوجن سماج پارٹی (بی ایس پی)' },
+    yearsOfExperience: '15 Years',
+    qualification: { en: 'Intermediate', hi: 'इंटरमीडिएट', ur: 'انٹرمیڈیٹ' },
+    university: { en: 'Board of Secondary Education Madhya Pradesh', hi: 'माध्यमिक शिक्षा मंडल मध्य प्रदेश', ur: 'سیکنڈری ایجوکیشن بورڈ مدھیہ پردیش' },
+    yearOfAchievement: 2025,
+    politicalParty: 'Bahujan Samaj Party (BSP)',
+    careerJourney: {
+      en: 'Janab Alauddin Khan is a well-respected general merchant and prominent political activist from Kailaras. He runs a general merchandise business and a timber enterprise, successfully combining commercial success with a strong commitment to public welfare. In his political life, he has been associated with the Bahujan Samaj Party (BSP) for over 15 years, currently serving as the 18 Sector Maha Sachiv. He has earned great appreciation for his active role in social awareness campaigns, promoting education, and resolving local disputes within the community. Through his dedicated efforts, he has established himself as a reliable leader and a positive influencer for the local youth.',
+      hi: 'जनाब अलाउद्दीन खान कैलारस के एक सम्मानित सामान्य व्यापारी और प्रमुख राजनीतिक कार्यकर्ता हैं। वे एक सामान्य व्यापार और लकड़ी का उद्यम चलाते हैं, जो व्यावसायिक सफलता को जन कल्याण के प्रति मजबूत प्रतिबद्धता के साथ सफलतापूर्वक जोड़ता है। उनके राजनीतिक जीवन में, वे 15 से अधिक वर्षों से बहुजन समाज पार्टी (बसपा) से जुड़े हुए हैं, वर्तमान में 18 सेक्टर महासचिव के रूप में कार्यरत हैं। वे सामाजिक जागरूकता अभियानों, शिक्षा को बढ़ावा देने और समुदाय के भीतर स्थानीय विवादों को सुलझाने में अपनी सक्रिय भूमिका के लिए बहुत सराहना प्राप्त कर चुके हैं।',
+      ur: 'جناب علاؤ الدین خان کیلارس کے ایک معزز جنرل مرچنٹ اور ممتاز سیاسی کارکن ہیں۔ وہ ایک جنرل مرچنٹ اور لکڑی کا کاروبار چلاتے ہیں، جو کاروباری کامیابی کو عوامی فلاح و بہبود کے عزم کے ساتھ کامیابی سے جوڑتا ہے۔ اپنی سیاسی زندگی میں وہ 15 سال سے زیادہ عرصے سے بہوجن سماج پارٹی (بی ایس پی) سے وابستہ ہیں، فی الحال 18 سیکٹر مہاسچیو کے طور پر خدمات انجام دے رہے ہیں۔ وہ سماجی بیداری کی مہموں، تعلیم کو فروغ دینے اور مقامی تنازعات کو حل کرنے میں اپنے فعال کردار کے لیے بہت سراہے گئے ہیں۔'
+    },
+    biography: {
+      en: 'Janab Alauddin Khan is a well-respected general merchant and prominent political activist from Kailaras. He runs a general merchandise business and a timber enterprise, successfully combining commercial success with a strong commitment to public welfare. In his political life, he has been associated with the Bahujan Samaj Party (BSP) for over 15 years, currently serving as the 18 Sector Maha Sachiv. He has earned great appreciation for his active role in social awareness campaigns, promoting education, and resolving local disputes within the community. Through his dedicated efforts, he has established himself as a reliable leader and a positive influencer for the local youth.',
+      hi: 'जनाब अलाउद्दीन खान कैलारस के एक सम्मानित सामान्य व्यापारी और प्रमुख राजनीतिक कार्यकर्ता हैं। वे एक सामान्य व्यापार और लकड़ी का उद्यम चलाते हैं, जो व्यावसायिक सफलता को जन कल्याण के प्रति मजबूत प्रतिबद्धता के साथ सफलतापूर्वक जोड़ता है। उनके राजनीतिक जीवन में, वे 15 से अधिक वर्षों से बहुजन समाज पार्टी (बसपा) से जुड़े हुए हैं, वर्तमान में 18 सेक्टर महासचिव के रूप में कार्यरत हैं। वे सामाजिक जागरूकता अभियानों, शिक्षा को बढ़ावा देने और समुदाय के भीतर स्थानीय विवादों को सुलझाने में अपनी सक्रिय भूमिका के लिए बहुत सराहना प्राप्त कर चुके हैं।',
+      ur: 'جناب علاؤ الدین خان کیلارس کے ایک معزز جنرل مرچنٹ اور ممتاز سیاسی کارکن ہیں۔ وہ ایک جنرل مرچنٹ اور لکڑی کا کاروبار چلاتے ہیں، جو کاروباری کامیابی کو عوامی فلاح و بہبود کے عزم के साथ کامیابی سے جوڑتا ہے۔ اپنی سیاسی زندگی میں وہ 15 سال سے زیادہ عرصے سے بہوجن سماج پارٹی (بی ایس پی) سے وابستہ ہیں، فی الحال 18 سیکٹر مہاسچیو کے طور پر خدمات انجام دے رہے ہیں۔ وہ سماجی بیداری کی مہموں، تعلیم کو فروغ دینے اور مقامی تنازعات کو حل کرنے میں اپنے فعال کردار کے لیے بہت سراہے گئے ہیں۔'
+    },
+    majorAchievements: [
+      'Runs a successful general merchandise and timber business in Kailaras',
+      'Associated with BSP for over 15 years, serving as 18 Sector Maha Sachiv',
+      'Consistently promotes positive social development and community harmony'
+    ],
+    awardsHonors: [
+      'Kailaras Business & Social Leadership Award'
+    ],
+    socialContributions: {
+      en: 'Promotes education, coordinates social awareness drives, and actively helps resolve family and neighborhood disputes peacefully within the community.',
+      hi: 'शिक्षा को बढ़ावा देते हैं, सामाजिक जागरूकता अभियानों का समन्वय करते हैं, और समुदाय के भीतर पारिवारिक और पड़ोसी विवादों को शांतिपूर्वक हल करने में सक्रिय रूप से मदद करते हैं।',
+      ur: 'تعلیم کو فروغ دیتے ہیں، سماجی بیداری کی مہموں کو مربوط کرتے ہیں، اور کمیونٹی کے اندر خاندانی اور پڑوسی کے تنازعات کو پرامن طریقے سے حل کرنے میں فعال طور پر مدد کرتے ہیں۔'
+    },
+    inspirationalMessage: {
+      en: 'True success lies in balancing commercial growth with selfless public service. Work for the upliftment of the underprivileged with pure intentions.',
+      hi: 'सच्ची सफलता व्यावसायिक विकास को निस्वार्थ जनसेवा के साथ संतुलित करने में निहित है। शुद्ध इरादों के साथ वंचितों के उत्थान के लिए काम करें।',
+      ur: 'سچی کامیابی کاروباری ترقی کو بے لوث عوامی خدمت کے ساتھ متوازن کرنے میں پنہاں ہے۔ پاکیزہ ارادوں کے ساتھ پسماندہ طبقات کی فلاح و بہبود کے لیے کام کریں۔'
+    },
+    careerAdvice: {
+      en: 'Focus on business integrity, maintain local connections, and step forward to support local educational initiatives whenever possible.',
+      hi: 'व्यावसायिक सत्यनिष्ठा पर ध्यान दें, स्थानीय संबंध बनाए रखें, और जब भी संभव हो स्थानीय शैक्षिक पहलों का समर्थन करने के लिए आगे बढ़ें।',
+      ur: 'کاروباری دیانت داری پر توجہ مرکوز کریں، مقامی روابط برقرار رکھیں، اور جب بھی ممکن ہو مقامی تعلیمی اقدامات کی حمایت کے لیے آگے بڑھیں۔'
+    },
+    languagesKnown: ['Hindi', 'Urdu', 'English'],
+    expertise: ['Public Governance', 'Business Strategy', 'Social Awareness', 'Conflict Resolution'],
+    contactPermission: true,
+    isMentor: true,
+    isVerified: true,
+    isFeatured: true,
+    isGovt: false,
+    isOverseas: false,
+    photoUrl: 'https://lh3.googleusercontent.com/d/1BHhSiRhU6ip2TdkxBpLpwbvW7clH6hDq',
+    coverImageUrl: 'https://lh3.googleusercontent.com/d/17VTMl7FJCliNc7K4gXZ8XM-7aA70lthk',
+    badges: ['🏛️ BSP Leader', '🪵 Timber Merchant', '🤝 Public Advocate', '⭐ Youth Icon']
+  },
+  {
+    id: 'anish-khan-morena',
+    name: { en: 'Saiyadil Murasalin alias Anish Khan (Bamsoli Wale)', hi: 'सैयादिल मुरासलीन उर्फ अनीश खान (बामसोली वाले)', ur: 'سید المرسلین عرف انیش خان (بامسولی والے)' },
+    fatherName: { en: 'Badarudwja', hi: 'बदरुद्दजा', ur: 'بدرالدجیٰ' },
+    gender: 'Male',
+    dob: '1990-10-15',
+    nativePlace: { en: 'Joura Road, Behind Solanki Petrol Pump, Kushwaha Colony, Morena, Madhya Pradesh, India', hi: 'जौरा रोड, सोलंकी पेट्रोल पंप के पीछे, कुशवाहा कॉलोनी, मुरैना, मध्य प्रदेश, भारत', ur: 'جورا روڈ، سولنکی پٹرول پمپ کے پیچھے، کشواہا کالونی، مورینا، مدھیہ پردیش، بھارت' },
+    currentCity: { en: 'Morena', hi: 'मुरैना', ur: 'مورینا' },
+    district: { en: 'Morena', hi: 'मुरैना', ur: 'مورینا' },
+    state: { en: 'Madhya Pradesh', hi: 'मध्य प्रदेश', ur: 'مدھیہ پردیش' },
+    country: { en: 'India', hi: 'भारत', ur: 'भारत' },
+    occupation: { en: 'Manager, Indane LPG Distributor & Media Incharge, Morena Rangrez Committee', hi: 'प्रबंधक, इंडेन एलपीजी वितरक एवं मीडिया प्रभारी, मुरैना रंगरेज कमेटी', ur: 'مینیجر، انڈین ایل پی جی ڈسٹری بیوٹر اور میڈیا انچارج، مورینا رنگریز کمیٹی' },
+    categoryId: 'media-writers',
+    categoryTier: 'gold',
+    designation: { en: 'Manager, Indane LPG Distributor & Media Incharge, Morena Rangrez Committee', hi: 'प्रबंधक, इंडेन एलपीजी वितरक एवं मीडिया प्रभारी, मुरैना रंगरेज कमेटी', ur: 'مینیجر، انڈین ایل پی جی ڈسٹری بیوٹر اور میڈیا انچارج، مورینا رنگریز کمیٹی' },
+    organization: { en: 'Indane LPG Distributorship & Morena Rangrez Committee', hi: 'इंडेन एलपीजी वितरण एवं मुरैना रंगरेज कमेटी', ur: 'انڈین ایل پی جی ڈسٹری بیوشن اور مورینا رنگریز کمیٹی' },
+    yearsOfExperience: '10 Years',
+    qualification: { en: 'Bachelor of Science (B.Sc.)', hi: 'विज्ञान स्नातक (बी.एससी.)', ur: 'بیچلر آف سائنس (بی ایس سی)' },
+    university: { en: 'Jiwaji University Gwalior', hi: 'जीवाजी विश्वविद्यालय ग्वालियर', ur: 'جیواجی یونیورسٹی گوالیار' },
+    yearOfAchievement: 2025,
+    careerJourney: {
+      en: 'Saiyadil Murasalin alias Anish Khan (Bamsoli Wale) is a thoughtful, disciplined, and action-oriented personality who is widely respected for his wisdom, humility, and dignified manner of communication. He is known for speaking only when necessary, but whenever he shares his views, they carry depth, clarity, and lasting impact. His ability to express meaningful ideas in just a few words is one of his most admired qualities. Professionally, he serves as the Manager of an Indane LPG Distributorship in Morena, where he performs his responsibilities with honesty, professionalism, and dedication. In social life, he serves as the Media Incharge of the Morena Rangrez Committee, playing a significant role in strengthening communication, promoting social awareness, and supporting community initiatives. Anish Khan firmly believes that a person\'s character is reflected more through actions than words. Rather than seeking recognition or publicity, he prefers working quietly behind the scenes and fulfilling every responsibility entrusted to him with sincerity and commitment. His calm nature, respectful attitude toward elders, compassionate approach toward others, and balanced thinking have earned him the respect of people across the community. He consistently works to strengthen unity, mutual respect, and harmony within society. Although he has a strong physical presence, his determination, courage, and dedication to public service are even greater. Choosing meaningful work over public attention, he continues to inspire others through his integrity, humility, and unwavering commitment to the welfare and progress of the Muslim Rangrez community.',
+      hi: 'सैयादिल मुरासलीन उर्फ अनीश खान (बामसोली वाले) एक विचारशील, अनुशासित और कर्मठ व्यक्तित्व हैं, जिन्हें उनकी बुद्धिमत्ता, विनम्रता और गरिमापूर्ण संवाद शैली के लिए व्यापक रूप से सम्मानित किया जाता है। वे केवल आवश्यकता होने पर ही बोलने के लिए जाने जाते हैं, लेकिन जब भी वे अपने विचार साझा करते हैं, वे गहराई, स्पष्टता और स्थायी प्रभाव लिए होते हैं। कुछ ही शब्दों में सार्थक विचार व्यक्त करने की उनकी क्षमता उनके सबसे प्रशंसित गुणों में से एक है। पेशेवर रूप से, वे मुरैना में इंडेन एलपीजी डिस्ट्रीब्यूटरशिप के प्रबंधक के रूप में कार्यरत हैं, जहां वे ईमानदारी, व्यावसायिकता और समर्पण के साथ अपनी जिम्मेदारियों का निर्वहन करते हैं। सामाजिक जीवन में, वे मुरैना रंगरेज कमेटी के मीडिया प्रभारी के रूप में सेवा करते हैं, जो संचार को मजबूत करने, सामाजिक जागरूकता को बढ़ावा देने और सामुदायिक पहलों का समर्थन करने में महत्वपूर्ण भूमिका निभा रहे हैं। अनीश खान का दृढ़ विश्वास है कि व्यक्ति का चरित्र शब्दों से अधिक उसके कार्यों से झलकता है। पहचान या प्रचार चाहने के बजाय, वे पर्दे के पीछे चुपचाप काम करना और उन्हें सौंपी गई हर जिम्मेदारी को सच्चाई और प्रतिबद्धता के साथ पूरा करना पसंद करते हैं। उनका शांत स्वभाव, बड़ों के प्रति आदरणीय दृष्टिकोण, दूसरों के प्रति दयालु रवैया और संतुलित सोच ने उन्हें पूरे समाज में सम्मान दिलाया है। वे समाज के भीतर एकता, आपसी सम्मान और सद्भाव को मजबूत करने के लिए लगातार काम करते हैं। हालांकि उनका शारीरिक व्यक्तित्व सुदृढ़ है, लेकिन उनका संकल्प, साहस और जनसेवा के प्रति समर्पण उससे भी कहीं अधिक बड़ा है। सार्वजनिक ध्यान के बजाय सार्थक कार्यों को चुनकर, वे मुस्लिम रंगरेज समुदाय के कल्याण और प्रगति के लिए अपनी ईमानदारी, विनम्रता और अटूट प्रतिबद्धता के माध्यम से दूसरों को प्रेरित करना जारी रखे हुए हैं।',
+      ur: 'سید المرسلین عرف انیش خان (بامسولی والے) ایک سنجیدہ، نظم و ضبط کے پابند، اور باعمل شخصیت ہیں جنہیں ان کی حکمت، عاجزی اور باوقار انداز گفتگو کی وجہ سے بڑے پیمانے پر عزت دی جاتی ہے۔ وہ صرف ضرورت کے وقت بولنے کے لیے مشہور ہیں، لیکن جب بھی وہ اپنے خیالات کا اظہار کرتے ہیں، ان میں گہرائی، وضاحت اور دیرپا اثر ہوتا ہے۔ چند الفاظ میں بامعنی خیالات کا اظہار کرنے کی صلاحیت ان کی سب سے پسندیدہ خوبیوں میں سے ایک ہے۔ پیشہ ورانہ طور پر، وہ مورینا میں انڈین ایل پی جی ڈسٹری بیوٹر شپ کے مینیجر کے طور پر خدمات انجام دے رہے ہیں، جہاں وہ اپنی ذمہ داریاں دیانتداری، پیشہ ورانہ مہارت اور لگن کے ساتھ نبھاتے ہیں۔ سماجی زندگی میں، وہ مورینا رنگریز کمیٹی کے میڈیا انچارج کے طور پر کام کرتے ہیں، جو باہمی رابطے کو مضبوط بنانے، سماجی بیداری کو فروغ دینے اور کمیونٹی کے اقدامات کی حمایت کرنے میں اہم کردار ادا کر رہے ہیں۔ انیش خان کا پختہ یقین ہے کہ انسان کا کردار الفاظ کے بجائے اس کے اعمال سے جھلکتا ہے۔ وہ شہرت یا تشہیر کے پیچھے بھاگنے کے بجائے خاموشی سے پس پردہ کام کرنے اور سونپی گئی ہر ذمہ داری کو خلوص اور عزم کے ساتھ پورا کرنے کو ترجیح دیتے ہیں۔ ان کا پرسکون مزاج، بزرگوں کا احترام، دوسروں کے لیے ہمدردانہ رویہ اور متوازن سوچ نے انہیں معاشرے کے ہر طبقے میں مقبول اور محترم بنایا ہے۔ وہ معاشرے میں اتحاد، باہمی احترام اور ہم آہنگی کو مضبوط کرنے کے لیے مسلسل کوشاں رہتے ہیں۔ اگرچہ ان کی جسمانی شخصیت پروقار ہے، لیکن ان کا عزم، حوصلہ اور عوامی خدمت کے لیے لگن اس سے بھی کہیں زیادہ بلند ہے۔ عوامی توجہ کے بجائے بامقصد کام کو ترجیح دیتے ہوئے، وہ اپنی دیانتداری، عاجزی اور مسلم رنگریز برادری کی فلاح و بہبود اور ترقی کے لیے اپنے غیر متزلزل عزم کے ذریعے دوسروں کے لیے مشعل راہ بنے ہوئے ہیں۔'
+    },
+    biography: {
+      en: 'Saiyadil Murasalin alias Anish Khan (Bamsoli Wale) is a thoughtful, disciplined, and action-oriented personality who is widely respected for his wisdom, humility, and dignified manner of communication. He is known for speaking only when necessary, but whenever he shares his views, they carry depth, clarity, and lasting impact. His ability to express meaningful ideas in just a few words is one of his most admired qualities. Professionally, he serves as the Manager of an Indane LPG Distributorship in Morena, where he performs his responsibilities with honesty, professionalism, and dedication. In social life, he serves as the Media Incharge of the Morena Rangrez Committee, playing a significant role in strengthening communication, promoting social awareness, and supporting community initiatives. Anish Khan firmly believes that a person\'s character is reflected more through actions than words. Rather than seeking recognition or publicity, he prefers working quietly behind the scenes and fulfilling every responsibility entrusted to him with sincerity and commitment. His calm nature, respectful attitude toward elders, compassionate approach toward others, and balanced thinking have earned him the respect of people across the community. He consistently works to strengthen unity, mutual respect, and harmony within society. Although he has a strong physical presence, his determination, courage, and dedication to public service are even greater. Choosing meaningful work over public attention, he continues to inspire others through his integrity, humility, and unwavering commitment to the welfare and progress of the Muslim Rangrez community.',
+      hi: 'सैयादिल मुरासलीन उर्फ अनीश खान (बामसोली वाले) एक विचारशील, अनुशासित और कर्मठ व्यक्तित्व हैं, जिन्हें उनकी बुद्धिमत्ता, विनम्रता और गरिमापूर्ण संवाद शैली के लिए व्यापक रूप से सम्मानित किया जाता है। वे केवल आवश्यकता होने पर ही बोलने के लिए जाने जाते हैं, लेकिन जब भी वे अपने विचार साझा करते हैं, वे गहराई, स्पष्टता और स्थायी प्रभाव लिए होते हैं। कुछ ही शब्दों में सार्थक विचार व्यक्त करने की उनकी क्षमता उनके सबसे प्रशंसित गुणों में से एक है। पेशेवर रूप से, वे मुरैना में इंडेन एलपीजी डिस्ट्रीब्यूटरशिप के प्रबंधक के रूप में कार्यरत हैं, जहां वे ईमानदारी, व्यावसायिकता और समर्पण के साथ अपनी जिम्मेदारियों का निर्वहन करते हैं। सामाजिक जीवन में, वे मुरैना रंगरेज कमेटी के मीडिया प्रभारी के रूप में सेवा करते हैं, जो संचार को मजबूत करने, सामाजिक जागरूकता को बढ़ावा देने और सामुदायिक पहलों का समर्थन करने में महत्वपूर्ण भूमिका निभा रहे हैं। अनीश खान का दृढ़ विश्वास है कि व्यक्ति का चरित्र शब्दों से अधिक उसके कार्यों से झलकता है। पहचान या प्रचार चाहने के बजाय, वे पर्दे के पीछे चुपचाप काम करना और उन्हें सौंपी गई हर जिम्मेदारी को सच्चाई और प्रतिबद्धता के साथ पूरा करना पसंद करते हैं। उनका शांत स्वभाव, बड़ों के प्रति आदरणीय दृष्टिकोण, दूसरों के प्रति दयालु रवैया और संतुलित सोच ने उन्हें पूरे समाज में सम्मान दिलाया है। वे समाज के भीतर एकता, आपसी सम्मान और सद्भाव को मजबूत करने के लिए लगातार काम करते हैं। हालांकि उनका शारीरिक व्यक्तित्व सुदृढ़ है, लेकिन उनका संकल्प, साहस और जनसेवा के प्रति समर्पण उससे भी कहीं अधिक बड़ा है। सार्वजनिक ध्यान के बजाय सार्थक कार्यों को चुनकर, वे मुस्लिम रंगरेज समुदाय के कल्याण और प्रगति के लिए अपनी ईमानदारी, विनम्रता और अटूट प्रतिबद्धता के माध्यम से दूसरों को प्रेरित करना जारी रखे हुए हैं।',
+      ur: 'سید المرسلین عرف انیش خان (بامسولی والے) ایک سنجیدہ، نظم و ضبط کے پابند، اور باعمل شخصیت ہیں جنہیں ان کی حکمت، عاجزی اور باوقار انداز گفتگو کی وجہ سے بڑے پیمانے پر عزت دی جاتی ہے۔ وہ صرف ضرورت کے وقت بولنے کے لیے مشہور ہیں، لیکن جب بھی وہ اپنے خیالات کا اظہار کرتے ہیں، ان میں گہرائی، وضاحت اور دیرپا اثر ہوتا ہے۔ چند الفاظ میں بامعنی خیالات کا اظہار کرنے کی صلاحیت ان کی سب سے پسندیدہ خوبیوں میں سے ایک ہے۔ پیشہ ورانہ طور پر، وہ مورینا میں انڈین ایل پی جی ڈسٹری بیوٹر شپ کے مینیجر کے طور پر خدمات انجام دے رہے ہیں، جہاں وہ اپنی ذمہ داریاں دیانتداری، پیشہ ورانہ مہارت اور لگن کے ساتھ نبھاتے ہیں۔ سماجی زندگی میں، وہ مورینا رنگریز کمیٹی کے میڈیا انچارج کے طور پر کام کرتے ہیں، جو باہمی رابطے کو مضبوط بنانے، سماجی بیداری کو فروغ دینے اور کمیونٹی کے اقدامات کی حمایت کرنے میں اہم کردار ادا کر رہے ہیں۔ انیش خان کا پختہ یقین ہے کہ انسان کا کردار الفاظ کے بجائے اس کے اعمال سے جھلکتا ہے۔ وہ شہرت یا تشہیر کے پیچھے بھاگنے کے بجائے خاموشی سے پس پردہ کام کرنے اور سونپی گئی ہر ذمہ داری کو خلوص اور عزم کے ساتھ پورا کرنے کو ترجیح دیتے ہیں۔ ان کا پرسکون مزاج، بزرگوں کا احترام، دوسروں کے لیے ہمدردانہ رویہ اور متوازن سوچ نے انہیں معاشرے کے ہر طبقے میں مقبول اور محترم بنایا ہے۔ وہ معاشرے میں اتحاد، باہمی احترام اور ہم آہنگی کو مضبوط کرنے کے لیے مسلسل کوشاں رہتے ہیں۔ اگرچہ ان کی جسمانی شخصیت پروقار ہے، لیکن ان کا عزم، حوصلہ اور عوامی خدمت کے لیے لگن اس سے بھی کہیں زیادہ بلند ہے۔ عوامی توجہ کے بجائے بامقصد کام کو ترجیح دیتے ہوئے، وہ اپنی دیانتداری، عاجزی اور مسلم رنگریز برادری کی فلاح و بہبود اور ترقی کے لیے اپنے غیر متزلزل عزم کے ذریعے دوسروں کے لیے مشعل راہ بنے ہوئے ہیں۔'
+    },
+    majorAchievements: [
+      'Successfully manages LPG distribution services with outstanding professional efficiency in Morena',
+      'Appointed Media Incharge of Morena Rangrez Committee to strengthen community communication',
+      'Exemplary advocate for quiet, action-oriented public service over personal recognition'
+    ],
+    awardsHonors: [
+      'Morena Gas Distributor & Social Media Excellence Award'
+    ],
+    socialContributions: {
+      en: 'Serves as the Media Incharge of Morena Rangrez Committee, coordinating news, organizing events, and building strong digital links for the community.',
+      hi: 'मुरैना रंगरेज कमेटी के मीडिया प्रभारी के रूप में कार्य करते हुए समाचारों का समन्वय, कार्यक्रमों का आयोजन और समुदाय के लिए मजबूत डिजिटल संबंध स्थापित करते हैं।',
+      ur: 'مورینا رنگریز کمیٹی کے میڈیا انچارج کے طور پر خدمات انجام دیتے ہیں، خبروں کو مربوط کرتے ہیں، تقریبات کا انعقاد کرتے ہیں اور برادری کے لیے مضبوط ڈیجیٹل روابط قائم کرتے ہیں۔'
+    },
+    inspirationalMessage: {
+      en: 'A person\'s character is reflected more through actions than words. Work silently for the upliftment and progress of all.',
+      hi: 'व्यक्ति का चरित्र शब्दों से अधिक उसके कार्यों से झलकता है। सभी के उत्थान और प्रगति के लिए चुपचाप काम करें।',
+      ur: 'انسان کا کردار الفاظ کے بجائے اس کے اعمال سے جھلکتا ہے۔ سب کے فائدے اور ترقی کے لیے خاموشی سے کام کریں۔'
+    },
+    careerAdvice: {
+      en: 'Focus on business integrity, professional discipline, and devote your extra time to building community relationships and helping others.',
+      hi: 'व्यावसायिक सत्यनिष्ठा, व्यावसायिक अनुशासन पर ध्यान दें और अपना अतिरिक्त समय सामुदायिक संबंध बनाने और दूसरों की मदद करने में लगाएं।',
+      ur: 'کاروباری دیانتداری، پیشہ ورانہ نظم و ضبط پر توجہ دیں اور اپنا اضافی وقت کمیونٹی کے تعلقات استوار کرنے اور دوسروں کی مدد کرنے میں لگائیں।'
+    },
+    languagesKnown: ['Hindi', 'Urdu', 'English'],
+    expertise: ['LPG Distribution Management', 'Media Coordination', 'Public Relations', 'Community Service'],
+    contactPermission: true,
+    isMentor: true,
+    isVerified: true,
+    isFeatured: true,
+    isGovt: false,
+    isOverseas: false,
+    photoUrl: 'https://lh3.googleusercontent.com/d/1IXWtNz9-Ic_RRle1PO_gpa-lU2VilF68',
+    coverImageUrl: 'https://lh3.googleusercontent.com/d/1xQJmOzaH3oB43CKPylyGx2wI-S4ST7xo',
+    badges: ['📢 Media Incharge Morena', '💼 Indane Gas Manager', '🤝 Quiet Social Worker', '⭐ Disciplined Leader']
+  },
+  {
+    id: 'haneef-khan-imaliya',
+    name: { en: 'Janab Haneef Khan', hi: 'जनाब हनीफ खान', ur: 'جناب حنیف خان' },
+    fatherName: { en: 'Janab Gulsheri (Urf Bachchu Khan)', hi: 'जनाब गुलशेरी (उर्फ बच्चू खान)', ur: 'جناب گلشیری (عرف بچو خان)' },
+    gender: 'Male',
+    dob: '1979-07-12',
+    nativePlace: { en: 'Imaliya, Tehsil Joura, District Morena, Madhya Pradesh, India', hi: 'इमलिया, तहसील जौरा, जिला मुरैना, मध्य प्रदेश, भारत', ur: 'املیہ، تحصیل جورا، ضلع مورینا، مدھیہ پردیش، بھارت' },
+    currentCity: { en: 'Bengaluru', hi: 'बेंगलुरु', ur: 'بنگلور' },
+    district: { en: 'Morena', hi: 'मुरैना', ur: 'مورینا' },
+    state: { en: 'Karnataka', hi: 'कर्नाटक', ur: 'کرناٹک' },
+    country: { en: 'India', hi: 'भारत', ur: 'भारत' },
+    occupation: { en: 'Civil Contractor & Social Worker', hi: 'सिविल ठेकेदार एवं समाज सेवक', ur: 'سیول کنٹریکٹر اور سماجی کارکن' },
+    categoryId: 'social-workers',
+    categoryTier: 'silver',
+    designation: { en: 'Civil Contractor & Community Supporter', hi: 'सिविल ठेकेदार एवं समाज सेवक', ur: 'سیول کنٹریکٹر اور سماجی کارکن' },
+    organization: { en: 'Bengaluru Construction & Imaliya Community Welfare', hi: 'बेंगलुरु निर्माण एवं इमलिया सामुदायिक कल्याण', ur: 'بنگلور کنسٹرکشن اور املیہ کمیونٹی ویلفیئر' },
+    yearsOfExperience: '20+ Years',
+    qualification: { en: '10th Standard', hi: '10वीं कक्षा', ur: 'دسویں جماعت' },
+    university: { en: 'Board of Secondary Education Madhya Pradesh', hi: 'माध्यमिक शिक्षा मंडल मध्य प्रदेश', ur: 'سیکنڈری ایجوکیشن بورڈ مدھیہ پردیش' },
+    yearOfAchievement: 2025,
+    careerJourney: {
+      en: 'Janab Haneef Khan is a respected entrepreneur and socially active member of the Muslim Rangrez community. Originally from Imaliya, Tehsil Joura (Morena, Madhya Pradesh), he is currently working as a successful contractor in Bengaluru, Karnataka. Despite living outside his native region for professional commitments, he has remained closely connected with his community and continues to contribute to social welfare initiatives. He actively supports programs that promote unity, education, brotherhood, and the overall development of society. Known for his humble nature, hardworking personality, and cooperative attitude, Janab Haneef Khan believes that collective effort and mutual support are the foundation of a strong and progressive community. Whenever community welfare activities are organized, he extends his support and encourages people to work together for the betterment of future generations.',
+      hi: 'जनाब हनीफ खान मुस्लिम रंगरेज समुदाय के एक सम्मानित उद्यमी और सामाजिक रूप से सक्रिय सदस्य हैं। मूल रूप से इमलिया, तहसील जौरा (मुरैना, मध्य प्रदेश) के रहने वाले, वे वर्तमान में बेंगलुरु, कर्नाटक में एक सफल सिविल ठेकेदार के रूप में काम कर रहे हैं। पेशेवर प्रतिबद्धताओं के कारण अपने मूल क्षेत्र से बाहर रहने के बावजूद, वे अपने समुदाय से निकटता से जुड़े हुए हैं और सामाजिक कल्याण पहलों में योगदान देना जारी रखे हुए हैं। वे समाज में एकता, शिक्षा, भाईचारे और समग्र विकास को बढ़ावा देने वाले कार्यक्रमों का सक्रिय रूप से समर्थन करते हैं। अपने विनम्र स्वभाव, मेहनती व्यक्तित्व और सहयोगात्मक दृष्टिकोण के लिए जाने जाने वाले, जनाब हनीफ खान का मानना है कि सामूहिक प्रयास और पारस्परिक सहयोग एक मजबूत और प्रगतिशील समुदाय की नींव हैं। जब भी सामुदायिक कल्याण गतिविधियों का आयोजन किया जाता है, वे अपना समर्थन देते हैं और लोगों को आने वाली पीढ़ियों की भलाई के लिए मिलकर काम करने के लिए प्रोत्साहित करते हैं।',
+      ur: 'جناب حنیف خان مسلم رنگریز برادری کے ایک معزز کاروباری اور سماجی طور پر سرگرم رکن ہیں۔ وہ بنیادی طور پر املیہ، تحصیل جورا (مورینا، مدھیہ پردیش) کے رہنے والے ہیں اور فی الحال بنگلور، کرناٹک میں ایک کامیاب سیول کنٹریکٹر کے طور پر کام کر رہے ہیں۔ پیشہ ورانہ مصروفیات کی وجہ سے اپنے آبائی علاقے سے باہر رہنے کے باوجود، وہ اپنی برادری کے ساتھ قریبی طور پر جڑے ہوئے ہیں اور سماجی بہبود کے کاموں میں اپنا حصہ ڈال رہے ہیں۔ وہ ایسے پروگراموں کی فعال طور پر حمایت کرتے ہیں جو معاشرے میں اتحاد، تعلیم، بھائی چارے اور مجموعی ترقی کو فروغ دیتے ہیں۔ اپنے عاجزانہ مزاج، محنتی شخصیت اور تعاون پر مبنی رویے کے لیے معروف، جناب حنیف خان کا ماننا ہے کہ اجتماعی کوشش اور باہمی تعاون ایک مضبوط اور ترقی پسند برادری کی بنیاد ہیں۔ جب بھی کمیونٹی کی فلاح و بہبود کی سرگرمیاں منعقد کی جاتی ہیں، وہ ہر ممکن تعاون پیش کرتے ہیں اور لوگوں کو آنے والی نسلوں کے بہتر مستقبل کے لیے مل کر کام کرنے کی ترغیب دیتے ہیں۔'
+    },
+    biography: {
+      en: 'Janab Haneef Khan is a respected entrepreneur and socially active member of the Muslim Rangrez community. Originally from Imaliya, Tehsil Joura (Morena, Madhya Pradesh), he is currently working as a successful contractor in Bengaluru, Karnataka. Despite living outside his native region for professional commitments, he has remained closely connected with his community and continues to contribute to social welfare initiatives. He actively supports programs that promote unity, education, brotherhood, and the overall development of society. Known for his humble nature, hardworking personality, and cooperative attitude, Janab Haneef Khan believes that collective effort and mutual support are the foundation of a strong and progressive community. Whenever community welfare activities are organized, he extends his support and encourages people to work together for the betterment of future generations.',
+      hi: 'जनाब हनीफ खान मुस्लिम रंगरेज समुदाय के एक सम्मानित उद्यमी और सामाजिक रूप से सक्रिय सदस्य हैं। मूल रूप से इमलिया, तहसील जौरा (मुरैना, मध्य प्रदेश) के रहने वाले, वे वर्तमान में बेंगलुरु, कर्नाटक में एक सफल सिविल ठेकेदार के रूप में काम कर रहे हैं। पेशेवर प्रतिबद्धताओं के कारण अपने मूल क्षेत्र से बाहर रहने के बावजूद, वे अपने समुदाय से निकटता से जुड़े हुए हैं और सामाजिक कल्याण पहलों में योगदान देना जारी रखे हुए हैं। वे समाज में एकता, शिक्षा, भाईचारे और समग्र विकास को बढ़ावा देने वाले कार्यक्रमों का सक्रिय रूप से समर्थन करते हैं। अपने विनम्र स्वभाव, मेहनती व्यक्तित्व और सहयोगात्मक दृष्टिकोण के लिए जाने जाने वाले, जनाब हनीफ खान का मानना है कि सामूहिक प्रयास और पारस्परिक सहयोग एक मजबूत और प्रगतिशील समुदाय की नींव हैं। जब भी सामुदायिक कल्याण गतिविधियों का आयोजन किया जाता है, वे अपना समर्थन देते हैं और लोगों को आने वाली पीढ़ियों की भलाई के लिए मिलकर काम करने के लिए प्रोत्साहित करते हैं।',
+      ur: 'جناب حنیف خان مسلم رنگریز برادری کے ایک معزز کاروباری اور سماجی طور پر سرگرم رکن ہیں۔ وہ بنیادی طور پر املیہ، تحصیل جورا (مورینا، مدھیہ پردیش) کے رہنے والے ہیں اور فی الحال بنگلور، کرناٹک میں ایک کامیاب سیول کنٹریکٹر کے طور پر کام کر رہے ہیں۔ پیشہ ورانہ مصروفیات کی وجہ سے اپنے آبائی علاقے سے باہر رہنے کے باوجود، وہ اپنی برادری کے ساتھ قریبی طور پر جڑے ہوئے ہیں اور سماجی بہبود کے کاموں میں اپنا حصہ ڈال رہے ہیں۔ وہ ایسے پروگراموں کی فعال طور پر حمایت کرتے ہیں جو معاشرے میں اتحاد، تعلیم، بھائی چارے اور مجموعی ترقی کو فروغ دیتے ہیں۔ اپنے عاجزانہ مزاج، محنتی شخصیت اور تعاون پر مبنی رویے کے لیے معروف، جناب حنیف خان کا ماننا ہے کہ اجتماعی کوشش اور باہمی تعاون ایک مضبوط اور ترقی پسند برادری کی بنیاد ہیں۔ جب بھی کمیونٹی کی فلاح و بہبود کی سرگرمیاں منعقد کی جاتی ہیں، وہ ہر ممکن تعاون پیش کرتے ہیں اور لوگوں کو آنے والی نسلوں کے بہتر مستقبل کے لیے مل کر کام کرنے کی ترغیب دیتے ہیں۔'
+    },
+    majorAchievements: [
+      'Built a successful civil contracting enterprise in Bengaluru, Karnataka',
+      'Consistently supports underprivileged students and social development projects in Imaliya (MP)',
+      'Highly active volunteer and benefactor for Rangrez community development drives'
+    ],
+    awardsHonors: [
+      'Imaliya-Bengaluru Community Builder Award'
+    ],
+    socialContributions: {
+      en: 'Provides continuous social, educational, and financial support for community welfare projects and brotherhood promotional events in his native place Imaliya and current city Bengaluru.',
+      hi: 'अपने मूल स्थान इमलिया और वर्तमान शहर बेंगलुरु में सामुदायिक कल्याण परियोजनाओं और भाईचारा बढ़ाने वाले कार्यक्रमों के लिए निरंतर सामाजिक, शैक्षिक और वित्तीय सहायता प्रदान करते हैं।',
+      ur: 'اپنے آبائی شہر املیہ اور موجودہ شہر بنگلور میں سماجی بہبود کے منصوبوں اور بھائی چارے کے فروغ کے پروگراموں کے لیے مسلسل سماجی، تعلیمی اور مالی مدد فراہم کرتے ہیں۔'
+    },
+    inspirationalMessage: {
+      en: 'Collective effort and mutual support are the foundation of a strong and progressive community. Support each other and rise together.',
+      hi: 'सामूहिक प्रयास और पारस्परिक सहयोग एक मजबूत और प्रगतिशील समुदाय की नींव हैं। एक-दूसरे का समर्थन करें और साथ मिलकर आगे बढ़ें।',
+      ur: 'اجتماعی کوشش اور باہمی تعاون ایک مضبوط اور ترقی پسند برادری کی بنیاد ہیں۔ ایک دوسرے کا ساتھ دیں اور مل کر ترقی کریں۔'
+    },
+    careerAdvice: {
+      en: 'Focus on persistent hard work, keep your humility, and dedicate yourself to uplift the society whenever you achieve success.',
+      hi: 'निरंतर कड़ी मेहनत पर ध्यान केंद्रित करें, अपनी विनम्रता बनाए रखें, और जब भी आप सफलता प्राप्त करें तो समाज के उत्थान के लिए खुद को समर्पित करें।',
+      ur: 'مسلسل سخت محنت پر توجہ دیں، عاجزی برقرار رکھیں، اور جب بھی کامیابی حاصل کریں معاشرے کی فلاح کے لیے خود کو وقف کریں۔'
+    },
+    languagesKnown: ['Hindi', 'Urdu', 'English', 'Kannada'],
+    expertise: ['Civil Contracting', 'Philanthropy', 'Community Organization', 'Project Execution'],
+    contactPermission: true,
+    isMentor: true,
+    isVerified: true,
+    isFeatured: true,
+    isGovt: false,
+    isOverseas: false,
+    photoUrl: 'https://lh3.googleusercontent.com/d/1W_OQbG2KjvDjE5rB9yMNY--9ClW1UCDh',
+    coverImageUrl: '',
+    badges: ['🏗️ Civil Contractor', '🤝 Imaliya Supporter', '❤️ Dedicated Philanthropist', '⭐ Bengaluru Icon']
   }
 ];
 
@@ -1143,10 +1403,10 @@ export const INITIAL_AWARDS_GALLERY: AwardItem[] = [
       hi: 'बीजेपी संगठन नेतृत्व एवं जनसेवा सम्मान 2025',
       ur: 'بی جے پی تنظیمی قیادت اور عوامی خدمت کا اعزاز 2025'
     },
-    recipientName: 'Fakhruddin Khan (Rahimbaks Khan)',
+    recipientName: 'Fakhruddin Khan s/o Janab Rahimbaks',
     category: 'Public Representatives',
     year: 2025,
-    description: 'Conferred on Shri Fakhruddin Khan (Mandal President B.J.P. Kailaras) for 22 years of selfless public service, grassroots governance, and community leadership in Morena, MP.',
+    description: 'Conferred on Shri Fakhruddin Khan s/o Janab Rahimbaks (Mandal President B.J.P. Kailaras) for 22 years of selfless public service, grassroots governance, and community leadership in Morena, MP.',
     type: 'Community Award',
     imageUrl: 'https://lh3.googleusercontent.com/d/1GB3DLriIQH_mYNtPXav_81w3SU5ZXrMC'
   },

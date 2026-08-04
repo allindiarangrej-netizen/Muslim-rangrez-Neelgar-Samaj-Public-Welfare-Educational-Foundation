@@ -8,6 +8,7 @@ import { resolveSocialUrl } from './common/SocialIcons';
 import ImtiyazKhanSlideshow from './ImtiyazKhanSlideshow';
 import FounderTimelineGallery from './FounderTimelineGallery';
 import EducationalBackgroundWrapper from './common/EducationalBackgroundWrapper';
+import { TEMPORARY_ARCHIVE_MODE } from '../data/archiveConfig';
 
 interface LeaderProfile {
   id: string;
@@ -333,7 +334,11 @@ export default function NationalLeadership({ currentLanguage }: NationalLeadersh
     }
   ];
 
-  const filteredLeaders = leaders.filter(leader => {
+  const activeLeaders = TEMPORARY_ARCHIVE_MODE
+    ? leaders.filter(l => !l.designationEn.toLowerCase().includes('president') && !l.designationHi.includes('अध्यक्ष'))
+    : leaders;
+
+  const filteredLeaders = activeLeaders.filter(leader => {
     const leaderCat = leader.category || 'district';
     const matchesCategory = activeCategory === 'all' || leaderCat === activeCategory;
     const matchesSearch = !searchQuery.trim() || 
@@ -393,11 +398,11 @@ export default function NationalLeadership({ currentLanguage }: NationalLeadersh
           {/* Category Filter Pills */}
           <div className="flex flex-wrap items-center justify-center gap-2.5">
             {[
-              { id: 'all', labelEn: '🌐 All Leadership', labelHi: '🌐 सभी पदाधिकारी', count: leaders.length },
-              { id: 'founder', labelEn: '🌟 Founders & Patrons', labelHi: '🌟 संस्थापक एवं संरक्षक', count: leaders.filter(l => l.category === 'founder').length },
-              { id: 'national', labelEn: '👑 National Executive Council', labelHi: '👑 राष्ट्रीय कार्यकारिणी', count: leaders.filter(l => l.category === 'national').length },
-              { id: 'advisory', labelEn: '⚖️ Advisory & Legal Board', labelHi: '⚖️ सलाहकार एवं कानूनी बोर्ड', count: leaders.filter(l => l.category === 'advisory').length },
-              { id: 'district', labelEn: '📍 District Presidents', labelHi: '📍 जिलाध्यक्ष', count: leaders.filter(l => !l.category || l.category === 'district').length },
+              { id: 'all', labelEn: '🌐 All Leadership', labelHi: '🌐 सभी पदाधिकारी', count: activeLeaders.length },
+              { id: 'founder', labelEn: '🌟 Founders & Patrons', labelHi: '🌟 संस्थापक एवं संरक्षक', count: activeLeaders.filter(l => l.category === 'founder').length },
+              { id: 'national', labelEn: '👑 National Executive Council', labelHi: '👑 राष्ट्रीय कार्यकारिणी', count: activeLeaders.filter(l => l.category === 'national').length },
+              { id: 'advisory', labelEn: '⚖️ Advisory & Legal Board', labelHi: '⚖️ सलाहकार एवं कानूनी बोर्ड', count: activeLeaders.filter(l => l.category === 'advisory').length },
+              { id: 'district', labelEn: '📍 District Presidents', labelHi: '📍 जिलाध्यक्ष', count: activeLeaders.filter(l => !l.category || l.category === 'district').length },
             ].filter((cat) => cat.count > 0)
              .map((cat) => (
               <button

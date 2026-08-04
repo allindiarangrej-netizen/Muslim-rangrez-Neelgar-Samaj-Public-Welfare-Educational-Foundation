@@ -94,6 +94,7 @@ interface SocialItemProps {
   className?: string;
   size?: 'sm' | 'md' | 'lg';
   variant?: 'solid' | 'outline' | 'ghost' | 'pills';
+  asSpan?: boolean;
 }
 
 export function SocialButton({
@@ -102,7 +103,8 @@ export function SocialButton({
   title,
   className = '',
   size = 'md',
-  variant = 'ghost'
+  variant = 'ghost',
+  asSpan = false
 }: SocialItemProps) {
   const targetUrl = resolveSocialUrl(url, platform);
 
@@ -145,6 +147,18 @@ export function SocialButton({
   };
 
   const defaultTitle = platform.charAt(0).toUpperCase() + platform.slice(1);
+
+  if (asSpan) {
+    return (
+      <span
+        title={title || defaultTitle}
+        aria-label={title || defaultTitle}
+        className={`inline-flex items-center justify-center ${className}`}
+      >
+        {getIcon()}
+      </span>
+    );
+  }
 
   if (variant === 'solid') {
     return (
@@ -211,7 +225,7 @@ export function OfficialSocialChannelsList({ className = "" }: { className?: str
           className="flex items-center space-x-3 p-3 rounded-2xl bg-white border border-gray-200 hover:border-[#004B23] hover:shadow-md transition group cursor-pointer"
         >
           <div className="p-2.5 rounded-xl bg-gray-50 group-hover:bg-[#004B23] text-gray-700 group-hover:text-white transition shrink-0">
-            <SocialButton platform={ch.platform} variant="ghost" size="md" className="p-0 text-current" />
+            <SocialButton platform={ch.platform} variant="ghost" size="md" className="p-0 text-current" asSpan />
           </div>
           <div className="min-w-0">
             <h5 className="text-xs font-bold text-gray-900 group-hover:text-[#004B23] truncate transition">{ch.name}</h5>

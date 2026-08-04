@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Landmark, Mail, Phone, MapPin, Send, HelpCircle, CheckCircle, ShieldCheck, X, Sparkles, ArrowUp, Shield, Lock, Building, Users, UserCheck } from 'lucide-react';
 import { Language } from '../types';
 import { SocialButton, FacebookIcon, YouTubeIcon, WhatsAppIcon, TelegramIcon, InstagramIcon, TwitterIcon, LinkedInIcon, COMMUNITY_SOCIAL_URLS } from './common/SocialIcons';
+import { TEMPORARY_ARCHIVE_MODE } from '../data/archiveConfig';
 
 interface FooterProps {
   currentLanguage: Language;
@@ -135,12 +136,14 @@ export default function Footer({ currentLanguage, onNavigate, onOpenArchitecture
                 • {currentLanguage === 'en' ? 'Annual Audited Reports' : currentLanguage === 'ur' ? 'سالانہ آڈٹ رپورٹس' : 'वार्षिक ऑडिट रिपोर्ट'}
               </button>
             </li>
-            <li>
-              <button onClick={() => onNavigate('about-excellence')} className="hover:text-[#F4C430] transition text-[#FFD54A] font-extrabold flex items-center gap-1.5">
+            {!TEMPORARY_ARCHIVE_MODE && (
+              <li>
+                <button onClick={() => onNavigate('about-excellence')} className="hover:text-[#F4C430] transition text-[#FFD54A] font-extrabold flex items-center gap-1.5">
                 <span>• 🏆</span>
                 <span>{currentLanguage === 'en' ? 'Hall of Excellence (Achievers)' : currentLanguage === 'ur' ? 'ہال آف ایکسیلنس' : 'गौरवशाली विभूतियाँ'}</span>
-              </button>
-            </li>
+                </button>
+              </li>
+            )}
             <li>
               <button onClick={() => onNavigate('membership-register')} className="hover:text-[#F4C430] transition">
                 • {currentLanguage === 'en' ? 'Membership Registration' : currentLanguage === 'ur' ? 'رکنیت رجسٹریشن ہب' : 'रुक्नियत (मेम्बरशिप) रजिस्ट्रेशन हब'}
